@@ -43,6 +43,11 @@ internal static class DustyTomeAncientFallbackPatch
         }
 
         List<CardModel> fallback = FilterAncient(native, player);
+        if (fallback.Count == 0)
+        {
+            return true; // native pool unexpectedly empty too — keep vanilla behavior
+        }
+
         __instance.AncientCard = player.PlayerRng.Rewards.NextItem(fallback.Select(c => c.Id));
         return false; // replaced: vanilla would NRE on the empty mod pool
     }
@@ -57,6 +62,7 @@ internal static class DustyTomeAncientFallbackPatch
         "ironclad" => ModelDb.CardPool<IroncladCardPool>(),
         "silent" => ModelDb.CardPool<SilentCardPool>(),
         "defect" => ModelDb.CardPool<DefectCardPool>(),
+        "regent" => ModelDb.CardPool<RegentCardPool>(), // Watcher stands in for the Regent
         _ => null,
     };
 }
