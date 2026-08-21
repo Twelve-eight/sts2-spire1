@@ -13,6 +13,8 @@ namespace Spire1.Spire1Code.Encounters;
 /// </summary>
 public sealed class ExordiumWildlifeEncounter : Spire1Encounter
 {
+    public ExordiumWildlifeEncounter() : base(RoomType.Monster) { }
+
     public override RoomType RoomType => RoomType.Monster;
 
     public override IEnumerable<MonsterModel> AllPossibleMonsters =>
@@ -49,5 +51,5 @@ public sealed class ExordiumWildlifeEncounter : Spire1Encounter
         };
     }
 
-    public List<(string, string)>? Localization => [("name", "Exordium Wildlife")];
+    public override List<(string, string)>? Localization => [("title", "Exordium Wildlife")];
 }

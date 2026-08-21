@@ -10,6 +10,8 @@ namespace Spire1.Spire1Code.Encounters;
 /// </summary>
 public sealed class LargeSlimeEncounter : Spire1Encounter
 {
+    public LargeSlimeEncounter() : base(RoomType.Monster) { }
+
     public override RoomType RoomType => RoomType.Monster;
 
     public override IEnumerable<MonsterModel> AllPossibleMonsters =>
@@ -25,5 +27,5 @@ public sealed class LargeSlimeEncounter : Spire1Encounter
             : ModelDb.Monster<SpikeSlimeL>().ToMutable(), null),
     ];
 
-    public List<(string, string)>? Localization => [("name", "Large Slime")];
+    public override List<(string, string)>? Localization => [("title", "Large Slime")];
 }

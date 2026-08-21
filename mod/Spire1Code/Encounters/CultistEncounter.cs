@@ -9,6 +9,8 @@ namespace Spire1.Spire1Code.Encounters;
 /// </summary>
 public sealed class CultistEncounter : Spire1Encounter
 {
+    public CultistEncounter() : base(RoomType.Monster) { }
+
     public override RoomType RoomType => RoomType.Monster;
 
     public override bool IsWeak => true;
@@ -23,5 +25,5 @@ public sealed class CultistEncounter : Spire1Encounter
         (ModelDb.Monster<Cultist>().ToMutable(), null),
     ];
 
-    public List<(string, string)>? Localization => [("name", "Cultist")];
+    public override List<(string, string)>? Localization => [("title", "Cultist")];
 }

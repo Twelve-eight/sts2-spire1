@@ -65,8 +65,8 @@ public sealed class FungiBeast : Spire1Monster
         RandomBranchState roll = new("ROLL");
         bite.FollowUpState = roll;
         grow.FollowUpState = roll;
-        roll.AddBranch(bite, 0, 2, 60f);
-        roll.AddBranch(grow, 0, 1, 40f);
+        roll.AddBranch(bite, 0, 2, () => 60f);
+        roll.AddBranch(grow, 0, 1, () => 40f);
         return new MonsterMoveStateMachine([bite, grow, roll], bite);
     }
 

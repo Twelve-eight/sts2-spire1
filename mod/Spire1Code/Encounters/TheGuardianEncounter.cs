@@ -11,6 +11,8 @@ namespace Spire1.Spire1Code.Encounters;
 /// </summary>
 public sealed class TheGuardianEncounter : Spire1Encounter
 {
+    public TheGuardianEncounter() : base(RoomType.Boss) { }
+
     public override RoomType RoomType => RoomType.Boss;
 
     public override int MinGoldReward => 95;
@@ -26,5 +28,5 @@ public sealed class TheGuardianEncounter : Spire1Encounter
         (ModelDb.Monster<TheGuardian>().ToMutable(), null),
     ];
 
-    public List<(string, string)>? Localization => [("name", "The Guardian")];
+    public override List<(string, string)>? Localization => [("title", "The Guardian")];
 }

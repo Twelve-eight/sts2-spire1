@@ -13,6 +13,8 @@ namespace Spire1.Spire1Code.Encounters;
 /// </summary>
 public sealed class ThreeSentriesEncounter : Spire1Encounter
 {
+    public ThreeSentriesEncounter() : base(RoomType.Elite) { }
+
     public override RoomType RoomType => RoomType.Elite;
 
     public override int MinGoldReward => 25;
@@ -30,5 +32,5 @@ public sealed class ThreeSentriesEncounter : Spire1Encounter
         (ModelDb.Monster<Sentry>().ToMutable(), null),
     ];
 
-    public List<(string, string)>? Localization => [("name", "3 Sentries")];
+    public override List<(string, string)>? Localization => [("title", "3 Sentries")];
 }

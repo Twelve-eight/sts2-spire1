@@ -10,6 +10,8 @@ namespace Spire1.Spire1Code.Encounters;
 /// </summary>
 public sealed class SmallSlimesEncounter : Spire1Encounter
 {
+    public SmallSlimesEncounter() : base(RoomType.Monster) { }
+
     public override RoomType RoomType => RoomType.Monster;
 
     public override bool IsWeak => true;
@@ -35,5 +37,5 @@ public sealed class SmallSlimesEncounter : Spire1Encounter
                 (ModelDb.Monster<SpikeSlimeM>().ToMutable(), null),
             };
 
-    public List<(string, string)>? Localization => [("name", "Small Slimes")];
+    public override List<(string, string)>? Localization => [("title", "Small Slimes")];
 }

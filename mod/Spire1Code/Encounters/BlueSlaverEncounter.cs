@@ -9,6 +9,8 @@ namespace Spire1.Spire1Code.Encounters;
 /// </summary>
 public sealed class BlueSlaverEncounter : Spire1Encounter
 {
+    public BlueSlaverEncounter() : base(RoomType.Monster) { }
+
     public override RoomType RoomType => RoomType.Monster;
 
     public override IEnumerable<MonsterModel> AllPossibleMonsters =>
@@ -21,5 +23,5 @@ public sealed class BlueSlaverEncounter : Spire1Encounter
         (ModelDb.Monster<SlaverBlue>().ToMutable(), null),
     ];
 
-    public List<(string, string)>? Localization => [("name", "Blue Slaver")];
+    public override List<(string, string)>? Localization => [("title", "Blue Slaver")];
 }

@@ -11,6 +11,8 @@ namespace Spire1.Spire1Code.Encounters;
 /// </summary>
 public sealed class SlimeBossEncounter : Spire1Encounter
 {
+    public SlimeBossEncounter() : base(RoomType.Boss) { }
+
     public override RoomType RoomType => RoomType.Boss;
 
     public override int MinGoldReward => 95;
@@ -26,5 +28,5 @@ public sealed class SlimeBossEncounter : Spire1Encounter
         (ModelDb.Monster<SlimeBoss>().ToMutable(), null),
     ];
 
-    public List<(string, string)>? Localization => [("name", "Slime Boss")];
+    public override List<(string, string)>? Localization => [("title", "Slime Boss")];
 }

@@ -9,6 +9,8 @@ namespace Spire1.Spire1Code.Encounters;
 /// </summary>
 public sealed class JawWormEncounter : Spire1Encounter
 {
+    public JawWormEncounter() : base(RoomType.Monster) { }
+
     public override RoomType RoomType => RoomType.Monster;
 
     public override bool IsWeak => true;
@@ -23,5 +25,5 @@ public sealed class JawWormEncounter : Spire1Encounter
         (ModelDb.Monster<JawWorm>().ToMutable(), null),
     ];
 
-    public List<(string, string)>? Localization => [("name", "Jaw Worm")];
+    public override List<(string, string)>? Localization => [("title", "Jaw Worm")];
 }

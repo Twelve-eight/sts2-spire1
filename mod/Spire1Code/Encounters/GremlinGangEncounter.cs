@@ -14,6 +14,8 @@ namespace Spire1.Spire1Code.Encounters;
 /// </summary>
 public sealed class GremlinGangEncounter : Spire1Encounter
 {
+    public GremlinGangEncounter() : base(RoomType.Monster) { }
+
     public override RoomType RoomType => RoomType.Monster;
 
     public override IEnumerable<MonsterModel> AllPossibleMonsters =>
@@ -57,5 +59,5 @@ public sealed class GremlinGangEncounter : Spire1Encounter
         return monsters;
     }
 
-    public List<(string, string)>? Localization => [("name", "Gremlin Gang")];
+    public override List<(string, string)>? Localization => [("title", "Gremlin Gang")];
 }
