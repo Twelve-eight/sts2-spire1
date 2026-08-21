@@ -1,3 +1,4 @@
+using Spire1.Spire1Code.Character;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -9,6 +10,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Ironclad — Fiend Fire (Rare). Exhaust your hand; deal 7 damage per card exhausted (10 upgraded).</summary>
+[Pool(typeof(Spire1LegacyPool))]
 public class FiendFire() : Spire1Card(2, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(7, ValueProp.Move)];

@@ -26,7 +26,7 @@ public class NoteForYourself : Spire1Event
 
     public override void CalculateVars()
     {
-        ((StringVar)DynamicVars["Card"]).StringValue = ModelDb.Card<IronWave>().Title;
+        ((StringVar)DynamicVars["Card"]).StringValue = ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.IronWave>().Title;
     }
 
     protected override IReadOnlyList<EventOption> GenerateInitialOptions()
@@ -54,7 +54,7 @@ public class NoteForYourself : Spire1Event
         // card you store now is the one you receive in future runs. No such save system exists in
         // this port, so the event always starts from the StS1 defaults (Iron Wave, unupgraded) and
         // the stored card is not persisted.
-        CardModel received = Owner.RunState.CreateCard<IronWave>(Owner);
+        CardModel received = Owner.RunState.CreateCard<MegaCrit.Sts2.Core.Models.Cards.IronWave>(Owner);
         await CardPileCmd.Add(received, PileType.Deck);
         List<CardModel> stored = (await CardSelectCmd.FromDeckGeneric(Owner,
             new CardSelectorPrefs(new LocString("events", "SPIRE1-NOTE_FOR_YOURSELF.selectionScreenPrompt"), 1))).ToList();

@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Silent — Nightmare (Rare Skill). Choose a card; next turn add 3 copies of it into your hand (2 cost upgraded). Exhaust. Reuses the game's NightmarePower.</summary>
-[Pool(typeof(SilentCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class Nightmare() : Spire1Card(3, CardType.Skill, CardRarity.Rare, TargetType.None)
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];

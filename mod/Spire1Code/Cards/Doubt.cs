@@ -1,3 +1,4 @@
+using Spire1.Spire1Code.Character;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -12,6 +13,7 @@ namespace Spire1.Spire1Code.Cards;
 /// Mirror of the base-game Doubt: applies at turn end and sets SkipNextDurationTick so the
 /// Weak is not ticked down immediately and lasts through the enemy's turn.
 /// </summary>
+[Pool(typeof(Spire1LegacyPool))]
 public class Doubt() : Spire1Curse()
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<WeakPower>(1)];

@@ -1,3 +1,5 @@
+using BaseLib.Utils;
+using Spire1.Spire1Code.Character;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -11,6 +13,7 @@ namespace Spire1.Spire1Code.Cards;
 /// StS1 Ironclad — Regret (Curse). Unplayable. At the end of your turn, lose 1 HP for each card in your hand.
 /// Mirror of the base-game Regret (BeforeSideTurnEnd hand snapshot + OnTurnEndInHand).
 /// </summary>
+[Pool(typeof(Spire1LegacyPool))]
 public class Regret() : Spire1Curse()
 {
     private int _cardsInHand;

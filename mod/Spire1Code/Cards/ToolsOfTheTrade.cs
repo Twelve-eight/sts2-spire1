@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Silent — Tools of the Trade (Rare Power). At the start of your turn, draw 1 card and discard 1 card (0 cost upgraded).</summary>
-[Pool(typeof(SilentCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class ToolsOfTheTrade() : Spire1Card(1, CardType.Power, CardRarity.Rare, TargetType.Self)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<ToolsOfTheTradePower>(1)];

@@ -1,3 +1,4 @@
+using Spire1.Spire1Code.Character;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
@@ -10,6 +11,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Ironclad - Headbutt (Common Attack). Deal 9 damage, put a card from your discard pile on top of your draw pile (12 upgraded).</summary>
+[Pool(typeof(Spire1LegacyPool))]
 public class Headbutt() : Spire1Card(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars =>

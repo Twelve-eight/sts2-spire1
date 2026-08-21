@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Cards;
 
-[Pool(typeof(DefectCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class FTL() : Spire1Card(0, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars =>

@@ -9,7 +9,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Silent — Flechettes (Uncommon Attack). Deal 4 damage for each Skill in your hand (6 upgraded).</summary>
-[Pool(typeof(SilentCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class Flechettes() : Spire1Card(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(4, ValueProp.Move)];

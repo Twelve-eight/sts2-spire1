@@ -11,7 +11,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Silent — Dagger Throw (Common). Deal 9 damage, draw 1 card, discard 1 card (12 upgraded).</summary>
-[Pool(typeof(SilentCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class DaggerThrow() : Spire1Card(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(9, ValueProp.Move), new CardsVar(1)];

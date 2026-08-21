@@ -1,3 +1,4 @@
+using Spire1.Spire1Code.Character;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -9,6 +10,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Ironclad — Flame Barrier (Uncommon). Gain 12 Block; whenever attacked this turn, deal 4 damage back (16 / 6 upgraded).</summary>
+[Pool(typeof(Spire1LegacyPool))]
 public class FlameBarrier() : Spire1Card(2, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars =>

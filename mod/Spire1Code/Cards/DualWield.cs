@@ -1,3 +1,4 @@
+using Spire1.Spire1Code.Character;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
@@ -9,6 +10,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Ironclad - Dual Wield (Uncommon Skill). Choose an Attack or Power card; add a copy of it to your hand (2 copies upgraded).</summary>
+[Pool(typeof(Spire1LegacyPool))]
 public class DualWield() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 {
     private int _copies = 1;

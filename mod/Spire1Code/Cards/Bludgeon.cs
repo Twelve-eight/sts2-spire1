@@ -1,3 +1,4 @@
+using Spire1.Spire1Code.Character;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -7,6 +8,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Ironclad — Bludgeon (Rare Attack). Deal 32 damage (42 upgraded).</summary>
+[Pool(typeof(Spire1LegacyPool))]
 public class Bludgeon() : Spire1Card(3, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(32, ValueProp.Move)];

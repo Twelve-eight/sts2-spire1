@@ -9,7 +9,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Silent — Escape Plan (Uncommon Skill). Draw 1 card. If you draw a Skill, gain 3 Block (5 upgraded).</summary>
-[Pool(typeof(SilentCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class EscapePlan() : Spire1Card(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(1), new BlockVar(3, ValueProp.Move)];

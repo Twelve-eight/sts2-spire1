@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Cards;
 
-[Pool(typeof(DefectCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class Darkness() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("MagicNumber", 1)];

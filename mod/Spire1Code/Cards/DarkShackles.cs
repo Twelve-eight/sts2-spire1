@@ -1,3 +1,4 @@
+using Spire1.Spire1Code.Character;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -14,7 +15,7 @@ namespace Spire1.Spire1Code.Cards;
 /// Uses the base game's DarkShacklesPower (a TemporaryStrengthPower with IsPositive=false): PowerCmd.Apply receives
 /// the positive PowerVar amount and the power internally applies -X Strength, exactly like the base-game Dark Shackles card.
 /// </summary>
-[Pool(typeof(ColorlessCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class DarkShackles() : Spire1Card(0, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy)
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];

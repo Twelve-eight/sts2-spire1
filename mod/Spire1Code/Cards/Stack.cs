@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Cards;
 
-[Pool(typeof(DefectCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class Stack() : Spire1Card(1, CardType.Skill, CardRarity.Common, TargetType.Self)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars =>

@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Silent — Noxious Fumes (Uncommon Power). At the start of your turn, apply 2 Poison to ALL enemies (3 upgraded).</summary>
-[Pool(typeof(SilentCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class NoxiousFumes() : Spire1Card(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<NoxiousFumesPower>(2)];

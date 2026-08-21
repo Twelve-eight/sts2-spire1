@@ -1,3 +1,4 @@
+using Spire1.Spire1Code.Character;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -9,6 +10,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Ironclad — Shockwave (Uncommon). Apply 3 Weak and 3 Vulnerable to ALL enemies, Exhaust (5 / 5 upgraded).</summary>
+[Pool(typeof(Spire1LegacyPool))]
 public class Shockwave() : Spire1Card(2, CardType.Skill, CardRarity.Uncommon, TargetType.AllEnemies)
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];

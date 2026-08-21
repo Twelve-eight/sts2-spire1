@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Silent — Bouncing Flask (Uncommon Skill). Apply 3 Poison to a random enemy 3 times (4 times upgraded).</summary>
-[Pool(typeof(SilentCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class BouncingFlask() : Spire1Card(2, CardType.Skill, CardRarity.Uncommon, TargetType.AllEnemies)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<PoisonPower>(3), new RepeatVar(3)];

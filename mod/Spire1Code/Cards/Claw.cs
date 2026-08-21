@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Cards;
 
-[Pool(typeof(DefectCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class Claw() : Spire1Card(0, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
     private decimal _extraDamageFromClawPlays;

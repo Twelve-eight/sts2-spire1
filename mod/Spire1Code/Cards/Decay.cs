@@ -1,3 +1,5 @@
+using BaseLib.Utils;
+using Spire1.Spire1Code.Character;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -10,6 +12,7 @@ namespace Spire1.Spire1Code.Cards;
 /// StS1 Ironclad — Decay (Curse). Unplayable. At the end of your turn, take 2 damage.
 /// Mirror of the base-game Decay (DamageVar + OnTurnEndInHand).
 /// </summary>
+[Pool(typeof(Spire1LegacyPool))]
 public class Decay() : Spire1Curse()
 {
     protected override IEnumerable<DynamicVar> CanonicalVars =>
