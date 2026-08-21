@@ -247,3 +247,63 @@ The salvaged artifacts were written by agents from transcripts — spot-check a 
 ### Verification state — BE HONEST ABOUT THIS
 - Central build green AFTER base classes landed (0 errors, before the worker wave). NOT yet rebuilt with Exordium + patch (Exordium references three encounter classes being written now).
 - No in-game smoke test of anything from this session yet. The face-relics checklist from session 5 is still outstanding with the user, who is awake and available — hand it over when the wave lands and the build is green.
+
+## Session 7 — M2 wave landed, cross-reviewed, fixed (2026-08-21)
+
+### 7.1 What exists now
+- **25/25 Act-1 monsters** on disk under `mod/Spire1Code/Monsters/` (AcidSlime L/M/S, SpikeSlime L/M/S, Cultist, JawWorm, FungiBeast, Looter, SlaverBlue/Red, Sentry, Lagavulin, LouseNormal/Defensive, GremlinWarrior/Thief/Fat/Shield/Wizard/Nob, TheGuardian, Hexaghost, SlimeBoss) + shared infra (`SlimeSplit.cs`, `ISlimeSplitSpawn.cs`) and new powers (`SporeCloudPower`, `SlimeSplitPower`, `AngryPower`, `ModeShiftPower`, `SharpHidePower`).
+- **20/20 encounters** in `mod/Spire1Code/Encounters/` (14 Monster / 3 Elite / 3 Boss), gold overrides on elites 25-35 / bosses 95-105.
+- Central build: **0 errors** (214 pre-existing nullable warnings, all in old Events/Relics/Cards code).
+
+### 7.2 Cross-review round (6 reviewers) — verdicts & adjudications
+- ReviewHumanoids: FAIL → 4 P1 (Lagavulin AsleepPower hard-cast crash; Lagavulin post-wake branch inverted; Sentry predicates self-locking BOLT; SporeCloud Owner.Player NRE) + 4 P2. All fixed (writer rewrote Lagavulin/Sentry/SporeCloud; main agent patched compile fallout).
+- ReviewEncounters: FAIL → 3 mechanical blockers (missing ctor chaining CS7036; Localization not `override` CS0534; key "name" never read — engine reads `.title`/`.loss`). Main agent batch-fixed all 20 files via script.
+- ReviewLouses: PASS-with-1-blocker → green louse missing A17+ "Spit Web never back-to-back" guard. Fixed with weight lambda mirroring red louse pattern.
+- ReviewGremlins: FAIL → P1 (AngryPower trigger) **REJECTED after javap adjudication**: vanilla `AngryPower.onAttacked(DamageInfo,int)` EXISTS in desktop-1.0.jar with exactly the implemented gate (owner!=null && dmg>0 && !HP_LOSS && !THORNS). Reviewer had confused it with `AngerPower` (the card power). 4 accepted: Wizard escape wiring orphaned; Shield Protect loop ignores escapeNext; Protect pool must exclude self (GainBlockRandomMonsterAction bytecode); Fat Blunt invalid Attack trigger.
+- ReviewSlimes: FAIL → Acid L/M attack pairing swapped vs bytecode (Slimed belongs on the 11/12 & 7/8 attacks); Spike lick caps inverted base/A17+; SpikeL missing A17 3-Frail. All fixed by writer.
+- BossesW delivered Guardian/Hexaghost/SlimeBoss (split = 1×SpikeSlimeL + 1×AcidSlimeL per bytecode, NOT ×2) and flagged a real runtime crash in SlimeSplit: `new T {}` is canonical/immutable → `CreatureCmd.Add` AssertMutable throws. Fixed: `(T)ModelDb.Monster<T>().ToMutable()` then set SpawnHp.
+
+### 7.3 Main-agent fixes after writer termination (perf)
+- JawWorm AI rewritten from bytecode getMove: band picker 25/30/45 + conditional sub-rolls (0.5625 after Bellow→56.25% THRASH; 0.357 after THRASH²→35.7% CHOMP; 0.416 after CHOMP→41.6% CHOMP), first move CHOMP, per-turn cached sub-roll via `base.Rng.NextFloat()`.
+- SlaverRed Entangle now 25%/turn (`RollHundred() >= 75`, once per combat), STAB-after-entangle gated `_stabRun < 2 && roll >= 55`.
+- A17/A18-only values dropped to base (Looter gold 15, SlaverBlue Weak 1, SlaverRed Vuln 1; Lagavulin debuff already -1 const) with comments — StS2 caps at A10 so those tiers are unreachable; gating them at A9 silently changed reachable balance.
+
+### 7.4 Engine facts learned this session
+- `AddBranch(state, 0, N, Wf)` binds the `(state,int cooldown,int maxRepeats,Func<float>)` overload — a bare float weight does NOT convert; use `() => Wf`. maxRepeats=0 = never repeat.
+- Branch states (ConditionalBranchState/RandomBranchState) MUST be registered in the state machine's states list or FindNextMoveState throws "no valid state found".
+- `RollMove` draws from `RunRng.MonsterAi`; per-combat seeded `MonsterModel.Rng` is available for sub-rolls.
+- Donor rigs don't all follow idle_loop/cast/attack/hurt/die: fat_gremlin has awake_loop/FleeTrigger/WakeUpTrigger only; lagavulin_matriarch has sleep_loop/eyes_closed tracks; torch_head_amalgam & slimed_berserker lack cast. Use BaseLib `SetupAnimationState(controller, idle, dead, hitName:, attackName:)` overrides; unknown triggers no-op with Log.Warn (silent visual gap).
+- `CreatureCmd.SetMaxAndCurrentHp(creature, decimal)` exists (used by SlimeBoss split inheritance).
+- Encounter loc keys are `.title`/`.loss` (EncounterLoc record); monster loc keys are `.name` + `moves.<STATE_ID>.title`.
+
+### 7.5 Re-review verdicts + post-verdict fixes (2026-08-21 evening)
+- ReReviewB-2 (JawWorm/SlaverRed/Gremlins): FAIL, 3 findings — ALL CONFIRMED by javap and fixed:
+  - JawWorm `JAW_WORM_BANDS` had no outgoing state and `BAND_PICKER` was never wired → would throw "No valid next state found" on turn 2+. Fixed: `bands.AddState(bandPicker, () => true)` after declaration.
+  - JawWorm band A/C history conditions inverted vs bytecode (band A guards on last CHOMP → 56.25% BELLOW; band C is the BELLOW band → 41.6% CHOMP). Fixed to match jawworm.txt truth table.
+  - SlaverRed base-tier scrape guard must be `lastTwoMoves(SCRAPE)` (two scrapes allowed); the single-move guard is A17+-only (dropped per policy). Replaced `_lastWasScrape` bool with `_scrapeRun` counter (<2), maintained in Stab/Entangle (reset) and Scrape (++).
+- ReReviewA-2 (slimes/lagavulin/lices/sentries): FAIL, 6 findings — adjudicated against fresh javap dumps (.tmp/acidslimes.txt, lousedef.txt, lousenorm.txt, spikeslimes.txt, slaverblue.txt):
+  - AcidSlimeL/M weight tables swapped both tiers vs bytecode. Truth: L base 30/40/30, L A17+ 40/30/30; M base 30/40/30, M A17+ 40/40/20. Fixed. (Reviewer's repeat-cap numbers were wrong — vanilla uses lastTwo/lastMove conditional sub-rolls, not flat caps; documented in comments.)
+  - Lagavulin damage-wake STUN never consumed a turn: stun MoveState lacked `MustPerformOnceBeforeTransitioning` (engine's own Creature.StunInternal sets it). Fixed.
+  - LouseDefensive/LouseNormal AI inverted: vanilla is two deterministic history-map branches on one roll (`<25: lastMove(WEB|GROW)?BITE:X; >=25: lastTwo(BITE)?X:BITE`), long-run ~80% BITE / ~20% debuff-buff. Rewritten as nested ConditionalBranchState with WebGuard/GrowGuard (base lastMove guard, A17+ lastTwo guard via DeadlyEnemies gate) + per-turn cached LastSubRoll(0.25).
+  - SpikeSlimeL/M A17+ caps reversed: base tackle max2/lick max1; A17+ tackle max1/lick max2. Fixed both files.
+  - SlaverBlue never double-stabbed: bytecode yields cycle S,S,R (stab max2/rake max1, first move 60/40). Fixed AddBranch(stab,2)/AddBranch(rake,1).
+- Post-fix independent review (FixReviewA/FixReviewB) dispatched over all touched files.
+- Build green (Debug + Release); Release auto-deployed to game mods dir 20:59 (Spire1.dll/.pck).
+
+### 7.6 Second-round review (FixReviewA/B) — 10 findings, all confirmed, all fixed
+- P0 crash class: LouseDefensive/LouseNormal/SpikeSlimeL/M left MoveStates without
+  `FollowUpState` → engine `MoveState.GetNextState` throws "No valid followup state." on the
+  first post-first-move RollMove (player turn 2). Wired every move state back to its root.
+- JawWorm band A else-branch routes to CHOMP (bytecode off 101-123), not BELLOW; fixed +
+  stale class-doc truth table rewritten (56.25/43.75, 35.7/64.3, 41.6/58.4).
+- SpikeSlimeL/M maxRepeats: base tackle2/lick2, A17+ tackle2/lick1 (earlier table had the
+  base >=30 guard as lastMove(LICK); bytecode is lastTwoMoves — main agent's error, reviewer caught).
+- SlaverBlue: STAB weight is 60% (num>=40), rake max2 (base lastTwo(RAKE)); first move random
+  via initial state = roll. Fixed from 40/60 + stab-max2/rake-max1 + fixed first move.
+- AcidSlimeL/M comment truth tables corrected (guards: base <70 lastMove(TACKLE)→40%WOUND/60%WEAK;
+  A17+ <70 lastTwo(TACKLE), >=70 lastMove(LICK)).
+- SlaverRed write-only `_lastWasScrape` removed (counter `_scrapeRun` drives the guard).
+
+### 7.7 Verification state
+- In-game interactive smoke still blocked for the agent (Steam DRM launch, UI not drivable,
+  running game locks Spire1.dll); deployed artifacts are CURRENT (20:59). Smoke checklist handed to user.

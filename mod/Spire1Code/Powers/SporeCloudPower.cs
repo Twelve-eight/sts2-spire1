@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -14,9 +16,11 @@ namespace Spire1.Spire1Code.Powers;
 /// Vulnerable (amount) to the player. The engine ships no equivalent power, so this is our own
 /// CustomPowerModel.
 /// <para>
-/// The battle-ending guard maps to the engine's <c>ShouldStopCombatFromEnding</c> hook: while
-/// this power is on a dying creature the combat cannot finish before AfterDeath runs, which is
-/// exactly the window StS1's early-return was protecting (no spores after the fight is over).
+/// Death-trigger shape copied from the shipped <c>SteamEruptionPower</c>: <c>AfterDeath</c> hook
+/// plus <c>ShouldPowerBeRemovedAfterOwnerDeath => false</c> so the power survives its owner's
+/// death long enough to fire, and <c>ShouldStopCombatFromEnding => true</c> so the combat cannot
+/// finish before the spores resolve — together these are the engine-side equivalent of StS1's
+/// isBattleEnding guard (spores never apply after the fight is already over).
 /// </para>
 /// </summary>
 public class SporeCloudPower : CustomPowerModel
@@ -37,13 +41,23 @@ public class SporeCloudPower : CustomPowerModel
         if (wasRemovalPrevented || creature != Owner)
             return;
         Flash();
-        await PowerCmd.Apply<VulnerablePower>(new ThrowingPlayerChoiceContext(), Owner.Player.Creature, Amount, Owner, null);
+        // Owner.Player is null for enemy-side creatures; resolve the target through the
+        // combat state's players (GremlinMerc / Looter pattern).
+          foreach (Player player in CombatState.Players)
+        {
+            await PowerCmd.Apply<VulnerablePower>(new ThrowingPlayerChoiceContext(), player.Creature, Amount, Owner, null);
+        }
     }
 
-    // Keeps the combat open until the death-triggered Vulnerable has been applied,
-    // mirroring StS1's isBattleEnding() guard in reverse.
+    // Keeps the combat open until the death-triggered Vulnerable has been applied.
     public override bool ShouldStopCombatFromEnding()
     {
         return true;
+    }
+
+    // Survive the owner's death so AfterDeath can run (SteamEruptionPower pattern).
+    public override bool ShouldPowerBeRemovedAfterOwnerDeath()
+    {
+        return false;
     }
 }

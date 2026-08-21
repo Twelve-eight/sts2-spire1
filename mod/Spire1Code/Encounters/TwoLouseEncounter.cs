@@ -12,6 +12,8 @@ namespace Spire1.Spire1Code.Encounters;
 /// </summary>
 public sealed class TwoLouseEncounter : Spire1Encounter
 {
+    public TwoLouseEncounter() : base(RoomType.Monster) { }
+
     public override RoomType RoomType => RoomType.Monster;
 
     public override bool IsWeak => true;
@@ -32,5 +34,5 @@ public sealed class TwoLouseEncounter : Spire1Encounter
             : ModelDb.Monster<LouseDefensive>().ToMutable(), null),
     ];
 
-    public List<(string, string)>? Localization => [("name", "2 Louse")];
+    public override List<(string, string)>? Localization => [("title", "2 Louse")];
 }
