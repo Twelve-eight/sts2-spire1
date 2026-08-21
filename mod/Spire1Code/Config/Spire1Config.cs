@@ -36,11 +36,18 @@ internal class Spire1Config : SimpleModConfig
     /// </summary>
     public static bool UseSts1Dungeon { get; set; } = false;
 
+    /// <summary>
+    /// Debug mode: append the localization key to every mod string shown in-game,
+    /// e.g. "打击 (SPIRE1-STRIKE_SILENT.title)". Makes console spawning and testing easier.
+    /// </summary>
+    public static bool DebugShowLocKeys { get; set; } = false;
+
     // --- gate helpers (computed; getter-only, not surfaced as settings) ---
     [ConfigIgnore] public static bool CharactersEnabled => EnableSts1Content && EnableSts1Characters;
     [ConfigIgnore] public static bool CardsEnabled => EnableSts1Content && EnableSts1Cards;
     [ConfigIgnore] public static bool RelicsEnabled => EnableSts1Content && EnableSts1Relics;
     [ConfigIgnore] public static bool DungeonEnabled => EnableSts1Content && EnableSts1Dungeon;
+    [ConfigIgnore] public static bool LocDebug => EnableSts1Content && DebugShowLocKeys;
 
     /// <summary>True when a newly started run should run the StS1 acts.</summary>
     [ConfigIgnore] public static bool Sts1DungeonSelected => DungeonEnabled && UseSts1Dungeon;
