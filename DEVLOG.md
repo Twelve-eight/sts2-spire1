@@ -398,3 +398,42 @@ The salvaged artifacts were written by agents from transcripts — spot-check a 
 - `AssetCache` poisons failed paths: any later `GetTexture2D` on them throws
   "Asset previously failed to load" instead of returning null — this is what turns a cosmetic
   missing icon into a startup crash when RitsuLib's TopBar patch propagates it.
+
+## Session 10 — card dedup + slime state-machine freeze fix (2026-08-22)
+
+### 10.1 Duplicate-card audit & dedup (commits `62478e3`)
+- `DupCardsAudit` compared all 306 mod cards vs StS2's 596: **A 105 same-name-same-effect /
+  B 24 same-name-different-effect / C 177 StS1-only** → `.tmp/duplicate-cards-report.md`.
+  Starter-deck audit extended it: every Ironclad/Silent/Defect starter (Strike/Defend variants,
+  Bash, Neutralize, Survivor, Zap, Dualcast) also has an identical native StS2 model; Watcher
+  does NOT exist in StS2, so its whole kit stays modded.
+- Dedup mechanism: new `Spire1LegacyPool` sink pool (no character references it, IsShared=false
+  → never surfaces anywhere). The 111 duplicated cards now `[Pool(typeof(Spire1LegacyPool))]`;
+  their SPIRE1-* ids stay resolvable so old saves keep loading. Starter decks of
+  Ironclad/Silent/Defect and the NoteForYourself event's IronWave use fully-qualified native
+  `MegaCrit.Sts2.Core.Models.Cards.*` models. B/C untouched.
+- GOTCHA: `[Pool]` is Inherited=true — removing the attribute falls back to the base class's
+  pool, so a sink pool attribute must be explicit. BaseLib `AddModel` throws without any Pool.
+
+### 10.2 Combat freeze: "No valid followup state" on turn 2 (commit `f5f7261`)
+- Symptom: LotsOfSlimes fight, enemy turn completes but turn loop dies before player turn 2.
+- Stack: `PrepareForNextTurn → RollMove → FindNextMoveState → MoveState.GetNextState` throws.
+  Engine semantics (`MonsterMoveStateMachine.FindNextMoveState`): each turn calls
+  `GetNextState()` on the CURRENT state; MoveState returns `FollowUpState?.Id ?? throw`.
+  Turn 1 rolls from initialState; turn 2 asks the last MOVE for its followup — AcidSlimeS/M/L
+  and SpikeSlimeL moves had none → crash. Session 8 fixed Louses/SpikeSlimeM only.
+- Fix: wire every move back to its AI root (tackle/lick/spit → ai; split → ai as a safe
+  fallback even though split removes the monster). Final sweep: ALL monsters wired.
+- Split-spawn safety confirmed: `SetUpForCombat()` regenerates the state machine per creature,
+  so `ToMutable()` children get fresh machines.
+
+### 10.3 Static review findings (no game launch; user busy with CoD)
+- LOW: AcidSlimeS uses AddBranch maxRepeats=1 → forbids consecutive same-move even on base
+  difficulty (StS1 base is a free 50/50). Cosmetic deviation, revisit if desired.
+- Known log noise: `NBossMapPoint._Ready` still throws a caught exception per map screen over
+  missing `animations/map/spire1-*_skel_data.tres(.png)` — path has no Spire1/ prefix so our
+  PckPacker cannot ship it; needs real Spine scenes or a BaseLib BossNodePath patch (none today).
+- Run-history icons are 1×1 transparent placeholders: invisible in library/history screens.
+- LocDebug postfix runs `StartsWith("SPIRE1-")` on every GetRawText call — acceptable overhead.
+- A combat that died to the old bug stays stuck until the room is restarted (engine behavior);
+  saves from before the fix may hold such rooms.
