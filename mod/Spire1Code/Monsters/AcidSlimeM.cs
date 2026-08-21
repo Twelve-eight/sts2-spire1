@@ -69,6 +69,10 @@ public sealed class AcidSlimeM : Spire1Monster, ISlimeSplitSpawn
         ai.AddState(ascendedAi, () => AscensionHelper.HasAscension(AscensionLevel.DeadlyEnemies));
         ai.AddState(normalAi, () => true);
 
+        spit.FollowUpState = ai;
+        tackle.FollowUpState = ai;
+        lick.FollowUpState = ai;
+
         states.AddRange(new MonsterState[] { spit, tackle, lick, normalAi, ascendedAi, ai });
         return new MonsterMoveStateMachine(states, ai);
     }

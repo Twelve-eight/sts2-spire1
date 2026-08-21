@@ -75,6 +75,8 @@ public sealed class SpikeSlimeL : Spire1Monster, ISlimeSplitSpawn
         tackle.FollowUpState = ai;
         lick.FollowUpState = ai;
 
+        split.FollowUpState = ai;
+
         states.AddRange(new MonsterState[] { tackle, lick, split, normalAi, ascendedAi, ai });
         return new MonsterMoveStateMachine(states, ai);
     }
