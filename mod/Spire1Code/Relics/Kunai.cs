@@ -1,0 +1,107 @@
+using BaseLib.Abstracts;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Relics;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Rooms;
+
+namespace Spire1.Spire1Code.Relics;
+
+/// <summary>StS1 — Kunai (Uncommon). Every time you play 3 Attacks in a single turn, gain 1 Dexterity.</summary>
+public class Kunai : Spire1Relic
+{
+    private bool _isActivating;
+
+    private int _attacksPlayedThisTurn;
+
+    public override RelicRarity Rarity => RelicRarity.Uncommon;
+
+    public override bool ShowCounter => CombatManager.Instance.IsInProgress;
+
+    public override int DisplayAmount =>
+        IsActivating ? DynamicVars.Cards.IntValue : AttacksPlayedThisTurn % DynamicVars.Cards.IntValue;
+
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(3), new PowerVar<DexterityPower>(1m)];
+
+    public override List<(string, string)>? Localization =>
+        new RelicLoc(
+            "StS1 - Kunai",
+            "#Every time you play 3 Attacks in a single turn, gain !DexterityPower! Dexterity.",
+            "A blade favored by assassins for its ability to strike multiple times.");
+
+    private bool IsActivating
+    {
+        get => _isActivating;
+        set
+        {
+            _isActivating = value;
+            UpdateDisplay();
+        }
+    }
+
+    private int AttacksPlayedThisTurn
+    {
+        get => _attacksPlayedThisTurn;
+        set
+        {
+            _attacksPlayedThisTurn = value;
+            UpdateDisplay();
+        }
+    }
+
+    private void UpdateDisplay()
+    {
+        if (IsActivating)
+        {
+            Status = RelicStatus.Normal;
+        }
+        else
+        {
+            int threshold = DynamicVars.Cards.IntValue;
+            Status = AttacksPlayedThisTurn % threshold == threshold - 1 ? RelicStatus.Active : RelicStatus.Normal;
+        }
+        InvokeDisplayAmountChanged();
+    }
+
+    public override Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
+    {
+        if (!participants.Contains(Owner.Creature))
+            return Task.CompletedTask;
+        AttacksPlayedThisTurn = 0;
+        Status = RelicStatus.Normal;
+        return Task.CompletedTask;
+    }
+
+    public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    {
+        if (cardPlay.Card.Owner != Owner || !CombatManager.Instance.IsInProgress || cardPlay.Card.Type != CardType.Attack)
+            return;
+        AttacksPlayedThisTurn++;
+        if (AttacksPlayedThisTurn % DynamicVars.Cards.IntValue == 0)
+        {
+            TaskHelper.RunSafely(DoActivateVisuals());
+            await PowerCmd.Apply<DexterityPower>(choiceContext, Owner.Creature, DynamicVars.Dexterity.BaseValue, Owner.Creature, null);
+        }
+    }
+
+    private async Task DoActivateVisuals()
+    {
+        IsActivating = true;
+        Flash();
+        await Cmd.Wait(1f);
+        IsActivating = false;
+    }
+
+    public override Task AfterCombatEnd(CombatRoom _)
+    {
+        Status = RelicStatus.Normal;
+        AttacksPlayedThisTurn = 0;
+        IsActivating = false;
+        return Task.CompletedTask;
+    }
+}

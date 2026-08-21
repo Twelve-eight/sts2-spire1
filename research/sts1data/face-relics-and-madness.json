@@ -1,0 +1,145 @@
+{
+ "relics": [
+  {
+   "cls": "CultistMask",
+   "id": "CultistMask",
+   "tier": "SPECIAL",
+   "sfx": "CLINK",
+   "counter": null,
+   "numbers": [],
+   "hooks": [
+    "atBattleStart"
+   ],
+   "behavior": "Purely cosmetic joke relic - it has NO gameplay effect. Constructor: AbstractRelic(\"CultistMask\", \"cultistMask.png\", RelicTier.SPECIAL, LandingSound.CLINK); the class declares only ID = \"CultistMask\" and no numeric field at all. getUpdatedDescription() returns DESCRIPTIONS[0] unmodified (no splicing). atBattleStart() is the only hook overridden and it queues no power, damage, block or gold: flash(), then addToBot(new RelicAboveCreatureAction(AbstractDungeon.player, this)), addToBot(new SFXAction(\"VO_CULTIST_1A\")), addToBot(new TalkAction(true, DESCRIPTIONS[1], 1.0f, 2.0f)) - i.e. the player caws DESCRIPTIONS[1] = \"@CAW!@ NL @CAAAW@\" in a speech bubble at the start of every combat. The only literal constants anywhere in the class are the two TalkAction floats 1.0f and 2.0f (fconst_1 / fconst_2, the bubble duration and wait time); there are no gameplay constants, which is why numbers is empty. makeCopy() returns new CultistMask(). Source: FaceTrader.getRandomFace() builds an ArrayList of the five face-relic IDs the player does not already hold (adding \"Circlet\" instead if all five are held), shuffles it with new java.util.Random(AbstractDungeon.miscRng.randomLong()) via Collections.shuffle, and returns RelicLibrary.getRelic(list.get(0)).",
+   "loc": {
+    "NAME": "Cultist Headpiece",
+    "DESCRIPTION": "You feel more talkative.",
+    "FLAVOR": "Part of the Flock!"
+   },
+   "sts2_equivalent": null,
+   "sts2_api_risk": "No gameplay hook required, so zero risk. StS2 has no atBattleStart relic hook; the documented substitute is AbstractModel.AfterRoomEntered(AbstractRoom room) with a `room is CombatRoom` check (.tmp/dllsrc/MegaCrit.Sts2.Core.Models/AbstractModel.cs:1153, whose own doc-comment at lines 1147-1148 names this hook for \"start of combat\" effects that must run before the first turn), or BeforeSideTurnStart(...) guarded by `base.Owner.PlayerCombatState.TurnNumber <= 1` the way shipped RedMask does (Models.Relics/RedMask.cs:23-30; TurnNumber at Entities.Players/PlayerCombatState.cs:37). Flash() is available on RelicModel (Models/RelicModel.cs:458). The caw itself maps to TalkCmd.Play(LocString line, Creature speaker, VfxColor vfxColor, VfxDuration duration = VfxDuration.Custom) (Commands/TalkCmd.cs:17) and the voice line to SfxCmd.Play(string sfx, float volume = 1f) (Commands/SfxCmd.cs:14) - but StS1's \"VO_CULTIST_1A\" audio asset is not ours to ship, so pick an existing StS2 sfx id or drop the sound and keep only the bubble."
+  },
+  {
+   "cls": "FaceOfCleric",
+   "id": "FaceOfCleric",
+   "tier": "SPECIAL",
+   "sfx": "CLINK",
+   "counter": null,
+   "numbers": [
+    1
+   ],
+   "hooks": [
+    "onVictory"
+   ],
+   "behavior": "Constructor: AbstractRelic(\"FaceOfCleric\", \"clericFace.png\", RelicTier.SPECIAL, LandingSound.CLINK); no fields declared. getUpdatedDescription() returns DESCRIPTIONS[0] unmodified. onVictory() is the only hook overridden: flash(), then AbstractDungeon.player.increaseMaxHp(1, true), where the 1 is an iconst_1 literal. IMPORTANT: AbstractCreature.increaseMaxHp(int amount, boolean) never reads its boolean parameter - there is no iload_2 anywhere in the method body - and the heal is unconditional. Its full body: early-return if (Settings.isEndless && AbstractDungeon.player.hasBlight(\"FullBelly\")); log a warning if amount < 0; maxHealth += amount; effectsQueue.add(new TextAboveCreatureEffect(..., TEXT[2] + Integer.toString(amount), Settings.GREEN_TEXT_COLOR)); heal(amount, true); healthBarUpdatedEvent(). So the true StS1 effect is +1 Max HP AND +1 current HP per combat won, not max HP alone. The hook is driven by AbstractPlayer.onVictory(), which is guarded by !isDying and iterates relics -> blights -> powers; AbstractRoom calls it when a combat is won, so it fires for normal, elite and boss fights but never on death. makeCopy() returns new FaceOfCleric(). Granted by FaceTrader.getRandomFace() (see CultistMask).",
+   "loc": {
+    "NAME": "Face Of Cleric",
+    "DESCRIPTION": "At the end of combat, raise your Max HP by #b1.",
+    "FLAVOR": "Everyone loves Cleric."
+   },
+   "sts2_equivalent": null,
+   "sts2_api_risk": "Routine - the hook exists. AbstractModel.AfterCombatVictory(CombatRoom room) (.tmp/dllsrc/MegaCrit.Sts2.Core.Models/AbstractModel.cs:556) is the exact analogue of StS1 onVictory(); do NOT use AfterCombatEnd(CombatRoom) at AbstractModel.cs:520, which also fires when the combat was lost. The effect is a single CreatureCmd.GainMaxHp(base.Owner.Creature, 1m) (Commands/CreatureCmd.cs:841): it calls SetMaxHp and then `await Heal(creature, num)` at CreatureCmd.cs:853, so it already heals the amount gained and reproduces StS1's increaseMaxHp exactly - do not add a second heal. Rarity maps to RelicRarity.Event (Entities.Relics/RelicRarity.cs), the value shipped MawBank uses for its own event relic (Models.Relics/MawBank.cs:17). No missing API."
+  },
+  {
+   "cls": "GremlinMask",
+   "id": "GremlinMask",
+   "tier": "SPECIAL",
+   "sfx": "CLINK",
+   "counter": null,
+   "numbers": [
+    1
+   ],
+   "hooks": [
+    "atBattleStart"
+   ],
+   "behavior": "WARNING - this is a DOWNSIDE relic that applies Weak to the PLAYER, not to enemies. Do not port it as a RedMask clone. Constructor: AbstractRelic(\"GremlinMask\", \"gremlinMask.png\", RelicTier.SPECIAL, LandingSound.CLINK); no fields declared. getUpdatedDescription() returns DESCRIPTIONS[0] unmodified. atBattleStart() is the only hook overridden: flash(), addToBot(new RelicAboveCreatureAction(AbstractDungeon.player, this)), then addToBot(new ApplyPowerAction(AbstractDungeon.player, AbstractDungeon.player, new WeakPower(AbstractDungeon.player, 1, false), 1)). Every creature argument is the getstatic AbstractDungeon.player - target AND source AND the WeakPower owner - the WeakPower amount is iconst_1, its isSourceMonster flag is iconst_0 (false), and the ApplyPowerAction stack-amount argument is iconst_1. There is no loop over monsters, unlike RedMask. Net effect: the player begins every combat with 1 Weak. makeCopy() returns new GremlinMask(). Granted by FaceTrader.getRandomFace() (see CultistMask).",
+   "loc": {
+    "NAME": "Gremlin Visage",
+    "DESCRIPTION": "Start each combat with #b1 #yWeak.",
+    "FLAVOR": "Time to run."
+   },
+   "sts2_equivalent": null,
+   "sts2_api_risk": "Routine - the hook exists. Mirror shipped RedMask (Models.Relics/RedMask.cs:23-30) but retarget from combatState.HittableEnemies to the owner: PowerCmd.Apply<WeakPower>(choiceContext, base.Owner.Creature, 1m, base.Owner.Creature, null) using the single-Creature overload at Commands/PowerCmd.cs:71. Applying a debuff to one's own owner is shipped precedent - FakeSneckoEye.cs:38 does PowerCmd.Apply<ConfusedPower>(new ThrowingPlayerChoiceContext(), base.Owner.Creature, 1m, base.Owner.Creature, null). Hook choice: BeforeSideTurnStart(PlayerChoiceContext, CombatSide, IReadOnlyList<Creature>, ICombatState) (AbstractModel.cs:1247) guarded by participants.Contains(base.Owner.Creature) && base.Owner.PlayerCombatState.TurnNumber <= 1, exactly as RedMask; AfterRoomEntered(AbstractRoom) with `room is CombatRoom` (AbstractModel.cs:1153) is the alternative the core doc-comment at AbstractModel.cs:1147-1148 recommends for power application. WeakPower ships (Models.Powers/WeakPower.cs, referenced by RedMask.cs:19). No missing API."
+  },
+  {
+   "cls": "NlothsMask",
+   "id": "NlothsMask",
+   "tier": "SPECIAL",
+   "sfx": "FLAT",
+   "counter": 1,
+   "numbers": [
+    1,
+    -2
+   ],
+   "hooks": [
+    "onChestOpenAfter",
+    "setCounter"
+   ],
+   "behavior": "Constructor: AbstractRelic(\"NlothsMask\", \"nloth.png\", RelicTier.SPECIAL, LandingSound.FLAT) followed by counter = 1 (iconst_1), so the relic ships armed with exactly one charge and displays that counter. getUpdatedDescription() returns DESCRIPTIONS[0] unmodified; DESCRIPTIONS[1] is the empty string (the used-up text comes from AbstractRelic.MSG instead). onChestOpenAfter(boolean bossChest): if (!bossChest && counter > 0) { counter--; flash(); AbstractDungeon.getCurrRoom().removeOneRelicFromRewards(); if (counter == 0) setCounter(-2); }. setCounter(int i) is also overridden: counter = i; if (i == -2) { usedUp(); counter = -2; } - the -2 sentinel appears twice as bipush -2 and is StS1's standard \"spent relic\" marker. AbstractRelic.usedUp() sets grayscale = true, usedUp = true, description = AbstractRelic.MSG[2], clears tips and re-runs initializeTips(). AbstractRoom.removeOneRelicFromRewards() iterates room.rewards, removes the FIRST RewardItem whose type == RewardItem.RewardType.RELIC, and then - only if another element follows and the removed item's relicLink == that next element - removes the linked element too (that link is the Sapphire Key AbstractChest pairs with the relic). CALL ORDER MATTERS: AbstractChest.open(boolean bossChest) first loops relic.onChestOpen(bossChest) over every relic, plays \"CHEST_OPEN\", adds the gold reward if goldReward (Math.round(AbstractDungeon.treasureRng.random(GOLD_AMT * 0.9f, GOLD_AMT * 1.1f)); flat GOLD_AMT on a daily run), adds a random curse if cursed, switches on relicReward to call room.addRelicToRewards(tier), then adds the Sapphire Key when Settings.isFinalActAvailable && !Settings.hasSapphireKey, and only AFTER all that loops relic.onChestOpenAfter(bossChest) before calling combatRewardScreen.open(). Because the gold reward is added earlier and never removed, StS1's \"empty\" chest still pays out its gold - only the relic (plus its linked Sapphire Key) is deleted. makeCopy() returns new NlothsMask(). Granted by FaceTrader.getRandomFace() (see CultistMask).",
+   "loc": {
+    "NAME": "N'loth's Hungry Face",
+    "DESCRIPTION": "The next non-Boss chest you open is empty.",
+    "FLAVOR": "You feel hungry."
+   },
+   "sts2_equivalent": null,
+   "sts2_api_risk": "THE HOOK EXISTS: AbstractModel.ShouldGenerateTreasure(Player player) (.tmp/dllsrc/MegaCrit.Sts2.Core.Models/AbstractModel.cs:2325). Hook.ShouldGenerateTreasure(IRunState, Player) at Hooks/Hook.cs:2325 is veto-style - any listener returning false wins - and shipped SilverCrucible already suppresses a treasure room through it (Models.Relics/SilverCrucible.cs:140-147). The \"non-Boss\" clause is satisfied for free: RunManager.CreateRoom maps only RoomType.Treasure to `new TreasureRoom(State.CurrentActIndex)` while RoomType.Boss becomes a CombatRoom (Runs/RunManager.cs:947-954), and ShouldGenerateTreasure is reached from exactly two call sites - TreasureRoomRelicSynchronizer.cs:105 and OneOffSynchronizer.DoTreasureRoomRewards at Multiplayer.Game/OneOffSynchronizer.cs:129 - so boss relics never route through it. TWO FIDELITY DEVIATIONS the coordinator must rule on. (1) Returning false also zeroes the chest's GOLD, because OneOffSynchronizer.cs:129-132 returns 0 before ever reaching PlayerCmd.GainGold at OneOffSynchronizer.cs:138, whereas StS1 keeps the gold and deletes only the relic. There is no relic-only gate: TreasureRoom's relic pick runs through RunManager.Instance.TreasureRoomRelicSynchronizer.BeginRelicPicking() (Rooms/TreasureRoom.cs:47), NOT through a RewardsSet, so TryModifyRewards(Player, List<Reward>, AbstractRoom?) (AbstractModel.cs:2140) cannot see it and would only strip the room's extra rewards. ShouldGenerateTreasure is therefore the only workable gate, and losing the gold is an accepted, unavoidable deviation unless a BaseLib/RitsuLib patch is added. (2) StS2's `?` map point can itself roll into RoomType.Treasure (RunManager.cs:985, State.Odds.UnknownMapPoint.Roll), so a `?` node can consume the charge - StS1 has no such case. One-shot plus greyed-out presentation is fully supported: copy MawBank's shape - a [SavedProperty] bool whose setter sets base.Status = RelicStatus.Disabled, plus `public override bool IsUsedUp => <that bool>` (Models.Relics/MawBank.cs:23-41; RelicModel.IsUsedUp at Models/RelicModel.cs:236, RelicStatus.Disabled at Entities.Relics/RelicStatus.cs). Spend the charge inside ShouldGenerateTreasure itself: AfterRoomEntered fires BEFORE BeginRelicPicking (Rooms/TreasureRoom.cs:44 then :47), so it cannot arm-then-spend in the right order, and AbstractModel has NO room-exit hook (no AfterRoomExited / OnRoomLeft / MapPointCompleted member exists - grep for `public virtual .*(Exit|Exited|Left|Leaving)` over AbstractModel.cs returns nothing)."
+  },
+  {
+   "cls": "SsserpentHead",
+   "id": "SsserpentHead",
+   "tier": "SPECIAL",
+   "sfx": "CLINK",
+   "counter": null,
+   "numbers": [
+    50
+   ],
+   "hooks": [
+    "onEnterRoom"
+   ],
+   "behavior": "private static final int GOLD_AMT = 50 is the class's only field. Constructor: AbstractRelic(\"SsserpentHead\", \"serpentHead.png\", RelicTier.SPECIAL, LandingSound.CLINK). getUpdatedDescription() splices the constant itself: new StringBuilder().append(DESCRIPTIONS[0]).append(50).append(DESCRIPTIONS[1]).toString(), where the 50 is an inlined bipush 50 literal rather than a getfield of GOLD_AMT, giving \"Whenever you enter a #y? room, gain #b\" + \"50\" + \" #yGold.\". onEnterRoom(AbstractRoom room) is the only hook overridden: if (room instanceof EventRoom) { flash(); AbstractDungeon.player.gainGold(50); } - again a bipush 50 literal. The instanceof test is the entire condition; there is no floor, act or once-per-run gate and no counter. Why it fires on every \"?\" node: AbstractDungeon.nextRoomTransition(SaveFile) runs `for (AbstractRelic r : AbstractDungeon.player.relics) r.onEnterRoom(nextRoom.room)` BEFORE the room's onPlayerEntry() executes, and every \"?\" map node is constructed as an EventRoom (EventRoom's constructor sets phase = RoomPhase.EVENT, mapSymbol = \"?\", mapImg = ImageMaster.MAP_NODE_EVENT). EventRoom.onPlayerEntry() only afterwards builds a fresh Random(Settings.seed, AbstractDungeon.eventRng.counter) and calls AbstractDungeon.generateEvent(rng), so the 50 gold is paid on EVERY \"?\" node regardless of whether that node subsequently resolves into an event, a monster fight, a shop or a treasure. No other StS1 room class extends EventRoom, so there is no double payout. makeCopy() returns new SsserpentHead(). Granted by FaceTrader.getRandomFace() (see CultistMask).",
+   "loc": {
+    "NAME": "Ssserpent Head",
+    "DESCRIPTION": "Whenever you enter a #y? room, gain #b50 #yGold.",
+    "FLAVOR": "The most fulfilling of lives is that in which you can buy anything!"
+   },
+   "sts2_equivalent": null,
+   "sts2_api_risk": "THE HOOK EXISTS: AbstractModel.AfterRoomEntered(AbstractRoom room) (.tmp/dllsrc/MegaCrit.Sts2.Core.Models/AbstractModel.cs:1153) plus PlayerCmd.GainGold(decimal amount, Player player, bool wasStolenBack = false) (Commands/PlayerCmd.cs:141). Shipped MawBank is the template for the whole shape: `if (base.Owner.RunState.BaseRoom == room && !HasItemBeenBought) { Flash(); await PlayerCmd.GainGold(base.DynamicVars.Gold.BaseValue, base.Owner); }` (Models.Relics/MawBank.cs:43-50) - keep the `RunState.BaseRoom == room` guard, since it is what limits the payout to one per map point instead of once per sub-room on the room stack. FIDELITY POINT - do NOT write `room is EventRoom`. StS1 tests `room instanceof EventRoom` only because at the moment relic.onEnterRoom fires the \"?\" node's room object IS always an EventRoom (the relic loop in AbstractDungeon.nextRoomTransition precedes EventRoom.onPlayerEntry's event roll), so StS1 pays on all \"?\" nodes. StS2 resolves the room type up front instead: RunManager.RollRoomTypeFor maps MapPointType.Unknown through State.Odds.UnknownMapPoint.Roll into Event / Monster / Treasure / Shop / ... (Runs/RunManager.cs:976-994), and Rooms/RoomType.cs:19-27 documents this divergence explicitly - so `room is EventRoom` would silently skip every \"?\" node that rolled into a fight, shop or chest. The faithful test is the map point, not the room: `base.Owner.RunState.CurrentMapPoint?.PointType == MapPointType.Unknown` (IRunState.CurrentMapPoint at Runs/IRunState.cs:59, MapPoint.PointType at Map/MapPoint.cs:22, MapPointType.Unknown at Map/MapPointType.cs:10). Rule separately on MapPointType.Ancient (Map/MapPointType.cs, resolves to RoomType.Event at RunManager.cs:992): StS1 has no Ancient point type, so excluding it is the vanilla-faithful choice. No missing API."
+  }
+ ],
+ "cards": [
+  {
+   "cls": "Madness",
+   "color": "colorless",
+   "cost": 1,
+   "type": "SKILL",
+   "rarity": "UNCOMMON",
+   "target": "SELF",
+   "base": {},
+   "flags": {
+    "exhaust": true
+   },
+   "upgrade": {
+    "upgradeBaseCost": 0
+   },
+   "useActions": [
+    "CardType",
+    "CardColor",
+    "CardRarity",
+    "CardTarget",
+    "AbstractCard",
+    "MadnessAction",
+    "Madness"
+   ],
+   "usePowers": [],
+   "id": "Madness",
+   "loc": {
+    "NAME": "Madness",
+    "DESCRIPTION": "Reduce the cost of a random card in your hand to 0 this combat. NL Exhaust."
+   },
+   "pkg": "com.megacrit.cardcrawl.cards.colorless",
+   "behavior": "Package confirmed as com.megacrit.cardcrawl.cards.colorless.Madness (jar entry com/megacrit/cardcrawl/cards/colorless/Madness.class; portrait images/1024Portraits/colorless/skill/madness.png). Constructor: AbstractCard(\"Madness\", cardStrings.NAME, \"colorless/skill/madness\", 1, cardStrings.DESCRIPTION, CardType.SKILL, CardColor.COLORLESS, CardRarity.UNCOMMON, CardTarget.SELF) then exhaust = true; the cost argument is an iconst_1 literal. Static initializer: cardStrings = CardCrawlGame.languagePack.getCardStrings(\"Madness\"). upgrade() overridden as if (!upgraded) { upgradeName(); upgradeBaseCost(0); } - iconst_0, so the upgrade only zeroes the base cost and changes nothing else, which is why the loc table has no UPGRADE_DESCRIPTION. use(AbstractPlayer, AbstractMonster) does nothing but addToBot(new MadnessAction()). makeCopy() returns new Madness(). MadnessAction (com.megacrit.cardcrawl.actions.unique.MadnessAction) holds all the logic: constructor sets actionType = ActionType.CARD_MANIPULATION, p = AbstractDungeon.player, duration = Settings.ACTION_DUR_FAST. update() acts on the first tick only (duration == Settings.ACTION_DUR_FAST): it walks p.hand.group setting hasCostForTurn = true if a card has costForTurn > 0, otherwise setting hasCost = true if that same card has cost > 0 (the cost branch is only reached when costForTurn <= 0); then if (hasCostForTurn || hasCost) it calls findAndModifyCard(hasCostForTurn); finally tickDuration(). findAndModifyCard(boolean useCostForTurn) draws c = p.hand.getRandomCard(AbstractDungeon.cardRandomRng) and tests c.costForTurn > 0 when useCostForTurn is true, or c.cost > 0 when it is false; on success it sets c.cost = 0, c.costForTurn = 0, c.isCostModified = true and calls c.superFlash(Color.GOLD.cpy()); on failure it RECURSES into itself with the same flag until a qualifying card is drawn (safe because update() already proved one exists). Because BOTH cost and costForTurn are zeroed, the reduction persists for the whole combat rather than the turn - matching the card text.",
+   "sts2_equivalent": null,
+   "sts2_api_risk": "Routine - no missing hook, and StS2 ships no Madness (grep for `class Madness` over .tmp/dllsrc/MegaCrit.Sts2.Core.Models.Cards/ returns nothing; the only loosely-named neighbours are FeedingFrenzy.cs and MadScience.cs, which are unrelated). Hand access is PileType.Hand.GetPile(base.Owner).Cards (shipped BulletTime.cs:19, Armaments.cs:28). The random pick on the correct combat rng stream is base.Owner.RunState.Rng.CombatCardSelection.NextItem(<filtered sequence>), which returns null for an empty sequence - so filter first and null-check instead of recursing the way StS1's MadnessAction does; shipped precedents are Thrash.cs:49-51 (`pile.Cards.Where(c => c.Type == CardType.Attack)`) and TrueGrit.cs:40. The cost change is CardEnergyCost.SetThisCombat(int cost, bool reduceOnly = false) applied to the picked card: card.EnergyCost.SetThisCombat(0) (Entities.Cards/CardEnergyCost.cs:238). Do not confuse it with the turn-scoped sibling SetThisTurnOrUntilPlayed at CardEnergyCost.cs:197, which CardModel.SetToFreeThisTurn wraps (Models/CardModel.cs:1269) and BulletTime.cs:23 uses - StS1 Madness is combat-scoped. Exclude X-cost cards from the filter exactly as BulletTime.cs:21 does (`!card.EnergyCost.CostsX`), and test the resolved cost > 0 via CardEnergyCost.GetResolved() (CardEnergyCost.cs:155) to reproduce StS1's costForTurn-then-cost precedence. Exhaust is a standard card keyword. No missing API."
+  }
+ ]
+}
