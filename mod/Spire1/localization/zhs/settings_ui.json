@@ -1,0 +1,20 @@
+{
+  "SPIRE1-ENABLE_STS1_CONTENT.title": "启用一代内容",
+  "SPIRE1-ENABLE_STS1_CONTENT.hover.title": "启用一代内容",
+  "SPIRE1-ENABLE_STS1_CONTENT.hover.desc": "总开关。关闭后,本模组的全部《杀戮尖塔1》内容均被停用,但无需卸载模组。",
+  "SPIRE1-ENABLE_STS1_CHARACTERS.title": "一代角色",
+  "SPIRE1-ENABLE_STS1_CHARACTERS.hover.title": "一代角色",
+  "SPIRE1-ENABLE_STS1_CHARACTERS.hover.desc": "在角色选择界面显示一代角色(\"StS1 - X\")。",
+  "SPIRE1-ENABLE_STS1_CARDS.title": "一代卡牌",
+  "SPIRE1-ENABLE_STS1_CARDS.hover.title": "一代卡牌",
+  "SPIRE1-ENABLE_STS1_CARDS.hover.desc": "将一代无色卡牌注入公共奖励卡池。",
+  "SPIRE1-ENABLE_STS1_RELICS.title": "一代遗物",
+  "SPIRE1-ENABLE_STS1_RELICS.hover.title": "一代遗物",
+  "SPIRE1-ENABLE_STS1_RELICS.hover.desc": "将一代遗物注入公共奖励池。",
+  "SPIRE1-ENABLE_STS1_DUNGEON.title": "一代地牢内容",
+  "SPIRE1-ENABLE_STS1_DUNGEON.hover.title": "一代地牢内容",
+  "SPIRE1-ENABLE_STS1_DUNGEON.hover.desc": "注册一代地牢的关卡、怪物与遭遇。仅注册本身不会改变新对局的内容——请看下一项。",
+  "SPIRE1-USE_STS1_DUNGEON.title": "游玩一代地牢",
+  "SPIRE1-USE_STS1_DUNGEON.hover.title": "游玩一代地牢",
+  "SPIRE1-USE_STS1_DUNGEON.hover.desc": "下一个新的单人对局将使用一代关卡序列,取代二代关卡。默认关闭:安装本模组绝不会悄悄改变原版对局。多人模式不受影响。"
+}

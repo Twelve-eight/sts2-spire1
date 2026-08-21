@@ -38,18 +38,18 @@ namespace Spire1.Spire1Code.Patches;
 internal static class DungeonSelectionPatch
 {
     /// <summary>
-    /// The StS1 dungeon in floor order. Only Exordium is ported so far; The City, The Beyond and
-    /// The Ending append here as they land, and until all four exist the run is left alone rather
-    /// than started on a truncated dungeon.
+    /// The StS1 dungeon in floor order: Exordium / The City / The Beyond / The Ending.
+    /// The City, The Beyond and The Ending currently ship with empty encounter pools (their
+    /// monsters are M2.5+ work): normal rooms tolerate an empty pool (ActModel.AddWithoutRepeatingTags
+    /// null-checks), but reaching those acts' boss floors will fail until their bosses are ported.
     /// </summary>
-    private static readonly Type[] Sts1ActOrder = [typeof(Exordium)];
-
-    /// <summary>
-    /// The full StS1 dungeon is four acts. Until all four are ported, the selector refuses to
-    /// substitute: a one-act "dungeon" would end the run after Exordium's boss, which is a test
-    /// rig, not the feature. Remove this gate when <see cref="Sts1ActOrder"/> holds all four.
-    /// </summary>
-    private const int CompleteDungeonActCount = 4;
+    private static readonly Type[] Sts1ActOrder =
+    [
+        typeof(Exordium),
+        typeof(TheCity),
+        typeof(TheBeyond),
+        typeof(TheEnding),
+    ];
 
     [HarmonyPrefix]
     [HarmonyPatch(nameof(NGame.StartNewSingleplayerRun))]
@@ -57,12 +57,6 @@ internal static class DungeonSelectionPatch
     {
         if (!Spire1Config.Sts1DungeonSelected)
         {
-            return;
-        }
-
-        if (Sts1ActOrder.Length < CompleteDungeonActCount)
-        {
-            MainFile.Logger.Warn($"StS1 dungeon selected but only {Sts1ActOrder.Length}/{CompleteDungeonActCount} acts are ported; keeping the StS2 acts.");
             return;
         }
 
