@@ -1,0 +1,103 @@
+=== SESSION SNAPSHOT 2026-08-21 22:13:25 ===
+
+--- Spire1 相关错误 ---
+2001:[INFO] [Spire1] Could not find relic image path: res://Spire1\images\relics\ring_of_the_snake_outline.png
+2003:[INFO] [StartRunLobby (1)] CHARACTER.SPIRE1-SILENT has no progress, disabling Ascension.
+2040:[INFO] [Spire1] Could not find relic image path: res://Spire1\images\relics\pure_water.png
+2041:[INFO] [Spire1] Could not find relic image path: res://Spire1\images\relics\pure_water_outline.png
+2043:[INFO] [StartRunLobby (1)] CHARACTER.SPIRE1-WATCHER has no progress, disabling Ascension.
+2044:[INFO] [Spire1] Could not find relic image path: res://Spire1\images\relics\ring_of_the_snake.png
+2045:[INFO] [Spire1] Could not find relic image path: res://Spire1\images\relics\ring_of_the_snake_outline.png
+2047:[INFO] [StartRunLobby (1)] CHARACTER.SPIRE1-SILENT has no progress, disabling Ascension.
+2049:[INFO] Embarking on a singleplayer SPIRE1-SILENT run. Ascension: 0 Seed: RENU5V9U474J
+2051:[INFO] Preloading 'characters=SPIRE1-SILENT' assets... count=43 vfx=6
+2167:[INFO] Preloading 'characters=SPIRE1-SILENT' Complete: assets=43 time_elapsed=291ms
+2168:[INFO] Preloading 'Act=SPIRE1-EXORDIUM' assets... count=14 vfx=0
+2283:ERROR: No loader found for resource: res://animations/map/spire1-the_guardian_encounter/spire1-the_guardian_encounter_node_skel_data.tres.png (expected type: unknown)
+2284:ERROR: No loader found for resource: res://animations/map/spire1-the_guardian_encounter/spire1-the_guardian_encounter_node_skel_data.tres_outline.png (expected type: unknown)
+2291:[WARN] Threaded load status Failed for res://animations/map/spire1-the_guardian_encounter/spire1-the_guardian_encounter_node_skel_data.tres.png, falling back to sync load
+2292:ERROR: Error loading resource: 'res://animations/map/spire1-the_guardian_encounter/spire1-the_guardian_encounter_node_skel_data.tres.png'.
+2302:[ERROR] Failed to load resource synchronously: res://animations/map/spire1-the_guardian_encounter/spire1-the_guardian_encounter_node_skel_data.tres.png
+2310:[WARN] Threaded load status Failed for res://animations/map/spire1-the_guardian_encounter/spire1-the_guardian_encounter_node_skel_data.tres_outline.png, falling back to sync load
+2311:ERROR: Error loading resource: 'res://animations/map/spire1-the_guardian_encounter/spire1-the_guardian_encounter_node_skel_data.tres_outline.png'.
+2321:[ERROR] Failed to load resource synchronously: res://animations/map/spire1-the_guardian_encounter/spire1-the_guardian_encounter_node_skel_data.tres_outline.png
+2329:[INFO] Preloading 'Act=SPIRE1-EXORDIUM' Complete: assets=6 time_elapsed=18ms
+2349:   at: void Godot.NativeInterop.ExceptionUtils.LogException(System.Exception) (:0)
+2352:       [1] void Godot.NativeInterop.ExceptionUtils.LogException(System.Exception)
+2372:[INFO] Preloading 'Act=SPIRE1-EXORDIUM' assets... count=8 vfx=0
+2487:[WARN] Threaded load status Failed for res://animations/map/spire1-the_guardian_encounter/spire1-the_guardian_encounter_node_skel_data.tres.png, falling back to sync load
+2488:ERROR: Error loading resource: 'res://animations/map/spire1-the_guardian_encounter/spire1-the_guardian_encounter_node_skel_data.tres.png'.
+2498:[ERROR] Failed to load resource synchronously: res://animations/map/spire1-the_guardian_encounter/spire1-the_guardian_encounter_node_skel_data.tres.png
+2506:[WARN] Threaded load status Failed for res://animations/map/spire1-the_guardian_encounter/spire1-the_guardian_encounter_node_skel_data.tres_outline.png, falling back to sync load
+2507:ERROR: Error loading resource: 'res://animations/map/spire1-the_guardian_encounter/spire1-the_guardian_encounter_node_skel_data.tres_outline.png'.
+2517:[ERROR] Failed to load resource synchronously: res://animations/map/spire1-the_guardian_encounter/spire1-the_guardian_encounter_node_skel_data.tres_outline.png
+2525:[INFO] Preloading 'Act=SPIRE1-EXORDIUM' Complete: assets=0 time_elapsed=10ms
+2526:[ERROR] Exception starting singleplayer run : System.NullReferenceException: Object reference not set to an instance of an object.
+2543:   at System.Threading.Tasks.Task.TrySetException(Object exceptionObject)
+2544:   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetException(Exception exception, Task`1& taskField)
+2553:   at System.Threading.Tasks.Task.TrySetException(Object exceptionObject)
+2554:   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetException(Exception exception, Task`1& taskField)
+2563:   at System.Threading.Tasks.Task.TrySetException(Object exceptionObject)
+2564:   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetException(Exception exception, Task`1& taskField)
+2573:   at System.Threading.Tasks.Task.TrySetException(Object exceptionObject)
+2574:   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetException(Exception exception, Task`1& taskField)
+       [1] void MegaCrit.Sts2.Core.Assets.AssetLoadingSession.CheckLoadingStatus()
+       [2] void MegaCrit.Sts2.Core.Assets.AssetLoadingSession.Process()
+       [3] void MegaCrit.Sts2.Core.Nodes.NAssetLoader._Process(double)
+       [4] bool Godot.Node.InvokeGodotClassMethod(Godot.NativeInterop.godot_string_name&, Godot.NativeInterop.NativeVariantPtrArgs, Godot.NativeInterop.godot_variant&)
+       [5] bool MegaCrit.Sts2.Core.Nodes.NAssetLoader.InvokeGodotClassMethod(Godot.NativeInterop.godot_string_name&, Godot.NativeInterop.NativeVariantPtrArgs, Godot.NativeInterop.godot_variant&)
+       [6] Godot.NativeInterop.godot_bool Godot.Bridge.CSharpInstanceBridge.Call(nint, Godot.NativeInterop.godot_string_name*, Godot.NativeInterop.godot_variant**, int, Godot.NativeInterop.godot_variant_call_error*, Godot.NativeInterop.godot_variant*)
+[ERROR] Failed to load resource synchronously: res://images/ui/run_history/spire1-slime_boss_encounter_outline.png
+   at MegaCrit.Sts2.Core.Assets.AssetLoadingSession.CheckLoadingStatus()
+   at MegaCrit.Sts2.Core.Assets.AssetLoadingSession.Process()
+   at MegaCrit.Sts2.Core.Nodes.NAssetLoader._Process(Double delta)
+   at Godot.Node.InvokeGodotClassMethod(godot_string_name& method, NativeVariantPtrArgs args, godot_variant& ret)
+   at MegaCrit.Sts2.Core.Nodes.NAssetLoader.InvokeGodotClassMethod(godot_string_name& method, NativeVariantPtrArgs args, godot_variant& ret)
+   at Godot.Bridge.CSharpInstanceBridge.Call(IntPtr godotObjectGCHandle, godot_string_name* method, godot_variant** args, Int32 argCount, godot_variant_call_error* refCallError, godot_variant* ret)
+
+[WARN] Threaded load status Failed for res://images/ui/run_history/spire1-the_guardian_encounter.png, falling back to sync load
+ERROR: Error loading resource: 'res://images/ui/run_history/spire1-the_guardian_encounter.png'.
+   at: load (core/core_bind.cpp:74)
+   C# backtrace (most recent call first):
+       [0] Godot.Resource Godot.ResourceLoader.Load(string, string, Godot.ResourceLoader+CacheMode)
+       [1] void MegaCrit.Sts2.Core.Assets.AssetLoadingSession.CheckLoadingStatus()
+       [2] void MegaCrit.Sts2.Core.Assets.AssetLoadingSession.Process()
+       [3] void MegaCrit.Sts2.Core.Nodes.NAssetLoader._Process(double)
+       [4] bool Godot.Node.InvokeGodotClassMethod(Godot.NativeInterop.godot_string_name&, Godot.NativeInterop.NativeVariantPtrArgs, Godot.NativeInterop.godot_variant&)
+       [5] bool MegaCrit.Sts2.Core.Nodes.NAssetLoader.InvokeGodotClassMethod(Godot.NativeInterop.godot_string_name&, Godot.NativeInterop.NativeVariantPtrArgs, Godot.NativeInterop.godot_variant&)
+       [6] Godot.NativeInterop.godot_bool Godot.Bridge.CSharpInstanceBridge.Call(nint, Godot.NativeInterop.godot_string_name*, Godot.NativeInterop.godot_variant**, int, Godot.NativeInterop.godot_variant_call_error*, Godot.NativeInterop.godot_variant*)
+[ERROR] Failed to load resource synchronously: res://images/ui/run_history/spire1-the_guardian_encounter.png
+   at MegaCrit.Sts2.Core.Assets.AssetLoadingSession.CheckLoadingStatus()
+   at MegaCrit.Sts2.Core.Assets.AssetLoadingSession.Process()
+   at MegaCrit.Sts2.Core.Nodes.NAssetLoader._Process(Double delta)
+   at Godot.Node.InvokeGodotClassMethod(godot_string_name& method, NativeVariantPtrArgs args, godot_variant& ret)
+   at MegaCrit.Sts2.Core.Nodes.NAssetLoader.InvokeGodotClassMethod(godot_string_name& method, NativeVariantPtrArgs args, godot_variant& ret)
+   at Godot.Bridge.CSharpInstanceBridge.Call(IntPtr godotObjectGCHandle, godot_string_name* method, godot_variant** args, Int32 argCount, godot_variant_call_error* refCallError, godot_variant* ret)
+
+[WARN] Threaded load status Failed for res://images/ui/run_history/spire1-the_guardian_encounter_outline.png, falling back to sync load
+ERROR: Error loading resource: 'res://images/ui/run_history/spire1-the_guardian_encounter_outline.png'.
+   at: load (core/core_bind.cpp:74)
+   C# backtrace (most recent call first):
+       [0] Godot.Resource Godot.ResourceLoader.Load(string, string, Godot.ResourceLoader+CacheMode)
+       [1] void MegaCrit.Sts2.Core.Assets.AssetLoadingSession.CheckLoadingStatus()
+       [2] void MegaCrit.Sts2.Core.Assets.AssetLoadingSession.Process()
+       [3] void MegaCrit.Sts2.Core.Nodes.NAssetLoader._Process(double)
+       [4] bool Godot.Node.InvokeGodotClassMethod(Godot.NativeInterop.godot_string_name&, Godot.NativeInterop.NativeVariantPtrArgs, Godot.NativeInterop.godot_variant&)
+       [5] bool MegaCrit.Sts2.Core.Nodes.NAssetLoader.InvokeGodotClassMethod(Godot.NativeInterop.godot_string_name&, Godot.NativeInterop.NativeVariantPtrArgs, Godot.NativeInterop.godot_variant&)
+       [6] Godot.NativeInterop.godot_bool Godot.Bridge.CSharpInstanceBridge.Call(nint, Godot.NativeInterop.godot_string_name*, Godot.NativeInterop.godot_variant**, int, Godot.NativeInterop.godot_variant_call_error*, Godot.NativeInterop.godot_variant*)
+[ERROR] Failed to load resource synchronously: res://images/ui/run_history/spire1-the_guardian_encounter_outline.png
+   at MegaCrit.Sts2.Core.Assets.AssetLoadingSession.CheckLoadingStatus()
+   at MegaCrit.Sts2.Core.Assets.AssetLoadingSession.Process()
+   at MegaCrit.Sts2.Core.Nodes.NAssetLoader._Process(Double delta)
+   at Godot.Node.InvokeGodotClassMethod(godot_string_name& method, NativeVariantPtrArgs args, godot_variant& ret)
+   at MegaCrit.Sts2.Core.Nodes.NAssetLoader.InvokeGodotClassMethod(godot_string_name& method, NativeVariantPtrArgs args, godot_variant& ret)
+   at Godot.Bridge.CSharpInstanceBridge.Call(IntPtr godotObjectGCHandle, godot_string_name* method, godot_variant** args, Int32 argCount, godot_variant_call_error* refCallError, godot_variant* ret)
+
+ERROR: Invalid Task ID
+   at: wait_for_task_completion (core/object/worker_thread_pool.cpp:418)
+[INFO] Preloading 'Common' Complete: assets=124 time_elapsed=678ms
+[INFO] MuteInBackground: FocusOut received [tween=False, windowFocused=False]
+[INFO] MuteInBackground: FocusOut ignored (setting off or saves null)
+[INFO] MuteInBackground: FocusIn received [tween=False, msSinceFocusOut=199151, windowFocused=True]
+[INFO] MuteInBackground: FocusOut received [tween=False, windowFocused=False]
+[INFO] MuteInBackground: FocusOut ignored (setting off or saves null)
