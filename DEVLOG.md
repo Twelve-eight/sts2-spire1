@@ -355,3 +355,46 @@ The salvaged artifacts were written by agents from transcripts — spot-check a 
   Log excerpt saved to `DEVLOG-crash-snapshot.txt` (repo root, committed). NOT yet diagnosed.
   First suspects: Silent's card/relic pool init touching content gated by config flags, or
   character-select path requiring assets not in pck. NO fixes attempted yet per user hold.
+
+## Session 9 — Silent crash root-caused & fixed; zhs localization + loc-debug mode (2026-08-21 night)
+
+### 9.1 Silent StS1-dungeon start NRE — root cause chain (fixed, commit `3806762`)
+- Symptom: selecting StS1-Silent with all settings on → "内部错误" NRE dialog. Watcher worked
+  earlier only because that run went to vanilla UNDERDOCKS (UseSts1Dungeon was off then).
+- Chain: our boss encounters ship no run-history icons → engine fallback path
+  `images/ui/run_history/<id>.png` lives OUTSIDE the `Spire1/` pck prefix → preload marks it
+  failed → `NTopBar.RefreshBossIcon` (via RitsuLib's `Initialize_Patch3`) asks AssetCache for the
+  same path → `AssetLoadException: previously failed to load` → aborts `NGlobalUi.Initialize`
+  mid-way → `NMapScreen.Initialize(runState)` never runs → `_runState == null` →
+  `NMapScreen.SetMap` NREs at `map_jitter_{_runState.CurrentActIndex}`.
+- Fix: `Spire1Encounter` overrides `CustomRunHistoryIconPath/OutlinePath` to
+  `res://Spire1/images/run_history/{id.ToLowerInvariant()}.png`; shipped 40 placeholder 1×1 PNGs
+  (20 encounters × main/outline) in pck. GOTCHA: BaseLib hands us `Id.Entry` UPPERCASE
+  (`SPIRE1-THE_GUARDIAN_ENCOUNTER`) — Godot pack lookups are case-sensitive, must lowercase.
+  Second launch confirmed in-game: Silent + all-on + StS1 dungeon starts fine.
+- Residual log noise (harmless): `NBossMapPoint._Ready` still asks for
+  `animations/map/spire1-*_encounter/*_skel_data.tres.png` (Spine atlas fallback when no .tres);
+  exception is caught by Godot and play continues. Real Spine scenes are M3+ art work.
+
+### 9.2 zhs localization wave + loc-debug mode (in flight)
+- Data prep done: unpacked official StS1 zhs json from desktop-1.0.jar (cards/powers/relics/
+  events/monsters). Auto-mapped via normalized-name index: cards 309/331, powers 40/50,
+  relics 34/37 official names; remainder need hand translation (beta-era cards like Claw,
+  Rushdown, Pressure Points never shipped in StS1 zhs).
+- Worklists: `.tmp/card-zhs-worklist.json`, `.tmp/cards-zhs-draft.json` (602 keys pre-filled),
+  `.tmp/cards-zhs-missing.json`, `.tmp/powers-eng.json`, `.tmp/relics-eng.json`.
+- 4 parallel workers spawned: ZhsCards (zhs/cards.json), ZhsPowersRelicsChars,
+  ZhsEvents (656 keys), LocDebugMode (`LocTable.GetRawText` postfix appending key to SPIRE1-
+  strings behind new `Spire1Config.DebugShowLocKeys` toggle — gives 中文名 (SPIRE1-X.title)
+  in-game for console testing).
+
+### 9.3 Engine facts learned this session
+- `LocManager.GetTable(name)` / `LocTable.GetRawText(key)` is THE text path; tables keyed by
+  filename (cards/events/...), mod files merge into same tables under `SPIRE1-` prefixed keys.
+- `EncounterModel.MapNodeAssetPaths`: if `BossNodePath` (.tres) exists → preload tres; else asks
+  for `tres.png` + `_tres_outline.png`. `BossNodePath` is virtual per encounter.
+- `ImageHelper.GetRoomIconPath` is patched by BaseLib `RoomIconPathPatch`: non-null
+  `CustomRunHistoryIconPath` short-circuits vanilla path. Same for outline variant.
+- `AssetCache` poisons failed paths: any later `GetTexture2D` on them throws
+  "Asset previously failed to load" instead of returning null — this is what turns a cosmetic
+  missing icon into a startup crash when RitsuLib's TopBar patch propagates it.
