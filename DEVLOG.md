@@ -307,3 +307,51 @@ The salvaged artifacts were written by agents from transcripts — spot-check a 
 ### 7.7 Verification state
 - In-game interactive smoke still blocked for the agent (Steam DRM launch, UI not drivable,
   running game locks Spire1.dll); deployed artifacts are CURRENT (20:59). Smoke checklist handed to user.
+
+## Session 8 — four-act dungeon shell, config localization, launch incident (2026-08-21 night)
+
+### 8.1 Second-round review (FixReviewA/B) — 10 findings, all confirmed vs bytecode, all fixed
+- P0 crash class: LouseDefensive/LouseNormal/SpikeSlimeL/M left MoveStates without
+  `FollowUpState` → engine `MoveState.GetNextState` throws "No valid followup state." on the first
+  post-first-move RollMove (player turn 2). Every move state now wired back to its root.
+- JawWorm band A else-branch routes to CHOMP (jawworm.txt off 101–123), not BELLOW; class doc
+  truth table rewritten (56.25/43.75 · 35.7/64.3 · 41.6/58.4).
+- SpikeSlimeL/M maxRepeats corrected: base tackle2/lick2, A17+ tackle2/lick1 — the base >=30
+  guard is `lastTwoMoves(LICK)` (main agent's earlier table was wrong; reviewer caught it).
+- SlaverBlue: STAB weight is 60% (`num>=40`), rake max2 (base lastTwo(RAKE)); first move random
+  via initial state = roll.
+- AcidSlimeL/M comment truth tables fixed (base <70 lastMove(TACKLE)→40%WOUND/60%WEAK;
+  A17+ <70 lastTwo(TACKLE), >=70 lastMove(LICK)).
+- SlaverRed write-only `_lastWasScrape` removed.
+- Commits: `0c02dfc` (M2 wave + fixes), rebuilt Debug+Release, deployed 20:59.
+
+### 8.2 Four-act dungeon shell (commit `fcb9ad2`)
+- `TheCity.cs` / `TheBeyond.cs` / `TheEnding.cs`: shipped act2(hive)/act3(glory) art+music+banks;
+  bytecode room counts (weak 2 + strong 12 for City/Beyond; The Ending has NO normal fights in
+  vanilla — generateMonsters empty); encounter pools EMPTY until M2.5 ports their monsters.
+  Ancients: borrowed StS2 Act2/Act3Ancients (engine requires non-empty; StS1 has no ancients).
+- `DungeonSelectionPatch`: full four-act sequence; the old "must have all 4 acts" gate removed.
+  Normal rooms tolerate an empty pool (AddWithoutRepeatingTags null-checks), but act 2–4 boss
+  floors WILL fail until their bosses exist. TheEnding is explicitly a placeholder shell.
+- Engine facts nailed: BaseLib config label key = `settings_ui:{PREFIX}{SLUG}.title`, hover tip =
+  `.hover.desc` (required) + `.hover.title`; PREFIX = uppercase root namespace + '-' ("SPIRE1-");
+  SLUG = StringHelper.Slugify(propertyName) (CamelCase→SNAKE_CASE). Act Id = Slugify(class name)
+  → acts.json keys EXORDIUM/THE_CITY/THE_BEYOND/THE_ENDING .title. Game locales incl. zhs
+  (confirmed by scanning SlayTheSpire2.pck tail index). Rng.NextItem(empty)=null;
+  GenerateRooms fills events from AllEvents + ModelDb.AllSharedEvents.
+- `settings_ui.json` + `acts.json` written eng+zhs under mod/Spire1/localization/.
+
+### 8.3 Launch incident (commit `04eb5f7`)
+- User launched game via Steam → fatal error dialog. Cause: `mods/BaseLib-3.3.5-backup/` was
+  scanned as a mod and loaded FIRST (v3.3.5 incompatible with game 0.111.0 → Harmony patch
+  exceptions), then real v3.4.5 failed with duplicate-id. FIX: moved backup dir out of mods/
+  (now at `<game>/BaseLib-3.3.5-backup-REMOVED-from-mods`). Relaunch: BaseLib 3.4.5 loaded,
+  Spire1 initialized clean.
+- User smoke: entered Exordium floor 1 fine (Watcher, placeholder Regent art — expected).
+- Known cosmetic log noise: missing `res://images/ui/run_history/spire1-*_encounter*.png`.
+
+### 8.4 OPEN INCIDENT — next session starts here
+- User selected character **StS1-Silent** with ALL mod settings enabled → **game error**.
+  Log excerpt saved to `DEVLOG-crash-snapshot.txt` (repo root, committed). NOT yet diagnosed.
+  First suspects: Silent's card/relic pool init touching content gated by config flags, or
+  character-select path requiring assets not in pck. NO fixes attempted yet per user hold.
