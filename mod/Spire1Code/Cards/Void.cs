@@ -1,3 +1,5 @@
+using BaseLib.Utils;
+using Spire1.Spire1Code.Character;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -10,6 +12,7 @@ namespace Spire1.Spire1Code.Cards;
 /// StS1 Ironclad — Void (Status). Unplayable. Ethereal. When drawn, lose 1 Energy.
 /// Mirror of the base-game Void (AfterCardDrawn + PlayerCmd.LoseEnergy).
 /// </summary>
+[Pool(typeof(Spire1LegacyPool))]
 public class Void() : Spire1Card(-1, CardType.Status, CardRarity.Status, TargetType.None)
 {
     public override int MaxUpgradeLevel => 0;

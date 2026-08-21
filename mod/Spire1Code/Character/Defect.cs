@@ -25,13 +25,16 @@ public class Defect : PlaceholderCharacterModel
     public override CharacterGender Gender => CharacterGender.Neutral;
     public override int StartingHp => 75; // vanilla StS1 Defect
 
-    // Vanilla starter deck: 4 Strike, 4 Defend, 1 Zap, 1 Dualcast.
+    // Vanilla starter deck: 4 Strike, 4 Defend, 1 Zap, 1 Dualcast. StS2 ships identical
+    // versions of all four (see .tmp/duplicate-cards-report.md), so the deck uses the base-game
+    // models — fully qualified, because Spire1.Spire1Code.Cards defines retired same-named mod
+    // copies that now live in Spire1LegacyPool.
     public override IEnumerable<CardModel> StartingDeck =>
     [
-        ModelDb.Card<StrikeDefect>(), ModelDb.Card<StrikeDefect>(), ModelDb.Card<StrikeDefect>(), ModelDb.Card<StrikeDefect>(),
-        ModelDb.Card<DefendDefect>(), ModelDb.Card<DefendDefect>(), ModelDb.Card<DefendDefect>(), ModelDb.Card<DefendDefect>(),
-        ModelDb.Card<Zap>(),
-        ModelDb.Card<Dualcast>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeDefect>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeDefect>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeDefect>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeDefect>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendDefect>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendDefect>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendDefect>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendDefect>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.Zap>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.Dualcast>(),
     ];
 
     // Starting relic: Cracked Core (channel 1 Lightning at start of combat) — mod class, ID SPIRE1-CRACKED_CORE.

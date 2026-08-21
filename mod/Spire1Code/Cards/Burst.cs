@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Silent — Burst (Rare Skill). This turn, your next Skill is played twice (next 2 upgraded). Reuses the game's BurstPower.</summary>
-[Pool(typeof(SilentCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class Burst() : Spire1Card(1, CardType.Skill, CardRarity.Rare, TargetType.Self)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<BurstPower>(1)];

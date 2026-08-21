@@ -1,3 +1,4 @@
+using Spire1.Spire1Code.Character;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -7,6 +8,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Ironclad - Infernal Blade (Uncommon Skill). Add a random Attack to your hand; it costs 0 this turn. Exhaust (0 cost upgraded).</summary>
+[Pool(typeof(Spire1LegacyPool))]
 public class InfernalBlade() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [];

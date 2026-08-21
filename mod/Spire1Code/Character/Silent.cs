@@ -25,13 +25,16 @@ public class Silent : PlaceholderCharacterModel
     public override CharacterGender Gender => CharacterGender.Feminine;
     public override int StartingHp => 70; // vanilla StS1 Silent
 
-    // Vanilla starter deck: 5 Strike, 5 Defend, 1 Neutralize, 1 Survivor.
+    // Vanilla starter deck: 5 Strike, 5 Defend, 1 Neutralize, 1 Survivor. StS2 already ships
+    // identical versions of all four (see .tmp/duplicate-cards-report.md), so the deck uses the
+    // base-game models directly — fully qualified, because Spire1.Spire1Code.Cards (imported
+    // below) defines retired same-named mod copies that now live in Spire1LegacyPool.
     public override IEnumerable<CardModel> StartingDeck =>
     [
-        ModelDb.Card<StrikeSilent>(), ModelDb.Card<StrikeSilent>(), ModelDb.Card<StrikeSilent>(), ModelDb.Card<StrikeSilent>(), ModelDb.Card<StrikeSilent>(),
-        ModelDb.Card<DefendSilent>(), ModelDb.Card<DefendSilent>(), ModelDb.Card<DefendSilent>(), ModelDb.Card<DefendSilent>(), ModelDb.Card<DefendSilent>(),
-        ModelDb.Card<Neutralize>(),
-        ModelDb.Card<Survivor>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeSilent>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeSilent>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeSilent>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeSilent>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeSilent>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendSilent>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendSilent>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendSilent>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendSilent>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendSilent>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.Neutralize>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.Survivor>(),
     ];
 
     // Starting relic: Ring of the Snake (draw 2 at start of each combat) — mod class, ID SPIRE1-RING_OF_THE_SNAKE.

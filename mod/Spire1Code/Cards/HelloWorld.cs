@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Powers;
 
 namespace Spire1.Spire1Code.Cards;
 
-[Pool(typeof(DefectCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class HelloWorld() : Spire1Card(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<HelloWorldPower>(1)];

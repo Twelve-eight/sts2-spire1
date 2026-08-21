@@ -1,3 +1,4 @@
+using Spire1.Spire1Code.Character;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -10,6 +11,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Ironclad — True Grit (Common). Gain 7 Block, exhaust a random hand card (9 Block, choose card upgraded).</summary>
+[Pool(typeof(Spire1LegacyPool))]
 public class TrueGrit() : Spire1Card(1, CardType.Skill, CardRarity.Common, TargetType.None)
 {
     private bool _choose;

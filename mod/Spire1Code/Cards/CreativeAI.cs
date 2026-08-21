@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Powers;
 
 namespace Spire1.Spire1Code.Cards;
 
-[Pool(typeof(DefectCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class CreativeAI() : Spire1Card(3, CardType.Power, CardRarity.Rare, TargetType.Self)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<CreativeAIPower>(1)];

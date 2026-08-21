@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Silent — Blur (Uncommon Skill). Gain 5 Block (8 upgraded). Block is not removed at the start of your next turn.</summary>
-[Pool(typeof(SilentCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class Blur() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(5, ValueProp.Move), new PowerVar<BlurPower>(1)];

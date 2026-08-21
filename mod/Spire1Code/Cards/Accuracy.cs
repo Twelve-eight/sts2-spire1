@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Silent — Accuracy (Uncommon Power). Shivs deal 4 additional damage (6 upgraded).</summary>
-[Pool(typeof(SilentCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class Accuracy() : Spire1Card(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<AccuracyPower>(4)];

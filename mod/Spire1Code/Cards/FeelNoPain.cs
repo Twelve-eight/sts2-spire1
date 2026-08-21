@@ -1,3 +1,4 @@
+using Spire1.Spire1Code.Character;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -8,6 +9,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Ironclad — Feel No Pain (Uncommon Power). Whenever a card is Exhausted, gain 3 Block (4 upgraded).</summary>
+[Pool(typeof(Spire1LegacyPool))]
 public class FeelNoPain() : Spire1Card(1, CardType.Power, CardRarity.Uncommon, TargetType.None)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<FeelNoPainPower>(3)];

@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Silent — Bullet Time (Rare Skill). You cannot draw additional cards this turn; all cards in your hand cost 0 this turn (2 cost upgraded).</summary>
-[Pool(typeof(SilentCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class BulletTime() : Spire1Card(3, CardType.Skill, CardRarity.Rare, TargetType.None)
 {
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)

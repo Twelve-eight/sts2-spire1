@@ -11,7 +11,7 @@ namespace Spire1.Spire1Code.Cards;
 /// StS1 Silent — Calculated Gamble (Uncommon Skill). Discard your hand, then draw that many cards.
 /// Exhaust (the upgrade removes Exhaust).
 /// </summary>
-[Pool(typeof(SilentCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class CalculatedGamble() : Spire1Card(0, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 {
     // LocalKeywords caches CanonicalKeywords on first access, so Exhaust must be removed dynamically on upgrade.

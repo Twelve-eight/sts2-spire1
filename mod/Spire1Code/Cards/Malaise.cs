@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Silent — Malaise (Rare Skill, X-cost). Enemy loses X Strength and gains X Weak (X+1 upgraded). Exhaust.</summary>
-[Pool(typeof(SilentCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class Malaise() : Spire1Card(0, CardType.Skill, CardRarity.Rare, TargetType.AnyEnemy)
 {
     protected override bool HasEnergyCostX => true;

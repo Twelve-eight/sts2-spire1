@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Defect — Multi-Cast (Rare Skill). X-cost: Evoke your next Orb X times (X+1 upgraded).</summary>
-[Pool(typeof(DefectCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class MultiCast() : Spire1Card(-1, CardType.Skill, CardRarity.Rare, TargetType.None)
 {
     public override OrbEvokeType OrbEvokeType => OrbEvokeType.All;

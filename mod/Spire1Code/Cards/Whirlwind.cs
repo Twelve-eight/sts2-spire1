@@ -1,3 +1,4 @@
+using Spire1.Spire1Code.Character;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -7,6 +8,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Ironclad — Whirlwind (Uncommon Attack, X-cost). Deal 5 damage to ALL enemies X times (8 upgraded).</summary>
+[Pool(typeof(Spire1LegacyPool))]
 public class Whirlwind() : Spire1Card(0, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies)
 {
     protected override bool HasEnergyCostX => true;

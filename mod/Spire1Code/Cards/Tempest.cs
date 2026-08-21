@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-[Pool(typeof(DefectCardPool))]
+[Pool(typeof(Spire1LegacyPool))]
 public class Tempest() : Spire1Card(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
     protected override bool HasEnergyCostX => true;

@@ -1,3 +1,4 @@
+using Spire1.Spire1Code.Character;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -9,6 +10,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Ironclad — Feed (Rare Attack). Deal 10 damage; if this kills the enemy, permanently raise your Max HP by 3 (12 damage / 4 HP upgraded). Exhaust.</summary>
+[Pool(typeof(Spire1LegacyPool))]
 public class Feed() : Spire1Card(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];

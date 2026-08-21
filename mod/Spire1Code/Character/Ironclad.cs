@@ -25,12 +25,15 @@ public class Ironclad : PlaceholderCharacterModel
     public override CharacterGender Gender => CharacterGender.Neutral;
     public override int StartingHp => 80; // vanilla StS1 Ironclad
 
-    // Vanilla starter deck: 5 Strike, 4 Defend, 1 Bash.
+    // Vanilla starter deck: 5 Strike, 4 Defend, 1 Bash. StS2 ships identical Strike_Ironclad /
+    // Defend_Ironclad / Bash models (see .tmp/duplicate-cards-report.md), so the deck uses the
+    // base-game cards — fully qualified, because Spire1.Spire1Code.Cards defines retired
+    // same-named mod copies (Strike/Defend/Bash) that now live in Spire1LegacyPool.
     public override IEnumerable<CardModel> StartingDeck =>
     [
-        ModelDb.Card<Strike>(), ModelDb.Card<Strike>(), ModelDb.Card<Strike>(), ModelDb.Card<Strike>(), ModelDb.Card<Strike>(),
-        ModelDb.Card<Defend>(), ModelDb.Card<Defend>(), ModelDb.Card<Defend>(), ModelDb.Card<Defend>(),
-        ModelDb.Card<Bash>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeIronclad>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeIronclad>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeIronclad>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeIronclad>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeIronclad>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendIronclad>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendIronclad>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendIronclad>(), ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendIronclad>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.Bash>(),
     ];
 
     // Starting relic: Burning Blood (heal 6 HP after combat) — mod class, ID SPIRE1-BURNING_BLOOD.

@@ -1,3 +1,4 @@
+using Spire1.Spire1Code.Character;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
@@ -10,6 +11,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Ironclad - Armaments (Common). Gain 5 Block; upgrade a card in your hand (all cards upgraded).</summary>
+[Pool(typeof(Spire1LegacyPool))]
 public class Armaments() : Spire1Card(1, CardType.Skill, CardRarity.Common, TargetType.None)
 {
     private bool _all;

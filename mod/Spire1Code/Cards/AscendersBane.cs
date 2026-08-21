@@ -1,4 +1,7 @@
+using Spire1.Spire1Code.Character;
 using MegaCrit.Sts2.Core.Entities.Cards;
+
+using BaseLib.Utils;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -7,6 +10,7 @@ namespace Spire1.Spire1Code.Cards;
 /// Mirror of the base-game AscendersBane: Eternal/Unplayable/Ethereal and excluded from all
 /// random generation (only added by the Ascension modifier).
 /// </summary>
+[Pool(typeof(Spire1LegacyPool))]
 public class AscendersBane() : Spire1Curse()
 {
     public override bool CanBeGeneratedByModifiers => false;
