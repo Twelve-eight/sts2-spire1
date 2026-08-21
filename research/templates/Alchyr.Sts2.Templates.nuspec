@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Alchyr.Sts2.Templates</id>
+    <version>2.5.1</version>
+    <title>Sts2 Mod Templates</title>
+    <authors>Alchyr</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <readme>README.md</readme>
+    <projectUrl>https://github.com/Alchyr/ModTemplate-StS2/</projectUrl>
+    <description>Templates to use when creating a Slay the Spire 2 mod</description>
+    <releaseNotes>Reference publicizer in nuget only if enabled, add potion placeholder images to character template</releaseNotes>
+    <tags>dotnet-new templates</tags>
+    <packageTypes>
+      <packageType name="Template" />
+    </packageTypes>
+    <repository type="git" commit="b3cca950067e55ad1b8fa709be247f75eaa8a5a3" />
+    <dependencies>
+      <group targetFramework="net9.0" />
+    </dependencies>
+  </metadata>
+</package>

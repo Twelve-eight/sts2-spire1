@@ -1,0 +1,312 @@
+[
+ {
+  "cls": "Beta",
+  "color": "tempCards",
+  "cost": 2,
+  "type": "SKILL",
+  "rarity": "SPECIAL",
+  "target": "NONE",
+  "base": {},
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {
+   "upgradeBaseCost": 1
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "Omega",
+   "MakeTempCardInDrawPileAction",
+   "Beta"
+  ],
+  "usePowers": [],
+  "id": "Beta",
+  "loc": {
+   "NAME": "Beta",
+   "DESCRIPTION": "Shuffle an *Omega into your draw pile. NL Exhaust.",
+   "UPGRADE_DESCRIPTION": ""
+  }
+ },
+ {
+  "cls": "Expunger",
+  "color": "tempCards",
+  "cost": 1,
+  "type": "ATTACK",
+  "rarity": "SPECIAL",
+  "target": "ENEMY",
+  "base": {
+   "baseDamage": 9
+  },
+  "flags": {},
+  "upgrade": {
+   "upgradeDamage": 6
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "ExpungeVFXAction",
+   "DamageAction",
+   "DamageInfo",
+   "AttackEffect",
+   "Expunger"
+  ],
+  "usePowers": [],
+  "id": "Expunger",
+  "loc": {
+   "NAME": "Expunger",
+   "DESCRIPTION": "Deal !D! damage X times.",
+   "UPGRADE_DESCRIPTION": ""
+  }
+ },
+ {
+  "cls": "Insight",
+  "color": "tempCards",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "SPECIAL",
+  "target": "SELF",
+  "base": {
+   "baseMagicNumber": 2,
+   "magicNumber": 2
+  },
+  "flags": {
+   "exhaust": true,
+   "selfRetain": true
+  },
+  "upgrade": {
+   "upgradeMagicNumber": 1
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "VFXAction",
+   "LightBulbEffect",
+   "DrawCardAction",
+   "Insight"
+  ],
+  "usePowers": [],
+  "id": "Insight",
+  "loc": {
+   "NAME": "Insight",
+   "DESCRIPTION": "Retain. NL Draw !M! cards. NL Exhaust.",
+   "UPGRADE_DESCRIPTION": "Retain. NL Draw !M! cards. NL Exhaust."
+  }
+ },
+ {
+  "cls": "Miracle",
+  "color": "tempCards",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "SPECIAL",
+  "target": "NONE",
+  "base": {},
+  "flags": {
+   "exhaust": true,
+   "selfRetain": true
+  },
+  "upgrade": {},
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "VFXAction",
+   "BorderFlashEffect",
+   "MiracleEffect",
+   "GainEnergyAction",
+   "Miracle"
+  ],
+  "usePowers": [],
+  "id": "Miracle",
+  "loc": {
+   "NAME": "Miracle",
+   "DESCRIPTION": "Retain. NL Gain [W]. NL Exhaust.",
+   "UPGRADE_DESCRIPTION": "Retain. NL Gain [W] [W]. NL Exhaust."
+  }
+ },
+ {
+  "cls": "Omega",
+  "color": "tempCards",
+  "cost": 3,
+  "type": "POWER",
+  "rarity": "SPECIAL",
+  "target": "SELF",
+  "base": {
+   "baseMagicNumber": 50,
+   "magicNumber": 50
+  },
+  "flags": {},
+  "upgrade": {
+   "upgradeMagicNumber": 10
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "ApplyPowerAction",
+   "Omega"
+  ],
+  "usePowers": [
+   "OmegaPower"
+  ],
+  "id": "Omega",
+  "loc": {
+   "NAME": "Omega",
+   "DESCRIPTION": "At the end of your turn, deal !M! damage to ALL enemies."
+  }
+ },
+ {
+  "cls": "Safety",
+  "color": "tempCards",
+  "cost": 1,
+  "type": "SKILL",
+  "rarity": "SPECIAL",
+  "target": "SELF",
+  "base": {
+   "baseBlock": 12
+  },
+  "flags": {
+   "selfRetain": true,
+   "exhaust": true
+  },
+  "upgrade": {
+   "upgradeBlock": 4
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "GainBlockAction",
+   "Safety"
+  ],
+  "usePowers": [],
+  "id": "Safety",
+  "loc": {
+   "NAME": "Safety",
+   "DESCRIPTION": "Retain. NL Gain !B! Block. NL Exhaust."
+  }
+ },
+ {
+  "cls": "Shiv",
+  "color": "tempCards",
+  "cost": 0,
+  "type": "ATTACK",
+  "rarity": "SPECIAL",
+  "target": "ENEMY",
+  "base": {
+   "baseDamage": 4
+  },
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {
+   "upgradeDamage": 2
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "DamageAction",
+   "DamageInfo",
+   "AttackEffect",
+   "Shiv"
+  ],
+  "usePowers": [
+   "AbstractPower"
+  ],
+  "id": "Shiv",
+  "loc": {
+   "NAME": "Shiv",
+   "DESCRIPTION": "Deal !D! damage. NL Exhaust."
+  }
+ },
+ {
+  "cls": "Smite",
+  "color": "tempCards",
+  "cost": 1,
+  "type": "ATTACK",
+  "rarity": "SPECIAL",
+  "target": "ENEMY",
+  "base": {
+   "baseDamage": 12
+  },
+  "flags": {
+   "selfRetain": true,
+   "exhaust": true
+  },
+  "upgrade": {
+   "upgradeDamage": 4
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "DamageAction",
+   "DamageInfo",
+   "AttackEffect",
+   "Smite"
+  ],
+  "usePowers": [],
+  "id": "Smite",
+  "loc": {
+   "NAME": "Smite",
+   "DESCRIPTION": "Retain. NL Deal !D! damage. NL Exhaust."
+  }
+ },
+ {
+  "cls": "ThroughViolence",
+  "color": "tempCards",
+  "cost": 0,
+  "type": "ATTACK",
+  "rarity": "SPECIAL",
+  "target": "ENEMY",
+  "base": {
+   "baseDamage": 20
+  },
+  "flags": {
+   "selfRetain": true,
+   "exhaust": true
+  },
+  "upgrade": {
+   "upgradeDamage": 10
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "VFXAction",
+   "ViolentAttackEffect",
+   "DamageAction",
+   "DamageInfo",
+   "AttackEffect",
+   "ThroughViolence"
+  ],
+  "usePowers": [],
+  "id": "ThroughViolence",
+  "loc": {
+   "NAME": "Through Violence",
+   "DESCRIPTION": "Retain. NL Deal !D! damage. NL Exhaust."
+  }
+ }
+]

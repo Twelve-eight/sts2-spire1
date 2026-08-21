@@ -1,0 +1,1294 @@
+[
+ {
+  "cls": "Apotheosis",
+  "color": "colorless",
+  "cost": 2,
+  "type": "SKILL",
+  "rarity": "RARE",
+  "target": "NONE",
+  "base": {},
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {
+   "upgradeBaseCost": 1
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "ApotheosisAction",
+   "Apotheosis"
+  ],
+  "usePowers": [],
+  "id": "Apotheosis",
+  "loc": {
+   "NAME": "Apotheosis",
+   "DESCRIPTION": "Upgrade ALL your cards for the rest of combat. NL Exhaust."
+  }
+ },
+ {
+  "cls": "Apparition",
+  "color": "colorless",
+  "cost": 1,
+  "type": "SKILL",
+  "rarity": "SPECIAL",
+  "target": "SELF",
+  "base": {},
+  "flags": {
+   "exhaust": true,
+   "isEthereal": true
+  },
+  "upgrade": {
+   "flag:isEthereal": false
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "ApplyPowerAction",
+   "Apparition"
+  ],
+  "usePowers": [
+   "IntangiblePlayerPower"
+  ],
+  "id": "Ghostly",
+  "loc": {
+   "NAME": "Apparition",
+   "DESCRIPTION": "Ethereal. NL Gain 1 Intangible. NL Exhaust.",
+   "UPGRADE_DESCRIPTION": "Gain 1 Intangible. NL Exhaust."
+  }
+ },
+ {
+  "cls": "BandageUp",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "UNCOMMON",
+  "target": "SELF",
+  "base": {
+   "baseMagicNumber": 4,
+   "magicNumber": 4
+  },
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {
+   "upgradeMagicNumber": 2
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "CardTags",
+   "HealAction",
+   "BandageUp"
+  ],
+  "usePowers": [],
+  "id": "Bandage Up",
+  "loc": {
+   "NAME": "Bandage Up",
+   "DESCRIPTION": "Heal !M! HP. NL Exhaust."
+  }
+ },
+ {
+  "cls": "Bite",
+  "color": "colorless",
+  "cost": 1,
+  "type": "ATTACK",
+  "rarity": "SPECIAL",
+  "target": "ENEMY",
+  "base": {
+   "baseDamage": 7,
+   "baseMagicNumber": 2,
+   "magicNumber": 2
+  },
+  "flags": {},
+  "upgrade": {
+   "upgradeDamage": 1,
+   "upgradeMagicNumber": 1
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "CardTags",
+   "VFXAction",
+   "BiteEffect",
+   "DamageAction",
+   "DamageInfo",
+   "AttackEffect",
+   "HealAction",
+   "Bite"
+  ],
+  "usePowers": [],
+  "id": "Bite",
+  "loc": {
+   "NAME": "Bite",
+   "DESCRIPTION": "Deal !D! damage. NL Heal !M! HP."
+  }
+ },
+ {
+  "cls": "Blind",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "UNCOMMON",
+  "target": "ENEMY",
+  "base": {
+   "baseMagicNumber": 2,
+   "magicNumber": 2
+  },
+  "flags": {},
+  "upgrade": {
+   "target": "ALL_ENEMY"
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "ApplyPowerAction",
+   "AttackEffect",
+   "Blind"
+  ],
+  "usePowers": [
+   "WeakPower"
+  ],
+  "id": "Blind",
+  "loc": {
+   "NAME": "Blind",
+   "DESCRIPTION": "Apply !M! Weak.",
+   "UPGRADE_DESCRIPTION": "Apply !M! Weak to ALL enemies."
+  }
+ },
+ {
+  "cls": "Chrysalis",
+  "color": "colorless",
+  "cost": 2,
+  "type": "SKILL",
+  "rarity": "RARE",
+  "target": "NONE",
+  "base": {
+   "baseMagicNumber": 3,
+   "magicNumber": 3
+  },
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {
+   "upgradeMagicNumber": 2
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "MakeTempCardInDrawPileAction",
+   "Chrysalis"
+  ],
+  "usePowers": [],
+  "id": "Chrysalis",
+  "loc": {
+   "NAME": "Chrysalis",
+   "DESCRIPTION": "Shuffle !M! random Skills into your draw pile. They cost 0 this combat. NL Exhaust."
+  }
+ },
+ {
+  "cls": "DarkShackles",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "UNCOMMON",
+  "target": "ENEMY",
+  "base": {
+   "baseMagicNumber": 9,
+   "magicNumber": 9
+  },
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {
+   "upgradeMagicNumber": 6
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "ApplyPowerAction",
+   "DarkShackles"
+  ],
+  "usePowers": [
+   "StrengthPower",
+   "GainStrengthPower"
+  ],
+  "id": "Dark Shackles",
+  "loc": {
+   "NAME": "Dark Shackles",
+   "DESCRIPTION": "Enemy loses !M! Strength this turn. NL Exhaust."
+  }
+ },
+ {
+  "cls": "DeepBreath",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "UNCOMMON",
+  "target": "SELF",
+  "base": {
+   "baseMagicNumber": 1,
+   "magicNumber": 1
+  },
+  "flags": {},
+  "upgrade": {
+   "upgradeMagicNumber": 1
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "CardGroup",
+   "EmptyDeckShuffleAction",
+   "ShuffleAction",
+   "DrawCardAction",
+   "DeepBreath"
+  ],
+  "usePowers": [],
+  "id": "Deep Breath",
+  "loc": {
+   "NAME": "Deep Breath",
+   "DESCRIPTION": "Shuffle your discard pile into your draw pile. NL Draw !M! card.",
+   "UPGRADE_DESCRIPTION": "Shuffle your discard pile into your draw pile. NL Draw !M! cards."
+  }
+ },
+ {
+  "cls": "Discovery",
+  "color": "colorless",
+  "cost": 1,
+  "type": "SKILL",
+  "rarity": "UNCOMMON",
+  "target": "SELF",
+  "base": {},
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {
+   "flag:exhaust": false
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "DiscoveryAction",
+   "Discovery"
+  ],
+  "usePowers": [],
+  "id": "Discovery",
+  "loc": {
+   "NAME": "Discovery",
+   "DESCRIPTION": "Choose 1 of 3 random cards to add into your hand. It costs 0 this turn. NL Exhaust.",
+   "UPGRADE_DESCRIPTION": "Choose 1 of 3 random cards to add into your hand. It costs 0 this turn."
+  }
+ },
+ {
+  "cls": "DramaticEntrance",
+  "color": "colorless",
+  "cost": 0,
+  "type": "ATTACK",
+  "rarity": "UNCOMMON",
+  "target": "ALL_ENEMY",
+  "base": {
+   "baseDamage": 8
+  },
+  "flags": {
+   "isMultiDamage": true,
+   "exhaust": true,
+   "isInnate": true
+  },
+  "upgrade": {
+   "upgradeDamage": 4
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "DamageAllEnemiesAction",
+   "AttackEffect",
+   "DramaticEntrance"
+  ],
+  "usePowers": [],
+  "id": "Dramatic Entrance",
+  "loc": {
+   "NAME": "Dramatic Entrance",
+   "DESCRIPTION": "Innate. NL Deal !D! damage to ALL enemies. NL Exhaust."
+  }
+ },
+ {
+  "cls": "Enlightenment",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "UNCOMMON",
+  "target": "SELF",
+  "base": {},
+  "flags": {},
+  "upgrade": {},
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "EnlightenmentAction",
+   "Enlightenment"
+  ],
+  "usePowers": [],
+  "id": "Enlightenment",
+  "loc": {
+   "NAME": "Enlightenment",
+   "DESCRIPTION": "Reduce the cost of all cards in your hand to 1 this turn.",
+   "UPGRADE_DESCRIPTION": "Reduce the cost of all cards in your hand to 1 this combat."
+  }
+ },
+ {
+  "cls": "Finesse",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "UNCOMMON",
+  "target": "SELF",
+  "base": {
+   "baseBlock": 2
+  },
+  "flags": {},
+  "upgrade": {
+   "upgradeBlock": 2
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "GainBlockAction",
+   "DrawCardAction",
+   "Finesse"
+  ],
+  "usePowers": [],
+  "id": "Finesse",
+  "loc": {
+   "NAME": "Finesse",
+   "DESCRIPTION": "Gain !B! Block. NL Draw 1 card."
+  }
+ },
+ {
+  "cls": "FlashOfSteel",
+  "color": "colorless",
+  "cost": 0,
+  "type": "ATTACK",
+  "rarity": "UNCOMMON",
+  "target": "ENEMY",
+  "base": {
+   "baseDamage": 3
+  },
+  "flags": {},
+  "upgrade": {
+   "upgradeDamage": 3
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "DamageAction",
+   "DamageInfo",
+   "AttackEffect",
+   "DrawCardAction",
+   "FlashOfSteel"
+  ],
+  "usePowers": [],
+  "id": "Flash of Steel",
+  "loc": {
+   "NAME": "Flash of Steel",
+   "DESCRIPTION": "Deal !D! damage. NL Draw 1 card."
+  }
+ },
+ {
+  "cls": "Forethought",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "UNCOMMON",
+  "target": "NONE",
+  "base": {},
+  "flags": {},
+  "upgrade": {},
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "ForethoughtAction",
+   "Forethought"
+  ],
+  "usePowers": [],
+  "id": "Forethought",
+  "loc": {
+   "NAME": "Forethought",
+   "DESCRIPTION": "Put a card from your hand to the bottom of your draw pile. It costs 0 until played.",
+   "UPGRADE_DESCRIPTION": "Put any number of cards from your hand to the bottom of your draw pile. They cost 0 until played."
+  }
+ },
+ {
+  "cls": "GoodInstincts",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "UNCOMMON",
+  "target": "SELF",
+  "base": {
+   "baseBlock": 6
+  },
+  "flags": {},
+  "upgrade": {
+   "upgradeBlock": 3
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "GainBlockAction",
+   "GoodInstincts"
+  ],
+  "usePowers": [],
+  "id": "Good Instincts",
+  "loc": {
+   "NAME": "Good Instincts",
+   "DESCRIPTION": "Gain !B! Block."
+  }
+ },
+ {
+  "cls": "HandOfGreed",
+  "color": "colorless",
+  "cost": 2,
+  "type": "ATTACK",
+  "rarity": "RARE",
+  "target": "ENEMY",
+  "base": {
+   "baseDamage": 20,
+   "baseMagicNumber": 20,
+   "magicNumber": 20
+  },
+  "flags": {},
+  "upgrade": {
+   "upgradeDamage": 5,
+   "upgradeMagicNumber": 5
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "GreedAction",
+   "DamageInfo",
+   "HandOfGreed"
+  ],
+  "usePowers": [],
+  "id": "HandOfGreed",
+  "loc": {
+   "NAME": "Hand of Greed",
+   "DESCRIPTION": "Deal !D! damage. NL If Fatal, gain !M! Gold."
+  }
+ },
+ {
+  "cls": "Impatience",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "UNCOMMON",
+  "target": "NONE",
+  "base": {
+   "baseMagicNumber": 2,
+   "magicNumber": 2
+  },
+  "flags": {},
+  "upgrade": {
+   "upgradeMagicNumber": 1
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "ConditionalDrawAction",
+   "CardGroup",
+   "Impatience"
+  ],
+  "usePowers": [],
+  "id": "Impatience",
+  "loc": {
+   "NAME": "Impatience",
+   "DESCRIPTION": "If you have no Attacks in your hand, draw !M! cards."
+  }
+ },
+ {
+  "cls": "JAX",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "SPECIAL",
+  "target": "SELF",
+  "base": {
+   "baseMagicNumber": 2,
+   "magicNumber": 2
+  },
+  "flags": {},
+  "upgrade": {
+   "upgradeMagicNumber": 1
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "LoseHPAction",
+   "ApplyPowerAction",
+   "JAX"
+  ],
+  "usePowers": [
+   "StrengthPower"
+  ],
+  "id": "J.A.X.",
+  "loc": {
+   "NAME": "J.A.X.",
+   "DESCRIPTION": "Lose 3 HP. NL Gain !M! Strength."
+  }
+ },
+ {
+  "cls": "JackOfAllTrades",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "UNCOMMON",
+  "target": "NONE",
+  "base": {
+   "baseMagicNumber": 1,
+   "magicNumber": 1
+  },
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {
+   "upgradeMagicNumber": 1
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "MakeTempCardInHandAction",
+   "JackOfAllTrades"
+  ],
+  "usePowers": [],
+  "id": "Jack Of All Trades",
+  "loc": {
+   "NAME": "Jack of All Trades",
+   "DESCRIPTION": "Add !M! random Colorless card into your hand. NL Exhaust.",
+   "UPGRADE_DESCRIPTION": "Add !M! random Colorless cards into your hand. NL Exhaust."
+  }
+ },
+ {
+  "cls": "Madness",
+  "color": "colorless",
+  "cost": 1,
+  "type": "SKILL",
+  "rarity": "UNCOMMON",
+  "target": "SELF",
+  "base": {},
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {
+   "upgradeBaseCost": 0
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "MadnessAction",
+   "Madness"
+  ],
+  "usePowers": [],
+  "id": "Madness",
+  "loc": {
+   "NAME": "Madness",
+   "DESCRIPTION": "Reduce the cost of a random card in your hand to 0 this combat. NL Exhaust."
+  }
+ },
+ {
+  "cls": "Magnetism",
+  "color": "colorless",
+  "cost": 2,
+  "type": "POWER",
+  "rarity": "RARE",
+  "target": "SELF",
+  "base": {
+   "baseMagicNumber": 1,
+   "magicNumber": 1
+  },
+  "flags": {},
+  "upgrade": {
+   "upgradeBaseCost": 1
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "ApplyPowerAction",
+   "Magnetism"
+  ],
+  "usePowers": [
+   "MagnetismPower"
+  ],
+  "id": "Magnetism",
+  "loc": {
+   "NAME": "Magnetism",
+   "DESCRIPTION": "At the start of your turn, add a random Colorless card into your hand."
+  }
+ },
+ {
+  "cls": "MasterOfStrategy",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "RARE",
+  "target": "NONE",
+  "base": {
+   "baseMagicNumber": 3,
+   "magicNumber": 3
+  },
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {
+   "upgradeMagicNumber": 1
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "DrawCardAction",
+   "MasterOfStrategy"
+  ],
+  "usePowers": [],
+  "id": "Master of Strategy",
+  "loc": {
+   "NAME": "Master of Strategy",
+   "DESCRIPTION": "Draw !M! cards. NL Exhaust."
+  }
+ },
+ {
+  "cls": "Mayhem",
+  "color": "colorless",
+  "cost": 2,
+  "type": "POWER",
+  "rarity": "RARE",
+  "target": "SELF",
+  "base": {
+   "baseMagicNumber": 1,
+   "magicNumber": 1
+  },
+  "flags": {},
+  "upgrade": {
+   "upgradeBaseCost": 1
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "ApplyPowerAction",
+   "Mayhem"
+  ],
+  "usePowers": [
+   "MayhemPower"
+  ],
+  "id": "Mayhem",
+  "loc": {
+   "NAME": "Mayhem",
+   "DESCRIPTION": "At the start of your turn, play the top card of your draw pile."
+  }
+ },
+ {
+  "cls": "Metamorphosis",
+  "color": "colorless",
+  "cost": 2,
+  "type": "SKILL",
+  "rarity": "RARE",
+  "target": "NONE",
+  "base": {
+   "baseMagicNumber": 3,
+   "magicNumber": 3
+  },
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {
+   "upgradeMagicNumber": 2
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "MakeTempCardInDrawPileAction",
+   "Metamorphosis"
+  ],
+  "usePowers": [],
+  "id": "Metamorphosis",
+  "loc": {
+   "NAME": "Metamorphosis",
+   "DESCRIPTION": "Shuffle !M! random Attacks into your draw pile. They cost 0 this combat. NL Exhaust."
+  }
+ },
+ {
+  "cls": "MindBlast",
+  "color": "colorless",
+  "cost": 2,
+  "type": "ATTACK",
+  "rarity": "UNCOMMON",
+  "target": "ENEMY",
+  "base": {
+   "baseDamage": 0
+  },
+  "flags": {
+   "isInnate": true
+  },
+  "upgrade": {
+   "upgradeBaseCost": 1
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "VFXAction",
+   "MindblastEffect",
+   "DamageAction",
+   "DamageInfo",
+   "DamageType",
+   "AttackEffect",
+   "CardGroup",
+   "MindBlast"
+  ],
+  "usePowers": [],
+  "id": "Mind Blast",
+  "loc": {
+   "NAME": "Mind Blast",
+   "DESCRIPTION": "Innate. NL Deal damage equal to the number of cards in your draw pile.",
+   "UPGRADE_DESCRIPTION": ""
+  }
+ },
+ {
+  "cls": "Panacea",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "UNCOMMON",
+  "target": "SELF",
+  "base": {
+   "baseMagicNumber": 1,
+   "magicNumber": 1
+  },
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {
+   "upgradeMagicNumber": 1
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "ApplyPowerAction",
+   "Panacea"
+  ],
+  "usePowers": [
+   "ArtifactPower"
+  ],
+  "id": "Panacea",
+  "loc": {
+   "NAME": "Panacea",
+   "DESCRIPTION": "Gain !M! Artifact. NL Exhaust."
+  }
+ },
+ {
+  "cls": "Panache",
+  "color": "colorless",
+  "cost": 0,
+  "type": "POWER",
+  "rarity": "RARE",
+  "target": "SELF",
+  "base": {
+   "baseMagicNumber": 10,
+   "magicNumber": 10
+  },
+  "flags": {},
+  "upgrade": {
+   "upgradeMagicNumber": 4
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "ApplyPowerAction",
+   "Panache"
+  ],
+  "usePowers": [
+   "PanachePower"
+  ],
+  "id": "Panache",
+  "loc": {
+   "NAME": "Panache",
+   "DESCRIPTION": "Every time you play 5 cards in a single turn, deal !M! damage to ALL enemies."
+  }
+ },
+ {
+  "cls": "PanicButton",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "UNCOMMON",
+  "target": "SELF",
+  "base": {
+   "baseBlock": 30,
+   "baseMagicNumber": 2,
+   "magicNumber": 2
+  },
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {
+   "upgradeBlock": 10
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "GainBlockAction",
+   "ApplyPowerAction",
+   "PanicButton"
+  ],
+  "usePowers": [
+   "NoBlockPower"
+  ],
+  "id": "PanicButton",
+  "loc": {
+   "NAME": "Panic Button",
+   "DESCRIPTION": "Gain !B! Block. You cannot gain Block from cards for !M! turns. NL Exhaust."
+  }
+ },
+ {
+  "cls": "Purity",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "UNCOMMON",
+  "target": "NONE",
+  "base": {
+   "baseMagicNumber": 3,
+   "magicNumber": 3
+  },
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {
+   "upgradeMagicNumber": 2
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "ExhaustAction",
+   "Purity"
+  ],
+  "usePowers": [],
+  "id": "Purity",
+  "loc": {
+   "NAME": "Purity",
+   "DESCRIPTION": "Exhaust up to !M! cards in your hand. NL Exhaust."
+  }
+ },
+ {
+  "cls": "RitualDagger",
+  "color": "colorless",
+  "cost": 1,
+  "type": "ATTACK",
+  "rarity": "SPECIAL",
+  "target": "ENEMY",
+  "base": {
+   "baseMagicNumber": 3,
+   "magicNumber": 3,
+   "baseDamage": 15
+  },
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {
+   "upgradeMagicNumber": 2
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "RitualDaggerAction",
+   "DamageInfo",
+   "RitualDagger"
+  ],
+  "usePowers": [],
+  "id": "RitualDagger",
+  "loc": {
+   "NAME": "Ritual Dagger",
+   "DESCRIPTION": "Deal !D! damage. NL If Fatal, permanently increase this card's damage by !M!. NL Exhaust."
+  },
+  "note": "baseDamage is set from the `misc` field (misc=15 then baseDamage=misc in the ctor), and misc is the run-persistent accumulator that grows by magicNumber on a Fatal kill. An earlier extraction pass recorded baseDamage=3 by mis-reading the putfield order; 15 is the value confirmed in bytecode."
+ },
+ {
+  "cls": "SadisticNature",
+  "color": "colorless",
+  "cost": 0,
+  "type": "POWER",
+  "rarity": "RARE",
+  "target": "SELF",
+  "base": {
+   "baseMagicNumber": 5,
+   "magicNumber": 5
+  },
+  "flags": {},
+  "upgrade": {
+   "upgradeMagicNumber": 2
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "ApplyPowerAction",
+   "SadisticNature"
+  ],
+  "usePowers": [
+   "SadisticPower"
+  ],
+  "id": "Sadistic Nature",
+  "loc": {
+   "NAME": "Sadistic Nature",
+   "DESCRIPTION": "Whenever you apply a debuff to an enemy, they take !M! damage."
+  }
+ },
+ {
+  "cls": "SecretTechnique",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "RARE",
+  "target": "NONE",
+  "base": {},
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {
+   "flag:exhaust": false
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "SkillFromDeckToHandAction",
+   "CardGroup",
+   "SecretTechnique"
+  ],
+  "usePowers": [],
+  "id": "Secret Technique",
+  "loc": {
+   "NAME": "Secret Technique",
+   "DESCRIPTION": "Put a Skill from your draw pile into your hand. NL Exhaust.",
+   "UPGRADE_DESCRIPTION": "Put a Skill from your draw pile into your hand."
+  }
+ },
+ {
+  "cls": "SecretWeapon",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "RARE",
+  "target": "NONE",
+  "base": {},
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {
+   "flag:exhaust": false
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "AttackFromDeckToHandAction",
+   "CardGroup",
+   "SecretWeapon"
+  ],
+  "usePowers": [],
+  "id": "Secret Weapon",
+  "loc": {
+   "NAME": "Secret Weapon",
+   "DESCRIPTION": "Put an Attack from your draw pile into your hand. NL Exhaust.",
+   "UPGRADE_DESCRIPTION": "Put an Attack from your draw pile into your hand."
+  }
+ },
+ {
+  "cls": "SwiftStrike",
+  "color": "colorless",
+  "cost": 0,
+  "type": "ATTACK",
+  "rarity": "UNCOMMON",
+  "target": "ENEMY",
+  "base": {
+   "baseDamage": 7
+  },
+  "flags": {},
+  "upgrade": {
+   "upgradeDamage": 3
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "CardTags",
+   "DamageAction",
+   "DamageInfo",
+   "AttackEffect",
+   "SwiftStrike"
+  ],
+  "usePowers": [],
+  "id": "Swift Strike",
+  "loc": {
+   "NAME": "Swift Strike",
+   "DESCRIPTION": "Deal !D! damage."
+  }
+ },
+ {
+  "cls": "TheBomb",
+  "color": "colorless",
+  "cost": 2,
+  "type": "SKILL",
+  "rarity": "RARE",
+  "target": "SELF",
+  "base": {
+   "baseMagicNumber": 40,
+   "magicNumber": 40
+  },
+  "flags": {},
+  "upgrade": {
+   "upgradeMagicNumber": 10
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "ApplyPowerAction",
+   "TheBomb"
+  ],
+  "usePowers": [
+   "TheBombPower"
+  ],
+  "id": "The Bomb",
+  "loc": {
+   "NAME": "The Bomb",
+   "DESCRIPTION": "At the end of 3 turns, deal !M! damage to ALL enemies."
+  }
+ },
+ {
+  "cls": "ThinkingAhead",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "RARE",
+  "target": "NONE",
+  "base": {},
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {
+   "flag:exhaust": false
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "DrawCardAction",
+   "CardGroup",
+   "PutOnDeckAction",
+   "ThinkingAhead"
+  ],
+  "usePowers": [],
+  "id": "Thinking Ahead",
+  "loc": {
+   "NAME": "Thinking Ahead",
+   "DESCRIPTION": "Draw 2 cards. NL Put a card from your hand on top of your draw pile. NL Exhaust.",
+   "UPGRADE_DESCRIPTION": "Draw 2 cards. NL Put a card from your hand on top of your draw pile."
+  }
+ },
+ {
+  "cls": "Transmutation",
+  "color": "colorless",
+  "cost": -1,
+  "type": "SKILL",
+  "rarity": "RARE",
+  "target": "SELF",
+  "base": {},
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {},
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "TransmutationAction",
+   "Transmutation"
+  ],
+  "usePowers": [],
+  "id": "Transmutation",
+  "loc": {
+   "NAME": "Transmutation",
+   "DESCRIPTION": "Add X random Colorless cards into your hand. They cost 0 this turn. NL Exhaust.",
+   "UPGRADE_DESCRIPTION": "Add X random Upgraded Colorless cards into your hand. They cost 0 this turn. NL Exhaust."
+  }
+ },
+ {
+  "cls": "Trip",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "UNCOMMON",
+  "target": "ENEMY",
+  "base": {
+   "baseMagicNumber": 2,
+   "magicNumber": 2
+  },
+  "flags": {},
+  "upgrade": {
+   "target": "ALL_ENEMY"
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "ApplyPowerAction",
+   "AttackEffect",
+   "Trip"
+  ],
+  "usePowers": [
+   "VulnerablePower"
+  ],
+  "id": "Trip",
+  "loc": {
+   "NAME": "Trip",
+   "DESCRIPTION": "Apply !M! Vulnerable.",
+   "UPGRADE_DESCRIPTION": "Apply !M! Vulnerable to ALL enemies."
+  }
+ },
+ {
+  "cls": "Violence",
+  "color": "colorless",
+  "cost": 0,
+  "type": "SKILL",
+  "rarity": "RARE",
+  "target": "NONE",
+  "base": {
+   "baseMagicNumber": 3,
+   "magicNumber": 3
+  },
+  "flags": {
+   "exhaust": true
+  },
+  "upgrade": {
+   "upgradeMagicNumber": 1
+  },
+  "useActions": [
+   "CardType",
+   "CardColor",
+   "CardRarity",
+   "CardTarget",
+   "AbstractCard",
+   "DrawPileToHandAction",
+   "Violence"
+  ],
+  "usePowers": [],
+  "id": "Violence",
+  "loc": {
+   "NAME": "Violence",
+   "DESCRIPTION": "Put !M! random Attacks from your draw pile into your hand. NL Exhaust."
+  }
+ }
+]

@@ -1,0 +1,27 @@
+# Build/runtime junk
+.tmp/
+.tmp3/
+MSBuildTemp/
+*.log
+
+# Tool caches (kept on G: per AGENTS.md)
+.dotnet/
+.dotnethome/
+.nuget/
+.tools/
+.store/
+.templateengine/
+packages/
+http-cache/
+
+# Godot/C# build output
+mod/.godot/
+mod/bin/
+mod/obj/
+mod/publish/
+mod/_staging/
+
+# IDE
+.idea/
+.vs/
+*.user

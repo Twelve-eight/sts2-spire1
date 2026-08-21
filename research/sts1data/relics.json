@@ -1,0 +1,295 @@
+[
+ {
+  "cls": "GoldenIdol",
+  "id": "Golden Idol",
+  "tier": "SPECIAL",
+  "sfx": "HEAVY",
+  "counter": null,
+  "numbers": [
+   0.25
+  ],
+  "hooks": [],
+  "behavior": "Declares MULTIPLIER = 0.25f and overrides no AbstractRelic gameplay hook; the effect lives in RewardItem's gold reward path, which - when the current room is NOT a TreasureRoom and the player hasRelic(\"Golden Idol\") - adds MathUtils.round(goldAmt * 0.25f) to that reward's bonusGold, i.e. +25% gold from combat/room gold rewards. AbstractDungeon's event-availability filter also reads hasRelic(\"Golden Idol\") to gate one event condition (that condition passes if you hold Golden Idol OR currentHealth/maxHealth <= 0.5).",
+  "loc": {
+   "NAME": "Golden Idol",
+   "DESCRIPTION": "Enemies drop #b25% more #yGold.",
+   "FLAVOR": "Made of solid gold, you feel richer just holding it."
+  },
+  "sts2_equivalent": null,
+  "sts2_api_risk": "ModifyGoldGained(Player, decimal) receives no room/source context (see BowlerHat, which multiplies ALL gold by 1.25m), so restricting the +25% to combat gold and excluding Treasure rooms needs separate room tracking via AfterRoomEntered."
+ },
+ {
+  "cls": "BloodyIdol",
+  "id": "Bloody Idol",
+  "tier": "SPECIAL",
+  "sfx": "HEAVY",
+  "counter": null,
+  "numbers": [
+   5
+  ],
+  "hooks": [
+   "onGainGold"
+  ],
+  "behavior": "HEAL_AMOUNT = 5. onGainGold() flashes, pushes a RelicAboveCreatureAction above the player, then calls AbstractPlayer.heal(5, true) directly - so every gold gain (combat reward, event, chest, Maw Bank, ...) heals exactly 5 HP, with no per-combat or per-floor limit.",
+  "loc": {
+   "NAME": "Bloody Idol",
+   "DESCRIPTION": "Whenever you gain #yGold, heal #b5 HP.",
+   "FLAVOR": "The idol now weeps a constant stream of blood."
+  },
+  "sts2_equivalent": null,
+  "sts2_api_risk": null
+ },
+ {
+  "cls": "RedMask",
+  "id": "Red Mask",
+  "tier": "SPECIAL",
+  "sfx": "SOLID",
+  "counter": null,
+  "numbers": [
+   1
+  ],
+  "hooks": [
+   "atBattleStart"
+  ],
+  "behavior": "WEAK = 1. atBattleStart() flashes and, for every monster in AbstractDungeon.getCurrRoom().monsters.monsters, queues a RelicAboveCreatureAction plus an ApplyPowerAction applying WeakPower(monster, 1, false) from the player - 1 Weak to ALL enemies at the start of every combat.",
+  "loc": {
+   "NAME": "Red Mask",
+   "DESCRIPTION": "At the start of each combat, apply #b1 #yWeak to ALL enemies.",
+   "FLAVOR": "This very stylish looking mask belongs to the leader of the Red Mask Bandits. Technically that makes you the leader now?"
+  },
+  "sts2_equivalent": "RedMask",
+  "sts2_api_risk": null
+ },
+ {
+  "cls": "Circlet",
+  "id": "Circlet",
+  "tier": "SPECIAL",
+  "sfx": "CLINK",
+  "counter": 1,
+  "numbers": [
+   1
+  ],
+  "hooks": [
+   "onEquip",
+   "onUnequip"
+  ],
+  "behavior": "No gameplay effect: the constructor sets counter = 1, onEquip() only flashes, onUnequip() is empty. It is the run's overflow trophy - AbstractRelic.obtain(), instantObtain() and instantObtain(player,int,boolean) all special-case relicId \"Circlet\": if the player already holds one they increment that existing relic's counter and flash it instead of adding a second copy, so the counter is the stack size.",
+  "loc": {
+   "NAME": "Circlet",
+   "DESCRIPTION": "Collect as many as you can.",
+   "FLAVOR": "You ran out of relics to find. Impressive!"
+  },
+  "sts2_equivalent": "Circlet",
+  "sts2_api_risk": null
+ },
+ {
+  "cls": "WarpedTongs",
+  "id": "WarpedTongs",
+  "tier": "SPECIAL",
+  "sfx": "CLINK",
+  "counter": null,
+  "numbers": [],
+  "hooks": [
+   "atTurnStartPostDraw"
+  ],
+  "behavior": "No numeric constants. atTurnStartPostDraw() flashes and queues a RelicAboveCreatureAction plus an UpgradeRandomCardAction, which upgrades one randomly chosen upgradable card in the player's hand; because it upgrades the in-combat card instance the upgrade lasts only for the rest of that combat. Fires at the start of every one of your turns, after the draw.",
+  "loc": {
+   "NAME": "Warped Tongs",
+   "DESCRIPTION": "At the start of your turn, #yUpgrade a random card in your hand for the rest of combat.",
+   "FLAVOR": "The cursed tongs emit a strong desire to return to where they were stolen from."
+  },
+  "sts2_equivalent": null,
+  "sts2_api_risk": null
+ },
+ {
+  "cls": "MutagenicStrength",
+  "id": "MutagenicStrength",
+  "tier": "SPECIAL",
+  "sfx": "CLINK",
+  "counter": null,
+  "numbers": [
+   3,
+   3
+  ],
+  "hooks": [
+   "atBattleStart"
+  ],
+  "behavior": "STR_AMT = 3. atBattleStart() flashes and addToTop()s an ApplyPowerAction of StrengthPower(player, 3) and an ApplyPowerAction of LoseStrengthPower(player, 3) on the player, plus a RelicAboveCreatureAction. LoseStrengthPower strips 3 Strength at the end of the player's first turn, so the net effect is exactly 3 Strength for turn 1 only, every combat.",
+  "loc": {
+   "NAME": "Mutagenic Strength",
+   "DESCRIPTION": "Start each combat with #b3 #yStrength. At the end of your first turn, lose #b3 #yStrength.",
+   "FLAVOR": "\"The results seem fleeting, triggering when the subject is in danger.\" - Unknown"
+  },
+  "sts2_equivalent": null,
+  "sts2_api_risk": null
+ },
+ {
+  "cls": "Necronomicon",
+  "id": "Necronomicon",
+  "tier": "SPECIAL",
+  "sfx": "FLAT",
+  "counter": null,
+  "numbers": [
+   2
+  ],
+  "hooks": [
+   "onEquip",
+   "onUnequip",
+   "onUseCard",
+   "atTurnStart",
+   "checkTrigger"
+  ],
+  "behavior": "COST_THRESHOLD = 2 plus a private boolean `activated` (true from the constructor, re-armed in atTurnStart(), consumed once per turn). onUseCard(card, action) fires only for CardType.ATTACK when (costForTurn >= 2 AND !freeToPlayOnce), or failing that when cost == -1 (X-cost) AND energyOnUse >= 2; it then sets activated = false, flashes, and re-queues card.makeSameInstanceOf() as a CardQueueItem with the same target, the same energyOnUse and purgeOnUse = true - the first qualifying Attack each turn is played twice. onEquip() plays the NECRONOMICON sfx, rewrites description to the shorter DESCRIPTIONS[0] + 2 + DESCRIPTIONS[2] form (\"The first #yAttack played each turn that costs #b2 or more is played twice.\") and grants a Necronomicurse via ShowCardAndObtainEffect; onUnequip() removes the first Necronomicurse found in masterDeck. checkTrigger() returns `activated` and drives the pulse glow.",
+  "loc": {
+   "NAME": "Necronomicon",
+   "DESCRIPTION": "The first #yAttack played each turn that costs #b2 or more is played twice. Upon pickup, obtain a special #rCurse.",
+   "FLAVOR": "Only a fool would try and harness this evil power. At night your dreams are haunted by images of the book devouring your mind."
+  },
+  "sts2_equivalent": null,
+  "sts2_api_risk": null
+ },
+ {
+  "cls": "Enchiridion",
+  "id": "Enchiridion",
+  "tier": "SPECIAL",
+  "sfx": "FLAT",
+  "counter": null,
+  "numbers": [
+   0
+  ],
+  "hooks": [
+   "atPreBattle"
+  ],
+  "behavior": "atPreBattle() flashes, calls AbstractDungeon.returnTrulyRandomCardInCombat(CardType.POWER).makeCopy(), and if that copy's cost != -1 calls setCostForTurn(0); it marks the card seen and queues MakeTempCardInHandAction(card). Each combat therefore starts by adding one random Power card to hand, free for that first turn only - X-cost Powers keep their cost.",
+  "loc": {
+   "NAME": "Enchiridion",
+   "DESCRIPTION": "At the start of each combat, add a random #yPower card into your hand. It costs #b0 for that turn.",
+   "FLAVOR": "The legendary journal of an ancient lich."
+  },
+  "sts2_equivalent": null,
+  "sts2_api_risk": null
+ },
+ {
+  "cls": "NilrysCodex",
+  "id": "Nilry's Codex",
+  "tier": "SPECIAL",
+  "sfx": "MAGICAL",
+  "counter": null,
+  "numbers": [
+   3,
+   1
+  ],
+  "hooks": [
+   "onPlayerEndTurn"
+  ],
+  "behavior": "The relic holds no constants: onPlayerEndTurn() queues a RelicAboveCreatureAction and a CodexAction. CodexAction loops AbstractDungeon.returnTrulyRandomCardInCombat() until it holds 3 distinct cardIDs, opens cardRewardScreen.customCombatOpen(choices, CardRewardScreen.TEXT[1], true) so the pick is optional, and on selection takes discoveryCard.makeStatEquivalentCopy() and shuffles it into the draw pile via ShowCardAndAddToDrawPileEffect. It aborts immediately if MonsterGroup.areMonstersBasicallyDead().",
+  "loc": {
+   "NAME": "Nilry's Codex",
+   "DESCRIPTION": "At the end of your turn, you may shuffle #b1 of #b3 random cards into your draw pile.",
+   "FLAVOR": "Crafted by the infamous game master himself. Said to expand one's mind."
+  },
+  "sts2_equivalent": null,
+  "sts2_api_risk": null
+ },
+ {
+  "cls": "NlothsGift",
+  "id": "Nloth's Gift",
+  "tier": "SPECIAL",
+  "sfx": "FLAT",
+  "counter": null,
+  "numbers": [
+   3
+  ],
+  "hooks": [
+   "changeRareCardRewardChance"
+  ],
+  "behavior": "MULTIPLIER = 3.0f. changeRareCardRewardChance(int) returns the incoming chance * 3 (integer multiply), tripling the rare-card chance rolled when card rewards are generated. Single hook, no counter, no expiry - it lasts the rest of the run.",
+  "loc": {
+   "NAME": "N'loth's Gift",
+   "DESCRIPTION": "Triple the chance of finding #yRare cards from combat rewards.",
+   "FLAVOR": "The strange gift from N'loth. Whenever you try and unwrap it, another wrapped box of the same size lies within."
+  },
+  "sts2_equivalent": null,
+  "sts2_api_risk": "No hook scales rare-card odds: CardRarityOdds bakes the per-source rare chances in as consts/statics and CardCreationOptions only exposes WithRarityOdds(CardRarityOddsType) / WithFilter, so ModifyCardRewardCreationOptions can swap the whole odds preset or force a rarity (BigGameHunter's approach) but cannot express a literal 3x rare chance."
+ },
+ {
+  "cls": "SpiritPoop",
+  "id": "Spirit Poop",
+  "tier": "SPECIAL",
+  "sfx": "MAGICAL",
+  "counter": null,
+  "numbers": [],
+  "hooks": [],
+  "behavior": "Completely inert: the class overrides only getUpdatedDescription() (returns DESCRIPTIONS[0]) and makeCopy(). No counter, no constants, no gameplay hook - it is purely the consolation prize handed out by shrine/offering event branches.",
+  "loc": {
+   "NAME": "Spirit Poop",
+   "DESCRIPTION": "It's unpleasant.",
+   "FLAVOR": "The charred remains of your offering to the spirits."
+  },
+  "sts2_equivalent": null,
+  "sts2_api_risk": null
+ },
+ {
+  "cls": "OddMushroom",
+  "id": "Odd Mushroom",
+  "tier": "SPECIAL",
+  "sfx": "FLAT",
+  "counter": null,
+  "numbers": [
+   1.25,
+   25
+  ],
+  "hooks": [],
+  "behavior": "Declares VULN_EFFECTIVENESS = 1.25f and EFFECTIVENESS_STRING = 25 and overrides no gameplay hook; VulnerablePower does the work. In VulnerablePower.atDamageReceive(float, DamageType), when the type is NORMAL, the power's owner is the player and the player hasRelic(\"Odd Mushroom\"), the damage is multiplied by 1.25f and returned early instead of the usual Vulnerable 1.5x; VulnerablePower.updateDescription() also splices 25 into its own text while the relic is held.",
+  "loc": {
+   "NAME": "Odd Mushroom",
+   "DESCRIPTION": "When #yVulnerable, take #b25% more attack damage rather than #b50%.",
+   "FLAVOR": "\"After consuming trichella parastius I felt larger and less... susceptible.\" - Ranwid "
+  },
+  "sts2_equivalent": null,
+  "sts2_api_risk": "The Vulnerable multiplier is not an open hook: VulnerablePower.ModifyDamageMultiplicative hard-codes lookups of PaperPhrog, CrueltyPower and DebilitatePower, so a mod relic cannot register one. It must be emulated from the relic's own ModifyDamageMultiplicative (return 1.25/1.5 while the owner has VulnerablePower and props.IsPoweredAttack()), which composes multiplicatively and mis-stacks with any other Vulnerable-multiplier source."
+ },
+ {
+  "cls": "MarkOfTheBloom",
+  "id": "Mark of the Bloom",
+  "tier": "SPECIAL",
+  "sfx": "MAGICAL",
+  "counter": null,
+  "numbers": [
+   0
+  ],
+  "hooks": [
+   "onPlayerHeal"
+  ],
+  "behavior": "onPlayerHeal(int) flashes and returns 0 unconditionally, so every heal routed through AbstractPlayer.heal - combat heals, campfire Rest, event heals, potions, Burning Blood - is reduced to zero for the rest of the run. Max-HP gains are untouched; only the heal amount is zeroed.",
+  "loc": {
+   "NAME": "Mark of the Bloom",
+   "DESCRIPTION": "You can no longer heal.",
+   "FLAVOR": "In the Beyond, thoughts and reality are one."
+  },
+  "sts2_equivalent": null,
+  "sts2_api_risk": "Core StS2 exposes no general heal hook - CreatureCmd.Heal calls HealInternal directly and only fires Hook.AfterCurrentHpChanged; AbstractModel's only heal surface is ModifyRestSiteHealAmount (Rest Sites only). Needs BaseLib's IHealAmountModifier.ModifyHealMultiplicative => 0m, the interface this mod's MagicFlower already uses."
+ },
+ {
+  "cls": "RegalPillow",
+  "id": "Regal Pillow",
+  "tier": "COMMON",
+  "sfx": "MAGICAL",
+  "counter": null,
+  "numbers": [
+   15,
+   48
+  ],
+  "hooks": [
+   "canSpawn"
+  ],
+  "behavior": "HEAL_AMT = 15. The relic overrides only canSpawn(), which returns Settings.isEndless || AbstractDungeon.floorNum <= 48. The heal is applied externally: CampfireSleepEffect computes healAmount = (int)(maxHealth * 0.3f) and, if the player hasRelic(\"Regal Pillow\"), flashes it and does healAmount += 15 before AbstractPlayer.heal(healAmount, false); RestOption appends \"\\n+15\" and the relic name to the Rest button description.",
+  "loc": {
+   "NAME": "Regal Pillow",
+   "DESCRIPTION": "Whenever you #yRest, heal an additional #b15 HP.",
+   "FLAVOR": "Now you can get a proper night's rest."
+  },
+  "sts2_equivalent": "RegalPillow",
+  "sts2_api_risk": null
+ }
+]

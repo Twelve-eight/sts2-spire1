@@ -1,0 +1,17 @@
+G:\omp works\sts2-spire1\research\sigdump\obj\Debug\net9.0\sigdump.GeneratedMSBuildEditorConfig.editorconfig
+G:\omp works\sts2-spire1\research\sigdump\obj\Debug\net9.0\sigdump.AssemblyInfoInputs.cache
+G:\omp works\sts2-spire1\research\sigdump\obj\Debug\net9.0\sigdump.AssemblyInfo.cs
+G:\omp works\sts2-spire1\research\sigdump\obj\Debug\net9.0\sigdump.csproj.CoreCompileInputs.cache
+G:\omp works\sts2-spire1\research\sigdump\bin\Debug\net9.0\sigdump.exe
+G:\omp works\sts2-spire1\research\sigdump\bin\Debug\net9.0\sigdump.deps.json
+G:\omp works\sts2-spire1\research\sigdump\bin\Debug\net9.0\sigdump.runtimeconfig.json
+G:\omp works\sts2-spire1\research\sigdump\bin\Debug\net9.0\sigdump.dll
+G:\omp works\sts2-spire1\research\sigdump\bin\Debug\net9.0\sigdump.pdb
+G:\omp works\sts2-spire1\research\sigdump\obj\Debug\net9.0\sigdump.dll
+G:\omp works\sts2-spire1\research\sigdump\obj\Debug\net9.0\refint\sigdump.dll
+G:\omp works\sts2-spire1\research\sigdump\obj\Debug\net9.0\sigdump.pdb
+G:\omp works\sts2-spire1\research\sigdump\obj\Debug\net9.0\sigdump.genruntimeconfig.cache
+G:\omp works\sts2-spire1\research\sigdump\obj\Debug\net9.0\ref\sigdump.dll
+G:\omp works\sts2-spire1\research\sigdump\bin\Debug\net9.0\dnlib.dll
+G:\omp works\sts2-spire1\research\sigdump\obj\Debug\net9.0\sigdump.csproj.AssemblyReference.cache
+G:\omp works\sts2-spire1\research\sigdump\obj\Debug\net9.0\sigdump.csproj.Up2Date
