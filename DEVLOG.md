@@ -437,3 +437,53 @@ The salvaged artifacts were written by agents from transcripts — spot-check a 
 - LocDebug postfix runs `StartsWith("SPIRE1-")` on every GetRawText call — acceptable overhead.
 - A combat that died to the old bug stays stuck until the room is restarted (engine behavior);
   saves from before the fix may hold such rooms.
+
+## Session 11 — Darv NRE, full art conversion, dual review (2026-08-22 overnight)
+
+### 11.1 Darv (ancient) event freeze — fixed (`03ae5d1` + `7c98579`)
+- Act-2 ancient **达弗/Darv** froze after its first line. Log: NRE at
+  `DustyTome.SetupForPlayer ← Darv.GenerateInitialOptions`. Chain: DustyTome rolls a random
+  Ancient-rarity card from `player.Character.CardPool`; our placeholder pools contain only
+  SPIRE1-* cards (none Ancient) → `NextItem(empty)` → null → `.Id` throws; the exception kills
+  `BeginEvent`, so the event screen never opens.
+- Fix: `DustyTomeAncientFallbackPatch` prefix — if the character's own pool has no Ancients,
+  roll from the native pool of the PlaceholderID stand-in instead (ironclad/silent/defect/
+  **regent** for Watcher — the regent mapping was the P1 gap EffReview caught). Guarded against
+  an empty fallback list too. StS1 has no Ancient rarity; borrowing the native pool's is the
+  intended stopgap until legacy ancients are ported as cards.
+
+### 11.2 Full art conversion from desktop-1.0.jar (`6128311`)
+- Unpacked all 2188 images; System.Drawing (PowerShell) batch pipeline in `.tmp/convert-*.ps1`.
+- Cards: 320 auto-mapped by normalized name + 11 manual (relic-styled cards, potion cards,
+  beta-era cards) = **331/331** card_portraits at 250×190 + big 1000×760 (StS1 ships 500×380;
+  scaled ±2× bicubic).
+- Relics: **36/38** classes mapped to relics/*.png (94×94), outline/ (94×94), largeRelics/
+  (256×256, falls back to upscaling the small art when a large variant doesn't exist).
+  FaceOfCleric=clericFace; MutagenicStrength has no StS1 counterpart (kept placeholder).
+- Powers: 30 auto + 20 semantic substitutes (StS1 buff icons live only inside texture atlases,
+  not standalone files) = 50 icons at 64×64 + 256×256, center-square-cropped from power-card
+  illustrations.
+- Potions: 8 potion CARDS composed from layered glass+liquid atlases (StS1 composites these
+  at runtime); outlines from the glass layer.
+- NOT converted: monster battle sprites (Spine atlas pieces — need skeleton data to pose;
+  M3 real-rig work), event illustrations (StS2 events are scene-based), charui (BaseLib
+  routes those through PlaceholderID to shipped assets already).
+- Final pck: 893 art entries, 7.0 MB.
+
+### 11.3 zhs text defects found via log triage (`bf7ff73`, `a1c2bb2`)
+- "Found end tag center, expected G" tooltip errors: 22 zhs keys carried orphaned StS1 energy
+  tags `[G]/[R]/[B]/[W]` — StS2 parses `[G]` as an unclosed BBCode color tag. Replaced with
+  `*能量*`. All 17 localization JSONs now scan clean of legacy tags.
+- 183 zhs card descriptions contained literal " NL " separators (StS1 line-break syntax);
+  replaced with real `\n`.
+
+### 11.4 Dual review (both reports in .tmp/)
+- Efficiency (`review-efficiency.md`): no P0. P1 Watcher regent gap → fixed. P2s: FilterAncient
+  allocation acceptable (once-per-run, not worth caching keyed on UnlockState);
+  LocDebug config-read could snapshot to a field if init order ever changes; stray decompile
+  scratch files removed.
+- Security (`review-security.md`): **no Critical/High**. Low ×3 — floating `Version="*"` deps
+  (fix: pin + lock file), BBCode option-title prefixes `[离开]` trip ParseBbcode in
+  CallDeferred (caught, cosmetic; fix: escape or use 【】), PckPacker packs everything except
+  four extensions (currently clean, add whitelist target). Zero network/process/shell APIs in
+  the codebase; path joins use compile-time constants only.
