@@ -1,0 +1,20 @@
+{
+  "SPIRE1-ENABLE_STS1_CONTENT.title": "Enable StS1 Content",
+  "SPIRE1-ENABLE_STS1_CONTENT.hover.title": "Enable StS1 Content",
+  "SPIRE1-ENABLE_STS1_CONTENT.hover.desc": "Master switch. When OFF, all Slay the Spire 1 content from this mod is gated off while the mod stays installed.",
+  "SPIRE1-ENABLE_STS1_CHARACTERS.title": "StS1 Characters",
+  "SPIRE1-ENABLE_STS1_CHARACTERS.hover.title": "StS1 Characters",
+  "SPIRE1-ENABLE_STS1_CHARACTERS.hover.desc": "Show the StS1 characters (\"StS1 - X\") in character select.",
+  "SPIRE1-ENABLE_STS1_CARDS.title": "StS1 Cards",
+  "SPIRE1-ENABLE_STS1_CARDS.hover.title": "StS1 Cards",
+  "SPIRE1-ENABLE_STS1_CARDS.hover.desc": "Inject StS1 colorless cards into the shared reward pool.",
+  "SPIRE1-ENABLE_STS1_RELICS.title": "StS1 Relics",
+  "SPIRE1-ENABLE_STS1_RELICS.hover.title": "StS1 Relics",
+  "SPIRE1-ENABLE_STS1_RELICS.hover.desc": "Inject StS1 relics into the shared reward pools.",
+  "SPIRE1-ENABLE_STS1_DUNGEON.title": "StS1 Dungeon Content",
+  "SPIRE1-ENABLE_STS1_DUNGEON.hover.title": "StS1 Dungeon Content",
+  "SPIRE1-ENABLE_STS1_DUNGEON.hover.desc": "Register the StS1 dungeon acts, monsters and encounters. Does NOT change what a new run plays by itself - see the next option.",
+  "SPIRE1-USE_STS1_DUNGEON.title": "Play StS1 Dungeon",
+  "SPIRE1-USE_STS1_DUNGEON.hover.title": "Play StS1 Dungeon",
+  "SPIRE1-USE_STS1_DUNGEON.hover.desc": "The next NEW singleplayer run plays the StS1 act sequence instead of the StS2 acts. Off by default so installing this mod never silently changes a vanilla run. Multiplayer is not affected."
+}
