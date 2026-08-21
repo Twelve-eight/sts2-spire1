@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Rooms;
 using Spire1.Spire1Code.Monsters;
 
 namespace Spire1.Spire1Code.Encounters;
