@@ -44,6 +44,13 @@ internal static class DungeonSelectionPatch
     /// </summary>
     private static readonly Type[] Sts1ActOrder = [typeof(Exordium)];
 
+    /// <summary>
+    /// The full StS1 dungeon is four acts. Until all four are ported, the selector refuses to
+    /// substitute: a one-act "dungeon" would end the run after Exordium's boss, which is a test
+    /// rig, not the feature. Remove this gate when <see cref="Sts1ActOrder"/> holds all four.
+    /// </summary>
+    private const int CompleteDungeonActCount = 4;
+
     [HarmonyPrefix]
     [HarmonyPatch(nameof(NGame.StartNewSingleplayerRun))]
     private static void SubstituteActs(ref IReadOnlyList<ActModel> acts)
@@ -52,6 +59,13 @@ internal static class DungeonSelectionPatch
         {
             return;
         }
+
+        if (Sts1ActOrder.Length < CompleteDungeonActCount)
+        {
+            MainFile.Logger.Warn($"StS1 dungeon selected but only {Sts1ActOrder.Length}/{CompleteDungeonActCount} acts are ported; keeping the StS2 acts.");
+            return;
+        }
+
 
         List<ActModel> dungeon = new(Sts1ActOrder.Length);
         foreach (Type actType in Sts1ActOrder)
