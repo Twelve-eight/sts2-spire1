@@ -25,3 +25,7 @@ mod/_staging/
 .idea/
 .vs/
 *.user
+
+# Nested build artifacts from research tools
+research/**/obj/
+research/**/bin/
