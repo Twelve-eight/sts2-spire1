@@ -209,3 +209,41 @@ Re-verified directly against the XML: **zero** documented members mention `Monst
 6. **Winding Halls `[Embrace Madness]`** — exactly 2 Madness into the deck; playing one should zero a random hand card's cost for the rest of the combat (no gold flash — known cosmetic omission).
 
 The salvaged artifacts were written by agents from transcripts — spot-check a citation or two before building on them.
+
+## ===== SESSION 6 (2026-08-21) — SINGLE-DEPENDENCY, BaseLib 3.4.5, M2 MONSTERS =====
+
+### 6.1 BaseLib 3.4.5 installed — a live compile/runtime mismatch is now closed
+- Discovered: we compiled against NuGet `Alchyr.Sts2.BaseLib` **3.4.5** while the game loaded **3.3.5**. Any source-only API would have compiled cleanly and thrown at load. Ironclad got away with it only because it happens to use shipped APIs.
+- User downloaded the official build (`I:/Downloads/BaseLib.3.4.5.zip`); its three files are **md5-identical** to the NuGet package's `Content/`+`lib/net9.0/` payload (we compile against exactly this build). Installed into `mods/BaseLib/`; 3.3.5 kept at `mods/BaseLib-3.3.5-backup/`. Game was not running during the swap.
+- Consequence: the whole 3.4.5 surface is now legal at runtime; `docs/BaseLib-API.md` §9's skew table is history, not a constraint.
+
+### 6.2 Single dependency, decided with evidence
+- `mods/BaseLib/BaseLib.json` declares `dependencies: []` — the earlier "runtime deps BaseLib+RitsuLib" note in DEVELOP.md §0 was simply wrong.
+- Our code references zero Ritsu/Jmc symbols; `Spire1.json` declares exactly `[{"id": "BaseLib", "min_version": "3.4.5"}]`.
+- RitsuLib rejected; its two headline benefits dissolved under inspection: relic icons need no second library because `RelicModel.IconBaseName/PackedIconPath/BigIconPath` are all virtual (engine `RelicModel.cs:128-140`) — the same donor trick characters and monsters use; and Necronomicon's `freeToPlayOnce` maps onto engine `CardModel.SetToFreeThisTurn()` → `EnergyCost.SetThisTurnOrUntilPlayed(0)` (`CardModel.cs:1267-1271`).
+
+### 6.3 Monster/encounter contract, nailed against the binaries
+- `CustomMonsterModel` is BaseLib's ONLY content base without `ILocalizationProvider`, so our `Spire1Monster` adds it; `ModelLocPatch` maps category `MonsterModel` → table `monsters`, so `LocTable` stays null. Loc is in-code via `MonsterLoc` (keys become `moves.<STATE_ID>.title`).
+- Visuals: `Spire1Monster.DonorId` → `SceneHelper.GetScenePath("creature_visuals/" + DonorId)`; BaseLib's `VisualsPath.cs` patch substitutes it. Engine default animator already matches shipped rig convention — no animation work per monster.
+- Encounters attach via `IsValidForAct`; BaseLib postfixes `GenerateAllEncounters` (must be *declared* — it is abstract in `ActModel`, so every act qualifies) and appends custom encounters whose `IsValidForAct` accepts the act.
+- `act.Index = -2` (from `CustomActModel(-1)`): engine reads `.Index` in one place only (`ModelDb.cs:334`) behind `if (Index >= 0)` — negative acts stay out of natural rotation safely. `CustomActModel.AllAncients` THROWS on non-basegame index (overridden in Exordium); `BaseNumberOfRooms` falls back to 15 harmlessly.
+- Landed: `Monsters/Spire1Monster.cs`, `Monsters/Spire1Encounter.cs`, `Acts/Spire1Act.cs`, `Acts/Exordium.cs` (surviving artifact from the killed wave — shipped act-1 art paths from Overgrowth, AllAncients/rooms/map-point overrides, empty encounter list by design), `Config.UseSts1Dungeon` toggle (default OFF), `Patches/DungeonSelectionPatch.cs`.
+
+### 6.4 The dungeon selector turned out to be one patch, not a subsystem
+- StS2 has no act-sequencing API and needs none: `NGame.StartNewSingleplayerRun(character, shouldSave, acts, ...)` takes the run's act list as a parameter ("The canonical acts that should be in the run") and hands it to `RunState.CreateForNewRun`, which walks it by list position via `CurrentActIndex`. Choosing a dungeon = rewriting that one argument.
+- One prefix patch covers character-select/custom/daily singleplayer. Multiplayer deliberately NOT patched yet: co-op has a second direct `RunState.CreateForNewRun` call site (`NCharacterSelectScreen.cs:745`) and per-client config substitution would desync a lobby. Host-authoritative choice is M3 work.
+- Completeness gate added after review feedback: until all four StS1 acts exist, the selector refuses to substitute (a one-act run would end after Exordium's boss). Fail-safe default: vanilla act sequence.
+
+### 6.5 M2 fan-out — and what killed the first wave
+- First wave (opus5): GremlinLouseWriter died after 18m20s having written NOTHING — transcript shows solid extraction work, then death mid-synthesis. Root cause matches DEVLOG §5.6: batching writes to the end. Two more socket deaths followed.
+- Second wave (same model as main agent), six slices: SlimesW / GremlinsW / HumanoidsW / LousesW(→LousesW2 after a socket death; the dead agent's extracted louse data was salvaged via IRC and archived to `mod/_staging/louse-extracted-data.md`) / BossesW / EncountersW. Anti-crash rule in every brief: write each file the moment its data is extracted; report ≤2 KB.
+- Reusable javap dumps archived to `research/sts1-javap/` (MonsterHelper, AbstractDungeon, AbstractRoom, absmon, lice, nob, gremlinfat, anger).
+
+### Engineering debt paid this session (user-approved review items)
+- **git initialized** (first commit `9bcfc06`); `.gitignore` excludes .tmp/.nuget/caches/build output; nested research obj/bin removed from index.
+- Durable artifacts moved out of `.tmp/`: decompiled trees now at `research/engine-dllsrc/` (3538 cs) + `research/baselib-dll/` (452 cs); javap dumps at `research/sts1-javap/`. `.tmp3/` deleted.
+- DEVLOG split: sessions 1-3 → `DEVLOG-archive.md`; live file starts with a STATUS header.
+
+### Verification state — BE HONEST ABOUT THIS
+- Central build green AFTER base classes landed (0 errors, before the worker wave). NOT yet rebuilt with Exordium + patch (Exordium references three encounter classes being written now).
+- No in-game smoke test of anything from this session yet. The face-relics checklist from session 5 is still outstanding with the user, who is awake and available — hand it over when the wave lands and the build is green.
