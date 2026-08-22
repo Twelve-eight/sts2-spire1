@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Models.CardPools;
 using Spire1.Spire1Code.Character;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -14,7 +15,7 @@ namespace Spire1.Spire1Code.Cards;
 /// Mirror of the base-game Burn (which deals via HasTurnEndInHandEffect + OnTurnEndInHand).
 /// Burn+ (4 damage) not implemented: base-game Burn has MaxUpgradeLevel 0 and statuses never upgrade.
 /// </summary>
-[Pool(typeof(Spire1LegacyPool))]
+[Pool(typeof(StatusCardPool))]
 public class Burn() : Spire1Card(-1, CardType.Status, CardRarity.Status, TargetType.None)
 {
     public override int MaxUpgradeLevel => 0;
