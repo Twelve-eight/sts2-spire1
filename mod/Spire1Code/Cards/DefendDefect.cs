@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Defect — Defend (Basic). Gain 5 Block (8 upgraded).</summary>
-[Pool(typeof(Spire1LegacyPool))]
+[Pool(typeof(DefectCardPool))]
 public class DefendDefect() : Spire1Card(1, CardType.Skill, CardRarity.Basic, TargetType.None)
 {
     protected override HashSet<CardTag> CanonicalTags => [CardTag.Defend];

@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Defect — Zap (Basic). Channel 1 Lightning. (0 cost upgraded).</summary>
-[Pool(typeof(Spire1LegacyPool))]
+[Pool(typeof(DefectCardPool))]
 public class Zap() : Spire1Card(1, CardType.Skill, CardRarity.Basic, TargetType.Self)
 {
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)

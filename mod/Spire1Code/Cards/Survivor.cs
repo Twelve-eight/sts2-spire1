@@ -11,7 +11,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Silent — Survivor (Basic). Gain 8 Block, discard 1 card (11 upgraded).</summary>
-[Pool(typeof(Spire1LegacyPool))]
+[Pool(typeof(SilentCardPool))]
 public class Survivor() : Spire1Card(1, CardType.Skill, CardRarity.Basic, TargetType.None)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(8, ValueProp.Move), new CardsVar(1)];
