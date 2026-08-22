@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Models.CardPools;
 using Spire1.Spire1Code.Character;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -13,7 +14,7 @@ namespace Spire1.Spire1Code.Cards;
 /// Mirror of the base-game Shame: applies at turn end and sets SkipNextDurationTick so the
 /// Frail is not ticked down immediately and lasts through the enemy's turn.
 /// </summary>
-[Pool(typeof(Spire1LegacyPool))]
+[Pool(typeof(CurseCardPool))]
 public class Shame() : Spire1Curse()
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<FrailPower>(1)];
