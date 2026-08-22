@@ -3,6 +3,8 @@ using MegaCrit.Sts2.Core.Rooms;
 using Spire1.Spire1Code.Acts;
 using Spire1.Spire1Code.Config;
 
+using System.Linq;
+
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
@@ -25,7 +27,15 @@ public abstract class Spire1Encounter : CustomEncounterModel, ILocalizationProvi
     {
     }
 
-    public override bool IsValidForAct(ActModel act) => Spire1Config.DungeonEnabled && act is Spire1Act;
+    /// <summary>
+    /// StS1 act ordinals (1-4) this encounter belongs to. Default: act 1 only, so Act-1
+    /// encounters stop leaking into The City / The Beyond / The Ending (which have their own,
+    /// harder pools once ported). Subclasses for later acts override this.
+    /// </summary>
+    public virtual IReadOnlyList<int> HomeActs => [1];
+
+    public override bool IsValidForAct(ActModel act) =>
+        Spire1Config.DungeonEnabled && act is Spire1Act spire1Act && HomeActs.Contains(spire1Act.Sts1ActNumber);
 
     /// <summary>
     /// Encounter display name. Required for every encounter.

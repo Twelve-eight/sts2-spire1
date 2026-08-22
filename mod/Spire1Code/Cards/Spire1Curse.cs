@@ -1,4 +1,5 @@
 using BaseLib.Abstracts;
+using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models.CardPools;
@@ -16,6 +17,6 @@ public abstract class Spire1Curse() : CustomCardModel(-1, CardType.Curse, CardRa
 {
     public override int MaxUpgradeLevel => 0;
 
-    public override string CustomPortraitPath => "card.png".BigCardImagePath();
-    public override string PortraitPath => "card.png".CardImagePath();
+    public override string CustomPortraitPath => $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".BigCardImagePath();
+    public override string PortraitPath => $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".CardImagePath();
 }

@@ -22,16 +22,18 @@ namespace Spire1.Spire1Code.Acts;
 /// </summary>
 public sealed class TheCity : Spire1Act, ILocalizationProvider
 {
+
+    public override int Sts1ActNumber => 2;
     // ---- shipped act-2 art (hive), redirected through BaseLib's CustomActModel hooks ----
 
     protected override string CustomMapTopBgPath =>
-        "res://images/packed/map/map_bgs/hive/map_top_hive.png";
+        "res://Spire1/images/map_bgs/map_top_the_city.png";
 
     protected override string CustomMapMidBgPath =>
-        "res://images/packed/map/map_bgs/hive/map_middle_hive.png";
+        "res://Spire1/images/map_bgs/map_middle_the_city.png";
 
     protected override string CustomMapBotBgPath =>
-        "res://images/packed/map/map_bgs/hive/map_bottom_hive.png";
+        "res://Spire1/images/map_bgs/map_bottom_the_city.png";
 
     protected override string CustomRestSiteBackgroundPath =>
         "res://scenes/rest_site/hive_rest_site.tscn";

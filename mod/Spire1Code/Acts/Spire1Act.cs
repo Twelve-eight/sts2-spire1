@@ -22,4 +22,7 @@ public abstract class Spire1Act : CustomActModel
     protected Spire1Act() : base(-1)
     {
     }
+
+    /// <summary>StS1 act ordinal (1-4). Encounters declare which ordinals they belong to.</summary>
+    public abstract int Sts1ActNumber { get; }
 }
