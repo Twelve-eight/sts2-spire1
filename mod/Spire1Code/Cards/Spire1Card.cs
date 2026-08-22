@@ -1,4 +1,5 @@
 using BaseLib.Abstracts;
+using BaseLib.Extensions;
 using BaseLib.Utils;
 using Spire1.Spire1Code.Character;
 using Spire1.Spire1Code.Extensions;
@@ -14,6 +15,6 @@ namespace Spire1.Spire1Code.Cards;
 public abstract class Spire1Card(int cost, CardType type, CardRarity rarity, TargetType target)
     : CustomCardModel(cost, type, rarity, target)
 {
-    public override string CustomPortraitPath => "card.png".BigCardImagePath();
-    public override string PortraitPath => "card.png".CardImagePath();
+    public override string CustomPortraitPath => $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".BigCardImagePath();
+    public override string PortraitPath => $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".CardImagePath();
 }

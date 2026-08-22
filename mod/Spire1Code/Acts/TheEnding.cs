@@ -25,16 +25,18 @@ namespace Spire1.Spire1Code.Acts;
 /// </summary>
 public sealed class TheEnding : Spire1Act, ILocalizationProvider
 {
+
+    public override int Sts1ActNumber => 4;
     // ---- borrowed shipped act-3 art (glory); no fourth-act art ships ----
 
     protected override string CustomMapTopBgPath =>
-        "res://images/packed/map/map_bgs/glory/map_top_glory.png";
+        "res://Spire1/images/map_bgs/map_top_the_ending.png";
 
     protected override string CustomMapMidBgPath =>
-        "res://images/packed/map/map_bgs/glory/map_middle_glory.png";
+        "res://Spire1/images/map_bgs/map_middle_the_ending.png";
 
     protected override string CustomMapBotBgPath =>
-        "res://images/packed/map/map_bgs/glory/map_bottom_glory.png";
+        "res://Spire1/images/map_bgs/map_bottom_the_ending.png";
 
     protected override string CustomRestSiteBackgroundPath =>
         "res://scenes/rest_site/glory_rest_site.tscn";

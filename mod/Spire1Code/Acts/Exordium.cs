@@ -35,16 +35,18 @@ namespace Spire1.Spire1Code.Acts;
 /// </summary>
 public sealed class Exordium : Spire1Act, ILocalizationProvider
 {
+
+    public override int Sts1ActNumber => 1;
     // ---- shipped act-1 art, redirected through BaseLib's CustomActModel hooks ----
 
     protected override string CustomMapTopBgPath =>
-        "res://images/packed/map/map_bgs/overgrowth/map_top_overgrowth.png";
+        "res://Spire1/images/map_bgs/map_top_exordium.png";
 
     protected override string CustomMapMidBgPath =>
-        "res://images/packed/map/map_bgs/overgrowth/map_middle_overgrowth.png";
+        "res://Spire1/images/map_bgs/map_middle_exordium.png";
 
     protected override string CustomMapBotBgPath =>
-        "res://images/packed/map/map_bgs/overgrowth/map_bottom_overgrowth.png";
+        "res://Spire1/images/map_bgs/map_bottom_exordium.png";
 
     protected override string CustomRestSiteBackgroundPath =>
         "res://scenes/rest_site/overgrowth_rest_site.tscn";
