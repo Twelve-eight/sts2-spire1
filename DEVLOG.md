@@ -692,3 +692,9 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - **seed2b = Regent 第二次斩心**（"That's 2 wins"）。死亡点不在游戏层：杀心→建筑师→结算屏后**回主菜单时**资源加载失败（`char_select_bg_necrobinder.tscn` / `characterselect_necrobinder_skel_data.tres` 解析错误 + LieRenTVmod 缺选人界面图）→ 未走干净关机 exit 5。嫌疑 = NecrobinderFemPortraits/LieRenTV 等肖像类 mod 与当前 beta 选人界面资源冲突——**非我方层问题**，独立待查项。
 - `[ERROR] Act 4 is not yet implemented` 为**良性日志**：ProgressSaveManager 给"完成第四幕"发角色 Epoch 时发现原版无此纪元（cs:579 case 3），仅缺一次解锁奖励。
 - **无图卡观察**：seed2b 日志零 card_portrait 加载失败；当时出牌均为原版 Regent 卡（GLITTERSTREAM/PANIC_BUTTON/CRUSH_UNDER/REFLECT/GOLD_AXE 等）。"回复4点生命。消耗。"未匹配我方 zhs 文案 → 非我方卡。需用户下次记下卡名才能追；日志侧无异常支撑。
+
+### 战果 #5：302 张卡面占位图全部替换为 StS1 原版美术（用户报告"包扎没卡图"触发）
+- 用户目击 `SPIRE1-BANDAGE_UP`（包扎）无卡图。审计：card_portraits 333 张中 **302 张为 ~314B 纯色占位**（250×190 尺寸正确但无内容）——session 11.2 的"331/331 mapped"仅指文件存在，非真美术。big/ 目录同样为 3KB 占位（不可用）。
+- 恢复源 = `.tmp/sts1full/images/1024Portraits/`（368 张 jar 解包图）：basename 直配 + 去符号 squeeze（j_a_x→jax 等）+ 全树兜底；10 张显式别名：per-color 共享 strike.png/defend.png、charge_battery→conserve_battery、wreathe_of_flame→wreath_of_flame、judgment→judgement、lessons_learned→lesson_learned。PowerShell System.Drawing 批量 500×380→250×190（脚本 `.tmp/restore-portraits.ps1`）。零残留。
+- pck 8.5MB→20.6MB 已部署（18:12）。commit `5588f9f`。**待用户下次进游戏目验包扎与其余卡面。**
+- 教训：DEVLOG 11.2 的"331/331 mapped"表述误导（存在≠真图）；后续"已映射"类声明必须附带尺寸/字节数证据。
