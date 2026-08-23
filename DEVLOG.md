@@ -605,3 +605,19 @@ v1.0.5（更新 07-30），111.45MB，479 评价；已下载到
 - ⚠️ **碰撞面 #1**：我方 fallback 的 The Ending（CorruptHeart/SpireShield/SpireSpear/HomeActs=[4]）与 Act4Heart 同内容双份并存——若用户同时启用我方幕与 AFTP 栈，会出现两个第四幕/两套心脏。P1 审计首项：确认 BossDiscoveryOrder/act 池在双装时的行为，必要时默认关停我方幕（config 门禁已具备）。
 - **MP Rebalance v0.0.1**：仅打 AFTP 自家怪物类（AwakenedOne/Nob/MadGremlin/Transient/Shifting）+ExtraDamage 等 power，依赖 AFTP≥1.0.5；与我方补丁面零交集。
 - **ActToggler2 v1.0.0**：单一 `ActTogglerPatch`，按配置开关幕池；依赖 BaseLib≥3.4.0。待验证粒度（是否区分幕来源 mod——影响它会不会把我方 fallback 幕也关掉）。
+
+## Session 15 — P1 互操作冒烟开跑 (2026-08-23 下午)
+
+**运行环境事实（后续会话必读）**：
+- 引擎**自动加载已订阅 workshop mod**（日志 "Looking for mods to load from Steam Workshop"），手动复制进 mods/ 会触发重复加载警告并被引擎消解（本地版优先，Steam 版禁用）——**不要再手动复制订阅 mod 进 mods/**。
+- `--autoslay` 契约（NGame.cs:694）：需 `IsReleaseGame()==false`（我方 AutoSlayGatePatch 已解锁）+ `--autoslay`；`--seed X` 固定序列、`--log-file Y` 落专用日志。AutoSlayer **随机选角色但同 seed 必同角色**（Rng 以 seed 哈希播种——用户观察到的"每次都是亡灵契约师/Necrobinder"即此）。runTimeout=25min。要覆盖不同角色→换 seed。
+- **hub 启动游戏必须 `pty:false`**：pty:true 会把 Godot stdout 灌进 omp 终端与 TUI 重绘打架（用户报告的显示 bug）。
+
+### 战果 #1：WrithingMass 无意图环 → native 栈溢出（P0，已修复）
+- 现象：seed P1SMOKE1 两次均于第三幕 42 层 `SPIRE1-WRITHING_MASS_ENCOUNTER` 开战瞬间 fatal native crash（exit 0x7FFFFFFF），最后日志 `[IntentGraph] Generating intent graph for monster: 扭曲团块`。
+- 根因：六个 reroll 条件态与 bands 形成不经过任何招式节点的纯条件环（reroll0_39⇄reroll40_99 等）；无环保护的原版拓扑假设被静态走图者（第三方 IntentGraph，引擎 AI guard 同理风险）递归爆栈。
+- 修复 `361d330`：重掷改为代码内急切解析（ResolveFirst/ResolveBands，**RNG 抽取顺序逐一保持**）；静态机 = root→5 招式→root，与原版怪物同形。审计脚本扫全部 50 怪物文件：仅此一家有纯条件环。
+- 附带发现：`res://animations/map/spire1-awakened_one_encounter/*` 地图图标缺失（非致命，回退加载）；`missing_power.png` 未打包（我方 power 图标回退链断一截）——待补 pck 资产。
+
+### 冒烟正面信号（崩溃前 42 层）
+AFTP/Act4Heart/ActToggler2/MP-Rebalance + Spire1 五件套正常同载；随机到 Necrobinder 打出了 SPIRE1-MADNESS（共享卡池互通 ✓）；我方遭遇（FOUR_SHAPES/DARKLINGS 等）连续正常出怪战斗；休息点/商店/事件 handler 全部工作。
