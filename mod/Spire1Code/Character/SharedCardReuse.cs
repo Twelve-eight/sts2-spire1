@@ -60,7 +60,7 @@ internal static class SharedCardReuse
     [
         // Commons
         typeof(Sts2Cards.Anger),          // 0E, 6 dmg (+3), add a copy to discard
-        typeof(Sts2Cards.Armaments),      // 1E, 5 block, upgrade 1 card in hand (+ all)
+        typeof(Sts2Cards.Armaments),      // 1E, 5 block, upgrade a card in hand (+ all)
         typeof(Sts2Cards.BodySlam),       // 1E, dmg = current Block (+ cost 0)
         typeof(Sts2Cards.Havoc),          // 1E, play top card of draw pile, Exhaust (+ 0E)
         typeof(Sts2Cards.Headbutt),       // 1E, 9 dmg (+2), place discard card on draw top
@@ -77,14 +77,16 @@ internal static class SharedCardReuse
     [
         // Commons
         typeof(Sts2Cards.Backflip),       // 1E, 5 block (+3), draw 2
-        typeof(Sts2Cards.BladeDance),     // 1E, add 3 Shivs to hand (+1)
+        // BladeDance EXCLUDED (re-verify 2026-08-24): shipped version self-exhausts
+        // (CanonicalKeywords => [Exhaust]) while StS1's does not (jar: zero exhaust) —
+        // B-group drift; our own Cards/BladeDance.cs serves in SilentCardPool instead.
         typeof(Sts2Cards.CloakAndDagger), // 1E, 6 block, add 1 Shiv (+1)
         typeof(Sts2Cards.DaggerSpray),    // 1E, 4 dmg to ALL, twice
         typeof(Sts2Cards.DaggerThrow),    // 1E, 9 dmg, draw 1, discard 1
-        typeof(Sts2Cards.DeadlyPoison),   // 1E, apply 5 Poison (+2), Exhaust
-        typeof(Sts2Cards.Deflect),        // 0E, 7 block (+3)
-        typeof(Sts2Cards.DodgeAndRoll),   // 1E, 11 block (+3), 4 block next turn
-        typeof(Sts2Cards.PiercingWail),   // 1E, 6 Weak to ALL this turn, Exhaust (+9)
+        typeof(Sts2Cards.DeadlyPoison),   // 1E, apply 5 Poison (+2) — NO exhaust either side
+        typeof(Sts2Cards.Deflect),        // 0E, 4 block (+3) — jar-arbitrated
+        typeof(Sts2Cards.DodgeAndRoll),   // 1E, 4 block (+2), gain equal block next turn
+        typeof(Sts2Cards.PiercingWail),   // 1E, enemies lose 6 Str this turn (+2), Exhaust
         typeof(Sts2Cards.Prepared),       // 0E, draw 1 discard 1 (+2/+2)
         typeof(Sts2Cards.Slice),          // 0E, 6 dmg (+3)
     ];
