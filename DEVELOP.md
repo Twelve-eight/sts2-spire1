@@ -76,6 +76,7 @@ G:/omp works/sts2-spire1/
 ```
 
 ## 5. Contracts (STABLE — all workers)
+- **External communications MUST disclose agent authorship** (user directive, mirroring AFTP's own AI-disclosure standard): every upstream issue/comment/draft states that research and writing were done by the autonomous agent (`ox-alpha`) under Twelve-eight's direction, with evidence sources named (decompiled shipped binaries, live autoslay logs, local repro runs).
 - Namespaces: root `Spire1`; code under `Spire1.Spire1Code.{Cards,Relics,Powers,Potions,Character,Monsters,Encounters,Acts,Config}`. Class name = identity (drives ID + loc key), StS1-descriptive PascalCase.
 - Every card extends `Spire1Card`; every relic `Spire1Relic`; pools exist; `[Pool]` inherited; no manual registration.
 - Every content class MUST add its localization entry to matching `localization/eng/*.json` (STS001 fails build). Card: `SPIRE1-<CLASS>` → `{ "title": "...", "description": "Deal !D! damage." }`.
