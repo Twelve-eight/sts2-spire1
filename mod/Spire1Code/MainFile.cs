@@ -33,8 +33,30 @@ public partial class MainFile : Node
         // game generates any pool, because ModHelper freezes modded pool content on first use.
         SharedCardReuse.Register();
 
-        // Apply Harmony patches declared in this assembly.
+        // Apply Harmony patches declared in this assembly — one try/catch PER TYPE so a single
+        // bad patch can never abort the whole set (PatchAll aborts on first failure, which
+        // silently stripped every other patch for an entire night run on 2026-08-24).
         Harmony harmony = new(ModId);
-        harmony.PatchAll();
+        int failed = 0;
+        foreach (var type in typeof(MainFile).Assembly.GetTypes())
+        {
+            if (type.GetCustomAttributes(typeof(HarmonyPatch), false).Length == 0)
+            {
+                continue;
+            }
+            try
+            {
+                harmony.CreateClassProcessor(type).Patch();
+            }
+            catch (Exception e)
+            {
+                failed++;
+                Logger.Error($"Harmony patch {type.Name} failed: {e.Message}");
+            }
+        }
+        if (failed > 0)
+        {
+            Logger.Error($"Harmony: {failed} patch class(es) failed to apply");
+        }
     }
 }
