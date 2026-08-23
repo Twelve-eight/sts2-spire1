@@ -43,6 +43,19 @@ internal static class RestSiteBackgroundPatch
         rect.SetAnchorsPreset(Control.LayoutPreset.FullRect);
         root.AddChild(rect);
 
+        // Engine contract (NRestSiteRoom._Ready): the returned control's subtree must expose
+        // a scene-unique "%RestSiteLighting" control used for room-light modulation. Without
+        // it GetNode("%RestSiteLighting") throws and the whole rest-site room fails to init.
+        var lighting = new Control();
+        lighting.Name = "RestSiteLighting";
+        lighting.MouseFilter = Control.MouseFilterEnum.Ignore;
+        lighting.SetAnchorsPreset(Control.LayoutPreset.FullRect);
+        root.AddChild(lighting);
+        // Godot registers scene-unique names through the OWNER, not the parent: a runtime
+        // child needs Owner set before UniqueNameInOwner takes effect, otherwise
+        // GetNode("%RestSiteLighting") cannot resolve and room init aborts.
+        lighting.Owner = root;
+        lighting.UniqueNameInOwner = true;
         return root;
     }
 }
