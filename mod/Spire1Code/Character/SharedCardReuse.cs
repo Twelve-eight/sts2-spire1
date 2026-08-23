@@ -53,14 +53,49 @@ internal static class SharedCardReuse
         typeof(Sts2Cards.Reboot),          // 0E, shuffle everything back, draw 4 (+2), Exhaust
     ];
 
+    /// <summary>Shipped StS2 cards identical to their StS1 Ironclad counterparts (A-group in
+    /// .tmp/duplicate-cards-report.md). Required: ROOM_FULL_OF_CHEESE Gorge demands 8 distinct
+    /// Commons from the character pool alone, and our own Ironclad commons number only 6.</summary>
+    private static readonly System.Type[] IroncladReuse =
+    [
+        // Commons
+        typeof(Sts2Cards.Anger),          // 0E, 6 dmg (+3), add a copy to discard
+        typeof(Sts2Cards.Armaments),      // 1E, 5 block, upgrade 1 card in hand (+ all)
+        typeof(Sts2Cards.BodySlam),       // 1E, dmg = current Block (+ cost 0)
+        typeof(Sts2Cards.Havoc),          // 1E, play top card of draw pile, Exhaust (+ 0E)
+        typeof(Sts2Cards.Headbutt),       // 1E, 9 dmg (+2), place discard card on draw top
+        typeof(Sts2Cards.IronWave),       // 1E, 5 dmg & 5 block (+3 each)
+        typeof(Sts2Cards.PommelStrike),   // 1E, 9 dmg (+2), draw 1 (+1)
+        typeof(Sts2Cards.ShrugItOff),     // 1E, 8 block (+3), draw 1
+        typeof(Sts2Cards.Thunderclap),    // 1E, 4 dmg (+3) & 1 Vulnerable to ALL
+        typeof(Sts2Cards.TwinStrike),     // 1E, 5 dmg twice (+2 each)
+    ];
+
+    /// <summary>Shipped StS2 cards identical to their StS1 Silent counterparts (same A-group;
+    /// same 8-Common contract — our own Silent commons also number only 6).</summary>
+    private static readonly System.Type[] SilentReuse =
+    [
+        // Commons
+        typeof(Sts2Cards.Backflip),       // 1E, 5 block (+3), draw 2
+        typeof(Sts2Cards.BladeDance),     // 1E, add 3 Shivs to hand (+1)
+        typeof(Sts2Cards.CloakAndDagger), // 1E, 6 block, add 1 Shiv (+1)
+        typeof(Sts2Cards.DaggerSpray),    // 1E, 4 dmg to ALL, twice
+        typeof(Sts2Cards.DaggerThrow),    // 1E, 9 dmg, draw 1, discard 1
+        typeof(Sts2Cards.DeadlyPoison),   // 1E, apply 5 Poison (+2), Exhaust
+        typeof(Sts2Cards.Deflect),        // 0E, 7 block (+3)
+        typeof(Sts2Cards.DodgeAndRoll),   // 1E, 11 block (+3), 4 block next turn
+        typeof(Sts2Cards.PiercingWail),   // 1E, 6 Weak to ALL this turn, Exhaust (+9)
+        typeof(Sts2Cards.Prepared),       // 0E, draw 1 discard 1 (+2/+2)
+        typeof(Sts2Cards.Slice),          // 0E, 6 dmg (+3)
+    ];
+
     /// <summary>
     /// Adds every reused shipped card to the matching custom pool. Call from MainFile.Initialize().
     /// </summary>
     public static void Register()
     {
-        foreach (var cardType in DefectReuse)
-        {
-            ModHelper.AddModelToPool(typeof(DefectCardPool), cardType);
-        }
+        foreach (var cardType in DefectReuse) ModHelper.AddModelToPool(typeof(DefectCardPool), cardType);
+        foreach (var cardType in IroncladReuse) ModHelper.AddModelToPool(typeof(Spire1CardPool), cardType);
+        foreach (var cardType in SilentReuse) ModHelper.AddModelToPool(typeof(SilentCardPool), cardType);
     }
 }
