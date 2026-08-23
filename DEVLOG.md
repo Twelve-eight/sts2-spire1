@@ -578,3 +578,9 @@ v1.0.5（更新 07-30），111.45MB，479 评价；已下载到
 - 多人：AFTP 有已知联机问题（事件不同步卡死、增益叠乘），作者明确不管多人——这是本项目的差异化质量线。
 
 ### 待用户决策去向（选项见会话报告）：全量自研收尾+定向吸收 vs 收缩为互补层。
+
+### 13.1 生态位补充调查（用户提示 + 页面核实，2026-08-23）
+- **辨误**：3737158447 不是联机模组——是 Cany 的旧版 **Act Toggler（已停支持，NO LONGER SUPPORTED）**，仅控制哪些幕进轮换池；继任版 = Darkglade 的 **3787796638**（同时支持 main+beta 分支，Cany 已同意移植）。AFTP 评论区作者指的联机模组实为 **3785039319 "Multiplayer Rebalance for Acts from the Past"**（Kziz3988，08-17 发布，开源 github.com/Kziz3988/ActsFromThePastMultiplayerBalance）：只做**平衡**——Gremlin Nob/Mad Gremlin/AwakenedOne 的 Strength 改为对触发玩家施加 Extra Damage 减益、Transient 按人数调伤害与衰减；**不解决事件不同步卡死**。
+- **Act 4 已有生态实现（用户确认）**：Thrayonlosa 的 **Act 4 Heart (3747537811)**。核实页面：StS1 The Ending+Corrupt Heart；三钥匙入门（打败超精英/放弃宝箱遗物/篝火回忆）；受 Ascension 影响；自称多人兼容；钥匙门禁可配置开关；可中途加入 run、不可中途移除；225 评价 5 星；kullay 贡献中文本地化。AFTP 官方 FAQ 即推荐此 mod 而非自己做 Act 4。
+- 三者本地均未下载（workshop 目录无 3747537811/3785039319/3787796638）。
+- **对我方差异化结论的修正**：①"The Ending 第 4 幕"不再是独占卖点；②"多人正确性"弱化为部分卖点（AFTP 联机可用但需全员同配置，平衡已有社区补丁；事件不同步卡死仍无人修）。剩余真实独占：**角色/玩家卡池/遗物层、选单地牢 selector UX**（生态评论区 Azusa 明确请求、无人做）、超越平衡补丁的联机正确性。另发现我方 The Ending 未实现三钥匙门禁（StS1 原版与 Act 4 Heart 都有）——若保留自研第四幕需补此保真缺口。
