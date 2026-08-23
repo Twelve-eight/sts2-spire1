@@ -656,3 +656,15 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - 所有对外 issue/评论/草稿**必须披露 agent 参与**（对齐 AFTP 作者自曝 AI 参与的标准）：注明研究/撰写由 ox-alpha agent 在 Twelve-eight 指挥下完成、证据来源。已回填 AFTP #10 正文与评论、MegaCrit 草稿，规则入 DEVELOP §5。
 - AFTP #10 已追加**标准结束协议**提案（标准 NGameOverScreen + 幂等 run-over 闩锁 + 可声明运行长度；含"多周目需手动开局故不受影响"论证）：issuecomment-5384987489。
 - MegaCrit 无公开 tracker，完整草稿（含协议附录）在 `.tmp/issues/megacrit-autoslay-extensibility.md`，待用户经 Discord/论坛递交。
+
+### 战果 #4：**全链路验证完成**（heart5 exit 0）
+`CORRUPT_HEART_BOSS` 4 回合斩杀 → 建筑师处决正常落地（免死收窄 v3 生效：事件房真实伤害放行）→ 标准 `NGameOverScreen` 出现 → 回主菜单 → **"Victory! Run completed" → exit 0**。
+完整链 = AFTP 三幕自动驱动（含转盘全自动：Complete + 后续按钮清扫）+ Act4Heart 第四幕 + 我方角色/卡池/事件层全程在线。
+
+### 层数核验（供对外信件引用）
+原版 `BaseNumberOfRooms`：Overgrowth 15 / Hive 14 / Glory 13 / Underdocks 15 → 原版局 ≈48 层封顶，引擎 `TotalFloor < 49` 恰按原版上限校准。任何加幕/拉长流程必撞线；AFTP 纯三幕自身即有越界风险（StS1 长度）。修复用 MoveNext 字面量 49→120。
+
+### 对外沟通落地（礼貌版 + 完整上下文 + agent 披露）
+- AFTP #10 新跟进评论（issuecomment-5385088440）：先谢后请、补齐 Spire1 定位/验证方法学/层数数学、明确我方承载补丁不 upstream 化。
+- Act4Heart：无公开仓库 → 礼貌版协议请求草稿存 `.tmp/issues/act4heart-ending-protocol.md`，**待用户转贴工坊 Bug reports 区**。
+- MegaCrit 草稿含协议附录与 agent 披露，待用户递交 Discord/论坛。
