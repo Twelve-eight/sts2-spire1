@@ -2,6 +2,7 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.AutoSlay;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Map;
+using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 
@@ -14,21 +15,27 @@ namespace Spire1.Spire1Code.Patches;
 /// 退出（P1SMOKE4 Act3:F12 与 P1SMOKE6 Act3:F12(0,11) 两次实测；Open() 钩子版本因
 /// 触发时子浮层仍在栈上而漏救）。
 ///
-/// v2：挂在 autoslayer 高频轮询的 NMapPoint.IsEnabled getter 上——只要某点已
-/// Travelable、屏幕打开、无战斗、无浮层而旅行开关仍是 false，就地恢复开关。
-/// 仅在 AutoSlayer.IsActive 时生效，人类对局零介入。
+/// v2：挂在 autoslayer 高频轮询的 IsEnabled getter 上——只要某点已 Travelable、
+/// 地图打开、无战斗、无浮层而旅行开关仍是 false，就地恢复开关并令本帧可点击。
+/// 注意：IsEnabled 声明于基类 NClickableControl（NMapPoint 无自有声明），Harmony
+/// 不下探基类，因此挂声明类型并以 `is NMapPoint` 过滤。仅在 AutoSlayer.IsActive 时
+/// 生效，人类对局零介入。
 /// </summary>
-[HarmonyPatch(typeof(NMapPoint))]
+[HarmonyPatch(typeof(NClickableControl))]
 [HarmonyPatch("IsEnabled", MethodType.Getter)]
 internal static class MapTravelRescuePatch
 {
-    static void Postfix(NMapPoint __instance, ref bool __result)
+    static void Postfix(NClickableControl __instance, ref bool __result)
     {
         if (__result || !AutoSlayer.IsActive)
         {
             return;
         }
-        if (__instance.State != MapPointState.Travelable)
+        if (__instance is not NMapPoint mapPoint)
+        {
+            return;
+        }
+        if (mapPoint.State != MapPointState.Travelable)
         {
             return;
         }
