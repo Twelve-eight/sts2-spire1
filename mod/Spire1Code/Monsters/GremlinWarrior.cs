@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Nodes.Screens.Shops;
 using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Animation;
 using MegaCrit.Sts2.Core.Bindings.MegaSpine;
