@@ -734,3 +734,4 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - 原实现 `list.Remove(owner.CardPool)` 仅按**池对象**排除持有者；对移植角色失效——一代 Defect 通过 SharedCardReuse 已拥有官方缺陷猎手同源牌，这些模型经官方缺陷猎手池仍会进入候选（"可以同时属于一代自己"却以他人身份出现）。
 - 修复：`SplashOwnSetSubtractPatch` 前缀整体替换 OnPlay——候选 = 全部角色攻击牌 **减去持有者自身卡池集合（按 Id.Entry 集合差）**；对原版角色为零变化。mock 测试分支逐字保留。
 - 同批：Seek/Nightmare 补 `.selectionScreenPrompt` 键（CardModel.cs:129 缺键即 throw → 打出僵死的根因）；5 卡通配符对齐 C# 注册名（Aggregate/Claw/Halt/Prostrate/Streamline）。机制文档化于 SimpleLoc.cs:79-88（!X! 特判表仅 D/CD/B/CB/C/E/H，M 不在表内透传原名）。
+- P1SMOKE4 回归：官方 Defect 全程胜利（r1 竞态失败→救援补丁护栏在位，r2 未复现即胜）；**NaN=0 于原版局 ⇒ NaN 与我方自定义内容强相关**（N3 深挖线索）。
