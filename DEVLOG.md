@@ -705,3 +705,10 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - **修复**：SharedCardReuse 扩展 IroncladReuse(+10)/SilentReuse(+11)——取自 `.tmp/duplicate-cards-report.md` A 组（同名同效果，逐字段源码级比对过）的 shipped Common 卡，ModHelper.AddModelToPool 进对应池 → Ironclad 16 / Silent 17。commit `3deabac`。
 - **回归**：同 seed P1SMOKE3 重跑——同事件同选项零异常通过，**全程胜利**（第四幕心脏+建筑师演出+回主菜单，exit 0），`[ERROR]` 行数 0（历史最干净），NaN 3711（SpeedX 基线区间），我方资产缺失 1 条：`relics/mutagenic_strength.png` 遗物图缺（待补）。
 - **教训**：自定义角色池存在隐式引擎契约（事件可能要求 ≥8 张不重复 Common）；新角色入池时必须过此契约。静态解析注意 `[A-Za-z]+` 匹配不了带数字的类型名（Spire**1**CardPool）。
+
+### 战果 #7：卡面"无图"真根因 = 大图槽位 + E2 定罪失败（SpeedX 二次洗清）
+- 用户目验报 17+ 张铁甲卡无图 → 全量审计发现 **card_portraits/big/ 302 张全部为 ~3KB 占位**（早上只修了小图）。BaseLib `CustomCardModel.cs:268-311` 把 `CardModel.PortraitPath` getter 重定向到 `CustomPortraitPath`（=big 槽）→ **卡面主图永远走大图**，小图只喂缩略场景。
+- 图鉴（百科全书）判读修正：`未知/???/黑图` 条目 = 未解锁迷雾（正常现象）；"均衡带 BETA" = 官方水印；复用官方卡显示正常恰证 SharedCardReuse 生效。用户报的 17 张全是自家移植类，与该模型完全吻合。
+- 修复：`.tmp/restore-big-portraits.ps1` 从 sts1full 500×380 原生分辨率重生成 302 张 big（重跑安全，仅动 <4KB）；同批补 DrugDealer 遗物 mutagenic_strength 三件套（relics/ + outline + big，StS1 名 mutagen）。commit `465efe9`。
+- **E2 终审：SpeedX turbo 洗清**。同 seed P1SMOKE3 两局全程胜利：turbo 开 NaN=3711 / 关=3609（差 2.7%，噪声级）。NaN 挂在商店/奖励按钮音效 `set_volume_db`（引擎侧），与时间缩放无关——E1 的"头号嫌疑"撤销，真凶待查（低优先级，纯日志噪音无实感）。
+- 教训：修资产先确认**消费方路径**再动手（PortraitPath 被 Harmony 重定向这种事，光看自己基类会漏）；PowerShell 内联经 bash 会丢 `$`，一律落 .ps1 文件。
