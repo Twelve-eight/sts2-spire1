@@ -717,3 +717,14 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - 用户切换到无 StS2 授权的 Steam 账号游玩 → autoslay 无法跑（workshop 生态订阅同失）。P1SMOKE4 启动 21s 即停，无残留进程。
 - **磁盘状态即最终态**：mods/Spire1 已是 dll(卡池修复)+pck 31MB（302 小图+302 大图+遗物三件套）；SpeedX 配置已还原（turboEnabled:true）。换回原账号后无需任何补做。
 - **待办（恢复账号后）**：① 目验卡面大图（包扎/暴走/哨卫/缴械/燔祭/递归等）；② seed 扫描 P1SMOKE4 起覆盖 Ironclad/Silent/Defect/Watcher 四角色完整胜利；③ run_history 110 张 70B 遭遇图标为已知低影响缺口（StS1 无官方图标源，宁缺勿造）。
+
+### 全面复核 + 三连修复（2026-08-24 凌晨，用户实机反馈驱动）
+**复核层（全部通过）**：资产 0 占位残留、部署 pck/dll 与产物 md5 一致、SpeedX 还原一致；P1SMOKE3 Victory+0 ERROR+0 Exception；NaN 3609 vs 3711 维持 turbo 洗清；卡面链路源码闭合（NCard.cs:1248→CardModel.Portrait:157→PortraitPath:143←BaseLib CustomCardModel.cs:300 前缀重定向到 big 槽）；21 张复用卡经 javap -c desktop-1.0.jar 字节码仲裁——报告 A 组全对，我方记忆五连错（Deflect=4/DnR=4+2/PiercingWail=力量损失/Anger+2/DeadlyPoison 无耗尽），唯一漂移 BladeDance 官方版自耗尽→已移出 SilentReuse、我方类回归现役池；Toggler2 GetWeightedAct 反编译坐实空槽=均匀随机。
+
+**修复 #8：Seek+/Nightmare 打出卡死（selectionScreenPrompt 缺键）**
+- 根因：`CardModel.SelectionScreenPrompt`（CardModel.cs:129）在缺 `.selectionScreenPrompt` 键时直接 throw → OnPlay 首行即炸 → 牌僵在屏幕中间无选牌 UI。全量扫描：用选牌界面的 8 张卡中仅 Seek/Nightmare 缺键（其余 6 键即用户当年手工修复）。已补两语言键（Seek 用 {Cards:plural:...} 复数模板支持升级 2 张）。
+
+**修复 #9：描述英文回落+裸 {M:diff()} 模板（通配符↔变量名失配）**
+- 机制链：BaseLib SimpleLoc 把 `!X!` 转成 `{映射名:diff()}`，特判表仅 D/CD/B/CB/C/E/H 七个字母，其余透传原名；SmartFormat 按 C# CanonicalVars 注册名解析。zhs 缺键或渲染异常时回落 eng 表。
+- 全量扫描器（解析每卡注册变量名 vs 中英通配符）收敛到 5 卡 10 条：Aggregate !E!（整句重写为按 MagicNumber 计能）、Claw !M!→!Increase!、Halt/Prostrate !M!→!MagicNumber!、Streamline !M!→!CostReduction!。已修，复扫=0。误报排除：!CD!/!CB!/!Scry!/!Repeat!/!MaxHp! 等由 MakeCalculated*/专用 Var 类型正确解析。
+- 教训：变量通配符必须与 C# 注册名精确一致；715f42d 的"对齐 eng"标准不充分——eng 自己也可能写错，唯一权威是 C# 注册名。
