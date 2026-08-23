@@ -668,3 +668,8 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - AFTP #10 新跟进评论（issuecomment-5385088440）：先谢后请、补齐 Spire1 定位/验证方法学/层数数学、明确我方承载补丁不 upstream 化。
 - Act4Heart：无公开仓库 → 礼貌版协议请求草稿存 `.tmp/issues/act4heart-ending-protocol.md`，**待用户转贴工坊 Bug reports 区**。
 - MegaCrit 草稿含协议附录与 agent 披露，待用户递交 Discord/论坛。
+
+### 层数勘误（用户要求核实后修正）
+实测（heart5，seed P1SMOKE1）：AFTP 三幕 = **17+16+15 = 48** 层，恰好不越界；越界仅发生在追加第四幕进幕瞬间（TotalFloor=49）。StS1 原版字节码 `MAP_HEIGHT=15` + Boss 行 = 每幕 16 层，三幕+两次幕间篝火 ≈ 50 —— "原版 StS1 可超 48"成立，但"纯 AFTP 三幕自行越界"不成立，此前论断有误。
+- 已公开更正 AFTP #10 跟随评论（PATCH issuecomment-5385088440）。
+- 心脏草稿按用户格式重写：问题事实前置（引擎上下文→mod 改变量→实测数据→失败日志→归因→请求）→ 非问题确认清单 → 礼貌收尾 + agent 披露。待用户转贴工坊。
