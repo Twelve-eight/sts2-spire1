@@ -728,3 +728,9 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - 机制链：BaseLib SimpleLoc 把 `!X!` 转成 `{映射名:diff()}`，特判表仅 D/CD/B/CB/C/E/H 七个字母，其余透传原名；SmartFormat 按 C# CanonicalVars 注册名解析。zhs 缺键或渲染异常时回落 eng 表。
 - 全量扫描器（解析每卡注册变量名 vs 中英通配符）收敛到 5 卡 10 条：Aggregate !E!（整句重写为按 MagicNumber 计能）、Claw !M!→!Increase!、Halt/Prostrate !M!→!MagicNumber!、Streamline !M!→!CostReduction!。已修，复扫=0。误报排除：!CD!/!CB!/!Scry!/!Repeat!/!MaxHp! 等由 MakeCalculated*/专用 Var 类型正确解析。
 - 教训：变量通配符必须与 C# 注册名精确一致；715f42d 的"对齐 eng"标准不充分——eng 自己也可能写错，唯一权威是 C# 注册名。
+
+### 修复 #10：Splash（飞溅）候选集语义修正（用户实机反馈）
+- 用户引用描述"从其它角色的攻击牌中任选一张。该张牌在本回合免费打出。"→ pck 明文定位为官方稀有技能卡 SPLASH 的 zhs（非药水）。
+- 原实现 `list.Remove(owner.CardPool)` 仅按**池对象**排除持有者；对移植角色失效——一代 Defect 通过 SharedCardReuse 已拥有官方缺陷猎手同源牌，这些模型经官方缺陷猎手池仍会进入候选（"可以同时属于一代自己"却以他人身份出现）。
+- 修复：`SplashOwnSetSubtractPatch` 前缀整体替换 OnPlay——候选 = 全部角色攻击牌 **减去持有者自身卡池集合（按 Id.Entry 集合差）**；对原版角色为零变化。mock 测试分支逐字保留。
+- 同批：Seek/Nightmare 补 `.selectionScreenPrompt` 键（CardModel.cs:129 缺键即 throw → 打出僵死的根因）；5 卡通配符对齐 C# 注册名（Aggregate/Claw/Halt/Prostrate/Streamline）。机制文档化于 SimpleLoc.cs:79-88（!X! 特判表仅 D/CD/B/CB/C/E/H，M 不在表内透传原名）。
