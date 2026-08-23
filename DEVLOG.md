@@ -698,3 +698,10 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - 恢复源 = `.tmp/sts1full/images/1024Portraits/`（368 张 jar 解包图）：basename 直配 + 去符号 squeeze（j_a_x→jax 等）+ 全树兜底；10 张显式别名：per-color 共享 strike.png/defend.png、charge_battery→conserve_battery、wreathe_of_flame→wreath_of_flame、judgment→judgement、lessons_learned→lesson_learned。PowerShell System.Drawing 批量 500×380→250×190（脚本 `.tmp/restore-portraits.ps1`）。零残留。
 - pck 8.5MB→20.6MB 已部署（18:12）。commit `5588f9f`。**待用户下次进游戏目验包扎与其余卡面。**
 - 教训：DEVLOG 11.2 的"331/331 mapped"表述误导（存在≠真图）；后续"已映射"类声明必须附带尺寸/字节数证据。
+
+### 战果 #6：ROOM_FULL_OF_CHEESE 卡池耗尽崩溃修复 + SPIRE1-IRONCLAD 首胜（P1SMOKE3，2026-08-23 晚）
+- **现象**：seed P1SMOKE3 首跑 exit 1（AutoSlayer 看门狗）。锚点：`InvalidOperationException: Tried to create a card for a reward, but we couldn't generate a valid card!` at `RoomFullOfCheese.Gorge()` → Act1 F7 选"大快朵颐"。
+- **根因**：Gorge 用 `CardCreationOptions.ForNonCombatWithUniformOdds([owner.Character.CardPool], c => Rarity==Common)` 要 **8 张不重复 Common**；`CreateForReward` 内层循环把已选卡累积进 blacklist，池中 eligible Common 耗尽即抛。静态审计（解析全部 Cards/*.cs 的 [Pool] 继承链）：Spire1CardPool(Ironclad) Common 恰好 6 张（Cleave/Clothesline/Flex/HeavyBlade/Warcry/WildStrike——与异常黑名单逐字吻合），SilentCardPool 同为 6（潜伏雷），DefectCardPool 自有仅 3 但 SharedCardReuse 复用后 13 安全，Watcher 19 安全。
+- **修复**：SharedCardReuse 扩展 IroncladReuse(+10)/SilentReuse(+11)——取自 `.tmp/duplicate-cards-report.md` A 组（同名同效果，逐字段源码级比对过）的 shipped Common 卡，ModHelper.AddModelToPool 进对应池 → Ironclad 16 / Silent 17。commit `3deabac`。
+- **回归**：同 seed P1SMOKE3 重跑——同事件同选项零异常通过，**全程胜利**（第四幕心脏+建筑师演出+回主菜单，exit 0），`[ERROR]` 行数 0（历史最干净），NaN 3711（SpeedX 基线区间），我方资产缺失 1 条：`relics/mutagenic_strength.png` 遗物图缺（待补）。
+- **教训**：自定义角色池存在隐式引擎契约（事件可能要求 ≥8 张不重复 Common）；新角色入池时必须过此契约。静态解析注意 `[A-Za-z]+` 匹配不了带数字的类型名（Spire**1**CardPool）。
