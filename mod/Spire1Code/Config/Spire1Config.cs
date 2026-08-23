@@ -37,6 +37,14 @@ internal class Spire1Config : SimpleModConfig
     public static bool UseSts1Dungeon { get; set; } = false;
 
     /// <summary>
+    /// 纯一代池模式：自定义角色池不注入任何二代官方卡（SharedCardReuse 复用项全部跳过），
+    /// 改以我们自己的 StS1 忠实实现类填充（Ironclad/Silent 各 +10，Defect +ConserveBattery）。
+    /// 默认关。开启时 RewardClampPatch 将奖励类抽牌数量钳制到池内实际可行数，
+    /// 避免 ROOM_FULL_OF_CHEESE 等"要求 N 张不重复"的事件在小池上抛异常。
+    /// </summary>
+    public static bool PureSts1Pools { get; set; } = false;
+
+    /// <summary>
     /// Debug mode: append the localization key to every mod string shown in-game,
     /// e.g. "打击 (SPIRE1-STRIKE_SILENT.title)". Makes console spawning and testing easier.
     /// </summary>

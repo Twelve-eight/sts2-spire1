@@ -92,10 +92,50 @@ internal static class SharedCardReuse
     ];
 
     /// <summary>
+    /// 纯一代模式（Spire1Config.PureSts1Pools）下注入的自有 StS1 忠实实现类——
+    /// 这些类现退役于 Spire1LegacyPool，动态加入角色池后即恢复现役（模型 id 不变，
+    /// 老存档兼容）。Defect 的复用清单没有自有孪生类，纯模式下仅补 ConserveBattery，
+    /// 其余由 RewardClampPatch 钳制兜底。
+    /// </summary>
+    private static readonly (System.Type pool, System.Type card)[] PureSts1Adds =
+    [
+        (typeof(Spire1CardPool), typeof(Cards.Anger)),
+        (typeof(Spire1CardPool), typeof(Cards.Armaments)),
+        (typeof(Spire1CardPool), typeof(Cards.BodySlam)),
+        (typeof(Spire1CardPool), typeof(Cards.Havoc)),
+        (typeof(Spire1CardPool), typeof(Cards.Headbutt)),
+        (typeof(Spire1CardPool), typeof(Cards.IronWave)),
+        (typeof(Spire1CardPool), typeof(Cards.PommelStrike)),
+        (typeof(Spire1CardPool), typeof(Cards.ShrugItOff)),
+        (typeof(Spire1CardPool), typeof(Cards.Thunderclap)),
+        (typeof(Spire1CardPool), typeof(Cards.TwinStrike)),
+        (typeof(SilentCardPool), typeof(Cards.Backflip)),
+        (typeof(SilentCardPool), typeof(Cards.CloakAndDagger)),
+        (typeof(SilentCardPool), typeof(Cards.DaggerSpray)),
+        (typeof(SilentCardPool), typeof(Cards.DaggerThrow)),
+        (typeof(SilentCardPool), typeof(Cards.DeadlyPoison)),
+        (typeof(SilentCardPool), typeof(Cards.Deflect)),
+        (typeof(SilentCardPool), typeof(Cards.DodgeAndRoll)),
+        (typeof(SilentCardPool), typeof(Cards.PiercingWail)),
+        (typeof(SilentCardPool), typeof(Cards.Prepared)),
+        (typeof(SilentCardPool), typeof(Cards.Slice)),
+        (typeof(DefectCardPool), typeof(Cards.ConserveBattery)),
+    ];
+
+    /// <summary>
     /// Adds every reused shipped card to the matching custom pool. Call from MainFile.Initialize().
+    /// PureSts1Pools=true 时跳过全部二代官方卡注入，改为注入自有 StS1 实现类。
     /// </summary>
     public static void Register()
     {
+        if (Config.Spire1Config.PureSts1Pools)
+        {
+            foreach (var (pool, card) in PureSts1Adds)
+            {
+                ModHelper.AddModelToPool(pool, card);
+            }
+            return;
+        }
         foreach (var cardType in DefectReuse) ModHelper.AddModelToPool(typeof(DefectCardPool), cardType);
         foreach (var cardType in IroncladReuse) ModHelper.AddModelToPool(typeof(Spire1CardPool), cardType);
         foreach (var cardType in SilentReuse) ModHelper.AddModelToPool(typeof(SilentCardPool), cardType);
