@@ -487,3 +487,63 @@ The salvaged artifacts were written by agents from transcripts — spot-check a 
   CallDeferred (caught, cosmetic; fix: escape or use 【】), PckPacker packs everything except
   four extensions (currently clean, add whitelist target). Zero network/process/shell APIs in
   the codebase; path joins use compile-time constants only.
+
+## Session 12 — Act2/3/4 full migration, multi-path review, deploy (2026-08-23 morning)
+
+### 12.1 Night batch landed (uncommitted → this session's commits)
+- **Act2 The City** (20 monsters, 17 encounters, HomeActs=[2]): Byrd, Centurion, Chosen,
+  SnakePlant, Snecko, Bandit trio, Mugger, TorchHead, BookOfStabbing, SphericGuardian,
+  Healer, Taskmaster, BronzeOrb/Automaton, TheCollector, Champ.
+- **Act3 The Beyond** (17 monsters, 17 encounters, HomeActs=[3]): AwakenedOne, TimeEater,
+  Donu/Deca, Nemesis, Darkling, Maw, WrithingMass, Transient, OrbWalker, SpireGrowth,
+  Spiker/Repulsor/Exploder, SnakeDagger, GiantHead, GremlinLeader, ShelledParasite,
+  Reptomancer. Custom powers: Fading/Shifting/Regrow/PlatedArmor (+Constricted later).
+- **The Ending**: SpireShield/SpireSpear/CorruptHeart + ShieldAndSpear/CorruptHeart
+  encounters (HomeActs=[4], Boss via BossDiscoveryOrder). NOTE: an earlier worker had
+  claimed these landed but never wrote them — re-dispatched and verified on disk.
+- Build triage 280→0 errors: batch using-fixer over Monsters/, MoveRepeatType namespace,
+  Nemesis scythe local→field promotion, TimeEater Heal(creature,amount) signature,
+  ConditionalBranchState has no FollowUpState (WrithingMass), ConstrictedPower written on
+  CustomPowerModel (AfterSideTurnEnd(choiceContext, side, participants) signature).
+
+### 12.2 Multi-path review (4 reviewers; concurrency capped at 3 per user)
+Findings fixed in this session:
+- **P0 WrithingMass**: six reroll branch states had no exit → engine throws "No valid next
+  state" (~60% of turns). Fixed: each reroll AddState(bands, () => true).
+- **P1 AwakenedOne**: phase pickers used Turn<25/<50 instead of a per-turn roll — added the
+  Champ-style RollHundred() (one cached 0-99 roll per round).
+- **P1 Maw**: turnCount only bumped during opening evaluation (once) — NOM hits were stuck
+  at 1. Bumped inside bands' first predicate instead.
+- **P1 Snecko**: main-loop predicate chain inverted vs bytecode (BITE nearly unreachable).
+  Restored glare→tail(roll<40)→tail(lastTwoWere(bite))→bite.
+- **P1 Act4 missing** — see 12.1; also E-fixes below.
+- Encounters: AwakenedOneEncounter is 3-body (2 Cultists + boss, monsterhelper_full.txt);
+  new WrithingMassEncounter (elite, act 3) + run_history pair; Shapes encounters restored
+  vanilla randomness (with-replacement multiset draws / independent getAncientShape rolls);
+  SpireGrowth/Transient weak variants deleted (vanilla strong-pool-only); GremlinLeader
+  minions now drawn WITH replacement (fresh 8-entry multiset per slot).
+- Powers: TimeWarp counts statuses/curses too AND gives every monster +2 Strength on
+  trigger (both were missing); Fading fires at owner-side turn START (vanilla duringTurn:
+  at 1 stack die without acting) — Transient now attacks 4× not 5×; Constricted damage is
+  blockable (StS1 THORNS passes block) and localized via PowerLoc convention.
+- Bytecode fidelity P2/P3: BookOfStabbing A18 growth on the LastTwoWere path + initial
+  state = branch (first turn joins the roll); GiantHead lastTwo(GLARE) guard + intent-time
+  preview property (vanilla decrements count before setMove); Centurion initial state =
+  branch; TheCollector weights 26f/45f/29f; Maw ROAR + Snecko GLARE DebuffIntent(strong);
+  Reptomancer dagger slots: after-self → daggers[0]; Spiker comment package beyond.
+- Act4 review fixes: CorruptHeart Debilitate no longer increments moveCount (vanilla early
+  return); BUFF uses raw buffCount tableswitch so 5th+ buff = Strength +50; SpireSpear
+  BURN_STRIKE intent shows ×2 hits.
+
+### 12.3 Deploy blocker found & removed
+- `mod/Spire1/scenes/rest_site/*.tscn` (untracked leftovers against the established
+  RestSiteBackgroundPatch decision) made PckPacker skip packing entirely ("unsupported
+  files detected") — deployed .pck was stale since Aug 22. Deleted the directory;
+  pck packs clean and auto-copies again. New run_history placeholder pairs shipped for
+  writhing_mass / shield_and_spear / corrupt_heart encounters.
+
+### 12.4 State
+- Release build 0 errors; Mods/Spire1/{Spire1.dll,Spire1.pck} fresh (2026-08-23 11:46).
+- Known flags (documented in file headers): engine lacks Invincible/BeatOfDeath powers
+  (CorruptHeart opens without them); Surrounded uses Kaiser Crab directional variant;
+  CorruptHeart is a solo boss per bytecode (no summon phase exists in StS1 either).

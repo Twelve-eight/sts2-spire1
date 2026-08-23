@@ -3,6 +3,7 @@ using Godot;
 using MegaCrit.Sts2.Core.Map;
 using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.Rooms;
+using Spire1.Spire1Code.Encounters;
 
 namespace Spire1.Spire1Code.Acts;
 
@@ -13,9 +14,16 @@ namespace Spire1.Spire1Code.Acts;
 /// elite or chest rooms; its fights are the two Spire Heart phases plus forced encounters.
 /// The StS2 map generator (<c>StandardActMap</c>) always assigns Monster points and
 /// <c>GenerateRooms</c> fills them from the encounter pools, so a faithful empty pool would
-/// produce empty combat rooms. Until the Ending-specific content is ported (Spire Heart, the
-/// Death/Obeloth/Face encounters), this act therefore reuses the standard act-3 room mix as a
-/// placeholder shell — explicitly NOT vanilla-faithful, flagged here and in DEVLOG.
+/// produce empty combat rooms. Until the Death/Obeloth/Face encounters are ported, this act
+/// therefore reuses the standard act-3 room mix as a placeholder shell for the normal monster
+/// rooms — explicitly NOT vanilla-faithful, flagged here and in DEVLOG.
+/// </para>
+/// <para>
+/// The two Ending fights land via <see cref="Spire1Encounter.IsValidForAct"/>:
+/// <see cref="ShieldAndSpearEncounter"/> (elite, act 4) and <see cref="CorruptHeartEncounter"/>
+/// (boss, act 4 — registered in <see cref="BossDiscoveryOrder"/> below). Normal monster rooms
+/// still have no pool (vanilla The Ending has none), and the Death/Obeloth/Face events are not
+/// ported.
 /// </para>
 /// <para>
 /// No dedicated art ships for a fourth act (the unused <c>factory</c> background set has no
@@ -61,13 +69,22 @@ public sealed class TheEnding : Spire1Act, ILocalizationProvider
 
     // ---- act contents ----
 
-    /// <summary>Empty until the Ending encounters land; see type remarks.</summary>
+    /// <summary>
+    /// Empty by design; see the type remarks. Encounters attach themselves via
+    /// <c>Spire1Encounter.IsValidForAct</c>.
+    /// </summary>
     public override IEnumerable<EncounterModel> GenerateAllEncounters() => [];
 
     public override IEnumerable<EventModel> AllEvents => [];
 
-    /// <summary>Empty until Spire Heart is ported.</summary>
-    public override IEnumerable<EncounterModel> BossDiscoveryOrder => [];
+    /// <summary>
+    /// The Ending's single boss: the Corrupt Heart (the Shield/Spear elite attaches via
+    /// <c>IsValidForAct</c>).
+    /// </summary>
+    public override IEnumerable<EncounterModel> BossDiscoveryOrder =>
+    [
+        ModelDb.Encounter<CorruptHeartEncounter>(),
+    ];
 
     // ---- borrowed act-3 presentation ----
 
