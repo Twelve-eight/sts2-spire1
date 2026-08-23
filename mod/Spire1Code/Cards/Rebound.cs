@@ -11,7 +11,12 @@ namespace Spire1.Spire1Code.Cards;
 [Pool(typeof(Spire1LegacyPool))]
 public class Rebound() : Spire1Card(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(9, ValueProp.Move)];
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+    [
+        new DamageVar(9, ValueProp.Move),
+        // ApplySelf<ReboundPower> 无 amount 重载按名查 DynamicVars，缺注册会 KeyNotFoundException。
+        new PowerVar<ReboundPower>(1),
+    ];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
