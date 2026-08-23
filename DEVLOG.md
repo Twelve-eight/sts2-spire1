@@ -686,3 +686,9 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 ### seed2 结果 + NaN 对照实验进行中
 - **seed P1SMOKE2 = Regent 全程胜利 exit 0**（多 seed 扫描第二角色覆盖 ✓；两角色两胜利链）。NaN 基线（SpeedX 全开）= 3250；ERROR 仅 2 条。
 - 对照实验 E1：`autoProceedEnabled=false` 同 seed 重跑中（sts2-p1-seed2b）。判读：NaN≈0 → 定罪 AutoProceed 的按钮/tween 路径；仍 ~3000 → 排除 AutoProceed，下一步关 `turboEnabled`（注意 runTimeout 风险，前段日志即可计数）。
+
+### seed2b 尸检 + E1 判定（SpeedX 配置已恢复原状）
+- **E1 判定：AutoProceed 洗清**。NaN 3250（全开）vs 3279（关 AutoProceed）无显著差异 → 头号嫌疑转为 `turboEnabled` 的 10× 时间缩放 × 音频 tween（E2 可选：关 turbo 跑 10 分钟取前段计数即可定罪，无需跑完全程）。
+- **seed2b = Regent 第二次斩心**（"That's 2 wins"）。死亡点不在游戏层：杀心→建筑师→结算屏后**回主菜单时**资源加载失败（`char_select_bg_necrobinder.tscn` / `characterselect_necrobinder_skel_data.tres` 解析错误 + LieRenTVmod 缺选人界面图）→ 未走干净关机 exit 5。嫌疑 = NecrobinderFemPortraits/LieRenTV 等肖像类 mod 与当前 beta 选人界面资源冲突——**非我方层问题**，独立待查项。
+- `[ERROR] Act 4 is not yet implemented` 为**良性日志**：ProgressSaveManager 给"完成第四幕"发角色 Epoch 时发现原版无此纪元（cs:579 case 3），仅缺一次解锁奖励。
+- **无图卡观察**：seed2b 日志零 card_portrait 加载失败；当时出牌均为原版 Regent 卡（GLITTERSTREAM/PANIC_BUTTON/CRUSH_UNDER/REFLECT/GOLD_AXE 等）。"回复4点生命。消耗。"未匹配我方 zhs 文案 → 非我方卡。需用户下次记下卡名才能追；日志侧无异常支撑。
