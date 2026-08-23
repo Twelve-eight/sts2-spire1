@@ -127,6 +127,13 @@ Data files: `research/sts1data/events.json` (52 events: id, per-option official 
 - **Act 3 weak**: 3 Darklings, Orb Walker, 3 Shapes. **Act 3 strong**: Spire Growth, Transient, 4 Shapes, Maw, Sphere and 2 Shapes, Jaw Worm Horde, 3 Darklings, Writhing Mass. **Act 3 elites**: Giant Head, Nemesis, Reptomancer. **Act 3 bosses**: Awakened One, Time Eater, Donu and Deca.
 - Weak encounters are the first floors of an act, then strong ones; each act also has an exclusion list preventing an immediate repeat (captured in the extraction output). Encounter gating in StS2 is `CustomEncounterModel.IsValidForAct(act)` plus `IsWeak` for the early pool.
 
+### 7e. Act-pool semantics with ActToggler2 + our fallback acts (session 15/16, verified against configs)
+- **Selection chain**: with `Spire1.cfg UseSts1Dungeon=False` (default since the ecosystem pivot), our M2/M3 dungeon code stays dormant and the act pool is owned by ActToggler2. Toggler2's `GetWeightedAct` picks per slot from the configured `"Type:weight"` entries; an **empty/unset slot = uniform random over every registered act of that slot** — it does NOT distinguish source mods, so a blank config would also admit our fallback acts.
+- **Our fallback acts never enter the pool**: they carry `ActNumber/Index = -2` and register only when `UseSts1Dungeon=True`; Toggler2's weighted pick ignores them under the current pinned config.
+- **Current test environment pins all three slots to AFTP**: `ActToggler2.cfg = {"EnabledAct1":"ExordiumAct:1","EnabledAct2":"TheCityAct:1","EnabledAct3":"TheBeyondAct:1"}` (verified 2026-08-23). Deterministic AFTP three-act run, ~48 floors.
+- **Floor budget**: engine AutoSlayer caps at `TotalFloor < 49` (vanilla-calibrated: BaseNumberOfRooms 15/14/13 ≈ 48); our transpiler raises it to 120 so a fourth act fits. Any act set pushing past 120 would need the cap raised again.
+- **Implication for release**: shipping Spire1 without pinning Toggler2 means users with Toggler2 installed get our fallback acts randomly mixed into act slots alongside AFTP/vanilla sets. That may be desirable (variety) or surprising; if we want deterministic behavior we either document a recommended Toggler2 config or ship a config preset.
+
 ## 8. Verification
 Clean build; smoke-test IN-GAME (character loads, run starts, cards resolve, dungeon selection works, encounters spawn, toggles work). Deliverable = playable mod. Record smoke runs in `DEVLOG.md`.
 
