@@ -547,3 +547,34 @@ Findings fixed in this session:
 - Known flags (documented in file headers): engine lacks Invincible/BeatOfDeath powers
   (CorruptHeart opens without them); Surrounded uses Kaiser Crab directional variant;
   CorruptHeart is a solo boss per bytecode (no summon phase exists in StS1 either).
+
+## Session 13 — 竞品调查：(BETA BRANCH ONLY) Acts from the Past (2026-08-23)
+
+工坊物品 [3746969593](https://steamcommunity.com/sharedfiles/filedetails/?id=3746969593)，作者 Cany0udance，
+v1.0.5（更新 07-30），111.45MB，479 评价；已下载到
+`G:\steam\steamapps\workshop\content\2868840\3746969593`（json+pck 105MB+dll 1.1MB），**未装入 mods/**。
+开源：github.com/Cany0udance/ActsFromThePast，作者明示允许参考/复用代码。依赖 BaseLib >= 3.3.6、min_game_version 0.109.0、**仅 public-beta**（本机 appmanifest BetaKey=public-beta buildid 24724944，满足）。
+
+### 范围对比（反编译 DLL 全类型清单）
+- AFTP = 三幕（Exordium/City/Beyond，无 The Ending）+ 全部 StS1 敌人/遭遇 + ~52 事件 + 17 遗物（含全部 5 张脸面具 + N'loth's Gift）+ 8 事件卡（含 Madness）+ 29 敌方 power + 音乐/SFX/全套 StS1 立绘动画 VFX（LibGdxAtlas 解析 .atlas + 自建动画类，非 Spine）。**无角色/玩家卡池/职业内容**。
+- 本项目独有：4 角色、305 卡、33 遗物、药水、The Ending 第 4 幕、选单地牢 selector、运行时开关。
+- 双方在怪物/遭遇/事件上已达实质等价（本侧 Session 12 已落地三幕+第四幕全部敌人遭遇）。
+
+### 他们解决了我们的三个缺口（可直接借鉴）
+1. **N'loth's Gift**：Harmony Transpiler+Prefix 打 `CardRarityOdds.RollWithoutChangingFutureOdds(CardRarityOddsType, float offset)` —— Prefix 按 `baseRareOdds*3` 改写 offset（不污染 pity 状态），Dup+CaptureRoll 捕获 roll 用于闪光。推翻本文件早前"无钩子可用"结论（当时只看了 `Roll`）。
+2. **五脸面具+FaceTrader**：CultistHeadpiece/FaceOfCleric/GremlinVisage/NlothsHungryFace/SsserpentHead 各为 CustomRelicModel 入 `EventRelicPool`，事件内对未拥有面具均匀 roll。解锁我们 LOCKED 的 FaceTrader。
+3. **Madness 卡**：Cards.Madness 已有成品可对照。
+
+### 关键架构事实
+- Act 注册：`CustomActModel` 子类自动进 `ModelDb.Acts`；`ExordiumAct : base(1, true)`，`Index=0`、`IsDefault=false`；遭遇经 `IsValidForAct(act) => act is XAct` 类型判定绑定（与本侧同型）；事件经 `CustomEventModel.Acts` 绑定。
+- 原版 UI 假设硬编码：他们需 Transpiler 改 `NRelicCollectionCategory.LoadRelics` 的 "act list" throw 才能让自定义遗物集合页工作——M3 收尾时留意同类坑。
+- 配置项：RebalancedMode（默认关）、AllowNonLegacySharedEventsInLegacyActs（默认开）、AllowLegacySharedEventsInNonLegacyActs（默认关）、DarvOnlyInLegacyActs、LegacyEnemiesGiveClassicSlimed。Ancients（Darv 等）映射到 StS1 幕。
+- pck 为 GST2 自定义容器（GDPC v3 头 + GST2 目录 magic），内嵌 RIFF/WAV + WebP。
+
+### 共存风险（若同时安装）
+- ID 前缀不同（SPIRE1-* vs 无前缀）→ 无 ModelId 冲突；遭遇/事件按 act 类型隔离，互不入对方幕。
+- 但双方共享事件（shrine 类）都注册为全局共享 → 我们的 shrine 会出现在他们的幕里；他们的 `ShrinePatches.EventPoolPatch`/`RepeatableShrineValidityPatch` 是全局补丁，行为面待测。
+- 双方都有 GoldenIdol 等同名事件遗物（各自事件授予，获取路径隔离）；若都改 `CardRarityOdds` 需确认叠加语义。
+- 多人：AFTP 有已知联机问题（事件不同步卡死、增益叠乘），作者明确不管多人——这是本项目的差异化质量线。
+
+### 待用户决策去向（选项见会话报告）：全量自研收尾+定向吸收 vs 收缩为互补层。
