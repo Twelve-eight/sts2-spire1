@@ -1,10 +1,12 @@
 # DEVELOP.md — sts2-spire1 (Slay the Spire 1 ↔ Slay the Spire 2 interop)
 
-> Vision: a **cross-game sandbox** on the StS2 (v0.111.0, Godot/C#/.NET9) engine via **BaseLib**. Bring **vanilla StS1** content — characters, cards, relics, monsters, and its **4-act dungeon** — into StS2, and let the player at character-select pick **which dungeon to run** (StS1's 4 acts or StS2's 3 acts) with **any mix of StS1/StS2 characters, solo or co-op**. All mod content is runtime-toggleable (a run can use none of it) without uninstalling.
+> Vision (**PIVOTED** session 14, 2026-08-23 — supersedes the self-contained-sandbox vision): Spire1 is the **complementary character/card/relic layer** for vanilla StS1 content on StS2 (v0.111.x public-beta, Godot/C#/.NET9) via **BaseLib**. Bring vanilla StS1 **characters, cards, relics, powers, potions, events** into StS2, designed to run **inside the community act stack** — Acts from the Past (acts 1–3), Act 4 Heart (The Ending), Act Toggler, MP Rebalance — instead of maintaining our own dungeon presentation. Our own CustomActModel dungeon (former M2/M3) stays in-tree as **fallback only**, not a polish target. Any mix of StS1/StS2 characters, solo or co-op; all mod content runtime-toggleable.
 >
 > Authoritative design + contracts. Chronological log → `DEVLOG.md`. Shared conventions → `../AGENTS.md`. Deep API → research artifacts (§10).
 
 ## 0. Status (conclusion-first)
+- **DIRECTION PIVOT (session 14, user decision): complementary layer.** The ecosystem covers the dungeon stack better than we can present it: AFTP (acts 1–3, real StS1 art/music/animation, 479 ratings), Act 4 Heart (The Ending, three-key gate, MP-compatible), Darkglade's Act Toggler (main+beta), Kziz3988's MP Rebalance. All four subscribed and downloaded locally. We stop investing in our acts' presentation; effort concentrates on the class/card/relic layer + interop correctness. Analysis: `DEVLOG.md` §13/§13.1.
+- **Unlocked by AFTP decompilation (session 13)**: `N'loth's Gift` viable via Harmony on `CardRarityOdds.RollWithoutChangingFutureOdds`; `FaceTrader` unblocked (implement the five face relics); `Madness` has a reference impl. See §9.
 - Target: **StS2 v0.111.0** at `G:\steam\steamapps\common\Slay the Spire 2`. Framework **BaseLib**, and BaseLib is the mod's **only** dependency (NuGet `Alchyr.Sts2.BaseLib`; build-time-only helpers `Alchyr.Sts2.ModAnalyzers`, `Krafs.Publicizer`, `BSchneppe.StS2.PckPacker`; templates `Alchyr.Sts2.Templates`).
 - **Toolchain PROVEN**: .NET 9 SDK 9.0.317 + Godot.NET.Sdk/4.5.1 + BaseLib restore + `dotnet build` → copies dll+json into `mods/<Mod>/`. Caches on G (C: <1GB free). Scaffolded `mod/` (`dotnet new alchyrsts2charmod --name Spire1`), id/prefix `Spire1`/`SPIRE1-`. Build green except STS001 (needs complete localization).
 - Now: **M4 content is essentially complete. M2 monsters is the next milestone and is NO LONGER BLOCKED** (session 5 recon — see `DEVLOG.md` §5.1). All four characters, 305 card classes, 33 relics, 49 powers and 53 event classes build 0 errors and are deployed; every event branch that was blocked on a missing relic or card is wired.
@@ -19,9 +21,12 @@
 |---|---|---|
 | M0 pipeline (DONE) | toolchain + scaffold + build → dll in mods | build exit 0 |
 | **M1 Ironclad slice** | `Spire1Ironclad` "StS1 - Ironclad" (80 HP, 3 energy, deck 5 Strike/4 Defend/1 Bash, Burning Blood) + loc + red pool + global content toggle; then full Ironclad card pool + relics | in select; run starts; cards playable |
-| M2 Act-1 monsters | StS1 Exordium monsters + encounters as custom monsters + `Exordium` CustomActModel | encounters spawn; 0 load errors |
-| **M3 dungeon interop** | StS1 4-act dungeon (Exordium/City/Beyond/Ending) as CustomActModels; **char-select dungeon selector** (StS1 4-act vs StS2 3-act); character↔dungeon decoupling (any character in any dungeon, solo/co-op) | pick StS1 dungeon at select → run 4 StS1 acts with StS1 monsters, any character |
-| M4+ | Silent, Defect (orbs), Watcher (stances); StS1 Acts 2/3/4 content; **all 52 "?" events**; potions; **event relics** | per-wave smoke |
+| M2 monsters (**DONE — fallback**) | StS1 monsters+encounters for ALL acts incl. The Ending landed (session 12); kept compiling in-tree, NOT a presentation target | encounters spawn; 0 load errors |
+| ~~M3 own-dungeon selector~~ (**SUPERSEDED**) | replaced by the ecosystem act stack; own acts/dungeon-selector code retained as fallback only | n/a |
+| M4 (**DONE**) | 4 characters, 305 cards, 33 relics, 49 powers, potions, 53 events — deployed | build 0 errors; in-game smoke |
+| **P1 interop verification** | dual-install smoke: Spire1 + AFTP + Act 4 Heart + Toggler (±MP Rebalance); shared-shrine cross-pollution; Harmony patch-collision audit; AutoSlay run in mixed stack | `--autoslay` exit 0 with stack enabled; no duplicated/mispooled events |
+| **P2 gap closure** | N'loth's Gift (`RollWithoutChangingFutureOdds` prefix); FaceTrader + five face relics (`EventRelicPool`, uniform roll over unowned); Madness | each verified in-game |
+| **P3 layer UX** | character-select visibility/gating polish vs ecosystem stack; decide if a light dungeon-picker UX atop ecosystem acts is worth building | smoke |
 
 **VANILLA ONLY (hard):** unmodded StS1 as shipped by MegaCrit. Exclude all StS1 mods. Source = `desktop-1.0.jar` + fandom/wiki.gg vanilla; exact numbers in `agent://Sts1DataScout` (confirmed 100% vanilla: 75 red cards, 38 colorless, 5 status, 14 curses, temp/option cards; Act-1 monsters/encounters). Never invent unconfirmed values.
 
@@ -30,8 +35,8 @@
 - One class per StS1 character (`Spire1Ironclad`, later `Spire1Silent/Defect/Watcher`), NEW characters shown beside StS2's roster. Do NOT replace/hide StS2 characters. Display name **"StS1 - <Character>"** (eng) / **"一代-<角色>"** (zhs), e.g. `StS1 - Ironclad` / `一代-铁甲战士`.
 - Characters are decoupled from dungeon: any StS1/StS2 character can enter any dungeon (M3).
 
-### 2b. Dungeon/act-set selection at character select (M3)
-- StS1 = **4 acts** (Exordium, The City, The Beyond, The Ending). StS2 = **3 acts**. Player chooses the dungeon at char select; the choice sets the run's act sequence + encounter/event/boss pools (StS1 acts pull StS1 monsters).
+### 2b. Dungeon/act-set selection at character select (M3) — **SUPERSEDED by ecosystem (fallback only)**
+- Primary path: players choose StS1 acts via the ecosystem stack (AFTP pools / Act Toggler config); Spire1 contributes characters/cards/relics usable in ANY dungeon. Own-act selection below is kept for fallback activation only.
 - Implementation: StS1 acts as `CustomActModel`s; a char-select control (BaseLib `CustomCharacterSelectEntry` and/or Harmony patch on the select/run-setup screen) selects the act sequence; `RunState`/act-progression patched to run 4 acts when StS1 dungeon chosen. [research act-sequence + co-op run setup via sts2.xml/BaseLib before M3]
 - Co-op ("组队"): StS2 supports multiplayer; characters (mixed StS1/StS2) join a run into the selected dungeon. [verify multiplayer run-setup hooks]
 
@@ -126,9 +131,9 @@ Clean build; smoke-test IN-GAME (character loads, run starts, cards resolve, dun
 ## 9. Open gaps
 Most of the original list is now closed — resolved in session 5 and documented in `docs/`. Resolve anything new via `docs/BaseLib-API.md` first, then `sts2.xml` grep, then the decompiled tree at `.tmp/dllsrc/`.
 - **CLOSED**: `CardKeyword` members; power class names; command builders (`DamageCmd`/`PowerCmd`/`CreatureCmd`/`CardPileCmd`); per-character energy override; `MonsterModel` stat/name/art API + move-state selection (see `docs/BaseLib-API.md` §2 `CustomMonsterModel` and `research/BaseLib-unused-surface.md` §2).
-- **Act-sequence / run-setup / char-select / multiplayer hooks (M3 dungeon selector)** — BaseLib supplies `CustomActModel` and `CustomCharacterSelectEntry`; RitsuLib additionally supplies `ModContentRegistry.RegisterActEnterForce<TAct>(slotIndex, priority, Func<ActEnterResolveContext,bool>)` plus `RunSavedDataLobbyScope<T>` for the co-op handoff (`docs/RitsuLib-API.md` §3, §7). **Character select has no purpose-built hook in either library** — it needs generic node attachment or a Harmony patch. This is the one genuinely open M3 question.
-- Character-select visibility + shared-pool filter hooks (for gating) — partially covered by RitsuLib `IModCharacterVanillaSelectionPolicy`; verify against `docs/RitsuLib-API.md` §3 before designing.
-- `Girya`'s rest-site option and `N'loth's Gift`'s reward-rarity odds — see `research/BaseLib-unused-surface.md` §4 and §3.
+- **RESOLVED BY PIVOT (session 14)**: M3 dungeon-selector hook question is moot for the primary path (ecosystem supplies acts); revisit only if the fallback activates. Character-select visibility + shared-pool filter hooks stay relevant to the layer (P3).
+- **UNBLOCKED by AFTP decompilation (session 13, verify against shipped v1.0.5 dll before writing)**: `N'loth's Gift` — Prefix on `CardRarityOdds.RollWithoutChangingFutureOdds(CardRarityOddsType, ref float offset)` rewriting `offset = baseRareOdds*3 - baseRareOdds` when owned (no pity-state mutation; optional Dup-transpiler captures the roll for Flash). `FaceTrader` — implement `CultistHeadpiece`/`FaceOfCleric`/`GremlinVisage`/`NlothsHungryFace`/`SsserpentHead` as `CustomRelicModel`s pooled in `EventRelicPool`, event rolls uniformly over unowned faces. `Madness` — AFTP `Cards.Madness` is the working reference.
+- `Girya`'s rest-site option — STILL OPEN; BaseLib itself flags incomplete.
 
 ## 10. References
 **Library interface docs (`docs/`) — read these before writing code against a library:**
@@ -141,5 +146,6 @@ Most of the original list is now closed — resolved in session 5 and documented
 - `research/RitsuLib-api.md` — per-gap adopt/skip analysis, per-consumer usage, dependency risk.
 - `research/JmcModLib-api.md` — SKIP, with the measurement that proves it.
 - `research/sts1data/` — extracted vanilla StS1 data (cards, relics, events, `face-relics-and-madness.json`).
+- **AFTP-family reference binaries (NOT in repo)**: `G:\steam\steamapps\workshop\content\2868840\{3746969593,3747537811,3785039319,3787796638}` — decompile with `%USERPROFILE%\.dotnet\tools\ilspycmd.exe`; AFTP source at github.com/Cany0udance/ActsFromThePast (reuse permitted).
 
 **Sources:** `research/BaseLib-StS2/` (BaseLib source, tag v3.4.5), `research/ModTemplate-StS2/`, `.tmp/dllsrc/` (decompiled StS2 engine), `sts2.xml` (game API doc, `data_sts2_windows_x86_64/sts2.xml`), `.tmp/ritsu/` + `.tmp/jmc/` (library dumps and source). Wiki: alchyr.github.io/BaseLib-Wiki. `agent://Sts1DataScout` — StS1 Ironclad + Act-1 vanilla data.

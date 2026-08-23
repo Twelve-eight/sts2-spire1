@@ -584,3 +584,18 @@ v1.0.5（更新 07-30），111.45MB，479 评价；已下载到
 - **Act 4 已有生态实现（用户确认）**：Thrayonlosa 的 **Act 4 Heart (3747537811)**。核实页面：StS1 The Ending+Corrupt Heart；三钥匙入门（打败超精英/放弃宝箱遗物/篝火回忆）；受 Ascension 影响；自称多人兼容；钥匙门禁可配置开关；可中途加入 run、不可中途移除；225 评价 5 星；kullay 贡献中文本地化。AFTP 官方 FAQ 即推荐此 mod 而非自己做 Act 4。
 - 三者本地均未下载（workshop 目录无 3747537811/3785039319/3787796638）。
 - **对我方差异化结论的修正**：①"The Ending 第 4 幕"不再是独占卖点；②"多人正确性"弱化为部分卖点（AFTP 联机可用但需全员同配置，平衡已有社区补丁；事件不同步卡死仍无人修）。剩余真实独占：**角色/玩家卡池/遗物层、选单地牢 selector UX**（生态评论区 Azusa 明确请求、无人做）、超越平衡补丁的联机正确性。另发现我方 The Ending 未实现三钥匙门禁（StS1 原版与 Act 4 Heart 都有）——若保留自研第四幕需补此保真缺口。
+
+## Session 14 — 方向决策：全力转向互补层 (2026-08-23)
+
+**用户决策**：放弃"自研地牢呈现"主线，Spire1 定位为生态互补层（角色/卡池/遗物/药水/事件），运行于社区幕栈之上。
+生态栈四件全部订阅并下载到位（本地 workshop 目录核实）：AFTP `3746969593`（1-3 幕）、Act 4 Heart `3747537811`（The Ending+三钥匙，多人兼容）、Darkglade Act Toggler `3787796638`（main+beta）、Kziz3988 MP Rebalance `3785039319`（联机平衡）。
+
+### 本会话落地
+- 遗留改动收编（build 0 errors 验证后提交 `84bc1f9`）：`AutoSlayGatePatch.cs`（暴露引擎 `--autoslay` 冒烟路径，P1 互操作测试的基础设施）、`RestSiteBackgroundPatch` 补 `%RestSiteLighting` 场景唯一名（Owner+UniqueNameInOwner，修复休息点房间初始化崩溃）、8 张 map_bgs 瘦身为 146B 占位（自研幕降级为 fallback 的第一刀）。
+- 备份钩子安装（`575b5dd`，`.omp/hooks/pre/backup.ts` ← playderata 模板；下次会话启动生效）。
+- **DEVELOP.md 改写**：vision/§0/§1（P1 互操作验证、P2 缺口收口、P3 层内 UX 三新里程碑）/§2b（SUPERSEDED）/§9（N'loth's Gift、FaceTrader、Madness 解锁路线）/§10（AFTP 参考二进制位置）。
+
+### 后续执行序（P1 → P2 → P3，见 DEVELOP.md §1）
+1. **P1 互操作**：四件套 + Spire1 双装冒烟（AutoSlay）；审计点 = 双方 shrine 共享事件串扰、`ShrinePatches.EventPoolPatch` 全局行为、`CardRarityOdds` 补丁叠加语义、AFTP 的 `NRewardButton.Reload`/`LoadRelics` transpiler 与我方补丁面交集。
+2. **P2 缺口收口**：N'loth's Gift（Prefix `RollWithoutChangingFutureOdds` 改写 offset，勿碰 `Roll` 的 pity 计数）；五脸面具 + FaceTrader 解锁；Madness 对照 AFTP 实现。
+3. **P3**：选单可见性/门禁打磨；评估是否在生态幕之上做轻量地牢选择 UX。
