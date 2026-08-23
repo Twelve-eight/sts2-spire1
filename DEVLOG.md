@@ -677,3 +677,8 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 ### #10 第二条发言撤稿致歉（用户指令）
 反思确认：层数越界与 AFTP 无关（三幕恰 48 < 49；越界需第四幕追加；根因 = 引擎封闭假设）。已 PATCH 重写 issuecomment-5385088440：仅留情况简述 + 双方（人类指挥者与 agent）共同道歉 + 指明编辑历史可回看原文；删除错误问题报告与协议请求内容。协议请求仍保留在第一条跟进评论（5384987489，属 AFTP 职责范围的小游戏可驱动性 API）。MegaCrit/Act4Heart 草稿中的协议内容不变（归属正确）。
 - 用户将错误评论 hide 为 low-quality；改为输出第三条评论文稿（`.tmp/issues/aftp10-third-comment.md`）由用户手动发布：低姿态个人口吻、正确结果直出、错处看编辑史、agent 参与透明化（起草自 AI、核实责任在人）。
+
+### P1 资产项关闭 + 音频归因实验设计
+- **资产缺口项关闭**：heart5 实测我方 pck **零真实缺失**（唯一 warning 为引擎对 missing_power.png 兜底图的按需提示）。此前 106 条 ERROR 大头是**原版资源懒加载警告**（regen/strength/necrobinder_energy_icon 等原版物）+ AFTP 的 chosen_death.ogg（归 AFTP）+ NaN 刷屏。无补全需求。
+- **NaN 归因实验**：SpeedX 配置位于 `%APPDATA%/SlayTheSpire2/ModConfig/sts2.piyixiajiuhenfen.speedx.json`。基线 = seed2 全开运行；对照 = 同 seed 关 `autoProceedEnabled`；若仍复现再关 `turboEnabled`（注意关加速后 25min runTimeout 可能不够跑完全程——但日志前段足以计数 NaN）。定罪后材料并入 SpeedX 反馈。
+- 多 seed 扫描已启动：seed `P1SMOKE2`（sts2-p1-seed2）。
