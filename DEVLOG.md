@@ -712,3 +712,8 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - 修复：`.tmp/restore-big-portraits.ps1` 从 sts1full 500×380 原生分辨率重生成 302 张 big（重跑安全，仅动 <4KB）；同批补 DrugDealer 遗物 mutagenic_strength 三件套（relics/ + outline + big，StS1 名 mutagen）。commit `465efe9`。
 - **E2 终审：SpeedX turbo 洗清**。同 seed P1SMOKE3 两局全程胜利：turbo 开 NaN=3711 / 关=3609（差 2.7%，噪声级）。NaN 挂在商店/奖励按钮音效 `set_volume_db`（引擎侧），与时间缩放无关——E1 的"头号嫌疑"撤销，真凶待查（低优先级，纯日志噪音无实感）。
 - 教训：修资产先确认**消费方路径**再动手（PortraitPath 被 Harmony 重定向这种事，光看自己基类会漏）；PowerShell 内联经 bash 会丢 `$`，一律落 .ps1 文件。
+
+### 状态：冒烟测试挂起（2026-08-23 晚）
+- 用户切换到无 StS2 授权的 Steam 账号游玩 → autoslay 无法跑（workshop 生态订阅同失）。P1SMOKE4 启动 21s 即停，无残留进程。
+- **磁盘状态即最终态**：mods/Spire1 已是 dll(卡池修复)+pck 31MB（302 小图+302 大图+遗物三件套）；SpeedX 配置已还原（turboEnabled:true）。换回原账号后无需任何补做。
+- **待办（恢复账号后）**：① 目验卡面大图（包扎/暴走/哨卫/缴械/燔祭/递归等）；② seed 扫描 P1SMOKE4 起覆盖 Ironclad/Silent/Defect/Watcher 四角色完整胜利；③ run_history 110 张 70B 遭遇图标为已知低影响缺口（StS1 无官方图标源，宁缺勿造）。
