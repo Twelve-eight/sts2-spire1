@@ -637,3 +637,22 @@ AFTP/Act4Heart/ActToggler2/MP-Rebalance + Spire1 五件套正常同载；随机�
 - **MegaCrit**：无公开 tracker，草稿存 `.tmp/issues/megacrit-autoslay-extensibility.md`（_screenHandlers 开放扩展点）。
 - **SpeedX**：无公开仓库（B 站视频首发）→ **用户自行联系作者**（待办，非我方动作）。
 - **我方修复** `AutoSlayModdedScreenHandlersPatch`（--autoslay 门禁）：反射注册 NWheelSpin/NMatchAndKeep 屏 handler，等待滑入动画后调小游戏公开 Complete()（结果构造时已定，旋转纯演出）。PortalMapBuilder 无公开完成方法，暂不注册。**用户指令：此类兼容补丁随 Spire1 发布承载（AFTP 冻结），已写入 DEVELOP §0。**
+
+### 战果 #3：心脏已斩，结局链最后一环 = 我方不死补丁误伤脚本处决
+heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_HEART_BOSS 4 回合斩杀** ✓。
+结局链卡在 TheArchitect 事件：等 GameOverScreen 超时（exit 1）。根因 = 我方不死补丁无差别清零：
+原版胜利演出里建筑师对玩家执行**真实处决** `CreatureCmd.cs:533 LoseHpInternal(currentHp, Unblockable|Unpowered)`，
+被前缀挡下 → 死亡不注册 → 结算屏不来。**建筑师"劈死"不是纯演出，是等额处决**（此前"纯演出"判断有误，纠正）。
+修复 v3 `afd3b05`：免死范围收窄到 Monster/Elite/Boss 房；事件房内真实伤害放行（保真：事件致死本来就该致死）。
+`RunManager.Instance.DebugOnlyGetState().CurrentRoom.RoomType` 判定，状态不可读时 fail-safe 保持不死。
+
+### 音频核验（用户报告"攻击音效与自玩时不同"）
+- NaN 音量错误：我方测试跑 **3511 次** vs 用户 8-22 手动游玩日志 **0 次** → 测试环境特有。
+- AFTP 音量数学（LinearToDb(vol²)+offset）在正常输入只产生 -inf 不产生 NaN → 排除。
+- 首现位置紧贴 SpeedX AutoProceed 活动 → 头号嫌疑 SpeedX 加速×音频 tween；次嫌 AutoSlay 注入的 999 Plating/200 Strength 触发的 UI 路径。待对照实验（禁 SpeedX 重跑一次）定罪。
+- 另实测 AFTP pck 缺 `sfx/chosen/chosen_death.ogg`（加载失败 2 次）——部分 StS1 音效缺失即"听感不同"的构成之一；遗产幕内 AFTP 有意替换音频为设计行为。
+
+### 对外沟通规则（用户指令）
+- 所有对外 issue/评论/草稿**必须披露 agent 参与**（对齐 AFTP 作者自曝 AI 参与的标准）：注明研究/撰写由 ox-alpha agent 在 Twelve-eight 指挥下完成、证据来源。已回填 AFTP #10 正文与评论、MegaCrit 草稿，规则入 DEVELOP §5。
+- AFTP #10 已追加**标准结束协议**提案（标准 NGameOverScreen + 幂等 run-over 闩锁 + 可声明运行长度；含"多周目需手动开局故不受影响"论证）：issuecomment-5384987489。
+- MegaCrit 无公开 tracker，完整草稿（含协议附录）在 `.tmp/issues/megacrit-autoslay-extensibility.md`，待用户经 Discord/论坛递交。
