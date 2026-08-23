@@ -599,3 +599,9 @@ v1.0.5（更新 07-30），111.45MB，479 评价；已下载到
 1. **P1 互操作**：四件套 + Spire1 双装冒烟（AutoSlay）；审计点 = 双方 shrine 共享事件串扰、`ShrinePatches.EventPoolPatch` 全局行为、`CardRarityOdds` 补丁叠加语义、AFTP 的 `NRewardButton.Reload`/`LoadRelics` transpiler 与我方补丁面交集。
 2. **P2 缺口收口**：N'loth's Gift（Prefix `RollWithoutChangingFutureOdds` 改写 offset，勿碰 `Roll` 的 pity 计数）；五脸面具 + FaceTrader 解锁；Madness 对照 AFTP 实现。
 3. **P3**：选单可见性/门禁打磨；评估是否在生态幕之上做轻量地牢选择 UX。
+
+### 14.1 三件套侦察（P1 前置，ilspy 类型清单）
+- **Act4Heart v1.1.7**（dll 作者 Dolso）：`TheEnding`/`TheEndingMap`(CustomActModel)+CorruptHeart/SpireShield/SpireSpear；**三钥匙 = KeyRelicModel 子类（Ruby/Sapphire/Emerald）入自建 KeyRelicPool**，配 Red/Green/BlueKeyHooks（超精英任务/弃宝箱/篝火回忆 RecallSiteOption）；自带 **InvinciblePower、BeatOfDeathPower**、Metallicize/Regenerate 变体——正是我方标记"引擎缺失"的两个 power。Dolso 框架含 **ConfigSynchronizer（联机配置同步）**与特性式 HookManager，均为我方多人正确性的参考实现。
+- ⚠️ **碰撞面 #1**：我方 fallback 的 The Ending（CorruptHeart/SpireShield/SpireSpear/HomeActs=[4]）与 Act4Heart 同内容双份并存——若用户同时启用我方幕与 AFTP 栈，会出现两个第四幕/两套心脏。P1 审计首项：确认 BossDiscoveryOrder/act 池在双装时的行为，必要时默认关停我方幕（config 门禁已具备）。
+- **MP Rebalance v0.0.1**：仅打 AFTP 自家怪物类（AwakenedOne/Nob/MadGremlin/Transient/Shifting）+ExtraDamage 等 power，依赖 AFTP≥1.0.5；与我方补丁面零交集。
+- **ActToggler2 v1.0.0**：单一 `ActTogglerPatch`，按配置开关幕池；依赖 BaseLib≥3.4.0。待验证粒度（是否区分幕来源 mod——影响它会不会把我方 fallback 幕也关掉）。
