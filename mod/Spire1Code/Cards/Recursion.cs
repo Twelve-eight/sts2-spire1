@@ -18,16 +18,20 @@ public class Recursion() : Spire1Card(1, CardType.Skill, CardRarity.Common, Targ
         if (orbs.Count == 0)
             return;
 
-        OrbModel replacement = orbs[0] switch
+        // v0.111 新增 GlassOrb 等非经典球种：未知类型只 evoke、不再同型重铸，
+        // 绝不抛异常打断出牌（P1SMOKE3-r3 实测 "Unsupported orb type" 崩局）。
+        OrbModel? replacement = orbs[0] switch
         {
             LightningOrb => ModelDb.Orb<LightningOrb>().ToMutable(),
             FrostOrb => ModelDb.Orb<FrostOrb>().ToMutable(),
             DarkOrb => ModelDb.Orb<DarkOrb>().ToMutable(),
             PlasmaOrb => ModelDb.Orb<PlasmaOrb>().ToMutable(),
-            _ => throw new InvalidOperationException("Unsupported orb type")
+            GlassOrb => ModelDb.Orb<GlassOrb>().ToMutable(),
+            _ => null
         };
         await OrbCmd.EvokeNext(choiceContext, Owner);
-        await OrbCmd.Channel(choiceContext, replacement, Owner);
+        if (replacement != null)
+            await OrbCmd.Channel(choiceContext, replacement, Owner);
     }
 
     protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
