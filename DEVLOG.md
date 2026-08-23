@@ -682,3 +682,7 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - **资产缺口项关闭**：heart5 实测我方 pck **零真实缺失**（唯一 warning 为引擎对 missing_power.png 兜底图的按需提示）。此前 106 条 ERROR 大头是**原版资源懒加载警告**（regen/strength/necrobinder_energy_icon 等原版物）+ AFTP 的 chosen_death.ogg（归 AFTP）+ NaN 刷屏。无补全需求。
 - **NaN 归因实验**：SpeedX 配置位于 `%APPDATA%/SlayTheSpire2/ModConfig/sts2.piyixiajiuhenfen.speedx.json`。基线 = seed2 全开运行；对照 = 同 seed 关 `autoProceedEnabled`；若仍复现再关 `turboEnabled`（注意关加速后 25min runTimeout 可能不够跑完全程——但日志前段足以计数 NaN）。定罪后材料并入 SpeedX 反馈。
 - 多 seed 扫描已启动：seed `P1SMOKE2`（sts2-p1-seed2）。
+
+### seed2 结果 + NaN 对照实验进行中
+- **seed P1SMOKE2 = Regent 全程胜利 exit 0**（多 seed 扫描第二角色覆盖 ✓；两角色两胜利链）。NaN 基线（SpeedX 全开）= 3250；ERROR 仅 2 条。
+- 对照实验 E1：`autoProceedEnabled=false` 同 seed 重跑中（sts2-p1-seed2b）。判读：NaN≈0 → 定罪 AutoProceed 的按钮/tween 路径；仍 ~3000 → 排除 AutoProceed，下一步关 `turboEnabled`（注意 runTimeout 风险，前段日志即可计数）。
