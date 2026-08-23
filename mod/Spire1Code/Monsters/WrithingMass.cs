@@ -93,69 +93,37 @@ public sealed class WrithingMass : Spire1Monster
 
     protected override MonsterMoveStateMachine GenerateMoveStateMachine()
     {
-        MoveState bigHit = new("BIG_HIT_MOVE", BigHitMove, new SingleAttackIntent(BigHitDamage));
-        MoveState multiHit = new("MULTI_HIT_MOVE", MultiHitMove, new MultiAttackIntent(MultiHitDamage, 3));
-        MoveState attackBlock = new("ATTACK_BLOCK_MOVE", AttackBlockMove, new SingleAttackIntent(AttackBlockDamage), new DefendIntent());
-        MoveState attackDebuff = new("ATTACK_DEBUFF_MOVE", AttackDebuffMove, new SingleAttackIntent(AttackDebuffDamage), new DebuffIntent());
-        MoveState megaDebuff = new("MEGA_DEBUFF_MOVE", MegaDebuffMove, new DebuffIntent());
+        BigHitState = new("BIG_HIT_MOVE", BigHitMove, new SingleAttackIntent(BigHitDamage));
+        MultiHitState = new("MULTI_HIT_MOVE", MultiHitMove, new MultiAttackIntent(MultiHitDamage, 3));
+        AttackBlockState = new("ATTACK_BLOCK_MOVE", AttackBlockMove, new SingleAttackIntent(AttackBlockDamage), new DefendIntent());
+        AttackDebuffState = new("ATTACK_DEBUFF_MOVE", AttackDebuffMove, new SingleAttackIntent(AttackDebuffDamage), new DebuffIntent());
+        MegaDebuffState = new("MEGA_DEBUFF_MOVE", MegaDebuffMove, new DebuffIntent());
 
-        ConditionalBranchState firstBands = new("WRITHING_FIRST");
-        ConditionalBranchState bands = new("WRITHING_BANDS");
-        // Reroll fallthrough targets: the bytecode re-enters getMove with a fresh restricted
-        // roll; each Reroll branch re-enters "bands" with the current roll replaced.
-        ConditionalBranchState reroll10_99 = new("WRITHING_REROLL_10_99");
-        ConditionalBranchState reroll20_99 = new("WRITHING_REROLL_20_99");
-        ConditionalBranchState reroll40_99 = new("WRITHING_REROLL_40_99");
-        ConditionalBranchState reroll0_19 = new("WRITHING_REROLL_0_19");
-        ConditionalBranchState reroll0_39 = new("WRITHING_REROLL_0_39");
-        ConditionalBranchState reroll0_69 = new("WRITHING_REROLL_0_69");
-        // Each reroll re-enters bands with the fresh restricted roll (bytecode re-invokes
-        // getMove); without an exit ConditionalBranchState throws "No valid next state".
-        reroll10_99.AddState(bands, () => true);
-        reroll20_99.AddState(bands, () => true);
-        reroll40_99.AddState(bands, () => true);
-        reroll0_19.AddState(bands, () => true);
-        reroll0_39.AddState(bands, () => true);
-        reroll0_69.AddState(bands, () => true);
+        // The bytecode resolves a move through a potentially self-reentering getMove chain
+        // (restricted re-rolls re-enter the band ladder with a fresh roll). Modelling that
+        // re-entry as graph edges yields intent-less conditional cycles (e.g.
+        // WRITHING_REROLL_0_39 <-> WRITHING_REROLL_40_99) that native graph consumers
+        // traverse without cycle protection — observed as a deterministic fatal native
+        // crash (exit 0x7FFFFFFF) right after "[IntentGraph] Generating intent graph".
+        // Fix: resolve eagerly in code (identical RNG draw order, see ResolveBands) so the
+        // static machine is root -> 5 moves -> root; every cycle passes through a real
+        // move/intent node, matching shipped-monster topology.
+        ConditionalBranchState root = new("WRITHING_RESOLVE");
+        root.AddState(BigHitState, () => ReferenceEquals(ResolveNext(), BigHitState));
+        root.AddState(MultiHitState, () => ReferenceEquals(ResolveNext(), MultiHitState));
+        root.AddState(AttackBlockState, () => ReferenceEquals(ResolveNext(), AttackBlockState));
+        root.AddState(AttackDebuffState, () => ReferenceEquals(ResolveNext(), AttackDebuffState));
+        root.AddState(MegaDebuffState, () => ReferenceEquals(ResolveNext(), MegaDebuffState));
 
-        bigHit.FollowUpState = bands;
-        multiHit.FollowUpState = bands;
-        attackBlock.FollowUpState = bands;
-        attackDebuff.FollowUpState = bands;
-        megaDebuff.FollowUpState = bands;
-        // Opening (vanilla firstMove latch): r<33 MULTI_HIT x3, r<66 ATTACK_BLOCK, else
-        // ATTACK_DEBUFF — MEGA_DEBUFF can never open.
-        firstBands.AddState(multiHit, () => FirstMoveRoll(33));
-        firstBands.AddState(attackBlock, () => FirstMoveRoll(66));
-        firstBands.AddState(attackDebuff, () => ConsumeFirstMove());
-        firstBands.AddState(bands, () => true);
-
-        // roll < 10: BIG_HIT unless last was BIG_HIT, then reroll 10-99.
-        bands.AddState(bigHit, () => CurrentRoll() < 10 && !LastWas(bigHit));
-        bands.AddState(reroll10_99, () => CurrentRoll() < 10 && Reroll(10, 99));
-        // roll < 20: MEGA_DEBUFF once (unless it was the last move); else 10% BIG_HIT (no
-        // history guard in vanilla), 90% reroll 20-99.
-        bands.AddState(megaDebuff, () => CurrentRoll() < 20 && !_usedMegaDebuff && !LastWas(megaDebuff));
-        bands.AddState(bigHit, () => CurrentRoll() < 20 && SubRoll(0.1f));
-        bands.AddState(reroll20_99, () => CurrentRoll() < 20 && Reroll(20, 99));
-        // roll < 40: ATTACK_DEBUFF unless last was ATTACK_DEBUFF; else 40% reroll 0-19,
-        // 60% reroll 40-99.
-        bands.AddState(attackDebuff, () => CurrentRoll() < 40 && !LastWas(attackDebuff));
-        bands.AddState(reroll0_19, () => CurrentRoll() < 40 && SubRoll(0.4f) && Reroll(0, 19));
-        bands.AddState(reroll40_99, () => CurrentRoll() < 40 && Reroll(40, 99));
-        // roll < 70: MULTI_HIT x3 unless last was MULTI_HIT; else 30% ATTACK_BLOCK (no guard
-        // in vanilla), 70% reroll 0-39.
-        bands.AddState(multiHit, () => CurrentRoll() < 70 && !LastWas(multiHit));
-        bands.AddState(attackBlock, () => CurrentRoll() < 70 && SubRoll(0.3f));
-        bands.AddState(reroll0_39, () => CurrentRoll() < 70 && Reroll(0, 39));
-        // roll >= 70: ATTACK_BLOCK unless last was ATTACK_BLOCK; else reroll 0-69.
-        bands.AddState(attackBlock, () => !LastWas(attackBlock));
-        bands.AddState(reroll0_69, () => Reroll(0, 69));
+        BigHitState.FollowUpState = root;
+        MultiHitState.FollowUpState = root;
+        AttackBlockState.FollowUpState = root;
+        AttackDebuffState.FollowUpState = root;
+        MegaDebuffState.FollowUpState = root;
 
         return new MonsterMoveStateMachine(
-            [bigHit, multiHit, attackBlock, attackDebuff, megaDebuff,
-                firstBands, bands, reroll10_99, reroll20_99, reroll40_99, reroll0_19, reroll0_39, reroll0_69],
-            firstBands);
+            [BigHitState, MultiHitState, AttackBlockState, AttackDebuffState, MegaDebuffState, root],
+            root);
     }
 
     private async Task BigHitMove(IReadOnlyList<Creature> targets)
@@ -204,52 +172,105 @@ public sealed class WrithingMass : Spire1Monster
         }
     }
 
-    private bool FirstMoveRoll(int threshold)
+    // Resolved move states, assigned in GenerateMoveStateMachine; the resolvers below need
+    // them outside the factory's local scope.
+    private MoveState BigHitState = null!;
+
+    private MoveState MultiHitState = null!;
+
+    private MoveState AttackBlockState = null!;
+
+    private MoveState AttackDebuffState = null!;
+
+    private MoveState MegaDebuffState = null!;
+
+    private MonsterState? _resolved;
+
+    private int _resolvedRound = -1;
+
+    /// <summary>One resolution per round, cached — the root band's predicates consult it repeatedly.</summary>
+    private MonsterState ResolveNext()
     {
-        if (!_firstMove)
+        int round = base.Creature?.CombatState?.RoundNumber ?? 0;
+        if (_resolvedRound != round || _resolved == null)
         {
-            return false;
+            _resolved = _firstMove ? ResolveFirst(base.Rng.NextInt(100)) : ResolveBands(base.Rng.NextInt(100));
+            _resolvedRound = round;
         }
-        if (CurrentRoll() >= threshold)
-        {
-            return false;
-        }
+        return _resolved;
+    }
+
+    // Opening (vanilla firstMove latch): r<33 MULTI_HIT x3, r<66 ATTACK_BLOCK, else
+    // ATTACK_DEBUFF — MEGA_DEBUFF can never open. Any first resolution consumes the latch.
+    private MonsterState ResolveFirst(int roll)
+    {
         _firstMove = false;
-        return true;
-    }
-
-    private bool ConsumeFirstMove()
-    {
-        if (!_firstMove)
+        if (roll < 33)
         {
-            return false;
+            return MultiHitState;
         }
-        _firstMove = false;
-        return true;
-    }
-
-    // The "current" roll of this getMove chain. Drawn once per round on first use; the
-    // bytecode re-rolls inside recursion, which Reroll replaces in place.
-    private int _roll = -1;
-    private int _rollTurn = -1;
-    private int CurrentRoll()
-    {
-        int turn = base.Creature?.CombatState?.RoundNumber ?? 0;
-        if (_rollTurn != turn)
+        if (roll < 66)
         {
-            _roll = base.Rng.NextInt(100);
-            _rollTurn = turn;
+            return AttackBlockState;
         }
-        return _roll;
+        return AttackDebuffState;
     }
 
-    private bool Reroll(int minInclusive, int maxInclusive)
+    // Band ladder, byte-faithful with the EXACT RNG draw order of the lazy-predicate version
+    // it replaced: each restricted re-roll draws one int in its vanilla range, each sub-roll
+    // one float, evaluated in bytecode band order.
+    private MonsterState ResolveBands(int roll)
     {
-        _roll = minInclusive + base.Rng.NextInt(maxInclusive - minInclusive + 1);
-        return true;
+        if (roll < 10)
+        {
+            if (!LastWas(BigHitState))
+            {
+                return BigHitState;
+            }
+            return ResolveBands(10 + base.Rng.NextInt(90)); // reroll 10-99
+        }
+        if (roll < 20)
+        {
+            if (!_usedMegaDebuff && !LastWas(MegaDebuffState))
+            {
+                return MegaDebuffState;
+            }
+            if (base.Rng.NextFloat() < 0.1f) // 10% BIG_HIT, no history guard in vanilla
+            {
+                return BigHitState;
+            }
+            return ResolveBands(20 + base.Rng.NextInt(80)); // reroll 20-99
+        }
+        if (roll < 40)
+        {
+            if (!LastWas(AttackDebuffState))
+            {
+                return AttackDebuffState;
+            }
+            if (base.Rng.NextFloat() < 0.4f)
+            {
+                return ResolveBands(base.Rng.NextInt(20)); // reroll 0-19
+            }
+            return ResolveBands(40 + base.Rng.NextInt(60)); // reroll 40-99
+        }
+        if (roll < 70)
+        {
+            if (!LastWas(MultiHitState))
+            {
+                return MultiHitState;
+            }
+            if (base.Rng.NextFloat() < 0.3f) // 30% ATTACK_BLOCK, no guard in vanilla
+            {
+                return AttackBlockState;
+            }
+            return ResolveBands(base.Rng.NextInt(40)); // reroll 0-39
+        }
+        if (!LastWas(AttackBlockState))
+        {
+            return AttackBlockState;
+        }
+        return ResolveBands(base.Rng.NextInt(70)); // reroll 0-69
     }
-
-    private bool SubRoll(float threshold) => base.Rng.NextFloat() < threshold;
 
     private bool LastWas(MonsterState state)
     {
