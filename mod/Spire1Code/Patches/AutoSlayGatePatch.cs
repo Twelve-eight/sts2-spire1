@@ -2,6 +2,8 @@ using System.Linq;
 using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Nodes;
+using MegaCrit.Sts2.Core.Rooms;
+using MegaCrit.Sts2.Core.Runs;
 
 namespace Spire1.Spire1Code.Patches;
 
@@ -31,15 +33,18 @@ internal static class AutoSlayGatePatch
 }
 
 /// <summary>
-/// <c>--autoslay</code>-only immortality for full-run verification (act-4 Heart smoke):
-/// every HP-loss application on a player creature is zeroed, so the auto-player can walk the
-/// whole dungeon — including lethal boss mechanics (e.g. Act4Heart's Doom kill) — without
-/// dying. Normal launches never pass <c>--autoslay</c>, so gameplay is untouched.
+/// <c>--autoslay</c>-only immortality, SCOPED TO COMBAT ROOMS: HP loss on a player creature is
+/// zeroed only while the current room is Monster/Elite/Boss, so the auto-player survives every
+/// fight yet out-of-combat real damage stays lethal. That scoping matters: the vanilla victory
+/// sequence executes the player for real (<c>CreatureCmd.cs:533</c> —
+/// <c>LoseHpInternal(currentHp, Unblockable|Unpowered)</c> during TheArchitect dialogue), and an
+/// unscoped patch blocked that execution, so no game-over screen ever appeared and AutoSlayer
+/// stalled at the very end of a won run (seed P1SMOKE1, Act 4 Floor 5).
+/// Normal launches never pass <c>--autoslay</c>, so gameplay is untouched.
 /// <para>
-/// Two entry points are covered: <c>Creature.LoseHpInternal(decimal, ValueProp)</c> is the
-/// HP-mutation choke point for combat damage and most effects; direct HP sets
-/// (<c>SetCurrentHpInternal</c>, used by Doom-style kills) are floored at 1 HP. Enemy
-/// creatures are untouched — they must still die for runs to progress.
+/// Entry points covered: <c>Creature.LoseHpInternal(decimal, ValueProp)</c> (the HP-mutation
+/// choke point) and direct sets via <c>SetCurrentHpInternal</c> (floored at 1). Enemy creatures
+/// are untouched — they must still die for runs to progress.
 /// </para>
 /// </summary>
 [HarmonyPatch(typeof(MegaCrit.Sts2.Core.Entities.Creatures.Creature))]
@@ -48,11 +53,27 @@ internal static class AutoSlayImmortalityPatch
     internal static readonly bool Active = OS.GetCmdlineArgs().Any(
         a => a.TrimStart('-').Equals("autoslay", StringComparison.OrdinalIgnoreCase));
 
+    /// <summary>Fail-safe default is IMMORTAL (state unreadable mid-combat must not kill the run).</summary>
+    internal static bool InCombatRoom()
+    {
+        try
+        {
+            return RunManager.Instance.DebugOnlyGetState().CurrentRoom?.RoomType
+                is MegaCrit.Sts2.Core.Rooms.RoomType.Monster
+                    or MegaCrit.Sts2.Core.Rooms.RoomType.Elite
+                    or MegaCrit.Sts2.Core.Rooms.RoomType.Boss;
+        }
+        catch
+        {
+            return true;
+        }
+    }
+
     [HarmonyPrefix]
     [HarmonyPatch("LoseHpInternal")]
     static void ZeroPlayerHpLoss(MegaCrit.Sts2.Core.Entities.Creatures.Creature __instance, ref decimal amount)
     {
-        if (Active && __instance.IsPlayer)
+        if (Active && __instance.IsPlayer && InCombatRoom())
         {
             amount = 0m;
         }
@@ -62,7 +83,7 @@ internal static class AutoSlayImmortalityPatch
     [HarmonyPatch("SetCurrentHpInternal")]
     static void FloorPlayerHpSet(MegaCrit.Sts2.Core.Entities.Creatures.Creature __instance, ref decimal amount)
     {
-        if (Active && __instance.IsPlayer && amount <= 0m)
+        if (Active && __instance.IsPlayer && amount <= 0m && InCombatRoom())
         {
             amount = 1m;
         }
