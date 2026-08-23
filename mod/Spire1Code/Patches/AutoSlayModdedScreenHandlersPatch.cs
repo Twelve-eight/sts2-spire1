@@ -149,12 +149,30 @@ internal sealed class AftpMinigameScreenHandler : IScreenHandler
 /// at Act 4's first rest site, seed P1SMOKE1. Surgical fix: rewrite only the literal that
 /// follows the <c>get_TotalFloor</c> call (49 → 120); real endings still come from the
 /// victory / game-over paths inside the loop, and the 25-minute run timeout is the backstop.
-/// </summary>
-[HarmonyPatch(typeof(AutoSlayer), "PlayRunAsync")]
-internal static class AutoSlayMaxFloorPatch
-{
-    [HarmonyTranspiler]
-    static IEnumerable<CodeInstruction> WidenMaxFloor(IEnumerable<CodeInstruction> instructions)
+[HarmonyPatch]
+ internal static class AutoSlayMaxFloorPatch
+ {
+    /// <summary>PlayRunAsync is `async`: its IL — including the TotalFloor &lt; 49 loop bound —
+    /// lives in the compiler-generated <c>&lt;PlayRunAsync&gt;d__*.MoveNext</c>, not in the stub
+    /// method the first attempt patched (which is why the widen silently no-op'd once).
+    /// Resolved by name so we do not depend on any Harmony AsyncEnumerator sugar.</summary>
+    static MethodBase? _target;
+
+    static MethodBase TargetMethod()
+    {
+        if (_target == null)
+        {
+            Type? machine = typeof(AutoSlayer)
+                .GetNestedTypes(BindingFlags.NonPublic | BindingFlags.Public)
+                .FirstOrDefault(t => t.Name.StartsWith("<PlayRunAsync>", StringComparison.Ordinal));
+            _target = machine?.GetMethod("MoveNext", BindingFlags.NonPublic | BindingFlags.Instance);
+            MainFile.Logger.Info($"[Spire1] AutoSlay max-floor target resolved: {machine?.FullName} -> {_target != null}");
+        }
+        return _target ?? throw new InvalidOperationException("<PlayRunAsync>d__.MoveNext not found");
+    }
+
+     [HarmonyTranspiler]
+     static IEnumerable<CodeInstruction> WidenMaxFloor(IEnumerable<CodeInstruction> instructions)
     {
         List<CodeInstruction> codes = [.. instructions];
         for (int i = 0; i < codes.Count - 1; i++)
