@@ -621,3 +621,12 @@ v1.0.5（更新 07-30），111.45MB，479 评价；已下载到
 
 ### 冒烟正面信号（崩溃前 42 层）
 AFTP/Act4Heart/ActToggler2/MP-Rebalance + Spire1 五件套正常同载；随机到 Necrobinder 打出了 SPIRE1-MADNESS（共享卡池互通 ✓）；我方遭遇（FOUR_SHAPES/DARKLINGS 等）连续正常出怪战斗；休息点/商店/事件 handler 全部工作。
+
+### 战果 #1 验证通过（同 seed P1SMOKE1 复跑）
+修复后 `sts2-p1-smoke3`：42 层扭曲团块正常出招（MULTI_HIT→ATTACK_BLOCK）并获胜，run 完整走完生命周期（AutoSlay 随机败局→结算→exit 0，5m09s）。前两次对照：3m44s 同点 native 崩溃。**修复判定：成立**。
+遗留资产小账：本 run 共 106 条 [ERROR]（均为非致命资源回退）——`spire1-awakened_one_encounter` 地图图标、`missing_power.png` 未打包等，归入 pck 资产补全任务。
+
+### P1 后续队列
+1. 多 seed 扫描（换 seed 覆盖不同角色/路径，含我方四角色被选中时的完整 run）。
+2. pck 资产补全（遭遇地图图标对、missing_power.png 兜底图）。
+3. 幕池行为审计：本 run 走的是哪套幕（日志显示 SPIRE1 遭遇 → 疑为我方 fallback 幕被选中；需确认 AFTP 幕与我方幕在同池时的选择语义与 ActToggler2 粒度）。
