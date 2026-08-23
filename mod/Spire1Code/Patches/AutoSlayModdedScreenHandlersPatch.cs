@@ -2,11 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Threading;
 using System.Threading.Tasks;
+using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.AutoSlay;
 using MegaCrit.Sts2.Core.AutoSlay.Handlers;
+using MegaCrit.Sts2.Core.AutoSlay.Helpers;
+using MegaCrit.Sts2.Core.Nodes.Events;
 
 namespace Spire1.Spire1Code.Patches;
 
@@ -19,9 +23,12 @@ namespace Spire1.Spire1Code.Patches;
 /// <para>
 /// The minigames pre-roll their outcome at construction and expose a public parameterless
 /// <c>Complete()</c> on the minigame class, so driving them is: wait out the slide-in, then
-/// invoke it. Registration goes through reflection into <c>AutoSlayer._screenHandlers</c>
-/// because the engine offers no extension API yet (drafted upstream).
-/// <c>NPortalMapBuilderScreen</c> is NOT registered — its minigame has no public completion.
+/// invoke it, then sweep any FOLLOW-UP event-option buttons the result spawns (Wheel of
+/// Change's remove-card outcome opens a second "begin removal" option after the engine's
+/// EventRoomHandler has already returned). Registration goes through reflection into
+/// <c>AutoSlayer._screenHandlers</c> because the engine offers no extension API yet (drafted
+/// upstream). <c>NPortalMapBuilderScreen</c> is NOT registered — its minigame has no public
+/// completion method.
 /// </para>
 /// </summary>
 [HarmonyPatch]
@@ -56,7 +63,8 @@ internal static class AutoSlayModdedScreenHandlersPatch
     }
 }
 
-/// <summary>Drives an AFTP minigame overlay by invoking its minigame's public Complete().</summary>
+/// <summary>Drives an AFTP minigame overlay: invoke the minigame's public Complete(), then
+/// sweep follow-up event-option buttons the result spawns.</summary>
 internal sealed class AftpMinigameScreenHandler : IScreenHandler
 {
     private readonly Type _screenType;
@@ -84,8 +92,25 @@ internal sealed class AftpMinigameScreenHandler : IScreenHandler
         target.Value.complete.Invoke(target.Value.instance, null);
         AutoSlayLog.Action($"Drove {_screenType.Name} minigame to completion");
 
-        // Give the outcome application a beat before the drain loop re-polls overlays.
-        await Task.Delay(500, ct);
+        Node root = ((SceneTree)Engine.GetMainLoop()).Root;
+        for (int sweep = 0; sweep < 8; sweep++)
+        {
+            await Task.Delay(600, ct);
+            List<NEventOptionButton> buttons = UiHelper.FindAll<NEventOptionButton>(root)
+                .Where(b => !b.Option.IsLocked)
+                .ToList();
+            if (buttons.Count == 0)
+            {
+                break;
+            }
+            foreach (NEventOptionButton button in buttons)
+            {
+                AutoSlayLog.Action($"Clicking follow-up event option: {button.Option.Title.GetFormattedText()}");
+                await UiHelper.Click(button);
+                await Task.Delay(400, ct);
+            }
+        }
+
         AutoSlayLog.ExitScreen(_screenType.Name);
     }
 
@@ -112,5 +137,36 @@ internal sealed class AftpMinigameScreenHandler : IScreenHandler
         }
         MethodInfo? own = _screenType.GetMethod("Complete", Type.EmptyTypes);
         return own == null ? null : (screen, own);
+    }
+}
+
+/// <summary>
+/// <c>--autoslay</c>-only: widens the engine's hard-coded run length. The main loop plays
+/// <c>while (runState.TotalFloor &lt; 49)</c> — tuned for vanilla's three ~16-floor acts.
+/// Ecosystem runs are longer (StS1-faithful acts run 16-17 floors EACH, plus Act4Heart's
+/// fourth act), so TotalFloor crosses 49 around the act 3→4 transition and AutoSlayer
+/// abandons a perfectly healthy run ("Run completed (max floor reached)") — observed right
+/// at Act 4's first rest site, seed P1SMOKE1. Surgical fix: rewrite only the literal that
+/// follows the <c>get_TotalFloor</c> call (49 → 120); real endings still come from the
+/// victory / game-over paths inside the loop, and the 25-minute run timeout is the backstop.
+/// </summary>
+[HarmonyPatch(typeof(AutoSlayer), "PlayRunAsync")]
+internal static class AutoSlayMaxFloorPatch
+{
+    [HarmonyTranspiler]
+    static IEnumerable<CodeInstruction> WidenMaxFloor(IEnumerable<CodeInstruction> instructions)
+    {
+        List<CodeInstruction> codes = [.. instructions];
+        for (int i = 0; i < codes.Count - 1; i++)
+        {
+            if (codes[i].opcode == OpCodes.Callvirt
+                && codes[i].operand is MethodInfo m && m.Name == "get_TotalFloor"
+                && codes[i + 1].Is(OpCodes.Ldc_I4_S, 49))
+            {
+                codes[i + 1] = new CodeInstruction(OpCodes.Ldc_I4_S, (sbyte)120) { labels = codes[i + 1].labels };
+                break;
+            }
+        }
+        return codes;
     }
 }
