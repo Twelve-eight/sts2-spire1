@@ -736,3 +736,4 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - 同批：Seek/Nightmare 补 `.selectionScreenPrompt` 键（CardModel.cs:129 缺键即 throw → 打出僵死的根因）；5 卡通配符对齐 C# 注册名（Aggregate/Claw/Halt/Prostrate/Streamline）。机制文档化于 SimpleLoc.cs:79-88（!X! 特判表仅 D/CD/B/CB/C/E/H，M 不在表内透传原名）。
 - P1SMOKE4 回归：官方 Defect 全程胜利（r1 竞态失败→救援补丁护栏在位，r2 未复现即胜）；**NaN=0 于原版局 ⇒ NaN 与我方自定义内容强相关**（N3 深挖线索）。
 - P1SMOKE5：SPIRE1-WATCHER 全程胜利（EXC:0）。**NaN=0 ⇒ NaN 与 SPIRE1-IRONCLAD 专属内容强相关**（Ironclad 局 3600+ / Watcher·官方Defect 局 0），N3 深挖范围收窄至铁甲池内容。
+- P1SMOKE6 三连回归：r1/r2 暴露 SimpleLoc 同源竞态第二形态 + PatchAll 一损俱损缺陷 → IsEnabled 补丁重定向声明基类 NClickableControl + MainFile 逐类 try/catch 加固（3ebbab0）→ r3 **SPIRE1-DEFECT 全程胜利**（EXC:0）。覆盖进度：Ironclad✓ Watcher✓ Defect✓，仅剩 Silent。
