@@ -630,3 +630,10 @@ AFTP/Act4Heart/ActToggler2/MP-Rebalance + Spire1 五件套正常同载；随机�
 1. 多 seed 扫描（换 seed 覆盖不同角色/路径，含我方四角色被选中时的完整 run）。
 2. pck 资产补全（遭遇地图图标对、missing_power.png 兜底图）。
 3. 幕池行为审计：本 run 走的是哪套幕（日志显示 SPIRE1 遭遇 → 疑为我方 fallback 幕被选中；需确认 AFTP 幕与我方幕在同池时的选择语义与 ActToggler2 粒度）。
+
+### 战果 #2：AFTP 转盘事件三方交互（已上报 + 已自修）
+目标环境首跑在 Act1-F12 `ACTSFROMTHEPAST-WHEEL_OF_CHANGE` 中止：引擎 AutoSlay 无该自定义屏 handler（"No handler for screen type: NWheelSpinScreen"）+ 用户 SpeedX 的 AutoProceed 盲点 Proceed → 看门狗 5.1s 判死退出（exit 5；AutoSlayer 自身 quit(1)）。
+- **AFTP**：issue #10 已提交（API 稳定性承诺 + ProceedButton 时序 + 标记接口建议）。
+- **MegaCrit**：无公开 tracker，草稿存 `.tmp/issues/megacrit-autoslay-extensibility.md`（_screenHandlers 开放扩展点）。
+- **SpeedX**：无公开仓库（B 站视频首发）→ **用户自行联系作者**（待办，非我方动作）。
+- **我方修复** `AutoSlayModdedScreenHandlersPatch`（--autoslay 门禁）：反射注册 NWheelSpin/NMatchAndKeep 屏 handler，等待滑入动画后调小游戏公开 Complete()（结果构造时已定，旋转纯演出）。PortalMapBuilder 无公开完成方法，暂不注册。**用户指令：此类兼容补丁随 Spire1 发布承载（AFTP 冻结），已写入 DEVELOP §0。**
