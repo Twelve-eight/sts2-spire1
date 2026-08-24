@@ -1,0 +1,68 @@
+using Godot;
+using HarmonyLib;
+using MegaCrit.Sts2.Core.Nodes.Screens.Map;
+using Spire1.Spire1Code.Config;
+
+namespace Spire1.Spire1Code.Patches;
+
+/// <summary>
+/// 地图页"跳过当前节点"救援按钮（Spire1Config.EnableSkipNodeButton 门控，默认开）。
+/// <para>
+/// 用途：火堆等房间进入即黑屏死锁时，打开地图（顶栏地图键本地可用，
+/// 见 NTopBarMapButton.Open(isOpenedFromTopBar:true) 先例）后点此按钮解锁选点，
+/// 再直接点目标节点——走引擎原生 VoteForMapCoordAction 投票管线，全端一致移动。
+/// </para>
+/// <para>
+/// 引擎事实（SkipApiScout 取证）：RunState 无"房间完成"字段；放行完全由各端
+/// NMapScreen.IsTravelEnabled 本地门控（战斗胜利路径就是 SetTravelEnabled(true)），
+/// 因此本补丁零状态改动、零新增网络类型，不构成失同步源。
+/// </para>
+/// </summary>
+[HarmonyPatch(typeof(NMapScreen), "Open")]
+internal static class SkipNodeButtonPatch
+{
+    private const string ButtonName = "Spire1SkipNodeButton";
+
+    [HarmonyPostfix]
+    private static void AddSkipButton(NMapScreen __instance)
+    {
+        if (!Spire1Config.EnableSkipNodeButton || __instance.GetNodeOrNull<Button>(ButtonName) != null)
+        {
+            return;
+        }
+
+        var button = new Button
+        {
+            Name = ButtonName,
+            Text = "跳过当前节点",
+            TooltipText = "卡在房间出不去时使用：解锁地图选点，然后点击下一个要去的节点。"
+        };
+        button.SetAnchorsPreset(Control.LayoutPreset.BottomRight);
+        button.OffsetLeft = -250;
+        button.OffsetTop = -74;
+        button.OffsetRight = -16;
+        button.OffsetBottom = -20;
+        button.Pressed += () => OnSkipPressed(__instance);
+        __instance.AddChild(button);
+    }
+
+    private static void OnSkipPressed(NMapScreen screen)
+    {
+        try
+        {
+            screen.SetTravelEnabled(true);
+            // 私有方法：重算各点位可点性（与引擎内部状态变化后的刷新等价）
+            AccessTools.Method(typeof(NMapScreen), "RecalculateTravelability")
+                ?.Invoke(screen, null);
+            MainFile.Logger.Info("[Spire1] skip-node: travel force-enabled from map button");
+            if (screen.GetNodeOrNull<Button>(ButtonName) is { } b)
+            {
+                b.Disabled = true;
+            }
+        }
+        catch (System.Exception e)
+        {
+            MainFile.Logger.Error("[Spire1] skip-node failed: " + e.Message);
+        }
+    }
+}
