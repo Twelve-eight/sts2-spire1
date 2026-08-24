@@ -4,6 +4,7 @@ using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Modding;
 using Spire1.Spire1Code.Config;
+using Spire1.Spire1Code.Patches;
 using Spire1.Spire1Code.Character;
 using BaseLib.Patches.Localization;
 
@@ -57,6 +58,15 @@ public partial class MainFile : Node
         if (failed > 0)
         {
             Logger.Error($"Harmony: {failed} patch class(es) failed to apply");
+        }
+
+        // 第三方（RitsuLib）弹窗抑制不能进上面的属性扫描——目标类型缺失时 AccessTools
+        // 解析会抛异常，会让注册循环每次启动都记一条失败。显式调用、内部自兜底。
+        if (Spire1Config.IgnoreMpModDifferences)
+        {
+            Logger.Info(RitsuLibPopupSuppressionPatch.Apply(harmony)
+                ? "[Spire1] MP ignore-mod-diff: RitsuLib divergence popup suppressed"
+                : "[Spire1] MP ignore-mod-diff: RitsuLib popup type not found (mod absent?) — skipped");
         }
     }
 }
