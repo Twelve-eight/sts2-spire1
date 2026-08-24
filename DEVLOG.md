@@ -757,3 +757,11 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 ### 联机兼容审计（挂账清偿）+ 尘封魔典认知修正
 - **修正**：DustyTome 空池 NRE 早已修复在树——`DustyTomeAncientFallbackPatch`（03ae5d1，评审 7c98579）：原版 `NextItem(items).Id` 对空集直接解引用（我此前"setter null 守卫不崩"的推断有误，NRE 发生在 SetupForPlayer 内部）；补丁回退到 PlaceholderID 对应官方池（ironclad/silent/defect/regent），per-player 上下文。冒烟时 `relic add DUSTY_TOME` 只需验证回退生效。
 - **联机语义逐补丁核查**：RewardClampPatch（CreateForReward 按 player 参数钳制数量）、SplashOwnSetSubtractPatch（splash.Owner 上下文、PlayerChoiceContext 多人感知类型）、DustyTomeAncientFallbackPatch（player.Character+player.PlayerRng 每玩家流）——三者均无静态单例假设。AutoSlay 系全部 AutoSlayer.IsActive 门控且仅单机 --autoslay 生效；LocDebug/RestSite/DungeonSelection 为视觉/开发类全局项，StS2 联机要求双方 mod 集一致 ⇒ 无分叉风险。**结论：我方补丁层联机安全。**
+
+### 冒烟批次（守卫+遗物实测，r2-r13+final）
+- **商店守卫终版生效**：`ShopEnoughGoldGuardPatch`（MerchantEntry.EnoughGold postfix）——SOZU 在手时药水槽 reason=sozu-ban、被跳过；含药水商店流程秒过。前两代实现全部废弃并记录：①HandleAsync 前缀 .Wait() 主线程死锁（用户目击"对对碰"画面冻结）；②CreateCard+AddGenerated 异步管线在 postfix 上下文 await 不恢复。
+- **尘封魔典遗物链全通**：`DebugRelicInjectPatch` 挂 NMapScreen.Initialize（战斗外安全点），`relic.ToMutable()` + DustyTome 先 `SetupForPlayer(player)` → `RelicCmd.Obtain` 成功无失败日志；sozu-ban 即其铁证（禁令 hook 需遗物真实入包）。教训：①discarded task 吞异常必须 ContinueWith 记录；②canonical 模型不可直接 Obtain/CloneCard（"used in incorrect place"）。
+- **卡牌注入器四代演进全部失败，回滚原版**：canonical 直传 AddGenerated（Owner/Pile 断言静默炸）、CreateCard+AddGenerated（await 不恢复）、SetUpCombat 时点（DrawPile 未建）、PopulateCombatState+CreateCard/AddInternal（入堆成功但抽到即断回合链，turn3 "No playable turn" 超时）。**关键复盘：历史覆盖增长全部来自自然出牌，注入器从未贡献过覆盖**——跨角色注入的 canonical Owner=null 是根因。已 `git show f2f3305` 回滚；后续覆盖策略=多跑整局自然 drain。
+- **最终验证局**：SPIRE1-IRONCLAD ★胜利 F17-A3，ERR:0 EXC:0 NaN:0，无注入残留 ✓。
+- **终版矩阵**：IRONCLAD 36/44（缺12中8实缺：Bash/Berserk/LimitBreak/Reaper/SeeingRed/SeverSoule+起始牌替代4张N/A）、SILENT 34/47（10实缺+3N/A）、DEFECT 54/58（**实缺0**，余4全为起始牌替代）、WATCHER 39/77 归档挂起。
+- 提交序列见 git log；推送直连 fallback。
