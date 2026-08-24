@@ -1,0 +1,102 @@
+[
+  {
+    "id": "Burn",
+    "class": "Burn",
+    "color": "COLORLESS",
+    "name_en": "Burn",
+    "name_zh": "灼伤",
+    "type": "STATUS",
+    "rarity": "COMMON",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Unplayable. NL At the end of your turn, take 2 damage.",
+    "description_zh": " 不能被打出 。 NL 在你的回合结束时，你受到2点伤害。",
+    "upgraded_description_diff": {
+      "en": "Unplayable. NL At the end of your turn, take 4 damage.",
+      "zh": " 不能被打出 。 NL 在你的回合结束时，你受到4点伤害。"
+    },
+    "keywords": [
+      "UNPLAYABLE"
+    ]
+  },
+  {
+    "id": "Dazed",
+    "class": "Dazed",
+    "color": "COLORLESS",
+    "name_en": "Dazed",
+    "name_zh": "晕眩",
+    "type": "STATUS",
+    "rarity": "COMMON",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Unplayable. NL Ethereal.",
+    "description_zh": " 不能被打出 。 NL 虚无 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "ETHEREAL",
+      "UNPLAYABLE"
+    ]
+  },
+  {
+    "id": "Slimed",
+    "class": "Slimed",
+    "color": "COLORLESS",
+    "name_en": "Slimed",
+    "name_zh": "黏液",
+    "type": "STATUS",
+    "rarity": "COMMON",
+    "cost": 1,
+    "cost_upgraded": 1,
+    "cost_upgraded_source": "unchanged",
+    "target": "SELF",
+    "description_en": "Exhaust.",
+    "description_zh": "消耗 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "EXHAUST"
+    ]
+  },
+  {
+    "id": "Void",
+    "class": "VoidCard",
+    "color": "COLORLESS",
+    "name_en": "Void",
+    "name_zh": "虚空",
+    "type": "STATUS",
+    "rarity": "COMMON",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Unplayable. NL Ethereal. NL Whenever this card is drawn, lose 1 Energy.",
+    "description_zh": "不能被打出 。 NL 抽到这张牌时失去1点能量。 NL 虚无 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "ETHEREAL",
+      "UNPLAYABLE"
+    ]
+  },
+  {
+    "id": "Wound",
+    "class": "Wound",
+    "color": "COLORLESS",
+    "name_en": "Wound",
+    "name_zh": "伤口",
+    "type": "STATUS",
+    "rarity": "COMMON",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Unplayable.",
+    "description_zh": " 不能被打出 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "UNPLAYABLE"
+    ]
+  }
+]

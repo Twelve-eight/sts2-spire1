@@ -1,0 +1,766 @@
+[
+  {
+    "id": "Apotheosis",
+    "class": "Apotheosis",
+    "color": "COLORLESS",
+    "name_en": "Apotheosis",
+    "name_zh": "神化",
+    "type": "SKILL",
+    "rarity": "RARE",
+    "cost": 2,
+    "cost_upgraded": 1,
+    "cost_upgraded_source": "upgradeBaseCost(1)",
+    "target": "NONE",
+    "description_en": "Upgrade ALL your cards for the rest of combat. NL Exhaust.",
+    "description_zh": "在本场战斗中 升级 你的所有牌。 NL 消耗 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "EXHAUST",
+      "UPGRADE"
+    ]
+  },
+  {
+    "id": "Ghostly",
+    "class": "Apparition",
+    "color": "COLORLESS",
+    "name_en": "Apparition",
+    "name_zh": "灵体",
+    "type": "SKILL",
+    "rarity": "SPECIAL",
+    "cost": 1,
+    "cost_upgraded": 1,
+    "cost_upgraded_source": "unchanged",
+    "target": "SELF",
+    "description_en": "Ethereal. NL Gain 1 Intangible. NL Exhaust.",
+    "description_zh": "获得1层 无实体 。 NL 消耗 。 NL 虚无 。",
+    "upgraded_description_diff": {
+      "en": "Gain 1 Intangible. NL Exhaust.",
+      "zh": "获得1层 无实体 。 NL 消耗 。 "
+    },
+    "keywords": [
+      "ETHEREAL",
+      "EXHAUST",
+      "INTANGIBLE"
+    ]
+  },
+  {
+    "id": "Bandage Up",
+    "class": "BandageUp",
+    "color": "COLORLESS",
+    "name_en": "Bandage Up",
+    "name_zh": "包扎",
+    "type": "SKILL",
+    "rarity": "UNCOMMON",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "SELF",
+    "description_en": "Heal !M! HP. NL Exhaust.",
+    "description_zh": "回复 !M! 生命。 NL 消耗 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "EXHAUST"
+    ]
+  },
+  {
+    "id": "Bite",
+    "class": "Bite",
+    "color": "COLORLESS",
+    "name_en": "Bite",
+    "name_zh": "噬咬",
+    "type": "ATTACK",
+    "rarity": "SPECIAL",
+    "cost": 1,
+    "cost_upgraded": 1,
+    "cost_upgraded_source": "unchanged",
+    "target": "ENEMY",
+    "description_en": "Deal !D! damage. NL Heal !M! HP.",
+    "description_zh": "造成 !D! 点伤害。 NL 回复 !M! 点生命。",
+    "upgraded_description_diff": null,
+    "keywords": []
+  },
+  {
+    "id": "Blind",
+    "class": "Blind",
+    "color": "COLORLESS",
+    "name_en": "Blind",
+    "name_zh": "致盲",
+    "type": "SKILL",
+    "rarity": "UNCOMMON",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "ENEMY",
+    "description_en": "Apply !M! Weak.",
+    "description_zh": "给予 !M! 层 虚弱 。",
+    "upgraded_description_diff": {
+      "en": "Apply !M! Weak to ALL enemies.",
+      "zh": "给予所有敌人 !M! 层 虚弱 。"
+    },
+    "keywords": [
+      "WEAK"
+    ]
+  },
+  {
+    "id": "Chrysalis",
+    "class": "Chrysalis",
+    "color": "COLORLESS",
+    "name_en": "Chrysalis",
+    "name_zh": "结茧",
+    "type": "SKILL",
+    "rarity": "RARE",
+    "cost": 2,
+    "cost_upgraded": 2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Shuffle !M! random Skills into your draw pile. They cost 0 this combat. NL Exhaust.",
+    "description_zh": "在你的抽牌堆中加入 NL !M! 张随机技能牌。 他们 NL 在本场战斗中耗能为0。 NL 消耗 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "EXHAUST"
+    ]
+  },
+  {
+    "id": "Dark Shackles",
+    "class": "DarkShackles",
+    "color": "COLORLESS",
+    "name_en": "Dark Shackles",
+    "name_zh": "黑暗镣铐",
+    "type": "SKILL",
+    "rarity": "UNCOMMON",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "ENEMY",
+    "description_en": "Enemy loses !M! Strength this turn. NL Exhaust.",
+    "description_zh": "让一名敌人在本回合内失去 !M! 点 力量 。 NL 消耗 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "EXHAUST",
+      "STRENGTH"
+    ]
+  },
+  {
+    "id": "Deep Breath",
+    "class": "DeepBreath",
+    "color": "COLORLESS",
+    "name_en": "Deep Breath",
+    "name_zh": "深呼吸",
+    "type": "SKILL",
+    "rarity": "UNCOMMON",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "SELF",
+    "description_en": "Shuffle your discard pile into your draw pile. NL Draw !M! card.",
+    "description_zh": "将你的弃牌堆洗牌后放入你的抽牌堆。 NL 抽 !M! 张牌。",
+    "upgraded_description_diff": {
+      "en": "Shuffle your discard pile into your draw pile. NL Draw !M! cards.",
+      "zh": "将你的弃牌堆洗牌后放入你的抽牌堆。 NL 抽 !M! 张牌。"
+    },
+    "keywords": []
+  },
+  {
+    "id": "Discovery",
+    "class": "Discovery",
+    "color": "COLORLESS",
+    "name_en": "Discovery",
+    "name_zh": "发现",
+    "type": "SKILL",
+    "rarity": "UNCOMMON",
+    "cost": 1,
+    "cost_upgraded": 1,
+    "cost_upgraded_source": "unchanged",
+    "target": "SELF",
+    "description_en": "Choose 1 of 3 random cards to add into your hand. It costs 0 this turn. NL Exhaust.",
+    "description_zh": "从3张随机牌中选择1张加入你的手牌。这张牌在本回合耗能变为0。 NL 消耗 。",
+    "upgraded_description_diff": {
+      "en": "Choose 1 of 3 random cards to add into your hand. It costs 0 this turn.",
+      "zh": "从3张随机牌中选择1张加入你的手牌。这张牌在本回合耗能变为0。"
+    },
+    "keywords": [
+      "EXHAUST"
+    ]
+  },
+  {
+    "id": "Dramatic Entrance",
+    "class": "DramaticEntrance",
+    "color": "COLORLESS",
+    "name_en": "Dramatic Entrance",
+    "name_zh": "闪亮登场",
+    "type": "ATTACK",
+    "rarity": "UNCOMMON",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "ALL_ENEMY",
+    "description_en": "Innate. NL Deal !D! damage to ALL enemies. NL Exhaust.",
+    "description_zh": " 固有 。 NL 对所有敌人造成 !D! 点伤害。 NL 消耗 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "EXHAUST",
+      "INNATE"
+    ]
+  },
+  {
+    "id": "Enlightenment",
+    "class": "Enlightenment",
+    "color": "COLORLESS",
+    "name_en": "Enlightenment",
+    "name_zh": "开悟",
+    "type": "SKILL",
+    "rarity": "UNCOMMON",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "SELF",
+    "description_en": "Reduce the cost of all cards in your hand to 1 this turn.",
+    "description_zh": "在这个回合，你当前手牌中所有牌的耗能降低到1。",
+    "upgraded_description_diff": {
+      "en": "Reduce the cost of all cards in your hand to 1 this combat.",
+      "zh": "在本场战斗，你当前手牌中所有牌的耗能降低到1。"
+    },
+    "keywords": []
+  },
+  {
+    "id": "Finesse",
+    "class": "Finesse",
+    "color": "COLORLESS",
+    "name_en": "Finesse",
+    "name_zh": "妙计",
+    "type": "SKILL",
+    "rarity": "UNCOMMON",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "SELF",
+    "description_en": "Gain !B! Block. NL Draw 1 card.",
+    "description_zh": "获得 !B! 点 格挡 。 NL 抽1张牌。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "BLOCK"
+    ]
+  },
+  {
+    "id": "Flash of Steel",
+    "class": "FlashOfSteel",
+    "color": "COLORLESS",
+    "name_en": "Flash of Steel",
+    "name_zh": "亮剑",
+    "type": "ATTACK",
+    "rarity": "UNCOMMON",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "ENEMY",
+    "description_en": "Deal !D! damage. NL Draw 1 card.",
+    "description_zh": "造成 !D! 点伤害。 NL 抽1张牌。",
+    "upgraded_description_diff": null,
+    "keywords": []
+  },
+  {
+    "id": "Forethought",
+    "class": "Forethought",
+    "color": "COLORLESS",
+    "name_en": "Forethought",
+    "name_zh": "预谋",
+    "type": "SKILL",
+    "rarity": "UNCOMMON",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Put a card from your hand to the bottom of your draw pile. It costs 0 until played.",
+    "description_zh": "将手牌中的一张牌放到抽牌堆的底部。 NL 并且这张牌在被打出之前，耗能变为0。",
+    "upgraded_description_diff": {
+      "en": "Put any number of cards from your hand to the bottom of your draw pile. They cost 0 until played.",
+      "zh": "将手牌中的任意张牌放到抽牌堆的底部。 NL 并且它们在被打出之前，耗能变为0。"
+    },
+    "keywords": []
+  },
+  {
+    "id": "Good Instincts",
+    "class": "GoodInstincts",
+    "color": "COLORLESS",
+    "name_en": "Good Instincts",
+    "name_zh": "优秀直觉",
+    "type": "SKILL",
+    "rarity": "UNCOMMON",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "SELF",
+    "description_en": "Gain !B! Block.",
+    "description_zh": "获得 !B! 点 格挡 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "BLOCK"
+    ]
+  },
+  {
+    "id": "HandOfGreed",
+    "class": "HandOfGreed",
+    "color": "COLORLESS",
+    "name_en": "Hand of Greed",
+    "name_zh": "贪婪之手",
+    "type": "ATTACK",
+    "rarity": "RARE",
+    "cost": 2,
+    "cost_upgraded": 2,
+    "cost_upgraded_source": "unchanged",
+    "target": "ENEMY",
+    "description_en": "Deal !D! damage. NL If Fatal, gain !M! Gold.",
+    "description_zh": "造成 !D! 点伤害。 NL 斩杀 时，获得 !M! 金币。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "FATAL"
+    ]
+  },
+  {
+    "id": "Impatience",
+    "class": "Impatience",
+    "color": "COLORLESS",
+    "name_en": "Impatience",
+    "name_zh": "急躁",
+    "type": "SKILL",
+    "rarity": "UNCOMMON",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "If you have no Attacks in your hand, draw !M! cards.",
+    "description_zh": "如果你的手牌中没有攻击牌，抽 !M! 张牌。",
+    "upgraded_description_diff": null,
+    "keywords": []
+  },
+  {
+    "id": "Jack Of All Trades",
+    "class": "JackOfAllTrades",
+    "color": "COLORLESS",
+    "name_en": "Jack of All Trades",
+    "name_zh": "花样百出",
+    "type": "SKILL",
+    "rarity": "UNCOMMON",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Add !M! random Colorless card into your hand. NL Exhaust.",
+    "description_zh": "增加 !M! 张随机无色牌到你的手牌。 NL 消耗 。",
+    "upgraded_description_diff": {
+      "en": "Add !M! random Colorless cards into your hand. NL Exhaust.",
+      "zh": "增加 !M! 张随机无色牌到你的手牌。 NL 消耗 。"
+    },
+    "keywords": [
+      "EXHAUST"
+    ]
+  },
+  {
+    "id": "J.A.X.",
+    "class": "JAX",
+    "color": "COLORLESS",
+    "name_en": "J.A.X.",
+    "name_zh": "J.A.X.",
+    "type": "SKILL",
+    "rarity": "SPECIAL",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "SELF",
+    "description_en": "Lose 3 HP. NL Gain !M! Strength.",
+    "description_zh": "失去 3 点生命。 NL 获得 !M! 点 力量 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "STRENGTH"
+    ]
+  },
+  {
+    "id": "Madness",
+    "class": "Madness",
+    "color": "COLORLESS",
+    "name_en": "Madness",
+    "name_zh": "疯狂",
+    "type": "SKILL",
+    "rarity": "UNCOMMON",
+    "cost": 1,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "upgradeBaseCost(0)",
+    "target": "SELF",
+    "description_en": "Reduce the cost of a random card in your hand to 0 this combat. NL Exhaust.",
+    "description_zh": "你手牌中一张随机牌在本场战斗中耗能变为0。 NL 消耗 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "EXHAUST"
+    ]
+  },
+  {
+    "id": "Magnetism",
+    "class": "Magnetism",
+    "color": "COLORLESS",
+    "name_en": "Magnetism",
+    "name_zh": "磁力",
+    "type": "POWER",
+    "rarity": "RARE",
+    "cost": 2,
+    "cost_upgraded": 1,
+    "cost_upgraded_source": "upgradeBaseCost(1)",
+    "target": "SELF",
+    "description_en": "At the start of your turn, add a random Colorless card into your hand.",
+    "description_zh": "在每回合开始时，增加一张随机无色牌到你的手牌。",
+    "upgraded_description_diff": null,
+    "keywords": []
+  },
+  {
+    "id": "Master of Strategy",
+    "class": "MasterOfStrategy",
+    "color": "COLORLESS",
+    "name_en": "Master of Strategy",
+    "name_zh": "战略大师",
+    "type": "SKILL",
+    "rarity": "RARE",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Draw !M! cards. NL Exhaust.",
+    "description_zh": "抽 !M! 张牌。 NL 消耗 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "EXHAUST"
+    ]
+  },
+  {
+    "id": "Mayhem",
+    "class": "Mayhem",
+    "color": "COLORLESS",
+    "name_en": "Mayhem",
+    "name_zh": "乱战",
+    "type": "POWER",
+    "rarity": "RARE",
+    "cost": 2,
+    "cost_upgraded": 1,
+    "cost_upgraded_source": "upgradeBaseCost(1)",
+    "target": "SELF",
+    "description_en": "At the start of your turn, play the top card of your draw pile.",
+    "description_zh": "在你的回合开始时，打出你抽牌堆顶部的牌。",
+    "upgraded_description_diff": null,
+    "keywords": []
+  },
+  {
+    "id": "Metamorphosis",
+    "class": "Metamorphosis",
+    "color": "COLORLESS",
+    "name_en": "Metamorphosis",
+    "name_zh": "羽化",
+    "type": "SKILL",
+    "rarity": "RARE",
+    "cost": 2,
+    "cost_upgraded": 2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Shuffle !M! random Attacks into your draw pile. They cost 0 this combat. NL Exhaust.",
+    "description_zh": "在你的抽牌堆中加入 NL !M! 张随机攻击牌。 他们 NL 在本场战斗中耗能为0。 NL 消耗 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "EXHAUST"
+    ]
+  },
+  {
+    "id": "Mind Blast",
+    "class": "MindBlast",
+    "color": "COLORLESS",
+    "name_en": "Mind Blast",
+    "name_zh": "心灵震慑",
+    "type": "ATTACK",
+    "rarity": "UNCOMMON",
+    "cost": 2,
+    "cost_upgraded": 1,
+    "cost_upgraded_source": "upgradeBaseCost(1)",
+    "target": "ENEMY",
+    "description_en": "Innate. NL Deal damage equal to the number of cards in your draw pile.",
+    "description_zh": " 固有 。 NL 造成你抽牌堆中剩余牌数的伤害。",
+    "upgraded_description_diff": {
+      "en": "",
+      "zh": ""
+    },
+    "keywords": [
+      "INNATE"
+    ]
+  },
+  {
+    "id": "Panacea",
+    "class": "Panacea",
+    "color": "COLORLESS",
+    "name_en": "Panacea",
+    "name_zh": "万能药",
+    "type": "SKILL",
+    "rarity": "UNCOMMON",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "SELF",
+    "description_en": "Gain !M! Artifact. NL Exhaust.",
+    "description_zh": "获得 !M! 层 人工制品 。 NL 消耗 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "ARTIFACT",
+      "EXHAUST"
+    ]
+  },
+  {
+    "id": "Panache",
+    "class": "Panache",
+    "color": "COLORLESS",
+    "name_en": "Panache",
+    "name_zh": "神气制胜",
+    "type": "POWER",
+    "rarity": "RARE",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "SELF",
+    "description_en": "Every time you play 5 cards in a single turn, deal !M! damage to ALL enemies.",
+    "description_zh": "你每在同个回合内打出5张牌，就对所有敌人造成 !M! 点伤害。",
+    "upgraded_description_diff": null,
+    "keywords": []
+  },
+  {
+    "id": "PanicButton",
+    "class": "PanicButton",
+    "color": "COLORLESS",
+    "name_en": "Panic Button",
+    "name_zh": "应急按钮",
+    "type": "SKILL",
+    "rarity": "UNCOMMON",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "SELF",
+    "description_en": "Gain !B! Block. You cannot gain Block from cards for !M! turns. NL Exhaust.",
+    "description_zh": "获得 !B! 点 格挡 。 NL 你在接下来 !M! 回合内无法再从卡牌中获得格挡。 NL 消耗 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "BLOCK",
+      "EXHAUST"
+    ]
+  },
+  {
+    "id": "Purity",
+    "class": "Purity",
+    "color": "COLORLESS",
+    "name_en": "Purity",
+    "name_zh": "净化",
+    "type": "SKILL",
+    "rarity": "UNCOMMON",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Exhaust up to !M! cards in your hand. NL Exhaust.",
+    "description_zh": "从手牌中选择最多 !M! 张牌 消耗 。 NL 消耗 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "EXHAUST"
+    ]
+  },
+  {
+    "id": "RitualDagger",
+    "class": "RitualDagger",
+    "color": "COLORLESS",
+    "name_en": "Ritual Dagger",
+    "name_zh": "仪式匕首",
+    "type": "ATTACK",
+    "rarity": "SPECIAL",
+    "cost": 1,
+    "cost_upgraded": 1,
+    "cost_upgraded_source": "unchanged",
+    "target": "ENEMY",
+    "description_en": "Deal !D! damage. NL If Fatal, permanently increase this card's damage by !M!. NL Exhaust.",
+    "description_zh": "造成 !D! 点伤害。 NL 斩杀 时，它在本局游戏中的伤害永久性增加 !M! 。 NL 消耗 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "EXHAUST",
+      "FATAL"
+    ]
+  },
+  {
+    "id": "Sadistic Nature",
+    "class": "SadisticNature",
+    "color": "COLORLESS",
+    "name_en": "Sadistic Nature",
+    "name_zh": "残虐天性",
+    "type": "POWER",
+    "rarity": "RARE",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "SELF",
+    "description_en": "Whenever you apply a debuff to an enemy, they take !M! damage.",
+    "description_zh": "每当你对一名敌人造成负面 状态 ，使对方受到 !M! 点伤害。",
+    "upgraded_description_diff": null,
+    "keywords": []
+  },
+  {
+    "id": "Secret Technique",
+    "class": "SecretTechnique",
+    "color": "COLORLESS",
+    "name_en": "Secret Technique",
+    "name_zh": "秘密技法",
+    "type": "SKILL",
+    "rarity": "RARE",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Put a Skill from your draw pile into your hand. NL Exhaust.",
+    "description_zh": "从抽牌堆中选择一张技能牌放入你的手牌。 NL 消耗 。",
+    "upgraded_description_diff": {
+      "en": "Put a Skill from your draw pile into your hand.",
+      "zh": "从抽牌堆中选择一张技能牌放入你的手牌。"
+    },
+    "keywords": [
+      "EXHAUST"
+    ]
+  },
+  {
+    "id": "Secret Weapon",
+    "class": "SecretWeapon",
+    "color": "COLORLESS",
+    "name_en": "Secret Weapon",
+    "name_zh": "秘密武器",
+    "type": "SKILL",
+    "rarity": "RARE",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Put an Attack from your draw pile into your hand. NL Exhaust.",
+    "description_zh": "从抽牌堆中选择一张攻击牌放入你的手牌。 NL 消耗 。",
+    "upgraded_description_diff": {
+      "en": "Put an Attack from your draw pile into your hand.",
+      "zh": "从抽牌堆中选择一张攻击牌放入你的手牌。"
+    },
+    "keywords": [
+      "EXHAUST"
+    ]
+  },
+  {
+    "id": "Swift Strike",
+    "class": "SwiftStrike",
+    "color": "COLORLESS",
+    "name_en": "Swift Strike",
+    "name_zh": "迅捷打击",
+    "type": "ATTACK",
+    "rarity": "UNCOMMON",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "ENEMY",
+    "description_en": "Deal !D! damage.",
+    "description_zh": "造成 !D! 点伤害。",
+    "upgraded_description_diff": null,
+    "keywords": []
+  },
+  {
+    "id": "The Bomb",
+    "class": "TheBomb",
+    "color": "COLORLESS",
+    "name_en": "The Bomb",
+    "name_zh": "炸弹",
+    "type": "SKILL",
+    "rarity": "RARE",
+    "cost": 2,
+    "cost_upgraded": 2,
+    "cost_upgraded_source": "unchanged",
+    "target": "SELF",
+    "description_en": "At the end of 3 turns, deal !M! damage to ALL enemies.",
+    "description_zh": "在3回合结束后，对所有敌人造成 !M! 点伤害。",
+    "upgraded_description_diff": null,
+    "keywords": []
+  },
+  {
+    "id": "Thinking Ahead",
+    "class": "ThinkingAhead",
+    "color": "COLORLESS",
+    "name_en": "Thinking Ahead",
+    "name_zh": "深谋远虑",
+    "type": "SKILL",
+    "rarity": "RARE",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Draw 2 cards. NL Put a card from your hand on top of your draw pile. NL Exhaust.",
+    "description_zh": "抽2张牌，然后将手牌中的一张牌放到你抽牌堆的顶端。 消耗 。",
+    "upgraded_description_diff": {
+      "en": "Draw 2 cards. NL Put a card from your hand on top of your draw pile.",
+      "zh": "抽2张牌，然后将手牌中的一张牌放到你抽牌堆的顶端。"
+    },
+    "keywords": [
+      "EXHAUST"
+    ]
+  },
+  {
+    "id": "Transmutation",
+    "class": "Transmutation",
+    "color": "COLORLESS",
+    "name_en": "Transmutation",
+    "name_zh": "转化",
+    "type": "SKILL",
+    "rarity": "RARE",
+    "cost": -1,
+    "cost_upgraded": -1,
+    "cost_upgraded_source": "unchanged",
+    "target": "SELF",
+    "description_en": "Add X random Colorless cards into your hand. They cost 0 this turn. NL Exhaust.",
+    "description_zh": "在你的手牌中加入 X 张随机无色牌。 它们在本回合的耗能变为0。 NL 消耗 。",
+    "upgraded_description_diff": {
+      "en": "Add X random Upgraded Colorless cards into your hand. They cost 0 this turn. NL Exhaust.",
+      "zh": "在你的手牌中加入 X 张 升级 过的随机无色牌。 它们在本回合的耗能变为0。 NL 消耗 。"
+    },
+    "keywords": [
+      "EXHAUST"
+    ]
+  },
+  {
+    "id": "Trip",
+    "class": "Trip",
+    "color": "COLORLESS",
+    "name_en": "Trip",
+    "name_zh": "绊倒",
+    "type": "SKILL",
+    "rarity": "UNCOMMON",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "ENEMY",
+    "description_en": "Apply !M! Vulnerable.",
+    "description_zh": "给予 !M! 层 易伤 。",
+    "upgraded_description_diff": {
+      "en": "Apply !M! Vulnerable to ALL enemies.",
+      "zh": "给予所有敌人 !M! 层 易伤 。"
+    },
+    "keywords": [
+      "VULNERABLE"
+    ]
+  },
+  {
+    "id": "Violence",
+    "class": "Violence",
+    "color": "COLORLESS",
+    "name_en": "Violence",
+    "name_zh": "暴力",
+    "type": "SKILL",
+    "rarity": "RARE",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Put !M! random Attacks from your draw pile into your hand. NL Exhaust.",
+    "description_zh": "随机将你抽牌堆中 !M! 张攻击牌加入你的手牌。 NL 消耗 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "EXHAUST"
+    ]
+  }
+]

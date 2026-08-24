@@ -1,0 +1,187 @@
+[
+  {
+    "id": "Beta",
+    "class": "Beta",
+    "color": "COLORLESS",
+    "name_en": "Beta",
+    "name_zh": "贝塔",
+    "type": "SKILL",
+    "rarity": "SPECIAL",
+    "cost": 2,
+    "cost_upgraded": 1,
+    "cost_upgraded_source": "upgradeBaseCost(1)",
+    "target": "NONE",
+    "description_en": "Shuffle an *Omega into your draw pile. NL Exhaust.",
+    "description_zh": "将一张 *欧米伽 放入你的抽牌堆中。 NL 消耗 。",
+    "upgraded_description_diff": {
+      "en": "",
+      "zh": ""
+    },
+    "keywords": [
+      "EXHAUST"
+    ]
+  },
+  {
+    "id": "Expunger",
+    "class": "Expunger",
+    "color": "COLORLESS",
+    "name_en": "Expunger",
+    "name_zh": "灭除之刃",
+    "type": "ATTACK",
+    "rarity": "SPECIAL",
+    "cost": 1,
+    "cost_upgraded": 1,
+    "cost_upgraded_source": "unchanged",
+    "target": "ENEMY",
+    "description_en": "Deal !D! damage X times.",
+    "description_zh": "造成 !D! 点伤害 X 次。",
+    "upgraded_description_diff": {
+      "en": "",
+      "zh": ""
+    },
+    "keywords": []
+  },
+  {
+    "id": "Insight",
+    "class": "Insight",
+    "color": "COLORLESS",
+    "name_en": "Insight",
+    "name_zh": "洞见",
+    "type": "SKILL",
+    "rarity": "SPECIAL",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "SELF",
+    "description_en": "Retain. NL Draw !M! cards. NL Exhaust.",
+    "description_zh": " 保留 。 NL 抽 !M! 张牌。 NL 消耗 。",
+    "upgraded_description_diff": {
+      "en": "Retain. NL Draw !M! cards. NL Exhaust.",
+      "zh": " 保留 。 NL 抽 !M! 张牌。 NL 消耗 。"
+    },
+    "keywords": [
+      "EXHAUST",
+      "RETAIN"
+    ]
+  },
+  {
+    "id": "Miracle",
+    "class": "Miracle",
+    "color": "COLORLESS",
+    "name_en": "Miracle",
+    "name_zh": "奇迹",
+    "type": "SKILL",
+    "rarity": "SPECIAL",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Retain. NL Gain [W]. NL Exhaust.",
+    "description_zh": " 保留 。 NL 获得 [W] 。 NL 消耗 。",
+    "upgraded_description_diff": {
+      "en": "Retain. NL Gain [W] [W]. NL Exhaust.",
+      "zh": " 保留 。 NL 获得 [W] [W] 。 NL 消耗 。"
+    },
+    "keywords": [
+      "EXHAUST",
+      "RETAIN"
+    ]
+  },
+  {
+    "id": "Omega",
+    "class": "Omega",
+    "color": "COLORLESS",
+    "name_en": "Omega",
+    "name_zh": "欧米伽",
+    "type": "POWER",
+    "rarity": "SPECIAL",
+    "cost": 3,
+    "cost_upgraded": 3,
+    "cost_upgraded_source": "unchanged",
+    "target": "SELF",
+    "description_en": "At the end of your turn, deal !M! damage to ALL enemies.",
+    "description_zh": "在你的回合结束时，对所有敌人造成 !M! 点伤害。",
+    "upgraded_description_diff": null,
+    "keywords": []
+  },
+  {
+    "id": "Safety",
+    "class": "Safety",
+    "color": "COLORLESS",
+    "name_en": "Safety",
+    "name_zh": "平安",
+    "type": "SKILL",
+    "rarity": "SPECIAL",
+    "cost": 1,
+    "cost_upgraded": 1,
+    "cost_upgraded_source": "unchanged",
+    "target": "SELF",
+    "description_en": "Retain. NL Gain !B! Block. NL Exhaust.",
+    "description_zh": " 保留 。 NL 获得 !B! 点 格挡 。 NL 消耗 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "BLOCK",
+      "EXHAUST",
+      "RETAIN"
+    ]
+  },
+  {
+    "id": "Shiv",
+    "class": "Shiv",
+    "color": "COLORLESS",
+    "name_en": "Shiv",
+    "name_zh": "小刀",
+    "type": "ATTACK",
+    "rarity": "SPECIAL",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "ENEMY",
+    "description_en": "Deal !D! damage. NL Exhaust.",
+    "description_zh": "造成 !D! 点伤害。 NL 消耗 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "EXHAUST"
+    ]
+  },
+  {
+    "id": "Smite",
+    "class": "Smite",
+    "color": "COLORLESS",
+    "name_en": "Smite",
+    "name_zh": "惩恶",
+    "type": "ATTACK",
+    "rarity": "SPECIAL",
+    "cost": 1,
+    "cost_upgraded": 1,
+    "cost_upgraded_source": "unchanged",
+    "target": "ENEMY",
+    "description_en": "Retain. NL Deal !D! damage. NL Exhaust.",
+    "description_zh": " 保留 。 NL 造成 !D! 点伤害。 NL 消耗 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "EXHAUST",
+      "RETAIN"
+    ]
+  },
+  {
+    "id": "ThroughViolence",
+    "class": "ThroughViolence",
+    "color": "COLORLESS",
+    "name_en": "Through Violence",
+    "name_zh": "以暴易暴",
+    "type": "ATTACK",
+    "rarity": "SPECIAL",
+    "cost": 0,
+    "cost_upgraded": 0,
+    "cost_upgraded_source": "unchanged",
+    "target": "ENEMY",
+    "description_en": "Retain. NL Deal !D! damage. NL Exhaust.",
+    "description_zh": " 保留 。 NL 造成 !D! 点伤害。 NL 消耗 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "EXHAUST",
+      "RETAIN"
+    ]
+  }
+]
