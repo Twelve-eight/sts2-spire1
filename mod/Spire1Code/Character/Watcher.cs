@@ -25,6 +25,12 @@ public class Watcher : PlaceholderCharacterModel
 
     /// <summary>Substitute visual: StS2 Regent (no Watcher visual exists in StS2).</summary>
     public override string PlaceholderID => "regent";
+    // ARCHIVED by default (Spire1Config.EnableSts1Watcher=false): AFTP ships a finished
+    // Watcher; ours keeps two compromises (no stance API, borrowed Regent visual).
+    // Models stay registered for old-save compat; character hidden from select + random pool.
+    public override bool HideFromVanillaCharacterSelect => !Spire1.Spire1Code.Config.Spire1Config.EnableSts1Watcher;
+
+    public override bool AllowInVanillaRandomCharacterSelect => Spire1.Spire1Code.Config.Spire1Config.EnableSts1Watcher;
 
     public override Color NameColor => Color;
     public override CharacterGender Gender => CharacterGender.Feminine;

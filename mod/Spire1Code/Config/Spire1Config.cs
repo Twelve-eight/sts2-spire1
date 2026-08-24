@@ -45,6 +45,13 @@ internal class Spire1Config : SimpleModConfig
     public static bool PureSts1Pools { get; set; } = false;
 
     /// <summary>
+    /// 启用 "StS1 - Watcher"。默认关（归档）：AFTP 生态已提供成品 Watcher，
+    /// 我方实现存在姿态 API 缺失与借用储君视觉两处妥协（详见 Watcher.cs FLAG 注释）。
+    /// 归档=模型仍注册（老存档兼容），但隐藏于选人与随机角色池。
+    /// </summary>
+    public static bool EnableSts1Watcher { get; set; } = false;
+
+    /// <summary>
     /// Debug mode: append the localization key to every mod string shown in-game,
     /// e.g. "打击 (SPIRE1-STRIKE_SILENT.title)". Makes console spawning and testing easier.
     /// </summary>
