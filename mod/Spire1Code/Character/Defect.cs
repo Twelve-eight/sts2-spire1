@@ -19,6 +19,10 @@ public class Defect : PlaceholderCharacterModel
     /// <summary>StS1 Defect blue (card-back / name color), matching StS2's StsColors.blue.</summary>
     public static readonly Color Color = new("87CEEB");
 
+    public override bool HideFromVanillaCharacterSelect => !Config.CharacterGate.DefectEnabled;
+
+    public override bool AllowInVanillaRandomCharacterSelect => Config.CharacterGate.DefectEnabled;
+
     public override string PlaceholderID => "defect";
 
     public override Color NameColor => Color;
