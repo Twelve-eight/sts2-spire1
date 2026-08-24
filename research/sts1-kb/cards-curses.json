@@ -1,0 +1,275 @@
+[
+  {
+    "id": "AscendersBane",
+    "class": "AscendersBane",
+    "color": "CURSE",
+    "name_en": "Ascender's Bane",
+    "name_zh": "进阶之灾",
+    "type": "CURSE",
+    "rarity": "SPECIAL",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Unplayable. NL Ethereal. NL Cannot be removed from your deck.",
+    "description_zh": "不能被打出 。 NL 虚无 。 NL 不能从牌组中移除。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "ETHEREAL",
+      "UNPLAYABLE"
+    ]
+  },
+  {
+    "id": "Clumsy",
+    "class": "Clumsy",
+    "color": "CURSE",
+    "name_en": "Clumsy",
+    "name_zh": "笨拙",
+    "type": "CURSE",
+    "rarity": "CURSE",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Unplayable. NL Ethereal.",
+    "description_zh": " 不能被打出 。 NL 虚无 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "ETHEREAL",
+      "UNPLAYABLE"
+    ]
+  },
+  {
+    "id": "CurseOfTheBell",
+    "class": "CurseOfTheBell",
+    "color": "CURSE",
+    "name_en": "Curse of the Bell",
+    "name_zh": "铃铛的诅咒",
+    "type": "CURSE",
+    "rarity": "SPECIAL",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Unplayable. NL Cannot be removed from your deck.",
+    "description_zh": " 不能被打出 。 NL 不能从牌组中移除。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "UNPLAYABLE"
+    ]
+  },
+  {
+    "id": "Decay",
+    "class": "Decay",
+    "color": "CURSE",
+    "name_en": "Decay",
+    "name_zh": "腐朽",
+    "type": "CURSE",
+    "rarity": "CURSE",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Unplayable. NL At the end of your turn, take 2 damage.",
+    "description_zh": " 不能被打出 。 NL 在你的回合结束时，受到2点伤害。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "UNPLAYABLE"
+    ]
+  },
+  {
+    "id": "Doubt",
+    "class": "Doubt",
+    "color": "CURSE",
+    "name_en": "Doubt",
+    "name_zh": "疑虑",
+    "type": "CURSE",
+    "rarity": "CURSE",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Unplayable. NL At the end of your turn, gain 1 Weak.",
+    "description_zh": " 不能被打出 。 NL 在你的回合结束时，获得1层 虚弱 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "UNPLAYABLE",
+      "WEAK"
+    ]
+  },
+  {
+    "id": "Injury",
+    "class": "Injury",
+    "color": "CURSE",
+    "name_en": "Injury",
+    "name_zh": "受伤",
+    "type": "CURSE",
+    "rarity": "CURSE",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Unplayable.",
+    "description_zh": " 不能被打出 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "UNPLAYABLE"
+    ]
+  },
+  {
+    "id": "Necronomicurse",
+    "class": "Necronomicurse",
+    "color": "CURSE",
+    "name_en": "Necronomicurse",
+    "name_zh": "死灵诅咒",
+    "type": "CURSE",
+    "rarity": "SPECIAL",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Unplayable. NL There is no escape from this Curse.",
+    "description_zh": " 不能被打出 。 NL 这个 诅咒 无法逃脱。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "CURSE",
+      "UNPLAYABLE"
+    ]
+  },
+  {
+    "id": "Normality",
+    "class": "Normality",
+    "color": "CURSE",
+    "name_en": "Normality",
+    "name_zh": "凡庸",
+    "type": "CURSE",
+    "rarity": "CURSE",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Unplayable. NL While in hand, you cannot play more than 3 cards this turn.",
+    "description_zh": " 不能被打出 。 NL 在手牌中时，你在此回合无法打出3张以上牌。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "UNPLAYABLE"
+    ]
+  },
+  {
+    "id": "Pain",
+    "class": "Pain",
+    "color": "CURSE",
+    "name_en": "Pain",
+    "name_zh": "疼痛",
+    "type": "CURSE",
+    "rarity": "CURSE",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Unplayable. NL While in hand, NL lose 1 HP whenever you play another card.",
+    "description_zh": " 不能被打出 。 NL 当在手牌中时，每打出一张其他牌，失去1生命。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "UNPLAYABLE"
+    ]
+  },
+  {
+    "id": "Parasite",
+    "class": "Parasite",
+    "color": "CURSE",
+    "name_en": "Parasite",
+    "name_zh": "寄生",
+    "type": "CURSE",
+    "rarity": "CURSE",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Unplayable. NL If transformed or removed from your deck, lose 3 Max HP.",
+    "description_zh": " 不能被打出 。 NL 如果这张牌在你的牌组中被转化或移除，你失去3点最大生命。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "UNPLAYABLE"
+    ]
+  },
+  {
+    "id": "Pride",
+    "class": "Pride",
+    "color": "CURSE",
+    "name_en": "Pride",
+    "name_zh": "傲慢",
+    "type": "CURSE",
+    "rarity": "SPECIAL",
+    "cost": 1,
+    "cost_upgraded": 1,
+    "cost_upgraded_source": "unchanged",
+    "target": "SELF",
+    "description_en": "Innate. NL At the end of your turn, put a copy of this card on top of your draw pile. Exhaust.",
+    "description_zh": "固有 。 消耗 。 NL 你的回合结束时，在抽牌堆顶部加入一张这张牌的复制品。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "EXHAUST",
+      "INNATE"
+    ]
+  },
+  {
+    "id": "Regret",
+    "class": "Regret",
+    "color": "CURSE",
+    "name_en": "Regret",
+    "name_zh": "悔恨",
+    "type": "CURSE",
+    "rarity": "CURSE",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Unplayable. NL At the end of your turn, lose HP equal to the number of cards in your hand.",
+    "description_zh": " 不能被打出 。 NL 在你的回合结束时，失去相当于手牌数量的生命。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "UNPLAYABLE"
+    ]
+  },
+  {
+    "id": "Shame",
+    "class": "Shame",
+    "color": "CURSE",
+    "name_en": "Shame",
+    "name_zh": "羞耻",
+    "type": "CURSE",
+    "rarity": "CURSE",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Unplayable. NL At the end of your turn, gain 1 Frail.",
+    "description_zh": "不能被打出 。 NL 在你的回合结束时，获得1层 脆弱 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "FRAIL",
+      "UNPLAYABLE"
+    ]
+  },
+  {
+    "id": "Writhe",
+    "class": "Writhe",
+    "color": "CURSE",
+    "name_en": "Writhe",
+    "name_zh": "苦恼",
+    "type": "CURSE",
+    "rarity": "CURSE",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Unplayable. NL Innate.",
+    "description_zh": " 不能被打出 。 NL 固有 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "INNATE",
+      "UNPLAYABLE"
+    ]
+  }
+]

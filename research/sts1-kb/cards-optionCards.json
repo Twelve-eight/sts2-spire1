@@ -1,0 +1,91 @@
+[
+  {
+    "id": "BecomeAlmighty",
+    "class": "BecomeAlmighty",
+    "color": "COLORLESS",
+    "name_en": "Become Almighty",
+    "name_zh": "力大无穷",
+    "type": "POWER",
+    "rarity": "SPECIAL",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Gain !M! Strength.",
+    "description_zh": "获得 !M! 点 力量 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "STRENGTH"
+    ]
+  },
+  {
+    "id": "Calm",
+    "class": "ChooseCalm",
+    "color": "COLORLESS",
+    "name_en": "Calm",
+    "name_zh": "平静",
+    "type": "STATUS",
+    "rarity": "COMMON",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Upon exiting Calm, gain [W] [W].",
+    "description_zh": "离开 平静 时，获得 [W] [W] 。",
+    "upgraded_description_diff": null,
+    "keywords": [
+      "CALM"
+    ]
+  },
+  {
+    "id": "Wrath",
+    "class": "ChooseWrath",
+    "color": "COLORLESS",
+    "name_en": "Wrath",
+    "name_zh": "愤怒",
+    "type": "STATUS",
+    "rarity": "COMMON",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Deal and receive double attack damage.",
+    "description_zh": "造成和受到双倍攻击伤害。",
+    "upgraded_description_diff": null,
+    "keywords": []
+  },
+  {
+    "id": "FameAndFortune",
+    "class": "FameAndFortune",
+    "color": "COLORLESS",
+    "name_en": "Fame and Fortune",
+    "name_zh": "名利双收",
+    "type": "SKILL",
+    "rarity": "SPECIAL",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Gain !M! Gold.",
+    "description_zh": "获得 !M! 金币。",
+    "upgraded_description_diff": null,
+    "keywords": []
+  },
+  {
+    "id": "LiveForever",
+    "class": "LiveForever",
+    "color": "COLORLESS",
+    "name_en": "Live Forever",
+    "name_zh": "永生不死",
+    "type": "POWER",
+    "rarity": "SPECIAL",
+    "cost": -2,
+    "cost_upgraded": -2,
+    "cost_upgraded_source": "unchanged",
+    "target": "NONE",
+    "description_en": "Gain !M! *Plated *Armor.",
+    "description_zh": "获得 !M! 层 *多层护甲 。",
+    "upgraded_description_diff": null,
+    "keywords": []
+  }
+]
