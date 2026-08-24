@@ -753,3 +753,7 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 ### 非 cards 域通配符审计（挂账清偿）
 - 扫描九域 loc（powers/relics/potions/acts/characters/events/settings_ui/ancients/card_keywords/static_hover_tips）：除 events 外全部零占位符（无 !X! 也无 {X}）——此前 worker 报告的"非 cards 域风险"不存在。
 - events 域：53 事件 / 1312 键，{X} 占位符与 C# CanonicalVars/DynamicVars 注册名**全量一致，0 失配**。脚本固化 `.tmp/audit-event-vars.js`（id 规则 = `SPIRE1-`+类名蛇形；审计时注意 loc 键带连字符、类内字符串正则须含连字符，否则会空转假绿——已踩坑两次）。
+
+### 联机兼容审计（挂账清偿）+ 尘封魔典认知修正
+- **修正**：DustyTome 空池 NRE 早已修复在树——`DustyTomeAncientFallbackPatch`（03ae5d1，评审 7c98579）：原版 `NextItem(items).Id` 对空集直接解引用（我此前"setter null 守卫不崩"的推断有误，NRE 发生在 SetupForPlayer 内部）；补丁回退到 PlaceholderID 对应官方池（ironclad/silent/defect/regent），per-player 上下文。冒烟时 `relic add DUSTY_TOME` 只需验证回退生效。
+- **联机语义逐补丁核查**：RewardClampPatch（CreateForReward 按 player 参数钳制数量）、SplashOwnSetSubtractPatch（splash.Owner 上下文、PlayerChoiceContext 多人感知类型）、DustyTomeAncientFallbackPatch（player.Character+player.PlayerRng 每玩家流）——三者均无静态单例假设。AutoSlay 系全部 AutoSlayer.IsActive 门控且仅单机 --autoslay 生效；LocDebug/RestSite/DungeonSelection 为视觉/开发类全局项，StS2 联机要求双方 mod 集一致 ⇒ 无分叉风险。**结论：我方补丁层联机安全。**
