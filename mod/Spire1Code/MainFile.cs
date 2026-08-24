@@ -68,5 +68,9 @@ public partial class MainFile : Node
                 ? "[Spire1] MP ignore-mod-diff: RitsuLib divergence popup suppressed"
                 : "[Spire1] MP ignore-mod-diff: RitsuLib popup type not found (mod absent?) — skipped");
         }
+
+        // 归档角色门控的启动期预热：触发静态扫描并让"隐藏 N 张卡"计数进启动日志
+        //（否则静态字段懒初始化，首次进总览才执行，现场排障少一条关键证据）。
+        _ = Patches.CharacterArchive.ArchivedModelTypes;
     }
 }
