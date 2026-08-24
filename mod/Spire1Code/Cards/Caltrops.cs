@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Silent — Caltrops (Uncommon Power). Whenever you are attacked, deal 3 damage back (5 upgraded).</summary>
-[Pool(typeof(Spire1LegacyPool))]
+[Pool(typeof(SilentCardPool))]
 public class Caltrops() : Spire1Card(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<ThornsPower>(3)];

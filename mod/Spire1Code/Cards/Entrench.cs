@@ -9,7 +9,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Ironclad - Entrench (Uncommon Skill). Double your current Block (cost 1 upgraded).</summary>
-[Pool(typeof(Spire1LegacyPool))]
+[Pool(typeof(Spire1CardPool))]
 public class Entrench() : Spire1Card(2, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [];

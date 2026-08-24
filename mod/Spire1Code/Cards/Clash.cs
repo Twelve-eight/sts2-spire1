@@ -9,7 +9,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Ironclad - Clash (Common Attack). Can only be played if every card in your hand is an Attack; deal 14 damage (18 upgraded).</summary>
-[Pool(typeof(Spire1LegacyPool))]
+[Pool(typeof(Spire1CardPool))]
 public class Clash() : Spire1Card(0, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars =>
