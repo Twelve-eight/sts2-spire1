@@ -32,6 +32,12 @@ internal static class ShopEnoughGoldGuardPatch
     [HarmonyPostfix]
     private static void HideUnbuyablePotions(MerchantEntry __instance, ref bool __result)
     {
+        // 仅服务 autoslay 冒烟管线（消除 ShopRoomHandler 对隐形拒绝原因的死循环）。
+        // 正常对局必须保留引擎原生 EnoughGold 语义：它同时驱动商店 UI 着色与失败原因。
+        if (!Spire1.Spire1Code.Patches.AutoSlayImmortalityPatch.Active)
+        {
+            return; // 正常对局零介入
+        }
         if (!__result || __instance is not MerchantPotionEntry potionEntry || potionEntry.Model == null)
         {
             return;

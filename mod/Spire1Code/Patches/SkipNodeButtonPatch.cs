@@ -26,27 +26,38 @@ internal static class SkipNodeButtonPatch
     [HarmonyPostfix]
     private static void AddSkipButton(NMapScreen __instance)
     {
-        if (!Spire1Config.EnableSkipNodeButton || __instance.GetNodeOrNull<Button>(ButtonName) != null)
+        var button = __instance.GetNodeOrNull<Button>(ButtonName);
+        if (!Spire1Config.EnableSkipNodeButton)
         {
+            button?.QueueFree();
             return;
         }
 
-        var button = new Button
+        if (button == null)
         {
-            Name = ButtonName,
-            Text = "跳过当前节点",
-            TooltipText = "卡在房间出不去时使用：解锁地图选点，然后点击下一个要去的节点。"
-        };
-        button.SetAnchorsPreset(Control.LayoutPreset.BottomRight);
-        button.OffsetLeft = -250;
-        button.OffsetTop = -74;
-        button.OffsetRight = -16;
-        button.OffsetBottom = -20;
-        button.Pressed += () => OnSkipPressed(__instance);
-        __instance.AddChild(button);
+            button = new Button
+            {
+                Name = ButtonName,
+                TooltipText = "卡在房间出不去时使用：解锁地图选点，然后点击下一个要去的节点。"
+            };
+            button.SetAnchorsPreset(Control.LayoutPreset.BottomRight);
+            button.OffsetLeft = -250;
+            button.OffsetTop = -74;
+            button.OffsetRight = -16;
+            button.OffsetBottom = -20;
+            button.Pressed += () => OnSkipPressed(__instance, button);
+            __instance.AddChild(button);
+        }
+
+        // 本地化：键缺失时 Tr 原样返回键名，此时回退中文文案。
+        var localized = TranslationServer.Translate("SPIRE1_UI_SKIP_NODE");
+        button.Text = localized == "SPIRE1_UI_SKIP_NODE" ? "跳过当前节点" : (string)localized;
+
+        // 每次打开地图都复位可用性——上次按下后的禁用不能延续到下一次救援（Critic P2）。
+        button.Disabled = false;
     }
 
-    private static void OnSkipPressed(NMapScreen screen)
+    private static void OnSkipPressed(NMapScreen screen, Button button)
     {
         try
         {
@@ -55,10 +66,7 @@ internal static class SkipNodeButtonPatch
             AccessTools.Method(typeof(NMapScreen), "RecalculateTravelability")
                 ?.Invoke(screen, null);
             MainFile.Logger.Info("[Spire1] skip-node: travel force-enabled from map button");
-            if (screen.GetNodeOrNull<Button>(ButtonName) is { } b)
-            {
-                b.Disabled = true;
-            }
+            button.Disabled = true;
         }
         catch (System.Exception e)
         {
