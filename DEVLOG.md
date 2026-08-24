@@ -765,3 +765,11 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - **最终验证局**：SPIRE1-IRONCLAD ★胜利 F17-A3，ERR:0 EXC:0 NaN:0，无注入残留 ✓。
 - **终版矩阵**：IRONCLAD 36/44（缺12中8实缺：Bash/Berserk/LimitBreak/Reaper/SeeingRed/SeverSoule+起始牌替代4张N/A）、SILENT 34/47（10实缺+3N/A）、DEFECT 54/58（**实缺0**，余4全为起始牌替代）、WATCHER 39/77 归档挂起。
 - 提交序列见 git log；推送直连 fallback。
+
+### 联机粘液失同步验尸（RitsuLib 转储分析）
+- 现场：SLIMED（官方状态牌，打出发1张牌）打出后 checksum #55 分歧；另一局 SPIRE1-SUNDER 出现 "finished execution, but was in state Canceled! task probably kept executing..."（ID91 分歧）。
+- 硬数据：`players[1].piles.Draw` 本地 12 张 vs 远端 11 张，远端=本地左移一位（少一张 STRIKE_REGENT）——即某次对 players[1]（工坊 Watcher 局里的原版储君玩家）的抽牌只在单侧生效。全部 RNG 流（含 counter）两侧一致 ⇒ 非洗牌种子问题，是**抽牌动作未同步**。
+- 我方排除依据：①分歧堆属于第三方角色；②触发卡为官方状态牌；③我方 dll 双侧一致且无任何抽牌管线 hook；④本局我方卡（RECYCLE/SUNDER 等）执行序列双侧一致。
+- 高危嫌疑（环境里有 8 个 gameplay mod）：**Multiplayer Limit Break v0.2.7**（改多人抽牌限制，直插 DrawCmd 的可能性最大）、SpeedX（改动作节奏）、sts2_typing（拦截出牌）；另发现双方 **BaseLib 构建来源不同**（本地 ModsDirectory vs 朋友工坊版，同版本号不同构建体）。
+- 处置建议：①最小化 mod 集复测（BaseLib+Spire1），复现→上游 bug，消失→二分定位（先砍 MPLB）；②统一双方 BaseLib 为工坊版；③ Sunder 的 Canceled 模式与官方 HandOfGreed 同构（击杀后 GainEnergy），暂不改码，若最小集下仍复现再做无等待重排。
+- 教训：分装包 character.txt 只影响可见性不影响状态一致性（本次双方装了不同包仍完成整场战斗即为证明）。
