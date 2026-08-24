@@ -58,6 +58,12 @@ internal class Spire1Config : SimpleModConfig
     /// </summary>
     public static bool IgnoreMpModDifferences { get; set; } = true;
 
+    /// <summary>
+    /// 地图页显示"跳过当前节点"救援按钮：卡死在火堆等房间时打开地图，
+    /// 点按钮解锁选点后直接点下一个节点（走原生投票管线，无失同步风险）。
+    /// </summary>
+    public static bool EnableSkipNodeButton { get; set; } = true;
+
     // --- gate helpers (computed; getter-only, not surfaced as settings) ---
     [ConfigIgnore] public static bool CharactersEnabled => EnableSts1Content && EnableSts1Characters;
     [ConfigIgnore] public static bool CardsEnabled => EnableSts1Content && EnableSts1Cards;
