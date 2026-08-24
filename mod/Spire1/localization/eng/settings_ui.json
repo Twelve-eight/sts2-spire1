@@ -16,5 +16,17 @@
   "SPIRE1-ENABLE_STS1_DUNGEON.hover.desc": "Register the StS1 dungeon acts, monsters and encounters. Does NOT change what a new run plays by itself - see the next option.",
   "SPIRE1-USE_STS1_DUNGEON.title": "Play StS1 Dungeon",
   "SPIRE1-USE_STS1_DUNGEON.hover.title": "Play StS1 Dungeon",
-  "SPIRE1-USE_STS1_DUNGEON.hover.desc": "The next NEW singleplayer run plays the StS1 act sequence instead of the StS2 acts. Off by default so installing this mod never silently changes a vanilla run. Multiplayer is not affected."
+  "SPIRE1-USE_STS1_DUNGEON.hover.desc": "The next NEW singleplayer run plays the StS1 act sequence instead of the StS2 acts. Off by default so installing this mod never silently changes a vanilla run. Multiplayer is not affected.",
+  "SPIRE1-PURE_STS1_POOLS.title": "Pure StS1 Pools",
+  "SPIRE1-PURE_STS1_POOLS.hover.title": "Pure StS1 Pools",
+  "SPIRE1-PURE_STS1_POOLS.hover.desc": "Custom character pools skip identical official StS2 cards and fill with our StS1-faithful implementations instead. Reward counts are clamped to what the pool can actually offer.",
+  "SPIRE1-DEBUG_SHOW_LOC_KEYS.title": "Show Loc Keys",
+  "SPIRE1-DEBUG_SHOW_LOC_KEYS.hover.title": "Show Loc Keys",
+  "SPIRE1-DEBUG_SHOW_LOC_KEYS.hover.desc": "Append a localization key (e.g. SPIRE1-STRIKE.title) to every mod string in-game for debugging and console spawning.",
+  "SPIRE1-IGNORE_MP_MOD_DIFFERENCES.title": "MP: Ignore Mod Differences",
+  "SPIRE1-IGNORE_MP_MOD_DIFFERENCES.hover.title": "MP: Ignore Mod Differences",
+  "SPIRE1-IGNORE_MP_MOD_DIFFERENCES.hover.desc": "Force the handshake through mod-list and ModelID-hash mismatches (real game-version mismatch still blocks) and suppress the RitsuLib divergence popup. Fully effective only when both peers run this build; diagnostics still land in the logs directory.",
+  "SPIRE1-ENABLE_SKIP_NODE_BUTTON.title": "Map Skip-Node Button",
+  "SPIRE1-ENABLE_SKIP_NODE_BUTTON.hover.title": "Map Skip-Node Button",
+  "SPIRE1-ENABLE_SKIP_NODE_BUTTON.hover.desc": "Show a rescue button on the map screen: if you are stuck in a room, unlock map travel and click your next node. Uses the native vote pipeline — no desync risk."
 }

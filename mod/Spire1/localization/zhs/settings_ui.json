@@ -16,5 +16,18 @@
   "SPIRE1-ENABLE_STS1_DUNGEON.hover.desc": "注册一代地牢的关卡、怪物与遭遇。仅注册本身不会改变新对局的内容——请看下一项。",
   "SPIRE1-USE_STS1_DUNGEON.title": "游玩一代地牢",
   "SPIRE1-USE_STS1_DUNGEON.hover.title": "游玩一代地牢",
-  "SPIRE1-USE_STS1_DUNGEON.hover.desc": "下一个新的单人对局将使用一代关卡序列,取代二代关卡。默认关闭:安装本模组绝不会悄悄改变原版对局。多人模式不受影响。"
+  "SPIRE1-USE_STS1_DUNGEON.hover.desc": "下一个新的单人对局将使用一代关卡序列,取代二代关卡。默认关闭:安装本模组绝不会悄悄改变原版对局。多人模式不受影响。",
+  "SPIRE1-PURE_STS1_POOLS.title": "纯一代卡池",
+  "SPIRE1-PURE_STS1_POOLS.hover.title": "纯一代卡池",
+  "SPIRE1-PURE_STS1_POOLS.hover.desc": "自定义角色池不注入二代官方同名牌,改以我们的一代忠实实现填充。开启时奖励数量会按池内实际可行数钳制。",
+  "SPIRE1-DEBUG_SHOW_LOC_KEYS.title": "显示本地化键名",
+  "SPIRE1-DEBUG_SHOW_LOC_KEYS.hover.title": "显示本地化键名",
+  "SPIRE1-DEBUG_SHOW_LOC_KEYS.hover.desc": "游戏内每条本模组文本后附加定位键(如 SPIRE1-STRIKE.title),便于排查与控制台调用。",
+  "SPIRE1-IGNORE_MP_MOD_DIFFERENCES.title": "联机忽略mod差异",
+  "SPIRE1-IGNORE_MP_MOD_DIFERENCES_FALLBACK": "x",
+  "SPIRE1-IGNORE_MP_MOD_DIFFERENCES.hover.title": "联机忽略mod差异",
+  "SPIRE1-IGNORE_MP_MOD_DIFFERENCES.hover.desc": "握手时忽略双方mod清单与ModelID哈希差异强制放行(真实游戏版本不符仍拦截),并抑制失同步诊断弹窗。仅双方都安装本构建时完整生效;诊断包仍写入logs目录。",
+  "SPIRE1-ENABLE_SKIP_NODE_BUTTON.title": "地图跳过节点按钮",
+  "SPIRE1-ENABLE_SKIP_NODE_BUTTON.hover.title": "地图跳过节点按钮",
+  "SPIRE1-ENABLE_SKIP_NODE_BUTTON.hover.desc": "在地图页显示救援按钮:卡死在房间时解锁选点,直接点击下一节点。走原生投票管线,无失同步风险。"
 }
