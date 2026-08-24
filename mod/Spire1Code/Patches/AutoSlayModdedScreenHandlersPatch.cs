@@ -92,10 +92,28 @@ internal sealed class AftpMinigameScreenHandler : IScreenHandler
         target.Value.complete.Invoke(target.Value.instance, null);
         AutoSlayLog.Action($"Drove {_screenType.Name} minigame to completion");
 
-        Node root = ((SceneTree)Engine.GetMainLoop()).Root;
-        for (int sweep = 0; sweep < 8; sweep++)
+        // 引擎收尾是 ≥4s 的补间链，末端才 NOverlayStack.Remove(屏体)。
+        // 先给足自关时间；超时仍在栈上则代为移除，否则 drain loop 会抛
+        // "Screen ... not closing after being handled"（PURE-13 MatchAndKeep 实测）。
+        for (int wait = 0; wait < 8; wait++)
         {
-            await Task.Delay(600, ct);
+            await Task.Delay(500, ct);
+            if (GetCurrentScreen() == null)
+            {
+                break;
+            }
+        }
+        object? lingering = GetCurrentScreen();
+        if (lingering is MegaCrit.Sts2.Core.Nodes.Screens.Overlays.IOverlayScreen overlay)
+        {
+            MegaCrit.Sts2.Core.Nodes.Screens.Overlays.NOverlayStack.Instance?.Remove(overlay);
+            AutoSlayLog.Action($"Force-removed lingering {_screenType.Name} overlay");
+        }
+
+        Node root = ((SceneTree)Engine.GetMainLoop()).Root;
+        for (int sweep = 0; sweep < 12; sweep++)
+        {
+            await Task.Delay(700, ct);
             List<NEventOptionButton> buttons = UiHelper.FindAll<NEventOptionButton>(root)
                 .Where(b => !b.Option.IsLocked)
                 .ToList();
