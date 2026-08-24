@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Modding;
 using Sts2Cards = MegaCrit.Sts2.Core.Models.Cards;
 
@@ -50,7 +51,16 @@ internal static class SharedCardReuse
         typeof(Sts2Cards.MachineLearning), // 1E, draw 1 extra each turn, Innate on upgrade
         typeof(Sts2Cards.MeteorStrike),    // 5E, 24 dmg (+6), channel 3 Plasma
         typeof(Sts2Cards.Rainbow),         // 2E, channel Lightning + Frost + Dark, Exhaust
-        typeof(Sts2Cards.Reboot),          // 0E, shuffle everything back, draw 4 (+2), Exhaust
+        typeof(Sts2Cards.Reboot),
+        typeof(Sts2Cards.AllForOne),
+        typeof(Sts2Cards.Barrage),
+        typeof(Sts2Cards.Chill),
+        typeof(Sts2Cards.Claw),
+        typeof(Sts2Cards.CreativeAi),
+        typeof(Sts2Cards.Darkness),
+        typeof(Sts2Cards.Ftl),
+        typeof(Sts2Cards.MultiCast),
+        typeof(Sts2Cards.Tempest),          // 0E, shuffle everything back, draw 4 (+2), Exhaust
     ];
 
     /// <summary>Shipped StS2 cards identical to their StS1 Ironclad counterparts (A-group in
@@ -68,7 +78,28 @@ internal static class SharedCardReuse
         typeof(Sts2Cards.PommelStrike),   // 1E, 9 dmg (+2), draw 1 (+1)
         typeof(Sts2Cards.ShrugItOff),     // 1E, 8 block (+3), draw 1
         typeof(Sts2Cards.Thunderclap),    // 1E, 4 dmg (+3) & 1 Vulnerable to ALL
-        typeof(Sts2Cards.TwinStrike),     // 1E, 5 dmg twice (+2 each)
+        typeof(Sts2Cards.TwinStrike),
+        typeof(Sts2Cards.Barricade),
+        typeof(Sts2Cards.BattleTrance),
+        typeof(Sts2Cards.Bloodletting),
+        typeof(Sts2Cards.Bludgeon),
+        typeof(Sts2Cards.BurningPact),
+        typeof(Sts2Cards.DarkEmbrace),
+        typeof(Sts2Cards.Feed),
+        typeof(Sts2Cards.FeelNoPain),
+        typeof(Sts2Cards.FiendFire),
+        typeof(Sts2Cards.FlameBarrier),
+        typeof(Sts2Cards.Impervious),
+        typeof(Sts2Cards.InfernalBlade),
+        typeof(Sts2Cards.Inflame),
+        typeof(Sts2Cards.Rage),
+        typeof(Sts2Cards.Rupture),
+        typeof(Sts2Cards.SecondWind),
+        typeof(Sts2Cards.Shockwave),
+        typeof(Sts2Cards.SwordBoomerang),
+        typeof(Sts2Cards.TrueGrit),
+        typeof(Sts2Cards.Uppercut),
+        typeof(Sts2Cards.Whirlwind),     // 1E, 5 dmg twice (+2 each)
     ];
 
     /// <summary>Shipped StS2 cards identical to their StS1 Silent counterparts (same A-group;
@@ -88,7 +119,32 @@ internal static class SharedCardReuse
         typeof(Sts2Cards.DodgeAndRoll),   // 1E, 4 block (+2), gain equal block next turn
         typeof(Sts2Cards.PiercingWail),   // 1E, enemies lose 6 Str this turn (+2), Exhaust
         typeof(Sts2Cards.Prepared),       // 0E, draw 1 discard 1 (+2/+2)
-        typeof(Sts2Cards.Slice),          // 0E, 6 dmg (+3)
+        typeof(Sts2Cards.Slice),
+        typeof(Sts2Cards.Accuracy),
+        typeof(Sts2Cards.Acrobatics),
+        typeof(Sts2Cards.Adrenaline),
+        typeof(Sts2Cards.Afterimage),
+        typeof(Sts2Cards.Alchemize),
+        typeof(Sts2Cards.Backstab),
+        typeof(Sts2Cards.Blur),
+        typeof(Sts2Cards.BouncingFlask),
+        typeof(Sts2Cards.BulletTime),
+        typeof(Sts2Cards.Burst),
+        typeof(Sts2Cards.CalculatedGamble),
+        typeof(Sts2Cards.Dash),
+        typeof(Sts2Cards.Envenom),
+        typeof(Sts2Cards.EscapePlan),
+        typeof(Sts2Cards.Finisher),
+        typeof(Sts2Cards.Flechettes),
+        typeof(Sts2Cards.Footwork),
+        typeof(Sts2Cards.InfiniteBlades),
+        typeof(Sts2Cards.LegSweep),
+        typeof(Sts2Cards.Malaise),
+        typeof(Sts2Cards.Nightmare),
+        typeof(Sts2Cards.NoxiousFumes),
+        typeof(Sts2Cards.Predator),
+        typeof(Sts2Cards.StormOfSteel),
+        typeof(Sts2Cards.ToolsOfTheTrade),          // 0E, 6 dmg (+3)
     ];
 
     /// <summary>
@@ -122,6 +178,11 @@ internal static class SharedCardReuse
         (typeof(DefectCardPool), typeof(Cards.ConserveBattery)),
     ];
 
+    private static readonly System.Type[] ColorlessReuse =
+    [
+        typeof(Sts2Cards.DarkShackles),    // 1E, 敌人全体失去3力量(升5)，本回合
+    ];
+
     /// <summary>
     /// Adds every reused shipped card to the matching custom pool. Call from MainFile.Initialize().
     /// PureSts1Pools=true 时跳过全部二代官方卡注入，改为注入自有 StS1 实现类。
@@ -139,5 +200,37 @@ internal static class SharedCardReuse
         foreach (var cardType in DefectReuse) ModHelper.AddModelToPool(typeof(DefectCardPool), cardType);
         foreach (var cardType in IroncladReuse) ModHelper.AddModelToPool(typeof(Spire1CardPool), cardType);
         foreach (var cardType in SilentReuse) ModHelper.AddModelToPool(typeof(SilentCardPool), cardType);
+        foreach (var cardType in ColorlessReuse) ModHelper.AddModelToPool(typeof(ColorlessCardPool), cardType);
+        LogPoolCensus("ColorlessCardPool", typeof(ColorlessCardPool));
+        LogPoolCensus("Spire1CardPool", typeof(Spire1CardPool));
+        LogPoolCensus("SilentCardPool", typeof(SilentCardPool));
+        LogPoolCensus("DefectCardPool", typeof(DefectCardPool));
+    }
+
+    /// <summary>终态直证：打印三池最终成员的稀有度分布，用于核对复用注入是否生效。</summary>
+    private static void LogPoolCensus(string name, System.Type poolType)
+    {
+        try
+        {
+            var pool = (MegaCrit.Sts2.Core.Models.CardPoolModel)typeof(MegaCrit.Sts2.Core.Models.ModelDb)
+                .GetMethod("CardPool", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+                ?.MakeGenericMethod(poolType)
+                ?.Invoke(null, null);
+            if (pool == null) { MainFile.Logger.Error($"[Spire1] PoolCensus {name}: CardPool<T> returned null"); return; }
+            var hist = new System.Collections.Generic.SortedDictionary<string, int>();
+            int total = 0;
+            foreach (var c in pool.AllCards)
+            {
+                hist[c.Rarity.ToString()] = hist.GetValueOrDefault(c.Rarity.ToString()) + 1;
+                total++;
+            }
+            var parts = new List<string>();
+            foreach (var kv in hist) parts.Add(kv.Key + "=" + kv.Value);
+            MainFile.Logger.Info($"[Spire1] PoolCensus {name}: total={total} ({string.Join(", ", parts)})");
+        }
+        catch (System.Exception e)
+        {
+            MainFile.Logger.Error($"[Spire1] PoolCensus {name} failed: {e.Message}");
+        }
     }
 }

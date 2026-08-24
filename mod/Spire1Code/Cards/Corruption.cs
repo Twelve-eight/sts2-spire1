@@ -9,7 +9,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Ironclad — Corruption (Rare Power). Skills cost 0. Whenever you play a Skill, Exhaust it.</summary>
-[Pool(typeof(Spire1LegacyPool))]
+[Pool(typeof(Spire1CardPool))]
 public class Corruption() : Spire1Card(3, CardType.Power, CardRarity.Rare, TargetType.None)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<CorruptionPower>(1)];
