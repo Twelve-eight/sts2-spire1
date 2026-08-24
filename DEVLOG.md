@@ -749,3 +749,7 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
   - 修复候选（待实证后决策）：①给每角色配置一张忠实 Ancient 卡 ②SetupForPlayer 空集 fallback 补丁 ③文档化限制。
 - 权威覆盖计算器固化为 `.tmp/night/coverage.js`（继承链解析池归属；played 正则 `/Playing (\S+)/`；官方复用映射表；自动输出 queue-<pool>.txt）。当前：IRONCLAD 32/44、SILENT 34/47、DEFECT 51/58、WATCHER 39/77（归档挂起）；缺口含起始牌替代类（Strike/Defend 系，实际不发牌，标 N/A）。
 - 提交：ca8c0b2（41 力量图标重生）、f2f3305（归档+守卫+注入器）。推送走直连 fallback（代理 7897 失效）。
+
+### 非 cards 域通配符审计（挂账清偿）
+- 扫描九域 loc（powers/relics/potions/acts/characters/events/settings_ui/ancients/card_keywords/static_hover_tips）：除 events 外全部零占位符（无 !X! 也无 {X}）——此前 worker 报告的"非 cards 域风险"不存在。
+- events 域：53 事件 / 1312 键，{X} 占位符与 C# CanonicalVars/DynamicVars 注册名**全量一致，0 失配**。脚本固化 `.tmp/audit-event-vars.js`（id 规则 = `SPIRE1-`+类名蛇形；审计时注意 loc 键带连字符、类内字符串正则须含连字符，否则会空转假绿——已踩坑两次）。
