@@ -773,3 +773,37 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - 高危嫌疑（环境里有 8 个 gameplay mod）：**Multiplayer Limit Break v0.2.7**（改多人抽牌限制，直插 DrawCmd 的可能性最大）、SpeedX（改动作节奏）、sts2_typing（拦截出牌）；另发现双方 **BaseLib 构建来源不同**（本地 ModsDirectory vs 朋友工坊版，同版本号不同构建体）。
 - 处置建议：①最小化 mod 集复测（BaseLib+Spire1），复现→上游 bug，消失→二分定位（先砍 MPLB）；②统一双方 BaseLib 为工坊版；③ Sunder 的 Canceled 模式与官方 HandOfGreed 同构（击杀后 GainEnergy），暂不改码，若最小集下仍复现再做无等待重排。
 - 教训：分装包 character.txt 只影响可见性不影响状态一致性（本次双方装了不同包仍完成整场战斗即为证明）。
+
+## 2026-08-25 夜间批次（GA 修正 + 联机容错 + 跳过节点救援 + 部署闭环）
+
+### GA 池归属与语义双修正（af6d1d7）
+- 用户实锤"遗传算法不该是红色牌"：`GeneticAlgorithm.cs` 漏挂 `[Pool]` → 继承铁甲池。补 `[Pool(typeof(DefectCardPool))]`。
+- jar+官方 loc 双仲裁推翻记忆：GA 官方原文是 **Gain !B! Block**（非敏捷）+ 每打出一次格挡永久 +!M! + **消耗**。
+  类路径 `cards/blue/GeneticAlgorithm.class`（ID="Genetic Algorithm" 带空格）；描述在 `localization/`（单数）eng/zhs cards.json。
+- 教训固化：数值永远 jar+loc 双源仲裁，不信记忆（用户与我同时记错属性）。
+
+### 无视 mod 差异联机补丁（d0181a0，Spire1Config.IgnoreMpModDifferences 默认开）
+- 握手三道闸定位：HandshakeManager.TryReadHandshakeMessage——版本串不符→VersionMismatch；玩法 mod 清单不符→ModMismatch；ModelID 哈希不符→VersionMismatch；非玩法差异仅告警。
+- Postfix 放行策略：ModMismatch 一律放行；VersionMismatch 仅在版本串相同时（=哈希成因）放行；真版本差异仍拦截。
+- RitsuLib 失同步弹窗抑制：`StateDivergenceDiagnosticsPopup.ShowDeferred(report)` 前缀拦截（第三方类型 AccessTools 解析，缺失静默跳过，MainFile 扫描循环后显式 Apply）。诊断 zip 独立管线照常落盘。
+- **假阳性实锤**（divergence #563/#249 对拍）：双方 BaseLib 来源不同（ModsDirectory vs Workshop）、远端多 4 个非玩法 mod、分装包名不同 ⇒ 清单级差异；players/piles/choices/rewards/creatures 逐字段全同。SpeedX 在场但无状态差异。
+
+### 地图页跳过节点按钮（41e7acc，Spire1Config.EnableSkipNodeButton 默认开）
+- SkipApiScout 取证：RunState 无房间完成字段，放行=`NMapScreen.IsTravelEnabled` 本地门控（战斗胜利同款 `SetTravelEnabled(true)`）。
+- 实现：NMapScreen.Open postfix 注入"跳过当前节点"按钮 → SetTravelEnabled(true)+RecalculateTravelability(反射) → 玩家直接点目标节点走原生 VoteForMapCoordAction 投票管线。零状态改动零新增网络类型=不失同步源。
+- 用途：火堆黑屏死锁自救（顶栏地图键本地可用先例 NTopBarMapButton.cs:104）。
+
+### 火堆黑屏归因现状
+- 机制确认（用户）：进火堆必黑屏；杀进程后从火堆重启跳过入场故正常；本次上个存档点是事件→死循环。
+- 原始 110k 行现场日志已被轮转丢失；现存日志仅剩自救痕迹（win×3/block 222 均为事后戳醒动作，非病因）。我方 RestSiteBackgroundPatch 只作用于 Spire1Act 已排除。
+- 缓解已上线（跳过按钮）；复现协议：**冻结瞬间先拷 logs 目录再杀进程**。
+
+### 部署窗口闭环（cb70f82 后全绿）
+- 发现并根治清单回退 bug：csproj `CopyToModsFolderOnBuild` 每次构建用 `mod/Spire1.json`（v0.0.0 模板）覆盖 live 清单——昨晚手工同步的 0.9.0 被冲掉即此因。修复=源头改 0.9.0（构建自动带出）。
+- live 三件套 dll(ee92ac65)/pck(40025b18)/json(0.9.0) 齐；三 zip 重打（PowerShell Compress-Archive，无 zip CLI），解包校验 dll/pck 与 live 字节一致，character.txt ironclad/silent/defect 各归各。
+- 本批上线内容：GA 池修正+Block 语义、握手放行+弹窗抑制、地图跳过按钮、（前批）池系统性修复 8781855。
+
+### 待办移交
+- KBBuilder subagent 进行中（research/sts1-kb/ 四色卡牌+遗物+药水+事件，双语原文）。
+- 火堆黑屏真根因：待下次复现按新协议取日志。
+- Thunderclap jar 归属复核、CodeOpt 流、覆盖 drain 尾巴未动。
