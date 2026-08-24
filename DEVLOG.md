@@ -739,3 +739,13 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - P1SMOKE6 三连回归：r1/r2 暴露 SimpleLoc 同源竞态第二形态 + PatchAll 一损俱损缺陷 → IsEnabled 补丁重定向声明基类 NClickableControl + MainFile 逐类 try/catch 加固（3ebbab0）→ r3 **SPIRE1-DEFECT 全程胜利**（EXC:0）。覆盖进度：Ironclad✓ Watcher✓ Defect✓，仅剩 Silent。
 - P1SMOKE8：SPIRE1-SILENT 全程胜利 ⇒ **覆盖矩阵完成**（五角色+官方Defect加映全胜）。ERR 噪音新归属：AFTP 自身 {Damage} 系模板缺变量渲染（其 dll 内置 loc），非我方，随 AFTP 沟通材料反馈。
 - P1SMOKE9：官方铁甲胜利，当前构建累计8胜0崩、NaN全零（修复前铁甲局3700+）。
+
+### 夜间批次（续）：Watcher 归档 + 商店守卫 + 尘封魔典定罪
+- **SPIRE1-WATCHER 归档**（用户指令：AFTP 生态已有成品 Watcher）：`Spire1Config.EnableSts1Watcher=false` 默认；`Watcher.cs` override `HideFromVanillaCharacterSelect => !Enable`、`AllowInVanillaRandomCharacterSelect => Enable`。模型保留注册（老存档兼容）。归档前 watcher-cov 注入局已推进 WATCHER 覆盖 32→39/77（余量随归档挂起）。
+- **商店购买守卫**（用户实测定位：autoslay 持续尝试买药水被"添水"类禁药遗物阻止，maxAttempts=50 内反复空转约 1 分钟）：`ShopPurchaseGuardPatch.cs` 重实现 `ShopRoomHandler.HandleAsync` 主循环——购买后槽位仍 stocked ⇒ 判定被拒，加入 failedSlots 黑名单永不重试；AutoSlayer.IsActive 门控。**部署待游戏退出后补做**（dll 锁）。
+- **尘封魔典（DUSTY_TOME）机制定罪**（用户报告"发的牌是封印王座"）：
+  - 官方遗物 `DustyTome`（RelicRarity.Ancient，zhs"尘封魔典"）：`SetupForPlayer` 从**当前角色卡池**抽 `CardRarity.Ancient` 牌（升级后洗入牌堆）。Regent 池含 TheSealedThrone(Ancient Power) ⇒ "储君→封印王座"闭环。
+  - **一代角色四池 Ancient 稀有度牌数=0** ⇒ `NextItem(空集)`返回 null（Rng.cs:289-299 有 default 兜底不崩）→ setter null 守卫跳过 → AfterObtained `GetById<CardModel>(null)` 行为待实证（预计异常或无操作）。**冒烟时用控制台 `relic add DUSTY_TOME` 实测**（modded 运行控制台可用：NDevConsole.cs:359）。
+  - 修复候选（待实证后决策）：①给每角色配置一张忠实 Ancient 卡 ②SetupForPlayer 空集 fallback 补丁 ③文档化限制。
+- 权威覆盖计算器固化为 `.tmp/night/coverage.js`（继承链解析池归属；played 正则 `/Playing (\S+)/`；官方复用映射表；自动输出 queue-<pool>.txt）。当前：IRONCLAD 32/44、SILENT 34/47、DEFECT 51/58、WATCHER 39/77（归档挂起）；缺口含起始牌替代类（Strike/Defend 系，实际不发牌，标 N/A）。
+- 提交：ca8c0b2（41 力量图标重生）、f2f3305（归档+守卫+注入器）。推送走直连 fallback（代理 7897 失效）。
