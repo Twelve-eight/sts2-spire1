@@ -3,7 +3,7 @@
   "name": "Spire1",
   "author": "omp",
   "description": "StS1 content layer for StS2 (BaseLib). Package flavor (Ironclad/Silent/Defect) is set by character.txt next to the dll.",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "min_game_version": "0.107.0",
   "has_pck": true,
   "has_dll": true,
