@@ -821,3 +821,35 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - **冒烟**（P1SMOKE4）：补丁失败 0；启动日志 `character archive: 77 model type(s)` 与 KB 紫色 77 张精确对账；
   autoslay 正常进主菜单选角。跳过按钮的可视/点击行为需真人局验证（Godot 无 UI 自动化）。
 - **运行时序备忘**：hub 启动游戏窗口会抢占桌面焦点——用户在电脑前时先打招呼再弹窗。
+
+## 2026-08-25 凌晨批次（审计双报告 + 三卷知识库 + Critic 修复潮）
+
+### 独立审计（零上下文，均落盘 research/audits/）
+- **ProjectCritic**（critique-20260825.md）：17 条问题 P1×2/P2×7/P3×8。总体评价工程素养高，但抓出两个真 P1。
+- **DevlogAuditor**（devlog-audit-20260825.md）：需求表 27 条/结论表 45 条全证据核查——34 个提交哈希全部存在、live 部署物 md5 与记载一致、jar 反汇编坐实 GA 原文等三条关键结论；**无虚报**；5 处文档滞后列 C1-C5。
+
+### Critic 修复潮（已全部提交）
+- **P1 商店守卫**：`ShopEnoughGoldGuardPatch` 加 `AutoSlayImmortalityPatch.Active` 门控——此前无差别篡改所有对局的商店 EnoughGold 语义（UI 着色+失败原因+日志刷屏）。（fc9ef16）
+- **P2 LessonLearned 致命谓词取反**：对照引擎 PowerModel.cs:646 默认 true + Feed/HandOfGreed/TheHunt 官方三例（dllsrc 全 `All(p=>p.…Fatal())` 无否定），一行修正；MinionPower=false 才是例外语义。（3cfbcf1）
+- **P2 跳过按钮三缺陷**：每次开图复位 Disabled、文案走 TranslationServer 键 SPIRE1_UI_SKIP_NODE（ui.json 双语新表）、单次失效消除。（fc9ef16）
+- **P2 BaseLib 浮动版本**：csproj 钉死 3.4.5。（4695124）
+- **P3 zhs 缺表**：补 ancients.json（自译台词，非官方）、card_keywords/static_hover_tips 空镜像。（be0c902）
+- **设置 UI 补盲区**：四个无文案开关（纯池/LocKeys/联机忽略差异/跳过按钮）双语 settings_ui 全量补齐。（65a858f）
+- 遗留待用户：Girya 死遗物与 Nloth 空壳事件属内容设计决策；跳过按钮真人局验证。
+
+### 知识库三卷齐备
+- 一卷数据：research/sts1-kb/（460+ 双语条目，字节码权威）。
+- 二卷语义：research/sts1-kb/mechanics/（MechKB 产出 **119 条规则**，javap 字节码控制流提取；用户示例"开局抽牌 vs 消耗 vs 抽到自动打出"在 draw-exhaust.md §6 有唯一确定裁决：三者不交错——初始抽牌为原子块、triggerWhenDrawn 仅五类牌、消耗链整批抽完后按队列位执行）。附 8 条任务书假设勘误（含"Havoc 属 triggerWhenDrawn"系讹传）。
+- 项目 KB：research/kb/{engine-facts,aftp-interop,debug-protocols}.md + loc-drift-report.md（318 条目对账，274 对上，A/B/C 三级分类）；skill 已瘦身为纯方法。
+
+### AFTP 线
+- 许可证定案：主仓无 License（平台内 fork 私改合法，二进制发布需授权）；MPBalance=MIT。
+- 双 fork 建立+克隆+构建绿：Twelve-eight/ActsFromThePast(7416aef 路径移植)、ActsFromThePastMultiplayerBalance（零修改即绿）。产物走 aftp-stage 不进 live。
+- **火堆黑屏机制链锁定**：NRestSiteRoom._Ready L321-324 `GetNode("%RestSiteLighting")` 非 OrNull；AFTP 三幕自定义 tscn 任一加载失败/缺节点=黑屏；存档重启跳过入场转场故不复现。上游 issue 英文稿就绪 research/audits/aftp-upstream-issue-draft.md（待用户发送）。
+- 我方通用救援已上线：RestSiteLightingRescuePatch（Finalizer 兜底背景+Postfix 注入灯光，对所有幕生效）。（fbff0a8）
+- MPBalance 排除：源码零火堆接触面（纯战斗数值），嫌疑名单再划一人。
+- 阻塞记录：本机未启用 AFTP 地牢，fork 实机验证待用户决策窗口。
+
+### 夜间覆盖管线
+- night_drain.ps1 循环器（hub name=night-drain）：连跑 --autoslay 至 10:45 硬停，逐局归档 godot.log → .tmp/p1-smoke/autoslay-NIGHT*.log。
+- 中期覆盖（14 局时点）：IRONCLAD 43/48、SILENT 43/50、DEFECT 59/63、WATCHER 39/77（归档不动）。起始牌曾集体误报缺失——coverage.js 已修为双 id 记账（复用通道落原版 id 如 STRIKE_IRONCLAD）。
