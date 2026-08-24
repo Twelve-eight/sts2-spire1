@@ -14,6 +14,8 @@ public class Corruption() : Spire1Card(3, CardType.Power, CardRarity.Rare, Targe
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<CorruptionPower>(1)];
 
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
         => await CommonActions.ApplySelf<CorruptionPower>(choiceContext, this);
 

@@ -13,6 +13,8 @@ public class Reaper() : Spire1Card(2, CardType.Attack, CardRarity.Rare, TargetTy
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(4, ValueProp.Move)];
 
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         var attack = CommonActions.CardAttack(this, play);

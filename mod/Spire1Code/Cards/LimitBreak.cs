@@ -11,9 +11,9 @@ namespace Spire1.Spire1Code.Cards;
 /// <summary>StS1 Ironclad - Limit Break (Uncommon Skill). Double your Strength. Exhaust (removed when upgraded).</summary>
 public class LimitBreak() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 {
-    private bool _exhaust = true;
 
-    public override IEnumerable<CardKeyword> CanonicalKeywords => _exhaust ? [CardKeyword.Exhaust] : [];
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        IsUpgraded ? [] : [CardKeyword.Exhaust];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
@@ -24,5 +24,5 @@ public class LimitBreak() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, T
             await PowerCmd.Apply<StrengthPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, str, Owner.Creature, this);
     }
 
-    protected override void OnUpgrade() => _exhaust = false;
+    protected override void OnUpgrade() => ResetKeywordCache();
 }
