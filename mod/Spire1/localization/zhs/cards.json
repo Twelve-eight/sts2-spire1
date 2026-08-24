@@ -251,7 +251,7 @@
   "SPIRE1-SLICE.title": "切割",
   "SPIRE1-SLICE.description": "造成 !D! 点伤害。",
   "SPIRE1-DAGGER_THROW.title": "投掷匕首",
-  "SPIRE1-DAGGER_THROW.description": "造成 !D! 点伤害。抽 !C! 张牌。",
+  "SPIRE1-DAGGER_THROW.description": "造成 !D! 点伤害。抽 !C! 张牌。弃 !C! 张牌。",
   "SPIRE1-POISONED_STAB.title": "带毒刺击",
   "SPIRE1-POISONED_STAB.description": "造成 !D! 点伤害。\n给予 !PoisonPower! 层 中毒 。",
   "SPIRE1-QUICK_SLASH.title": "快斩",

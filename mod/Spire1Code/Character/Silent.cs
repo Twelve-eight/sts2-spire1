@@ -19,6 +19,10 @@ public class Silent : PlaceholderCharacterModel
     /// <summary>StS1 Silent green (card-back / name color).</summary>
     public static readonly Color Color = new("5EBD00");
 
+    public override bool HideFromVanillaCharacterSelect => !Config.CharacterGate.SilentEnabled;
+
+    public override bool AllowInVanillaRandomCharacterSelect => Config.CharacterGate.SilentEnabled;
+
     public override string PlaceholderID => "silent";
 
     public override Color NameColor => Color;

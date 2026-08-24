@@ -19,6 +19,10 @@ public class Ironclad : PlaceholderCharacterModel
     /// <summary>StS1 Ironclad red (card-back / name color).</summary>
     public static readonly Color Color = new("cc4444");
 
+    public override bool HideFromVanillaCharacterSelect => !Config.CharacterGate.IroncladEnabled;
+
+    public override bool AllowInVanillaRandomCharacterSelect => Config.CharacterGate.IroncladEnabled;
+
     public override string PlaceholderID => "ironclad";
 
     public override Color NameColor => Color;
