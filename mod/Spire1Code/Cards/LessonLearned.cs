@@ -27,7 +27,7 @@ public class LessonLearned() : Spire1Card(2, CardType.Attack, CardRarity.Rare, T
         var target = play.Target ?? throw new ArgumentNullException(nameof(play));
 
         // Same guard the mod's Feed uses: a target whose power wants to run a death trigger has not really died yet.
-        bool shouldTriggerFatal = target.Powers.All(p => !p.ShouldOwnerDeathTriggerFatal());
+        bool shouldTriggerFatal = target.Powers.All(p => p.ShouldOwnerDeathTriggerFatal());
 
         var attack = CommonActions.CardAttack(this, play);
         await attack.Execute(choiceContext);
