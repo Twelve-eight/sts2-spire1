@@ -14,12 +14,15 @@ public class Havoc() : Spire1Card(1, CardType.Skill, CardRarity.Common, TargetTy
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         var top = PileType.Draw.GetPile(Owner).Cards.FirstOrDefault();
         if (top != null)
         {
             await CardCmd.AutoPlay(choiceContext, top, null);
+            await CardCmd.Exhaust(choiceContext, top);
         }
     }
 

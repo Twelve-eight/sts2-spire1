@@ -13,6 +13,8 @@ public class Sentinel() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, Tar
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(5, ValueProp.Move), new EnergyVar(2)];
 
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
         => await CommonActions.CardBlock(this, DynamicVars.Block, play);
 
