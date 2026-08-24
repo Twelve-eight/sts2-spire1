@@ -807,3 +807,17 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - KBBuilder subagent 进行中（research/sts1-kb/ 四色卡牌+遗物+药水+事件，双语原文）。
 - 火堆黑屏真根因：待下次复现按新协议取日志。
 - Thunderclap jar 归属复核、CodeOpt 流、覆盖 drain 尾巴未动。
+
+## 2026-08-25 深夜追加（观者总览门控 + KB 落库 + 0.9.1 发布）
+
+- **观者卡牌退出总览**（bd6c539/4137492）：引擎钩子=`CardModel.ShouldShowInCardLibrary`
+  （getter，NCardLibraryGrid._Ready 唯一入册过滤）。`ArchivedCharacterGatePatch` 按池归属拦截；
+  `CharacterArchive.ArchivedPools={WatcherCardPool}` 一处登记即全量生效——后续归档其它角色照抄。
+  **刻意不注销模型**：保旧存档兼容 + ModelID 映射稳定（跨版本联机序列化安全）。
+- **KB 知识库落库**（566552e，KBBuilder 产出）：research/sts1-kb/ 15 文件——四色+紫77+
+  诅咒/状态/衍生/弃用卡、186 遗物、43 药水、54 事件，全部 en/zhs 双语原文，
+  数值以字节码 super() 实参为准（javap 抽样对账零警告）。build_kb.mjs 可重跑。
+- **0.9.1 发布**：dll c2d99b10 / pck 40025b18，live 与三 zip 字节一致；character.txt 三包各归各。
+- **冒烟**（P1SMOKE4）：补丁失败 0；启动日志 `character archive: 77 model type(s)` 与 KB 紫色 77 张精确对账；
+  autoslay 正常进主菜单选角。跳过按钮的可视/点击行为需真人局验证（Godot 无 UI 自动化）。
+- **运行时序备忘**：hub 启动游戏窗口会抢占桌面焦点——用户在电脑前时先打招呼再弹窗。
