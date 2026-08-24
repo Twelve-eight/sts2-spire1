@@ -50,6 +50,14 @@ internal class Spire1Config : SimpleModConfig
     /// </summary>
     public static bool DebugShowLocKeys { get; set; } = false;
 
+    /// <summary>
+    /// 联机容错：握手时忽略双方 mod 清单差异与 ModelID 哈希差异强制放行
+    /// （真实游戏版本不符仍然拦截），并抑制 RitsuLib 失同步诊断弹窗
+    /// （诊断 zip 仍照常写入 logs 目录供事后取证）。
+    /// 仅当双方都装了含此补丁的构建时才完整生效。
+    /// </summary>
+    public static bool IgnoreMpModDifferences { get; set; } = true;
+
     // --- gate helpers (computed; getter-only, not surfaced as settings) ---
     [ConfigIgnore] public static bool CharactersEnabled => EnableSts1Content && EnableSts1Characters;
     [ConfigIgnore] public static bool CardsEnabled => EnableSts1Content && EnableSts1Cards;

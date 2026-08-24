@@ -51,7 +51,7 @@ public class GeneticAlgorithm : Spire1Card
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        MainFile.Logger.Info($"[Spire1] GA play: extra={ExtraGain} gain={CurrentGain} deck={(DeckVersion != null ? "ok" : "null")}");
+        MainFile.Logger.Info($"[Spire1] GA play: extra={ExtraGain} block={CurrentBlock} deck={(DeckVersion != null ? "ok" : "null")}");
         await CommonActions.CardBlock(this, DynamicVars.Block, play);
         int inc = DynamicVars["Increase"].IntValue;
         ExtraGain += inc;
