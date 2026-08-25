@@ -73,7 +73,7 @@
 | CS8604 | 158 | 可空实参传入非空形参 |
 | CS1998 | 30 | async 无 await |
 | CS8600 | 14 | null 转 non-null |
-| CS4014 | 10 | 未等待任务（重点审计对象）|
+| CS4014 | 10 | 已审结：Shuriken/OrnamentalFan/LetterOpener/Kunai 视觉副作用 RunSafely 包装 + Darkling 群杀强制语义，均为有意火忘 ✓ |
 | CS0414 | 2 | 字段赋值未用 |
 
 处理策略：不盲目清零；CS4014 与 CS8602 中位于出牌路径的逐条人审，其余登记为已知噪音。
