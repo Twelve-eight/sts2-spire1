@@ -860,3 +860,7 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 ### 夜间覆盖管线
 - night_drain.ps1 循环器（hub name=night-drain）：连跑 --autoslay 至 10:45 硬停，逐局归档 godot.log → .tmp/p1-smoke/autoslay-NIGHT*.log。
 - 中期覆盖（14 局时点）：IRONCLAD 43/48、SILENT 43/50、DEFECT 59/63、WATCHER 39/77（归档不动）。起始牌曾集体误报缺失——coverage.js 已修为双 id 记账（复用通道落原版 id 如 STRIKE_IRONCLAD）。
+
+### 晚间追加（21:00-22:15）
+- pure 稀有度带宽修复（全稀有度自研实现注入）、Armaments 升级数值、三卡双虚无剥离、药水机制反证（Concat 追加非替换）、DingyRug 全无色根因定案。
+- Rewind 兼容：Cecil 补丁 attribute 5参→6参，启动 0 异常；pck 误删待用户重装（3a0de3d 起系列提交）。
