@@ -35,5 +35,9 @@ public class Armaments() : Spire1Card(1, CardType.Skill, CardRarity.Common, Targ
         }
     }
 
-    protected override void OnUpgrade() => _all = true;
+    protected override void OnUpgrade()
+    {
+        _all = true; // 官方：升级后升级手牌中所有卡
+        DynamicVars.Block.UpgradeValueBy(3m); // 官方 5→8（此前缺失→升级描述数字不变）
+    }
 }

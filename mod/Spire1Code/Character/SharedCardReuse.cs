@@ -191,14 +191,16 @@ internal static class SharedCardReuse
     {
         if (Config.Spire1Config.PureSts1Pools)
         {
-            foreach (var (pool, card) in PureSts1Adds)
-            {
-                ModHelper.AddModelToPool(pool, card);
-            }
+            // 纯一代池：角色池 = 自研实现类（一代卡面），覆盖全部稀有度。
+            // 同名实现类以 [Pool(Spire1LegacyPool)] 退役，这里动态加入角色池；
+            // 官方二代卡（无自研孪生的）在 pure 模式下不注入——缺失由 RewardClampPatch 钳制兜底。
+            // 历史教训（2026-08-25）：此前 pure 分支只注入 Common（10 张），稀有度带宽=0，
+            // 摇中 Uncommon/Rare 时候选为空，DingyRug 把无色池并入后奖励全部无色。
+            AddOwnImplementations(typeof(Spire1CardPool), IroncladReuse);
+            AddOwnImplementations(typeof(SilentCardPool), SilentReuse);
+            AddOwnImplementations(typeof(DefectCardPool), DefectReuse);
             return;
         }
-        foreach (var cardType in DefectReuse) ModHelper.AddModelToPool(typeof(DefectCardPool), cardType);
-        foreach (var cardType in IroncladReuse) ModHelper.AddModelToPool(typeof(Spire1CardPool), cardType);
         foreach (var cardType in SilentReuse) ModHelper.AddModelToPool(typeof(SilentCardPool), cardType);
         foreach (var cardType in ColorlessReuse) ModHelper.AddModelToPool(typeof(ColorlessCardPool), cardType);
         LogPoolCensus("ColorlessCardPool", typeof(ColorlessCardPool));
@@ -232,5 +234,26 @@ internal static class SharedCardReuse
         {
             MainFile.Logger.Error($"[Spire1] PoolCensus {name} failed: {e.Message}");
         }
+    }
+
+    /// <summary>pure 模式：对每个官方孪生条目，若存在同名自研实现类则注入角色池。</summary>
+    private static void AddOwnImplementations(System.Type pool, System.Type[] twins)
+    {
+        foreach (var twin in twins)
+        {
+            var own = ResolveOwnImplementation(twin);
+            if (own != null)
+            {
+                ModHelper.AddModelToPool(pool, own);
+            }
+        }
+    }
+
+    private static System.Type? ResolveOwnImplementation(System.Type twin)
+    {
+        // 官方类 Sts2Cards.X → 自研类 Spire1.Spire1Code.Cards.X
+        var name = twin.Name;
+        var own = typeof(SharedCardReuse).Assembly.GetType("Spire1.Spire1Code.Cards." + name);
+        return own != null && own.BaseType?.Name == "Spire1Card" ? own : null;
     }
 }
