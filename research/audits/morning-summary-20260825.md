@@ -63,3 +63,23 @@
 ## 五、Cutoff 追加
 
 （10:45 循环结束后填写：最终局数、终态覆盖、live/zip 终哈希。）
+
+
+## 五、Cutoff 追加（22:15 实测，187 局）
+
+- **总归档：187 局**（+1 局含 pure 模式验证局）
+- **终态覆盖**：IRONCLAD 47/48（仅缺 ThunderClap，RNG 观察项）、SILENT 50/50 ✅、DEFECT 63/63 ✅、WATCHER 41/77（归档冻结预期）
+- **终态基线**：live=三 zip=dll `aa8b4f33` / pck `65006e85` / json 0.9.1
+
+## 六、晚间追加修复（21:00-22:15，提交 3a0de3d 起）
+
+| 项 | 内容 | 状态 |
+|---|---|---|
+| pure 稀有度带宽 | PureSts1Pools 全稀有度注入自研实现（原仅 Common→U/R 候选空→DingyRug 全无色） | ✅ 已修待纯角色局实证 |
+| Armaments 升级 | Block 5→8 补数值（原升级仅 _all） | ✅ 已修 |
+| 双虚无 | Carnage/GhostlyArmor/Dazed 剥离独立行"虚无"（引擎自动渲染 Ethereal） | ✅ 已修+全表零残余校验 |
+| 药水双份 | 官方同名药水（含 Fire 20 伤）经 ModHelper 追加式复用，自研类保留——机制澄清：Concat 纯追加非替换 | ✅ 机制反证完成 |
+| 无色奖励"全无色" | 根因=DingyRug union 官方无色池 + pure 模式 U/R 带宽=0；Concat 反证我方未清空官方池 | ✅ 根因定案+修复 |
+| **Rewind 兼容** | Mono.Cecil 补丁 5 参→6 参 attribute（引擎 Add 增 isChangingOwners）；启动异常 0 | ✅ 验证通过 |
+| ⚠️ Rewind pck | 部署时误删原 json/pck；json 已重建，pck 需用户重装恢复 | 部分 |
+
