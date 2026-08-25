@@ -3,7 +3,14 @@
 Recovery anchor + working state. Design/contracts: `DEVELOP.md`. Shared conventions: `../AGENTS.md`. Resumable with zero prior chat.
 **Sessions 1-3 are archived in `DEVLOG-archive.md`.** This file keeps the live STATUS / latest sessions only.
 
-## STATUS (2026-08-21, session 6)
+## STATUS (2026-08-25 03:00, session 14+ 夜间自主批)
+- **版本 0.9.1 已发布**：live 三件套 dll `9e0bd0d9` / pck `27020df2` / json，三 zip 同哈希。BaseLib 钉死 3.4.5（csproj 不再浮动）。
+- 内容：4 角色可见（观者已归档硬隐藏，77 张卡退出总览）+ 一代地牢可选；305 卡、33 遗物（双语表已灌）、49 力量、53 事件。
+- 联机层：握手放行+弹窗抑制（IgnoreMpModDifferences）、火堆黑屏通用救援（RestSiteLightingRescuePatch）、地图跳过节点按钮。MP 失同步三案判定为清单级假阳性（divergence #563/#249 对拍）。
+- 知识库：research/sts1-kb/ 数据卷 460+ 条 + 语义卷 119 规则；research/kb/ 项目事实三卷；双审计报告在 research/audits/。
+- 待办焦点：跳过按钮真人局验证；AFTP 上游 issue 发送（文稿已备）；Girya/Nloth 设计决策；覆盖 drain 跑至 18:00 后终态回填本文「Cutoff 追加」。
+
+### 历史 STATUS（2026-08-21, session 6）——已过时，保留供考古
 - **Single dependency: BaseLib 3.4.5** (installed in-game AND compiled against; md5-verified identical to the NuGet payload). RitsuLib/JmcModLib rejected. `Spire1.json` declares exactly `[{"id": "BaseLib", "min_version": "3.4.5"}]`.
 - M4 content complete (4 characters, 305 cards, 33 relics, 49 powers, 53 events) and deployed. **M2 monsters in flight**: shared bases + `Exordium` act + dungeon-selector patch landed; 6 subagents writing monsters/encounters right now.
 - **git initialized this session** (first commit `9bcfc06`); durable research artifacts moved from `.tmp/` into `research/` (`engine-dllsrc/`, `baselib-dll/`, `sts1-javap/`).
@@ -499,7 +506,7 @@ The salvaged artifacts were written by agents from transcripts — spot-check a 
   Spiker/Repulsor/Exploder, SnakeDagger, GiantHead, GremlinLeader, ShelledParasite,
   Reptomancer. Custom powers: Fading/Shifting/Regrow/PlatedArmor (+Constricted later).
 - **The Ending**: SpireShield/SpireSpear/CorruptHeart + ShieldAndSpear/CorruptHeart
-  encounters (HomeActs=[4], Boss via BossDiscoveryOrder). NOTE: an earlier worker had
+  encounters (HomeActs=[4], Boss via BossDiscoveryOrder). NOTE: an earlier worker had【勘误 2026-08-25】Act3 实际落盘 16 场（本日删除一弱变体未回填此行），全游戏合计 55 而非隐含的 56。
   claimed these landed but never wrote them — re-dispatched and verified on disk.
 - Build triage 280→0 errors: batch using-fixer over Monsters/, MoveRepeatType namespace,
   Nemesis scythe local→field promotion, TimeEater Heal(creature,amount) signature,
@@ -741,7 +748,7 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - P1SMOKE9：官方铁甲胜利，当前构建累计8胜0崩、NaN全零（修复前铁甲局3700+）。
 
 ### 夜间批次（续）：Watcher 归档 + 商店守卫 + 尘封魔典定罪
-- **SPIRE1-WATCHER 归档**（用户指令：AFTP 生态已有成品 Watcher）：`Spire1Config.EnableSts1Watcher=false` 默认；`Watcher.cs` override `HideFromVanillaCharacterSelect => !Enable`、`AllowInVanillaRandomCharacterSelect => Enable`。模型保留注册（老存档兼容）。归档前 watcher-cov 注入局已推进 WATCHER 覆盖 32→39/77（余量随归档挂起）。
+- **SPIRE1-WATCHER 归档**（用户指令：AFTP 生态已有成品 Watcher）：`Spire1Config.EnableSts1Watcher=false` 默认；`Watcher.cs` override `HideFromVanillaCharacterSelect => !Enable`、`AllowInVanillaRandomCharacterSelect => Enable`。模型保留注册（老存档兼容）。归档前 watcher-cov 注入局已推进 WATCHER 覆盖 32→39/77（余量随归档挂起）。【2026-08-25 勘误】该开关已随 0c2a… 系列提交彻底移除，归档改为永久硬隐藏（无配置门禁）；后续总览门控见 bd6c539。
 - **商店购买守卫**（用户实测定位：autoslay 持续尝试买药水被"添水"类禁药遗物阻止，maxAttempts=50 内反复空转约 1 分钟）：`ShopPurchaseGuardPatch.cs` 重实现 `ShopRoomHandler.HandleAsync` 主循环——购买后槽位仍 stocked ⇒ 判定被拒，加入 failedSlots 黑名单永不重试；AutoSlayer.IsActive 门控。**部署待游戏退出后补做**（dll 锁）。
 - **尘封魔典（DUSTY_TOME）机制定罪**（用户报告"发的牌是封印王座"）：
   - 官方遗物 `DustyTome`（RelicRarity.Ancient，zhs"尘封魔典"）：`SetupForPlayer` 从**当前角色卡池**抽 `CardRarity.Ancient` 牌（升级后洗入牌堆）。Regent 池含 TheSealedThrone(Ancient Power) ⇒ "储君→封印王座"闭环。
