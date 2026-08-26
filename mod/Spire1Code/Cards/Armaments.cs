@@ -37,7 +37,10 @@ public class Armaments() : Spire1Card(1, CardType.Skill, CardRarity.Common, Targ
 
     protected override void OnUpgrade()
     {
-        _all = true; // 官方：升级后升级手牌中所有卡
-        DynamicVars.Block.UpgradeValueBy(3m); // 官方 5→8（此前缺失→升级描述数字不变）
+        // (2026-08-26 reverify fix) StS1's upgrade ONLY changes "a card" → "all cards";
+        // Block stays 5 (cards-red.json upgraded_description_diff has no !B! delta, and the
+        // shipped StS2 Armaments also keeps BlockVar(5)). The 5→8 added in 3a0de3d was a
+        // misremembered "fix" and is reverted.
+        _all = true;
     }
 }

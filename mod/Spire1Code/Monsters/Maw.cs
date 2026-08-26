@@ -74,8 +74,13 @@ public sealed class Maw : Spire1Monster
         drool.FollowUpState = bands;
         nom.FollowUpState = bands;
 
-        // First move is always ROAR (vanilla !roared latch).
-        opening.AddState(roar, () => !_roared);
+        // First move is always ROAR (vanilla !roared latch). BumpTurnCount() here too:
+        // vanilla's getMove increments turnCount unconditionally on EVERY call including the
+        // opening one, so by enemy turn k the count is k+1 and NOM hits = floor((k+1)/2).
+        // Without this the opening turn never counted and every odd turn >= 3 hit one less.
+        // _bumpedRound dedup keeps this to exactly one increment per round even though the
+        // state machine may re-evaluate predicates.
+        opening.AddState(roar, () => BumpTurnCount() && !_roared);
         opening.AddState(bands, () => true);
 
         // roll < 50 -> NOMNOMNOM unless it just nommed; else DROOL when the last move was

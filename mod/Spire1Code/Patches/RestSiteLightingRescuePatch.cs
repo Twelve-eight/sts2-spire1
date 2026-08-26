@@ -45,7 +45,13 @@ internal static class RestSiteLightingRescuePatch
         }
 
         MainFile.Logger.Warn("[Spire1] rest-site background missing %RestSiteLighting → injecting");
-        __result.AddChild(new Control { Name = "RestSiteLighting" });
+        // (2026-08-26 reverify fix) Owner + UniqueNameInOwner are REQUIRED for the %-path to
+        // resolve (same recipe as RestSiteBackgroundPatch.cs:57-58): without them the injected
+        // node is invisible to GetNode("%RestSiteLighting") and the rescue is a no-op.
+        var lighting = new Control { Name = "RestSiteLighting" };
+        __result.AddChild(lighting);
+        lighting.Owner = __result;
+        lighting.UniqueNameInOwner = true;
     }
 
     /// <summary>极简可用背景：全屏深色底 + 必备灯光节点。</summary>
@@ -58,7 +64,12 @@ internal static class RestSiteLightingRescuePatch
         dim.SetAnchorsPreset(Control.LayoutPreset.FullRect);
         root.AddChild(dim);
 
-        root.AddChild(new Control { Name = "RestSiteLighting" });
+        // Same % registration as EnsureLighting — BuildFallback is the Finalizer path and the
+        // engine's very next line does GetNode("%RestSiteLighting") on this exact control.
+        var lighting = new Control { Name = "RestSiteLighting" };
+        root.AddChild(lighting);
+        lighting.Owner = root;
+        lighting.UniqueNameInOwner = true;
         return root;
     }
 }

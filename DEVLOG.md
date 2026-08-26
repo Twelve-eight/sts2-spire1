@@ -871,3 +871,10 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - 实锤：High×4（非pure分支丢孪生注入→CHEESE崩溃回归；HandshakeResult struct缺ref→联机放行从未生效；RestSite救援缺Owner/UniqueNameInOwner→无效；三死开关零消费者）+ Med×8 + Low×8。
 - 澄清：IRONCLAD 47/48 系 coverage.js THUNDERCLAP 蛇形化记账 bug，真实 48/48；历史修复声明无虚报但同病灶尾巴普遍（Feed 谓词未随 LessonLearned 修等）。
 - 总报告 research/audits/freeze-review-20260826.md；三原始报告同目录 freeze-review-{code,arch,hist}-20260826.md。
+
+## 2026-08-26 推倒重验 + 修补批（reverify）
+
+- 四路 reviewer 重推 DEVLOG 全部结论（引擎事实 28/30✅、数值 19/24、修复声明无虚报、覆盖/联机 10/13）+ 主会话 16 条独立抽样。总报告 research/audits/reverify-20260826.md，四原始报告同目录 reverify-*-20260826.md。
+- 推翻并当日修补（全部经 ilspycmd 反编译实锤 + RVFIX1 冒烟 exit 0）：①联机放行 struct 缺 ref（补 ref，4 源证实从未生效）②3a0de3d 误删非 pure 分支 Ironclad/Defect 孪生注入（恢复+删 PureSts1Adds 死代码+删 DarkShackles 双注入）③Feed 谓词取反（去反对齐引擎）④Maw NOM 击数 off-by-one（opening 计 turnCount）⑤火堆救援补 Owner+UniqueNameInOwner ⑥Armaments +3 Block 违官方回滚 ⑦三处代码注释订正。
+- 澄清：IRONCLAD 覆盖真实 48/48（coverage.js 蛇形化记账 bug）；divergence zip 含遗物跨端分歧，「清单级假阳性」降级为「清单层排除+遗物分歧未解释」。
+- 未验项：ref 联机运行时（需联机局）、火堆救援实机（需 AFTP 幕）。

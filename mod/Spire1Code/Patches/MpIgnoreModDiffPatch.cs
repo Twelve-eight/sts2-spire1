@@ -29,7 +29,7 @@ internal static class MpIgnoreModDiffPatch
         AccessTools.Field(typeof(HandshakeManager), "_localVersionInfo");
 
     [HarmonyPostfix]
-    private static void AllowThrough(HandshakeResult __result, HandshakeManager __instance)
+    private static void AllowThrough(ref HandshakeResult __result, HandshakeManager __instance)
     {
         if (!Spire1Config.IgnoreMpModDifferences || __result.status == HandshakeStatus.Success)
         {
