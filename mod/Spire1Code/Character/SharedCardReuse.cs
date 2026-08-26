@@ -147,41 +147,13 @@ internal static class SharedCardReuse
         typeof(Sts2Cards.ToolsOfTheTrade),          // 0E, 6 dmg (+3)
     ];
 
-    /// <summary>
-    /// 纯一代模式（Spire1Config.PureSts1Pools）下注入的自有 StS1 忠实实现类——
-    /// 这些类现退役于 Spire1LegacyPool，动态加入角色池后即恢复现役（模型 id 不变，
-    /// 老存档兼容）。Defect 的复用清单没有自有孪生类，纯模式下仅补 ConserveBattery，
-    /// 其余由 RewardClampPatch 钳制兜底。
-    /// </summary>
-    private static readonly (System.Type pool, System.Type card)[] PureSts1Adds =
-    [
-        (typeof(Spire1CardPool), typeof(Cards.Anger)),
-        (typeof(Spire1CardPool), typeof(Cards.Armaments)),
-        (typeof(Spire1CardPool), typeof(Cards.BodySlam)),
-        (typeof(Spire1CardPool), typeof(Cards.Havoc)),
-        (typeof(Spire1CardPool), typeof(Cards.Headbutt)),
-        (typeof(Spire1CardPool), typeof(Cards.IronWave)),
-        (typeof(Spire1CardPool), typeof(Cards.PommelStrike)),
-        (typeof(Spire1CardPool), typeof(Cards.ShrugItOff)),
-        (typeof(Spire1CardPool), typeof(Cards.Thunderclap)),
-        (typeof(Spire1CardPool), typeof(Cards.TwinStrike)),
-        (typeof(SilentCardPool), typeof(Cards.Backflip)),
-        (typeof(SilentCardPool), typeof(Cards.CloakAndDagger)),
-        (typeof(SilentCardPool), typeof(Cards.DaggerSpray)),
-        (typeof(SilentCardPool), typeof(Cards.DaggerThrow)),
-        (typeof(SilentCardPool), typeof(Cards.DeadlyPoison)),
-        (typeof(SilentCardPool), typeof(Cards.Deflect)),
-        (typeof(SilentCardPool), typeof(Cards.DodgeAndRoll)),
-        (typeof(SilentCardPool), typeof(Cards.PiercingWail)),
-        (typeof(SilentCardPool), typeof(Cards.Prepared)),
-        (typeof(SilentCardPool), typeof(Cards.Slice)),
-        (typeof(DefectCardPool), typeof(Cards.ConserveBattery)),
-    ];
+    // (2026-08-26) PureSts1Adds 已删除：3a0de3d 起 pure 分支改走 AddOwnImplementations 全稀有度注入，
+    // 本数组再无引用，属死代码。非 pure 分支的 Ironclad/Defect 孪生注入曾在其重构中被误删
+    // （ROOM_FULL_OF_CHEESE 崩溃因此回归），本提交一并恢复。
 
-    private static readonly System.Type[] ColorlessReuse =
-    [
-        typeof(Sts2Cards.DarkShackles),    // 1E, 敌人全体失去3力量(升5)，本回合
-    ];
+
+    // (2026-08-26) ColorlessReuse 已删除：DarkShackles 本就在官方 ColorlessCardPool.GenerateAllCards
+    // 出货，重复注入使 ConcatModelsFromMods（盲拼接无去重）后的无色奖励候选权重翻倍。
 
     /// <summary>
     /// Adds every reused shipped card to the matching custom pool. Call from MainFile.Initialize().
@@ -201,8 +173,10 @@ internal static class SharedCardReuse
             AddOwnImplementations(typeof(DefectCardPool), DefectReuse);
             return;
         }
+        foreach (var cardType in IroncladReuse) ModHelper.AddModelToPool(typeof(Spire1CardPool), cardType);
+        foreach (var cardType in DefectReuse) ModHelper.AddModelToPool(typeof(DefectCardPool), cardType);
         foreach (var cardType in SilentReuse) ModHelper.AddModelToPool(typeof(SilentCardPool), cardType);
-        foreach (var cardType in ColorlessReuse) ModHelper.AddModelToPool(typeof(ColorlessCardPool), cardType);
+
         LogPoolCensus("ColorlessCardPool", typeof(ColorlessCardPool));
         LogPoolCensus("Spire1CardPool", typeof(Spire1CardPool));
         LogPoolCensus("SilentCardPool", typeof(SilentCardPool));

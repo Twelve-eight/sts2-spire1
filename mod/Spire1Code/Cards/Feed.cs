@@ -25,9 +25,11 @@ public class Feed() : Spire1Card(1, CardType.Attack, CardRarity.Rare, TargetType
     {
         var target = play.Target ?? throw new ArgumentNullException(nameof(play.Target));
 
-        // Only count as a kill if no power on the target wants to trigger a fatal death effect
-        // (e.g. death-explosion powers): the creature did not really die yet in that case.
-        bool shouldTriggerFatal = target.Powers.All(p => !p.ShouldOwnerDeathTriggerFatal());
+        // (2026-08-26 reverify fix) The predicate must match the engine's own Feed exactly:
+        // All(p => p.ShouldOwnerDeathTriggerFatal()) — e.g. MinionPower overrides it to false
+        // so minions are excluded from the max-HP reward. The previous !p.… inversion was the
+        // same bug fixed in LessonLearned (3cfbcf1) but missed here.
+        bool shouldTriggerFatal = target.Powers.All(p => p.ShouldOwnerDeathTriggerFatal());
 
         var attack = CommonActions.CardAttack(this, play);
         await attack.Execute(choiceContext);

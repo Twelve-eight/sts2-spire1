@@ -83,7 +83,8 @@ public sealed class LouseNormal : Spire1Monster
         //   base (<17):  <25: lastTwo(GROW) ? BITE : GROW
         //                >=25: lastTwo(BITE) ? GROW : BITE
         //   A17+:        <25: lastMove(GROW) ? BITE : GROW   (rest identical)
-        // Long-run ~80% BITE / 20% GROW. A17 gated on DeadlyEnemies.
+        // Long-run BITE ≈ 58.4% at base / 63.6% at A17+ (Markov chain + Monte Carlo,
+        // reverify 2026-08-26 — the old "~80%" figure was wrong).
         _growState = grow;
         ConditionalBranchState root = new("RED_LOUSE_ROOT");
         ConditionalBranchState lowRoll = new("LOW_ROLL");

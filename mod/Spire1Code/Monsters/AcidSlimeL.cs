@@ -64,9 +64,12 @@ public sealed class AcidSlimeL : Spire1Monster, ISlimeSplitSpawn
         //   A17+:        <40: lastTwo(TACKLE) ? 60/40 TACKLE/WEAK : WOUND
         //                <70: lastTwo(TACKLE) ? 60% WOUND / 40% WEAK : TACKLE
         //                >=70: lastMove(LICK) ? 40% WOUND / 60% TACKLE : WEAK
-        // Modelled as conditional history branches + weighted sub-rolls; the flat weights
-        // below reproduce the same long-run mix (spit/tackle/lick = 30/40/30 base,
-        // 40/30/30 A17+). A17 has no StS2 equivalent; gated on DeadlyEnemies.
+        // Modelled as flat-weighted branches (an APPROXIMATION): the bytecode's conditional
+        // sub-rolls (50/50 re-rolls, 40/60 redirects on cap violation) yield a different
+        // long-run mix than these flat weights — measured (2e6-turn MC, reverify 2026-08-26):
+        // vanilla L-base = 35.7/29.6/34.7 vs model 31.0/38.1/31.0, i.e. TACKLE runs ~8.5pp
+        // hotter here; M-A17 matches (39.0/39.9/21.1 vs 38.9/38.9/22.2). Accepted as a
+        // documented approximation, not claimed as exact.
         var normalAi = new RandomBranchState("AI");
         normalAi.AddBranch(spit, 2, () => 30f);
         normalAi.AddBranch(tackle, 2, () => 40f);

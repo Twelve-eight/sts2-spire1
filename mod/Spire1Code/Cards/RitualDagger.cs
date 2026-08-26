@@ -34,9 +34,9 @@ namespace Spire1.Spire1Code.Cards;
 /// StS1's "Minion" exclusion is StS2's PowerModel.ShouldOwnerDeathTriggerFatal() (MinionPower is the power that
 /// returns false). The predicate below matches the shipped Feed
 /// (.tmp/dllsrc/MegaCrit.Sts2.Core.Models.Cards/Feed.cs:38): the default return value is true, so a Fatal
-/// effect fires when EVERY power on the target allows it. NOTE for the coordinator: the mod's own
-/// Cards/Feed.cs:28 and Cards/LessonLearned.cs:30 negate the predicate, which makes those two cards' Fatal
-/// clauses effectively dead whenever the enemy carries any ordinary power. Not fixed here (not this task's files).
+/// effect fires when EVERY power on the target allows it. (2026-08-26) Feed.cs and LessonLearned.cs
+/// now both use the correct non-negated predicate — LessonLearned was fixed in 3cfbcf1, Feed in the
+/// reverify fix batch.
 ///
 /// SPECIAL rarity maps to CardRarity.Ancient + EventCardPool, matching the shipped Apparition
 /// (.tmp/dllsrc/MegaCrit.Sts2.Core.Models.CardPools/EventCardPool.cs:24).
