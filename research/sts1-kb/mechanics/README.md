@@ -20,6 +20,7 @@ wiki（slay-the-spire.fandom.com）仅作交叉佐证；HTML 页 403，经 `api.
 | [action-manager.md](action-manager.md) | 20 | GameActionManager 帧循环、五级队列优先级、addToBottom/addToTop/addCardQueueItem 插入语义、shouldCancelAction 取消语义、ActionType 真实用途（无逐类型节拍） |
 | [turn-phase.md](turn-phase.md) | 18 | 战斗开局初始化块、能量发放点、出牌微时序、结束回合三段链（哨兵→自动结算牌→弃牌阶段）、敌方回合、新回合块、首回合特殊点 |
 | [draw-exhaust.md](draw-exhaust.md) | 25 | DrawCardAction 逐帧逻辑、10 张手牌上限钳制、洗牌时机与 onShuffle 触发、triggerWhenDrawn 全量清单、消耗区七步通知链、Retain/Ethereal 结算顺序、**用户三连问裁决（§6）** |
+| [keys-and-final-act.md](keys-and-final-act.md) | 6 | 三钥匙与第四层入口、蓝宝石钥匙宝箱二选一（互斥）、autoslay 不取钥匙的幕切换卡死、StS2 无原生钥匙的对照 |
 | [triggers.md](triggers.md) | 18 | Power/Relic/Card/Monster/Stance 五基类钩子总表、onPlayCard/onUseCard/onAfterUseCard 四时刻对照、死亡链/胜利链、计数遗物取证、同容器获得顺序结论、同步直调 vs 队列化对照 |
 | [damage-pipeline.md](damage-pipeline.md) | 17 | DamageType 三型语义、攻防两端乘区次序（Vulnerable 在攻方侧）、atDamageGive/final 修改器链、多重打击单快照结论、格挡吸收点、LoseHP 分流 |
 | [status-stacking.md](status-stacking.md) | 21 | ApplyPowerAction 完整分支（Artifact 拦截/合并 vs 新建/Night Terror 特例）、负值下限与 999 钳制的真实位置、debuff 时长递减唯一发生地、justApplied 双条件 |
