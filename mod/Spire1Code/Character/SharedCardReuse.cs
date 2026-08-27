@@ -82,7 +82,7 @@ internal static class SharedCardReuse
         typeof(Sts2Cards.Barricade),
         typeof(Sts2Cards.BattleTrance),
         typeof(Sts2Cards.Bloodletting),
-        typeof(Sts2Cards.Bludgeon),
+        typeof(Sts2Cards.Bludgeon),         // StS1=RARE vs StS2=Uncommon → RARITY-DRIFT TWIN (inject own, see Register)
         typeof(Sts2Cards.BurningPact),
         typeof(Sts2Cards.DarkEmbrace),
         typeof(Sts2Cards.Feed),
@@ -121,7 +121,7 @@ internal static class SharedCardReuse
         typeof(Sts2Cards.Prepared),       // 0E, draw 1 discard 1 (+2/+2)
         typeof(Sts2Cards.Slice),
         typeof(Sts2Cards.Accuracy),
-        typeof(Sts2Cards.Acrobatics),
+        typeof(Sts2Cards.Acrobatics),       // StS1=COMMON vs StS2=Uncommon → RARITY-DRIFT TWIN (inject own, see Register)
         typeof(Sts2Cards.Adrenaline),
         typeof(Sts2Cards.Afterimage),
         typeof(Sts2Cards.Alchemize),
@@ -142,7 +142,7 @@ internal static class SharedCardReuse
         typeof(Sts2Cards.Malaise),
         typeof(Sts2Cards.Nightmare),
         typeof(Sts2Cards.NoxiousFumes),
-        typeof(Sts2Cards.Predator),
+        typeof(Sts2Cards.Predator),         // StS1=UNCOMMON vs StS2=Common → RARITY-DRIFT TWIN (inject own, see Register)
         typeof(Sts2Cards.StormOfSteel),
         typeof(Sts2Cards.ToolsOfTheTrade),          // 0E, 6 dmg (+3)
     ];
@@ -173,9 +173,14 @@ internal static class SharedCardReuse
             AddOwnImplementations(typeof(DefectCardPool), DefectReuse);
             return;
         }
-        foreach (var cardType in IroncladReuse) ModHelper.AddModelToPool(typeof(Spire1CardPool), cardType);
-        foreach (var cardType in DefectReuse) ModHelper.AddModelToPool(typeof(DefectCardPool), cardType);
-        foreach (var cardType in SilentReuse) ModHelper.AddModelToPool(typeof(SilentCardPool), cardType);
+        // (2026-08-27 fix) Rarity-drift twins: StS2 rebalanced these cards' rarity vs StS1
+        // (Bludgeon RARE→Uncommon, Acrobatics COMMON→Uncommon, Predator UNCOMMON→Common).
+        // Injecting the shipped version would leak StS2 balance into the StS1 layer (user
+        // obtained an Uncommon Bludgeon on SPIRE1-IRONCLAD). For these three, resolve to our
+        // own StS1-faithful implementation instead; all other twins inject the shipped card.
+        foreach (var cardType in IroncladReuse) InjectTwin(typeof(Spire1CardPool), cardType);
+        foreach (var cardType in DefectReuse) InjectTwin(typeof(DefectCardPool), cardType);
+        foreach (var cardType in SilentReuse) InjectTwin(typeof(SilentCardPool), cardType);
 
         LogPoolCensus("ColorlessCardPool", typeof(ColorlessCardPool));
         LogPoolCensus("Spire1CardPool", typeof(Spire1CardPool));
@@ -210,7 +215,30 @@ internal static class SharedCardReuse
         }
     }
 
-    /// <summary>pure 模式：对每个官方孪生条目，若存在同名自研实现类则注入角色池。</summary>
+    /// <summary>非 pure 模式：官方孪生默认注入 shipped 版；稀有度漂移条目（StS2 改了稀有度）
+    /// 改注入自研 StS1 忠实版，防止二代平衡改动渗入一代层。</summary>
+    private static void InjectTwin(System.Type pool, System.Type twin)
+    {
+        if (RarityDriftTwins.Contains(twin.Name))
+        {
+            var own = ResolveOwnImplementation(twin);
+            if (own != null)
+            {
+                ModHelper.AddModelToPool(pool, own);
+                return;
+            }
+        }
+        ModHelper.AddModelToPool(pool, twin);
+    }
+
+    /// <summary>官方二代改过稀有度（vs StS1）的孪生条目——注入我方忠实版。</summary>
+    private static readonly HashSet<string> RarityDriftTwins =
+    [
+        "Bludgeon",    // StS1 RARE → StS2 Uncommon
+        "Acrobatics",  // StS1 COMMON → StS2 Uncommon
+        "Predator",    // StS1 UNCOMMON → StS2 Common
+    ];
+
     private static void AddOwnImplementations(System.Type pool, System.Type[] twins)
     {
         foreach (var twin in twins)
