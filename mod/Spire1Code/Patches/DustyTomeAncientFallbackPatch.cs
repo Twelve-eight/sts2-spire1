@@ -45,7 +45,16 @@ internal static class DustyTomeAncientFallbackPatch
         List<CardModel> fallback = FilterAncient(native, player);
         if (fallback.Count == 0)
         {
-            return true; // native pool unexpectedly empty too — keep vanilla behavior
+            // (2026-08-27 fix) The self-twin filter can empty the native pool entirely
+            // (e.g. official Ironclad Ancients all re-implemented by us). Falling through to
+            // vanilla would NRE on NextItem(empty).Id — the very crash this patch exists to
+            // prevent. Retry WITHOUT the self-twin filter instead: a shipped Ancient card is
+            // still a valid tome reward even if we also ship a StS1 twin of it.
+            fallback = pool2_NoSelfTwinFilter(native, player);
+        }
+        if (fallback.Count == 0)
+        {
+            return true; // native pool genuinely has no Ancients — keep vanilla behavior
         }
 
         __instance.AncientCard = player.PlayerRng.Rewards.NextItem(fallback.Select(c => c.Id));
@@ -53,6 +62,19 @@ internal static class DustyTomeAncientFallbackPatch
     }
 
     private static List<CardModel> FilterAncient(CardPoolModel pool, Player player) =>
+        pool.GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint)
+            .Where(c => c.Rarity == CardRarity.Ancient && !ArchaicTooth.TranscendenceCards.Contains(c))
+            // (2026-08-27 fix) Exclude shipped Ancients that our layer already re-implements with the
+            // StS1 faithful card (e.g. Corruption: StS2 ships it as an Ancient, we ship SPIRE1-CORRUPTION
+            // as Rare). Handing the player the official version leaks gen-2 content into the StS1
+            // character AND creates a duplicate library entry.
+            .Where(c => typeof(DustyTomeAncientFallbackPatch).Assembly
+                .GetType("Spire1.Spire1Code.Cards." + c.GetType().Name, throwOnError: false) == null)
+            .ToList();
+
+    /// <summary>FilterAncient 去掉"自研同名排除"的变体——回退池被掏空时的最后手段：
+    /// 官方先古卡即便与我方卡同名，也胜过让原版在空池上 NRE。</summary>
+    private static List<CardModel> pool2_NoSelfTwinFilter(CardPoolModel pool, Player player) =>
         pool.GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint)
             .Where(c => c.Rarity == CardRarity.Ancient && !ArchaicTooth.TranscendenceCards.Contains(c))
             .ToList();

@@ -878,3 +878,17 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - 推翻并当日修补（全部经 ilspycmd 反编译实锤 + RVFIX1 冒烟 exit 0）：①联机放行 struct 缺 ref（补 ref，4 源证实从未生效）②3a0de3d 误删非 pure 分支 Ironclad/Defect 孪生注入（恢复+删 PureSts1Adds 死代码+删 DarkShackles 双注入）③Feed 谓词取反（去反对齐引擎）④Maw NOM 击数 off-by-one（opening 计 turnCount）⑤火堆救援补 Owner+UniqueNameInOwner ⑥Armaments +3 Block 违官方回滚 ⑦三处代码注释订正。
 - 澄清：IRONCLAD 覆盖真实 48/48（coverage.js 蛇形化记账 bug）；divergence zip 含遗物跨端分歧，「清单级假阳性」降级为「清单层排除+遗物分歧未解释」。
 - 未验项：ref 联机运行时（需联机局）、火堆救援实机（需 AFTP 幕）。
+
+## 2026-08-27 联机分歧攻坚 + 修复批（哨兵监视驱动）
+
+### 联机分歧三大家族（LogWatch 哨兵 46 轮监视，5 份简报 research/audits/watch-20260827/）
+- **A 经典粘液标记丢失**：AFTP ClassicSlimed 的 IsClassicSlimed 是本地 ConditionalWeakTable，网络重建端无标记→双端 Slimed 行为分叉（divergence #28/#286）
+- **B RebalancedMode 配置单端**：本地配置双端不一致→同一选项索引两义（DUPLICATOR Host=Kneel/Remote=Leave，#55/#35）
+- **C DARV×尘封魔典**：Remote 多出一个 DustyTome 顶掉 VELVET_CHOKER（#558）
+
+### 修复（AFTP fork + Spire1 双仓，全部构建绿+反编译验证）
+- AFTP：RebalancedModeEffective（MP 恒走原版分支，35 文件 75 处替换）+ ClassicSlimedOnPlayPatch MP 守卫（联机不整替）
+- Spire1：InjectTwin 稀有度漂移三卡改注自研（Bludgeon/Acrobatics/Predator）；Token 卡 11 张归档 LegacyPool（Omega 出奖励修复）；DustyTome 回退过滤自研同名卡+空池兜底（Darv NRE 修复——冒烟实锤 FIXB1 复现/FIXB2 零 NRE）；删自研遗物 7+赤牛+药水 6（官方等价，数值逐字段核对）；Disarm StrengthLoss 正向化（双负号修复）；DualWield/cardsModifierTitle 文本修正
+- 冒烟：FIXB1（发现 Darv NRE→修）FIXB2（NRE=0 验证通过；exit1 为 autoslay 不取宝箱缺蓝宝石钥匙的既有局限，历史 4/244 同款）
+- FixReview 复核 8 项全过（.tmp/review-fixbatch.md→research/audits/watch-20260827/review-fixbatch.md）
+- 已知观察（P3 不阻断）：删类对旧存档不兼容（当前阶段可弃）；Akabeko 官方 Uncommon vs StS1 Common 稀有度渗漏（用户已裁定删自研，接受）

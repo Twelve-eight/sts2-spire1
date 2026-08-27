@@ -4,9 +4,13 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 
+using BaseLib.Utils;
+using Spire1.Spire1Code.Character;
+
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Watcher token - Miracle. Gain 1 Energy (2 upgraded). Retain and Exhaust.</summary>
+[Pool(typeof(Spire1LegacyPool))]
 public class Miracle() : Spire1Card(0, CardType.Skill, CardRarity.Token, TargetType.Self)
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Retain, CardKeyword.Exhaust];

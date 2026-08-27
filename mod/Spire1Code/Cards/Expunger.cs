@@ -4,9 +4,13 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 
+using BaseLib.Utils;
+using Spire1.Spire1Code.Character;
+
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Watcher token - Expunger. Deal 9 damage (15 upgraded) a number of times set by its creator.</summary>
+[Pool(typeof(Spire1LegacyPool))]
 public class Expunger() : Spire1Card(1, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(9, ValueProp.Move), new RepeatVar(1)];
