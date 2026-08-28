@@ -29,3 +29,6 @@ mod/_staging/
 # Nested build artifacts from research tools
 research/**/obj/
 research/**/bin/
+friends-pack.zip
+friends-pack.zip
+dist/friends-pack/mods/
