@@ -1,3 +1,4 @@
 {
-  "SPIRE1_UI_SKIP_NODE": "跳过当前节点"
+  "SPIRE1_UI_SKIP_NODE": "跳过当前节点",
+  "SPIRE1_UI_SKIP_NODE_TOOLTIP": "卡在房间出不去时使用：解锁地图选点，然后点击下一个要去的节点。"
 }

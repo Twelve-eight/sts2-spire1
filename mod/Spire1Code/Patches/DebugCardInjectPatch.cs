@@ -1,3 +1,5 @@
+#if DEBUG
+
 using HarmonyLib;
 using MegaCrit.Sts2.Core.AutoSlay;
 using MegaCrit.Sts2.Core.Combat;
@@ -79,3 +81,5 @@ internal static class DebugCardInjectPatch
         }
     }
 }
+
+#endif

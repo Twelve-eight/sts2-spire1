@@ -38,7 +38,7 @@ internal static class SkipNodeButtonPatch
             button = new Button
             {
                 Name = ButtonName,
-                TooltipText = "卡在房间出不去时使用：解锁地图选点，然后点击下一个要去的节点。"
+                TooltipText = TrFallback("SPIRE1_UI_SKIP_NODE_TOOLTIP", "卡在房间出不去时使用：解锁地图选点，然后点击下一个要去的节点。")
             };
             button.SetAnchorsPreset(Control.LayoutPreset.BottomRight);
             button.OffsetLeft = -250;
@@ -49,9 +49,7 @@ internal static class SkipNodeButtonPatch
             __instance.AddChild(button);
         }
 
-        // 本地化：键缺失时 Tr 原样返回键名，此时回退中文文案。
-        var localized = TranslationServer.Translate("SPIRE1_UI_SKIP_NODE");
-        button.Text = localized == "SPIRE1_UI_SKIP_NODE" ? "跳过当前节点" : (string)localized;
+        button.Text = TrFallback("SPIRE1_UI_SKIP_NODE", "跳过当前节点");
 
         // 每次打开地图都复位可用性——上次按下后的禁用不能延续到下一次救援（Critic P2）。
         button.Disabled = false;
@@ -72,5 +70,13 @@ internal static class SkipNodeButtonPatch
         {
             MainFile.Logger.Error("[Spire1] skip-node failed: " + e.Message);
         }
+    }
+
+    /// <summary>TranslationServer.Translate with key-missing detection: when the key is absent
+    /// the engine returns the key itself, in which case we fall back to the hardcoded string.</summary>
+    private static string TrFallback(string key, string fallback)
+    {
+        var localized = TranslationServer.Translate(key);
+        return localized == key ? fallback : (string)localized;
     }
 }
