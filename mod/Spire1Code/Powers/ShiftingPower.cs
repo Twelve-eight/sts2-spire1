@@ -49,7 +49,10 @@ public sealed class ShiftingPower : CustomPowerModel
 
     public override async Task AfterSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
     {
-        if (_pendingRestore <= 0)
+        // participants = the side that just ended its turn. Without this gate (same idiom as
+        // CombustPower/MetallicizePower), any other side's turn end would restore the Strength
+        // early — in MP that means the Transient gets its Strength back before its own turn ends.
+        if (!participants.Contains(Owner) || _pendingRestore <= 0)
         {
             return;
         }

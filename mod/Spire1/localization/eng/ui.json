@@ -1,3 +1,4 @@
 {
-  "SPIRE1_UI_SKIP_NODE": "Skip node"
+  "SPIRE1_UI_SKIP_NODE": "Skip node",
+  "SPIRE1_UI_SKIP_NODE_TOOLTIP": "Use when stuck in a room: unlock map travel, then click the next node you want to visit."
 }

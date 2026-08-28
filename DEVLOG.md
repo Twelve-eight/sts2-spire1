@@ -5,8 +5,8 @@ Recovery anchor + working state. Design/contracts: `DEVELOP.md`. Shared conventi
 
 ## STATUS (2026-08-25 03:00, session 14+ 夜间自主批)
 - **版本 0.9.1 已发布**：live 三件套 dll `9e0bd0d9` / pck `27020df2` / json，三 zip 同哈希。BaseLib 钉死 3.4.5（csproj 不再浮动）。
-- 内容：4 角色可见（观者已归档硬隐藏，77 张卡退出总览）+ 一代地牢可选；305 卡、33 遗物（双语表已灌）、49 力量、53 事件。
-- 联机层：握手放行+弹窗抑制（IgnoreMpModDifferences）、火堆黑屏通用救援（RestSiteLightingRescuePatch）、地图跳过节点按钮。MP 失同步三案判定为清单级假阳性（divergence #563/#249 对拍）。
+- 内容：4 角色可见（观者已归档硬隐藏，77 张卡退出总览）+ 一代地牢可选；306 卡（Cards/ 实测 306 文件）、25 遗物（8 项官方等价已删，flavor 已按 KB 逐字对齐）、49 力量、53 事件。
+- 联机层：握手放行+弹窗抑制（IgnoreMpModDifferences）、火堆黑屏通用救援（RestSiteLightingRescuePatch）、地图跳过节点按钮。MP 失同步三案：清单层排除，遗物层分歧未解释（reverify B-5 降级表述）（divergence #563/#249 对拍）。
 - 知识库：research/sts1-kb/ 数据卷 460+ 条 + 语义卷 119 规则；research/kb/ 项目事实三卷；双审计报告在 research/audits/。
 - 待办焦点：跳过按钮真人局验证；AFTP 上游 issue 发送（文稿已备）；Girya/Nloth 设计决策；覆盖 drain 跑至 18:00 后终态回填本文「Cutoff 追加」。
 

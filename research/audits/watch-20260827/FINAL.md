@@ -45,3 +45,12 @@
 | 5 | 16:02:24 | 55 | 退出 DUPLICATOR | B(确证) | 是 |
 
 解包档案：G:/tmp/watch-div-1 ~ watch-div-5（勿删，含两端 debug log 全量）。
+
+
+---
+
+## 勘误 2026-08-28（Critic 复核）
+
+**家族 B 归因更正**：本文把 DUPLICATOR/#35 断线归因为 `ActsFromThePastMultiplayerBalance` 仅 Host 端生效，规避建议为两端禁用 MPBalance——**归因错误**。
+决定性证据（Host 选项页 INITIAL_REBALANCED vs Remote INITIAL）指向 **AFTP 自家的 RebalancedMode 配置**；MPBalance 是独立数值 mod（Nob/MadGremlin），不碰 DUPLICATOR 选项页。
+修复已落在 AFTP fork 的 `RebalancedModeEffective`（35 文件 75 处），与 MPBalance 无关。DEVLOG L886 已更正口径，本文照录存档+本勘误为准。
