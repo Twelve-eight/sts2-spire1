@@ -903,6 +903,20 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - **知识库盘点卷一二**：inventory-mods.md（35 注册/30 在载基线+双源去重规则）、inventory-research.md（12 子目录导航+决策树+数据流图）、workspace-inventory.md 总索引；卷三（代码仓）待续
 - **冒烟 P62FIX1**：Victory 29 战全胜；Spire1 35 条日志零 ERROR/WARN；loc 修复+幕过滤运行确认；legacy strip 空转（预期）
 
+### 追记 2026-08-28 23:39-23:55 — 家族C黑屏现场取证+当场修复（fork f166f11）
+
+**现场**（联机局，用户报告黑屏，进程活/日志冻住）：
+- 23:39:38 双端投票走 (1,1) → MoveToMapCoordAction 执行 → Checksum 'Exiting event room EVENT.DARV' → CombatStateSynchronizer 'Waiting to receive all sync messages' → **日志永久停此行**（此后只剩 20 秒 NetQualityTracker 心跳）
+- 决定性证据 L11636-11637：**同一 DARV 事件双端选项列表不同**——房主(ECTOPLASM/BLACK_STAR/ASTROLABE) vs 朋友(ECTOPLASM/PHILOSOPHERS_STONE/DUSTY_TOME)
+- 朋友选 DUSTY_TOME → dustyTome.SetupForPlayer 生成先古牌奖励 RewardsSet id 12 → 房主端该 set 永不创建 → 5 条 RewardSelectedMessage 永久 Buffering（L11699-11716 连续 5 条 'hasn't been created yet'）→ 房间过渡卡死 → 黑屏
+
+**根因**：DarvUniqueOffersPatch 只看裸配置 DarvOnlyInLegacyActs（本机 cfg=true，朋友默认 false）。08-27 的 RebalancedModeEffective 批（75 处）**漏了这两个同族配置**。
+
+**修复**（照 Effective 模式）：DarvOnlyInLegacyActsEffective + LegacyEnemiesGiveClassicSlimedEffective（SP-only 合取）；调用点全换：DarvPatches ×2、粘液族 ×5、TimeEater。MP 恒走原版分支双端一致。构建 0 错误。
+
+**部署态**：fork dll 96275db4 构建成功；**游戏进程占用中写不进** → 待部署标记 .tmp/pending-deploy-aftp.json，进程退出后补 cp。朋友包需再重打（含新 dll）。
+
+**教训**：Effective 守卫批当时的正确范围=「所有本地差异类配置」而非「RebalancedMode 一个键」——同族键排查应当时做全。
 ### 教训
 - subagent 自拟'风味文本'=发明数据——advisory 系统拦截有效；flavor 类必须机械 join KB
 - Critic 值得开（16 条中 14 条实锤 1 条驳回 1 条部分）——但 #12 证明批评也要验
