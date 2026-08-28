@@ -26,8 +26,8 @@
   **尚未经真实联机对局验证**——你们是第一次实战检验。若仍断线，
   把断线时间点告诉我（房主），日志里有自动记录。
 
-  【已知仍会断线】DARV 事件×尘封魔典(DustyTome)组合——第三个
-  断线家族尚未修复。遇到请直接记录，别反复重试。
+  【DARV 黑屏已修】尘封魔典断线家族已修复（2026-08-28 夜）。三个断线
+  家族（粘液/复制机/DARV）修复代码均已就位，全部待联机实战验证。
 
   联机验证清单（打完告诉我结果）：
   □ 打出史莱姆粘液卡 → 是否断线
@@ -49,5 +49,5 @@
 附：发包时校验值
   mods/Spire1/Spire1.dll  4badc11c6839841ad45de264ca4e2853  (v0.9.2)
   mods/Spire1/Spire1.pck  aae4930e99f24a2c983b4f323299507a
-  mods/ActsFromThePast/ActsFromThePast.dll  c2c49c620fce7c5f94d3ddba6046cbd5
+  mods/ActsFromThePast/ActsFromThePast.dll  96275db4c8d679b5fb0e417b3f4e3baf  (含DARV黑屏修复)
   mods/ActsFromThePast/ActsFromThePast.pck  ba60133a597bf7b80bddcccdd4c493db
