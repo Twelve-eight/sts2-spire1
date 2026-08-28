@@ -892,3 +892,21 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - 冒烟：FIXB1（发现 Darv NRE→修）FIXB2（NRE=0 验证通过；exit1 为 autoslay 不取宝箱缺蓝宝石钥匙的既有局限，历史 4/244 同款）
 - FixReview 复核 8 项全过（.tmp/review-fixbatch.md→research/audits/watch-20260827/review-fixbatch.md）
 - 已知观察（P3 不阻断）：删类对旧存档不兼容（当前阶段可弃）；Akabeko 官方 Uncommon vs StS1 Common 稀有度渗漏（用户已裁定删自研，接受）
+## Session 20 — 2026-08-28 晚：P6.2 小修批 + Critic 批评批 + 工作区盘点卷一二（HEAD 89fa137→c67bf42）
+
+**四路 subagent 并行**（FixBatch/InvMods/InvResearch/Critic 29-33 分钟）+ 主会话集成验证。
+
+### 产出
+- **P6.2 全 9 项**（commit 079281b）：ShiftingPower participants 门控、SkipNode loc 键、min_game_version 0.111、Girya 挪表+占位符修复、zhs 36 条 flavor **逐字对齐 KB**（advisory 拦截了 subagent 自拟文案违反 AGENTS §6——机械 join 修正）、#if DEBUG 隔离、LegacySaveCompatPatch 最小剥离版（归档 vs 剥离待用户裁定）、Akabeko 调研跳过（无渗漏面）
+- **Critic 16 条批评当日清偿**（报告归档 research/audits/critic-20260828.md）：#1 README 未定态表述+DARV 仍断警告+验证清单；#3 旧三包 dist/deprecated/；#5 Girya 坏占位符；#6 ecosystem 虚假声明修正；#7 FINAL.md 家族B归因勘误；#11 决策权归还（待裁定）；#13 STATUS 腐坏修正（33→25 遗物/假阳性降级/卡数 305→306）；#14 version 0.9.2；**#12 有据驳回**（mismatch 已是 Warn 级双横幅非 Info——批评报告也有错的时候）；#9 P6 瘦身
+- **friends-pack v2**：新 dll 4badc11c（含 ShiftingPower 门控等全部 P6.2）+ pck aae4930e + README v2（轻量安装路径+验证清单）；包内四件哈希终验一致
+- **知识库盘点卷一二**：inventory-mods.md（35 注册/30 在载基线+双源去重规则）、inventory-research.md（12 子目录导航+决策树+数据流图）、workspace-inventory.md 总索引；卷三（代码仓）待续
+- **冒烟 P62FIX1**：Victory 29 战全胜；Spire1 35 条日志零 ERROR/WARN；loc 修复+幕过滤运行确认；legacy strip 空转（预期）
+
+### 教训
+- subagent 自拟'风味文本'=发明数据——advisory 系统拦截有效；flavor 类必须机械 join KB
+- Critic 值得开（16 条中 14 条实锤 1 条驳回 1 条部分）——但 #12 证明批评也要验
+- 沙箱 EPERM subagent 落盘：artifact architecture 字段传递方案跑通（两次成功）
+
+### 下一步
+- 联机实测（朋友装 v2 包）→ P1 闭环；inventory 卷三（代码仓）；autoslay 钥匙策略
