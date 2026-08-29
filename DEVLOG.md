@@ -506,7 +506,8 @@ The salvaged artifacts were written by agents from transcripts — spot-check a 
   Spiker/Repulsor/Exploder, SnakeDagger, GiantHead, GremlinLeader, ShelledParasite,
   Reptomancer. Custom powers: Fading/Shifting/Regrow/PlatedArmor (+Constricted later).
 - **The Ending**: SpireShield/SpireSpear/CorruptHeart + ShieldAndSpear/CorruptHeart
-  encounters (HomeActs=[4], Boss via BossDiscoveryOrder). NOTE: an earlier worker had【勘误 2026-08-25】Act3 实际落盘 16 场（本日删除一弱变体未回填此行），全游戏合计 55 而非隐含的 56。
+  encounters (HomeActs=[4], Boss via BossDiscoveryOrder). NOTE: an earlier worker had
+【勘误 2026-08-25】Act3 实际落盘 16 场（本日删除一弱变体未回填此行），全游戏合计 55 而非隐含的 56。
   claimed these landed but never wrote them — re-dispatched and verified on disk.
 - Build triage 280→0 errors: batch using-fixer over Monsters/, MoveRepeatType namespace,
   Nemesis scythe local→field promotion, TimeEater Heal(creature,amount) signature,
@@ -748,7 +749,8 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - P1SMOKE9：官方铁甲胜利，当前构建累计8胜0崩、NaN全零（修复前铁甲局3700+）。
 
 ### 夜间批次（续）：Watcher 归档 + 商店守卫 + 尘封魔典定罪
-- **SPIRE1-WATCHER 归档**（用户指令：AFTP 生态已有成品 Watcher）：`Spire1Config.EnableSts1Watcher=false` 默认；`Watcher.cs` override `HideFromVanillaCharacterSelect => !Enable`、`AllowInVanillaRandomCharacterSelect => Enable`。模型保留注册（老存档兼容）。归档前 watcher-cov 注入局已推进 WATCHER 覆盖 32→39/77（余量随归档挂起）。【2026-08-25 勘误】该开关已随 0c2a… 系列提交彻底移除，归档改为永久硬隐藏（无配置门禁）；后续总览门控见 bd6c539。
+- **SPIRE1-WATCHER 归档**（用户指令：AFTP 生态已有成品 Watcher）：`Spire1Config.EnableSts1Watcher=false` 默认；`Watcher.cs` override `HideFromVanillaCharacterSelect => !Enable`、`AllowInVanillaRandomCharacterSelect => Enable`。模型保留注册（老存档兼容）。归档前 watcher-cov 注入局已推进 WATCHER 覆盖 32→39/77（余量随归档挂起）。
+【2026-08-25 勘误】该开关已随 0c2a… 系列提交彻底移除，归档改为永久硬隐藏（无配置门禁）；后续总览门控见 bd6c539。
 - **商店购买守卫**（用户实测定位：autoslay 持续尝试买药水被"添水"类禁药遗物阻止，maxAttempts=50 内反复空转约 1 分钟）：`ShopPurchaseGuardPatch.cs` 重实现 `ShopRoomHandler.HandleAsync` 主循环——购买后槽位仍 stocked ⇒ 判定被拒，加入 failedSlots 黑名单永不重试；AutoSlayer.IsActive 门控。**部署待游戏退出后补做**（dll 锁）。
 - **尘封魔典（DUSTY_TOME）机制定罪**（用户报告"发的牌是封印王座"）：
   - 官方遗物 `DustyTome`（RelicRarity.Ancient，zhs"尘封魔典"）：`SetupForPlayer` 从**当前角色卡池**抽 `CardRarity.Ancient` 牌（升级后洗入牌堆）。Regent 池含 TheSealedThrone(Ancient Power) ⇒ "储君→封印王座"闭环。
@@ -955,3 +957,29 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 
 ### 下一步
 - 联机实测（朋友装 v2 包）→ P1 闭环；inventory 卷三（代码仓）；autoslay 钥匙策略
+
+## Session 22 - 2026-08-29 - migration brief and model language firewall
+
+### Migration state
+- Added `SESSION-HANDOFF-20260829.md` as the single next-session entry. It records the vanilla MP teardown, DARV black-screen evidence, AFTP fixes, package hashes, open work, and next research order.
+- Refreshed `dist/friends-pack.zip` as pack v4. The archive now contains the current local Spire1 DLL and PCK plus the current AFTP fork DLL and complete PCK. `character.txt=all` enables Ironclad, Silent, and Defect by default.
+- Package verification: local and archive hashes match for all four binary files; archive contains seven mod files; no PDB or development residue.
+
+### Language firewall
+- Shared `../AGENTS.md` section 5 now requires model-bound text to use only Chinese, English, French, German, or Russian plus ASCII and approved control characters.
+- Added `.cursor/rules/model-text-language.mdc`, `.cursor/hooks.json`, `.cursor/hooks/check-agent-text.mjs`, and `tools/check-agent-text.mjs`.
+- The checker rejects non-approved Unicode scripts before model dispatch, reports code points and JSON paths, and never silently mutates source evidence. Hook mode fails closed.
+- Han code points overlap Chinese and Japanese. The rule therefore forbids pasting unknown raw multilingual text and requires a local path plus line range instead.
+- Verified: accepted Chinese, English, French, German, and Cyrillic sample; rejected Hiragana `U+3042`; valid hook input returned `permission=allow`; invalid hook input returned `permission=deny`.
+
+### Decision
+- Do not promise that a project hook can inspect transport outside the Codex hook lifecycle. The committed hook protects `beforeSubmitPrompt` and matching tool calls when project hooks are enabled; the CLI checker remains the explicit fallback.
+- Rejection is preferred over transliteration because changing a code point can corrupt code, paths, hashes, logs, or source evidence.
+
+### Verification snapshot
+- Main repo package and local deployment hashes match: Spire1 DLL `8d510cee7022b94a1abdb65138d9a061`; Spire1 PCK `aae4930e99f24a2c983b4f323299507a`; AFTP DLL `317ad0345f64fccef14d727ddbc46563`; AFTP PCK `ba60133a597bf7b80bddcccdd4c493db`.
+- The latest real runtime smoke remains `STALLW1`: victory, zero Spire1 errors, zero stall-watch warnings. This is single-player evidence only; real two-player validation remains open.
+
+### Next session
+- Start from `SESSION-HANDOFF-20260829.md`.
+- Do not repeat the completed raw-config audit. Continue vanilla source teardown for shop, encounter, map, and room-transition synchronization, then sample-check new risk classes.
