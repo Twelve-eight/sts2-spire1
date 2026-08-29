@@ -49,5 +49,5 @@
 附：发包时校验值
   mods/Spire1/Spire1.dll  4badc11c6839841ad45de264ca4e2853  (v0.9.2)
   mods/Spire1/Spire1.pck  aae4930e99f24a2c983b4f323299507a
-  mods/ActsFromThePast/ActsFromThePast.dll  96275db4c8d679b5fb0e417b3f4e3baf  (含DARV黑屏修复)
+  mods/ActsFromThePast/ActsFromThePast.dll  317ad0345f64fccef14d727ddbc46563  (含DARV黑屏+事件池分歧修复)
   mods/ActsFromThePast/ActsFromThePast.pck  ba60133a597bf7b80bddcccdd4c493db

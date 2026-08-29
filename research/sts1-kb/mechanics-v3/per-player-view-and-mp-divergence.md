@@ -95,6 +95,17 @@ BattlewornDummy / DenseVegetation / FakeMerchant / JungleMazeAdventure / Morphic
 | C DARV 黑屏 | 尘封魔典选择后黑屏 | M1+M4/R1+R3+R6 | DarvOnlyInLegacyActsEffective 等（f166f11） |
 | （防）未来家族 | — | M5/M6/R5/R8 | 本卷 checklist 预防 |
 
+### 追记 2026-08-29 — 卷四产出的第一个预防性修复（家族D候选）
+
+**GenerateRooms 双端对称执行**（新增引擎事实）：StartNewMultiplayerRun 无 host/client 分支（NCharacterSelectScreen.cs L726-790），双端各跑 ActModel.GenerateRooms、同一 seed 驱动 State.Rng.UpFront。**任何 GenerateRooms 的 Postfix 若受本地配置门控=地图分歧**（模式 M7）。
+
+**家族D候选实锤**：AFTP ShrinePatches（AllowNonLegacySharedEventsInLegacyActs=false 是我们本机压过的值，朋友默认 true）→ 双端一代幕事件池不同。修复 9b4c4fb：双键 Effective 化（MP 恒不过滤，幕纯净度让位于一致性）。
+
+**自查结果**（checklist §7 首轮执行）：
+- Spire1 mod 53 事件：干净（'本地随机'命中均为注释里的 StS1 原版描述，实现走事件 Rng；'直Add牌'是官方事件同款模式；SecretPortal 转场为 FLAGGED 未实现，无代码路径）
+- 自家 LegacyActSharedEventFilterPatch：类型判定门控（非配置），双端 dll 一致即安全 ✓
+- AFTP fork 全仓裸配置扫描：除已修三键外仅 ShrinePatches 两键（已修，9b4c4fb）
+
 ## 附：证据锚点索引
 
 - EventSynchronizer.cs：L57（option-selection rng host-only 注释）、L98-126（per-player 克隆）、L178（NextItem 齐票）、L206-222（OptionIndexChosen 处理）、L284-287（索引越界抛异常）
