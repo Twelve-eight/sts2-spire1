@@ -892,6 +892,37 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 - 冒烟：FIXB1（发现 Darv NRE→修）FIXB2（NRE=0 验证通过；exit1 为 autoslay 不取宝箱缺蓝宝石钥匙的既有局限，历史 4/244 同款）
 - FixReview 复核 8 项全过（.tmp/review-fixbatch.md→research/audits/watch-20260827/review-fixbatch.md）
 - 已知观察（P3 不阻断）：删类对旧存档不兼容（当前阶段可弃）；Akabeko 官方 Uncommon vs StS1 Common 稀有度渗漏（用户已裁定删自研，接受）
+## Session 21 — 2026-08-29：多人机制卷四拆解 + 家族D预防性修复 + 死等观察哨（HEAD df539b2）
+
+用户令：拆解游戏原文件构建知识库——目标'通过原版机制推断并预防 bug（每人选项可以不同是机制）'，喊停前持续工作。
+
+### 拆解→知识（卷四 research/sts1-kb/mechanics-v3/per-player-view-and-mp-divergence.md，212ebcf/1fafb2a）
+- **引擎两种事件模型**：每玩家一份 EventModel 克隆（合法不同选项的机制基础）；非共享事件只同步'第几个'（OptionIndexChosenMessage），共享事件（全游戏仅 8 个）投票制 host 定胜
+- **事件 RNG 派生式**（EventModel.cs L234）：runSeed+slotIndex+hash(事件Id)——同事件每人专属 RNG 流，'每人不同结果'是设计意图
+- **奖励链**：RewardsSet.Id 接收端本地分配；set 未生成→消息**无限期缓冲**（家族C黑屏的直接机制）
+- **卡死充要条件 V4-R6**：WaitForSync 无超时 await；解除=收齐或**对端断线**——黑屏只能强退的机制解释；排查口诀=日志冻在 Waiting to receive → 翻对端日志
+- **checksum 次数一致要求**（L83-84 注释明文）：单端条件跳过=假阳性 divergence
+- **RNG 三层表**：Run 层强制同步（host 下发快照）/Player 层各一份/Event 层各一份
+- **模式清单 M1-M8** + 7 条 mod 写手 checklist
+
+### 拆解→预防（两个当日修复）
+1. **家族D候选（9b4c4fb）**：GenerateRooms 双端对称执行（StartNewMultiplayerRun 无 host/client 分支，NCharacterSelectScreen L726-790）——AFTP ShrinePatches 两键裸配置门控房间池变异=地图分歧。Effective 化修复，本地部署 317ad034，friends-pack v4 已重打
+2. **M8 文本判等模式**：DarvOfferTracker 按 Title.GetFormattedText() 判等——跨语言双端可分歧（已被 Effective 守卫中和）；Spire1 侧扫描无违规（WeMeetAgain 是显示用非判等）
+
+### 自查（checklist 首轮执行）
+- Spire1 53 事件干净（'本地随机'命中全是 StS1 注释描述；'直Add牌'是官方同款模式；SecretPortal 转场 FLAGGED 未实现无路径）
+- 自家 LegacyActSharedEventFilterPatch 类型判定门控=双端 dll 一致即安全
+- AFTP 全仓裸配置扫描：仅 ShrinePatches 两键（已修）
+
+### 防御补丁（df539b2）
+- **CombatSyncStallWatchPatch**：WaitForSync Postfix 包 Task——60 秒未解打 Warn（含机制解释与排查指引）。零行为变化（超时后继续等原 task）。STALLW1 冒烟：胜利、零错误、零误报（单人早退路径正确跳过）
+- 首版 Prefix 方案自审废弃（async 方法换 __result 的正确姿势是 Postfix 包 Task）——保留教训
+
+### 部署态
+- Spire1.dll 8d510cee（含观察哨）/ AFTP fork 317ad034（含家族C+D修复）→ friends-pack v4 已重打（**用户需把 v4 重发朋友**）
+
+### 下一步（喊停前持续）
+- 卷五候选：商店/遭遇/地图生成同步链拆解；M8 跨语言判等全生态扫（工坊 mod 也可能犯）
 ## Session 20 — 2026-08-28 晚：P6.2 小修批 + Critic 批评批 + 工作区盘点卷一二（HEAD 89fa137→c67bf42）
 
 **四路 subagent 并行**（FixBatch/InvMods/InvResearch/Critic 29-33 分钟）+ 主会话集成验证。
