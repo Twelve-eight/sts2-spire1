@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeSubmitPrompt": [
+      {
+        "type": "command",
+        "command": "node .cursor/hooks/check-agent-text.mjs",
+        "timeout": 5,
+        "failClosed": true
+      }
+    ],
+    "preToolUse": [
+      {
+        "type": "command",
+        "command": "node .cursor/hooks/check-agent-text.mjs",
+        "matcher": "Task|MCP:.*",
+        "timeout": 5,
+        "failClosed": true
+      }
+    ]
+  }
+}

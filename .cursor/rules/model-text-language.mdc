@@ -1,0 +1,13 @@
+---
+description: Enforce approved model-bound language and preserve raw evidence in local files
+alwaysApply: true
+---
+
+# Model Text Language Firewall
+
+- Model-bound prompts, task contexts, subagent messages, and generated reports may use only Chinese, English, French, German, or Russian text plus ASCII punctuation and control characters.
+- Reject Japanese kana, Korean Hangul, Arabic, Hebrew, Greek, emoji, and other non-approved scripts before dispatch.
+- Han code points are shared by Chinese and Japanese. Do not infer language from Han alone. Keep unknown raw text in a local file and reference its path and line range.
+- Never silently delete or transliterate characters from code, paths, hashes, logs, or source evidence. Rejection is safer than mutation.
+- Run `node tools/check-agent-text.mjs --file <path>` before sending a large prompt or raw report. For hook input use `node tools/check-agent-text.mjs --hook`.
+- When a check fails, summarize the issue in approved text and reference the local source path instead of pasting the source.
