@@ -47,7 +47,7 @@ BattlewornDummy / DenseVegetation / FakeMerchant / JungleMazeAdventure / Morphic
 
 退房链（EventRoom.cs L90-104）：`AwaitPendingOptionTasks`（等所有 onChosen 任务完成）→ `ChecksumTracker.GenerateChecksum("Exiting event room ...")`（仅 IsDeterministic=true 即非共享事件）→ 清理。随后 `RunManager` L892/L1097/L1285 三处 `StartSync()` → `WaitForSync()`。
 
-`CombatStateSynchronizer.WaitForSync`（CombatStateSynchronizer.cs L152-163）：`await _syncCompletionSource.Task`——**无超时、无取消**。完成条件只有两个：收齐所有 peer 的 `SyncPlayerDataMessage`（CheckSyncCompleted），或 **peer 断线**（OnPeerDisconnected L103-111 会 CheckSyncCompleted）。
+`CombatStateSynchronizer.WaitForSync`（CombatStateSynchronizer.cs L152-163）：`await _syncCompletionSource.Task`——**无超时、无取消**。完成条件只有两个：收齐所有 peer 的 `SyncPlayerDataMessage`（CheckSyncCompleted），或 **peer 断线**（OnPeerDisconnected L103-111 会 CheckSyncCompleted）。【2026-08-30 订正细化：client 侧完成还需 host 的 `SyncRngMessage`——CheckSyncCompleted 要求 `_rngSet != null`,host 在 StartSync 自设,client 依赖 host 下发;若 host 只发玩家数据不发 Rng 快照,client 同样无限挂起。这是第三条挂起路径,与黑屏排查相关。】
 
 > **规则 V4-R6（卡死的充要条件）**：只要"对端永远不发 sync 消息且不断线"，本端就永久黑屏等待。触发路径：对端先死在另一个等待点（如索引越界抛异常把任务链炸断）、或对端的过渡路径被 mod 改得不经过 StartSync。**唯一自然解除=断线**——这就是家族C黑屏"只能强退"的机制解释。
 >
