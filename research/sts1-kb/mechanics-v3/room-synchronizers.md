@@ -2,11 +2,11 @@
 
 > 生成：2026-08-29（同批拆解，接卷四）。来源：sts2.dll v0.111.0 反编译源逐类精读。
 > 卷四回答"事件/奖励为什么能不同"；本卷回答"**哪些房间/系统有自己的专用同步器**、各自的合法分歧面在哪、死等点在哪"。
-> 已知死等三姐妹：卷四 WaitForSync（无超时）、本卷 AfterAllRestSitesCompleted（无超时）、宝箱投票齐票（无超时）——**共同解除条件只有 peer 断线**。
+> 已知死等三姐妹：卷四 WaitForSync（无超时）、本卷 AfterAllRestSitesCompleted（无超时）、宝箱投票齐票（无超时）。【2026-08-30 订正: 前两者的解除=断线兜底(RestSite OnPeerDisconnected L144-162/CombatState 同款);但 TreasureRoomRelicSynchronizer **无 OnPeerDisconnected 处理器**——宝箱投票在 peer 断线后无既定释放路径,断线能否解除取决于 ActionQueue 层的善后,引擎源内未见面级兜底。三姐妹"共同解除条件只有断线"对宝箱一员不成立,排查时勿假设断线必解锁宝箱房。】
 
 ---
 
-## 1. 同步器族谱总表（MegaCrit.Sts2.Core.Multiplayer.Game/ 全目录）
+## 1. 同步器族谱总表（MegaCrit.Sts2.Core.Multiplayer.Game/ 为主,另含 GameActions.Multiplayer/ 的 ActionQueueSynchronizer 与父目录的 CombatStateSynchronizer;目录内另有 RewardSynchronizer/EventCombatSynchronizer/ActChangeSynchronizer 未列详行）
 
 | 同步器 | 管什么 | 分歧面（各端独立） | 一致面（消息驱动） | 死等点 |
 |---|---|---|---|---|
@@ -17,9 +17,9 @@
 | MapSelectionSynchronizer | 地图节点投票 | — | VoteForMapCoord（host 齐票择 coord） | 齐票等待 |
 | CombatStateSynchronizer | 房间过渡 combat sync | — | SyncPlayerData/SyncRng（host 下发 Rng 快照） | WaitForSync（卷四 V4-R6） |
 | ActionQueueSynchronizer | 游戏动作队列 | — | 每动作双端排队执行 | — |
-| ReactionSynchronizer | 遗物触发动画标记 | 动画表现 | — | —（45 行小类） |
-| FlavorSynchronizer | 遗物 flavor 文本生成 | flavor roll（纯表现层，注释明示） | — | — |
-| OneOffSynchronizer | 一次性动作去重 | — | — | —（210 行，联机锁/一次性事件） |
+| ReactionSynchronizer | 表情反应轮(光标处 ReactionMessage,如 EndTurnPing 同类的手感消息) | 动画表现 | ReactionMessage | —(45 行小类) |
+| FlavorSynchronizer | 手感类杂项消息(EndTurnPing/MapPing) | 表现层 | Ping 消息 | — |
+| OneOffSynchronizer | 一次性场景同步(商店删卡/开箱金币/水晶球奖励) | — | 各自消息 | —(约 232 行) |
 | ChecksumTracker | 对拍与断线执法 | — | ChecksumData/StateDivergence | —（mismatch→DisconnectClient） |
 
 **结构规律**：凡"选项/内容生成"都可各端独立（走 per-player RNG 或共享但已同步的 RNG）；凡"选择/推进"必走消息。**mod 的安全侵入点=内容生成钩子（Hook 层），危险侵入点=消息处理与齐票逻辑**。
@@ -53,14 +53,16 @@
 
 ## 5. MapSelectionSynchronizer（地图投票）
 
-- 每步投票（VoteForMapCoordMessage）；host 齐票选坐标（同 EventSynchronizer 的 host-only rng 模式）→ MoveToMapCoordAction 入 ActionQueue 广播。
+- 每步投票（VoteForMapCoordAction 经 ActionQueueSynchronizer 入队,NMapScreen.cs L947-948；原记"VoteForMapCoordMessage"名称有误,2026-08-30 订正）；host 齐票选坐标（同 EventSynchronizer 的 host-only rng 模式）→ MoveToMapCoordAction 入 ActionQueue 广播。
 - **地图本身双端各生成**（卷四家族D：GenerateRooms 对称执行+同种子）——投票只是推进，不传地图。**地图分歧的检测点=进房时的 room 类型/内容对拍**（checksum 与 combat sync），不是投票环节。
 
-## 6. OneOffSynchronizer / ReactionSynchronizer / FlavorSynchronizer（速记）
+## 6. OneOffSynchronizer / ReactionSynchronizer / FlavorSynchronizer（速记,2026-08-30 审阅订正）
 
-- OneOff（210 行）：联机"一次性动作"互斥（如双端同时开同一宝箱）——mod 若绕过它做一次性副作用，双端可重复执行。
-- Reaction：遗物触发时的**动画标记同步**（远端也播放 flash）——表现层，mod 遗物 Flash() 自动同步。
-- Flavor：遗物 flavor 文本（如 "聚宝盆里装着 37 金币"）各端独立 roll——**引擎明示纯表现层可分歧**，与卷四"内容必须一致"边界互补：**玩家可见文本≠状态**。
+- OneOff(约 232 行): 跨端执行一次性场景动作 - 商店删卡(MerchantCardRemoval)/开箱金币(TreasureChestOpened)/水晶球奖励(CrystalSphereRewards). 类注释自称"装不进其它同步器的一次性场景杂物箱". mod 做一次性副作用若绕过它,双端可重复执行(原"互斥"定性不准,实为跨端执行).
+- Reaction: ReactionMessage - 光标处表情/反应轮(NReactionContainer.DoRemoteReaction),非遗物动画. 遗物 flash 若有同步走别的通道(未定位,存疑).
+- Flavor: EndTurnPingMessage/MapPingMessage - 手感类杂项消息. **原卷称"遗物 flavor 文本独立 roll"是错的**: 遗物风味是 RelicModel.Flavor 纯 LocString 查表,无 roll 无同步问题. 玩家可见动态文本若含随机数,来源是遗物 DynamicVars(确定性),非本类.
+
+> 2026-08-30 增量审阅(increment-review-20260830 F3)订正: 本节原三条功能描述中 Reaction/Flavor 两条与引擎源不符,OneOff 定性不准,已按反编译源重写. VoteForMapCoordMessage 名称亦有误 - 实为 VoteForMapCoordAction 经 ActionQueueSynchronizer 入队(NMapScreen.cs L947-948),非直接消息.
 
 ## 7. 新增预防规则（并入卷四 checklist 用）
 
