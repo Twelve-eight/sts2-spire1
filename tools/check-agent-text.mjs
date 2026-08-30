@@ -1,24 +1,20 @@
 #!/usr/bin/env node
-// Validate model-bound text. Reject; never mutate evidence.
-// Allowed letters: Han, Latin, and Cyrillic. ASCII is always allowed.
-// Hiragana, Katakana, Hangul, Arabic, Hebrew, Greek, emoji, and other
-// non-approved scripts are rejected by Unicode script properties.
+// Allowed letters: Han, Latin, and Cyrillic. Allowed non-letters are
+// ASCII control characters and ASCII printable characters only.
+// Reject non-ASCII punctuation, symbols, marks, separators, emoji, and
+// unapproved scripts. Never mutate source evidence.
 // Han is shared by Chinese and Japanese, so Han-only Japanese text cannot
 // be identified perfectly from code points alone. Keep unknown raw text in
 // a local file and pass only its path and line range.
 
 import fs from "node:fs";
 
-const allowedScript = /[\p{Script=Han}\p{Script=Latin}\p{Script=Cyrillic}]/u;
-const allowedMark = /\p{Mark}/u;
-const allowedPunctuation = /\p{Punctuation}/u;
-const allowedSeparator = /\p{Separator}/u;
+const allowedLetter = /[\p{Script=Han}\p{Script=Latin}\p{Script=Cyrillic}]/u;
 
 function isAllowed(ch) {
   const cp = ch.codePointAt(0);
   return cp === 0x09 || cp === 0x0a || cp === 0x0d ||
-    (cp >= 0x20 && cp <= 0x7e) || allowedScript.test(ch) ||
-    allowedMark.test(ch) || allowedPunctuation.test(ch) || allowedSeparator.test(ch);
+    (cp >= 0x20 && cp <= 0x7e) || allowedLetter.test(ch);
 }
 
 function scanText(text) {
