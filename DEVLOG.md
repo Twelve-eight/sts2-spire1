@@ -983,3 +983,59 @@ heart4（MoveNext 转译生效后）：**第四幕全程自动驱动，CORRUPT_H
 ### Next session
 - Start from `SESSION-HANDOFF-20260829.md`.
 - Do not repeat the completed raw-config audit. Continue vanilla source teardown for shop, encounter, map, and room-transition synchronization, then sample-check new risk classes.
+
+## Session 23 - 2026-08-30 - increment review (critic+1) + F1-F4 same-day fixes
+
+Scope: everything after the critic audit (079281b). Four-way parallel review
+(AftpForkReview/Spire1IncrementReview/KbVolumeAudit/HandoffHonestyAudit);
+report at research/audits/increment-review-20260830.md (commit 4453019).
+
+Findings and same-day fixes:
+- F1 (P1) fork family-D polarity inversion: the two shared-event ALLOW flags are
+  consumed under negation, so the plain SP&&raw pattern made the filter ALWAYS
+  fire in MP (legacy acts lost all base shared events; pools stayed symmetric so
+  no desync - content regression, masked in our dual-mod deployment by Spire1's
+  unconditional gen-2 filter). Fixed fork 80d8216 (MP returns true), built 0
+  errors, deployed AFTP dll 58310ad9. friends-pack.zip still holds old dll
+  317ad034 - rebuild before sending to the friend.
+- F2 (P2) hook wrapper resolved tools/check-agent-text.mjs via process.cwd();
+  a foreign hook cwd would deny every Task/MCP call. Rewritten with
+  import.meta.url resolution; verified allow exit 0 from project root AND a
+  foreign cwd, deny path exit 2 intact (70a71b2).
+- F3 (P2) KB vol5 corrections (a5fe4dc): FlavorSynchronizer is EndTurn/MapPing
+  (NOT relic flavor rolls - that is a plain LocString lookup); ReactionSynchronizer
+  is the emote wheel (NOT relic flash); OneOffSynchronizer is cross-peer one-off
+  scenarios (merchant removal/chest gold/crystal sphere, ~232 lines, not
+  mutual-exclusion); family table scope fixed (ActionQueueSynchronizer lives in
+  GameActions.Multiplayer; Reward/EventCombat/ActChange syncers omitted);
+  VoteForMapCoordMessage does not exist (it is VoteForMapCoordAction via the
+  action queue, NMapScreen.cs L947-948); treasure vote has NO disconnect fallback
+  - the "only release is disconnect" claim fails for the chest sister. Vol4
+  refinement: client sync completion also needs the host SyncRngMessage
+  (CheckSyncCompleted demands _rngSet != null) - third hang path.
+- F4 (P3) handoff log pointer rotated (godot2026-08-29T15.51.05.log), DEVELOP.md
+  counts 305/33 -> 306/25, hash block updated with the new dll and a
+  rebuild-pack warning.
+
+Verified clean: package chain (4 hashes + character.txt=all + no PDB residue),
+stall watch (3 engine WaitForSync call sites, SP no-false-positive path,
+STALLW1 log zero Spire1 ERROR/WARN), Effective wrappers (5 keys, zero raw-read
+leftovers, NetService assigned before GenerateRooms), EpochModel/Act4 errors are
+the known benign DEVLOG L701 item.
+
+Process lessons (three provider cuts this session, all from ECHOING fullwidth
+punctuation, never from reading):
+- Dispatch rule going forward: task briefs must forbid verbatim quoting of
+  source text; cite file:line and paraphrase in English ASCII. The checker only
+  guards outgoing dispatch JSON, not mid-run agent echoes.
+- Salvage path proven: a cut agent's transcript (KbVolumeAudit, 155 requests,
+  killed on budget) yielded its complete findings by extracting assistant
+  thinking blocks and ASCII-sanitizing them (.tmp/kbaudit-salvage-ascii.txt) -
+  no re-run needed.
+- New agent type language-translator (TRANSLATOR model role, no character
+  restrictions) fixed the report's fullwidth punctuation to pass the firewall in
+  26s. Use it for any file that must contain Chinese but pass the checker.
+
+Deployment state: Spire1.dll 8d510cee / Spire1.pck aae4930e unchanged;
+ActsFromThePast.dll now 58310ad9 (polarity fix) / pck ba60133a unchanged.
+Real two-player validation still open; pack rebuild still open.
