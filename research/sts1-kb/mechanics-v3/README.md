@@ -9,6 +9,7 @@
 |---|---|
 | [per-player-view-and-mp-divergence.md](per-player-view-and-mp-divergence.md) | 引擎如何合法地让每个玩家看到不同选项/奖励；mod 侵入模式 M1-M8；预防 checklist；卡死（黑屏）充要条件 V4-R6；断线家族 A-D 根因映射 |
 | [room-synchronizers.md](room-synchronizers.md) | 同步器族谱总表（11 个）；火堆/宝箱/地图投票各自的合法分歧面；死等三姐妹；RelicGrabBag 共享抓包 Front/Back 方向语义；规则 V5-R1..R5 |
+| [shop-encounter-map-transitions.md](shop-encounter-map-transitions.md) | 商店（per-player 货架+RewardSynchronizer 广播）、遭遇选择与战斗入口（种子公式/EventCombatSynchronizer 齐票/MonsterAi 单流）、地图幕过渡（种子拓扑/host 投票/ActChange 齐票）；新死等点 2+1；AFTP 风险审计（MatchAndKeep 候选） |
 
 ## 使用方式
 

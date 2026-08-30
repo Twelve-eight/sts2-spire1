@@ -1039,3 +1039,57 @@ punctuation, never from reading):
 Deployment state: Spire1.dll 8d510cee / Spire1.pck aae4930e unchanged;
 ActsFromThePast.dll now 58310ad9 (polarity fix) / pck ba60133a unchanged.
 Real two-player validation still open; pack rebuild still open.
+
+## Session 24 - 2026-08-30 - KB volume 6 teardown (shop/encounter/map/act transition)
+
+Four hardened scouts (no-verbatim-quote briefs): ShopSyncTeardown (died at 155
+req, no output - shop done by main session), EncounterRngTeardown (delivered
+full 27m report), MapActTeardown (155 req, salvaged 24 thinking blocks/269KB),
+AftpRiskAudit (155 req, salvaged 11 blocks/35KB). Volume landed:
+research/sts1-kb/mechanics-v3/shop-encounter-map-transitions.md, indexed in
+README.
+
+Key facts (main session re-verified against engine source):
+- Encounter selection is 100% run-level RNG: UpFront stream at run start rolls
+  all acts' content (RunManager.cs L743-766 -> ActModel.cs L331-386); Unknown
+  room types roll per point (UnknownMapPointOdds.cs L127-165). PlayerRngSet
+  covers only Rewards/Shops/Transformations - encounters never touch it.
+- Mutable encounters never cross the wire: per-peer local ToMutable, identical
+  via seed formula runSeed+TotalFloor+hash(encounterId) (EncounterModel.cs
+  L263-264). AI uses ONE shared MonsterAi stream (MonsterModel.cs L416-419).
+- Shop shelves are per-player local rolls (PlayerRng.Shops, MerchantInventory.cs
+  L100/L143); purchases broadcast via RewardSynchronizer (GoldLostMessage/
+  RewardObtainedMessage/CardRemovedMessage, location-targeted, combat-buffered).
+- Map topology is seed-derived (new Rng(runSeed, act_N_map), StandardActMap.cs
+  L112-114) - zero messaging. Host-only map_point_selection RNG breaks vote
+  ties (MapSelectionSynchronizer.cs L38-90).
+- Act change = distributed AND of VoteToMoveToNextActAction through the action
+  queue (ActChangeSynchronizer) - each peer independently runs EnterNextAct.
+
+NEW engine gaps (all main-session verified, recorded in vol6 section 4):
+1. MapSelectionSynchronizer has NO disconnect fallback - a disconnected player's
+   vote slot stays empty forever, host never MoveToMapCoord, whole team stuck
+   on the map screen. (Compare CombatState/RestSite which subscribe
+   OnPeerDisconnected.)
+2. ActChangeSynchronizer has NO disconnect fallback - a player who never votes
+   blocks the act transition permanently.
+3. EventCombatSynchronizer readiness barrier has no timeout/disconnect handling
+   (option-message loss stalls that peer only).
+Known engine TODO: SyncRngMessage.cs L12-15 - client Niche rollback may re-roll
+the same value twice.
+
+AFTP risk disposition (no code change this session):
+- MatchAndKeep minigame: cards added in a UI callback only on the owner peer
+  (NMatchAndKeepScreen.cs L517-518; MatchAndKeepMinigame.cs L121-127 IsMe gate;
+  CardPileCmd.Add is local-only). Structural single-ended side effect - needs a
+  real two-player test to grade (next combat SyncWithSerializedPlayer may heal
+  or checksum may flag). Recorded in vol6 section 5.2 as candidate.
+- SecretPortal wall-clock gate (SecretPortal.cs L31 RunTime) can disagree across
+  peers - known, rebalanded branch already MP-guarded; wall-clock check itself
+  unaddressed. Recorded with avoid guidance.
+
+Process note: three of four scouts hit the 100-request soft budget (155 cap)
+without yielding; the transcript-salvage path (extract assistant thinking
+blocks, ASCII-sanitize) recovered all three completely. Budgets: deep teardown
+needs effort=hi + explicit yield-at-90 instruction; briefs should cap tool
+rounds.
