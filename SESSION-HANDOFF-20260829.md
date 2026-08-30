@@ -16,12 +16,13 @@ Working tree changes from this pass must be committed after final checks.
 
 ## Deployed files and package
 
-Local deployed hashes:
+Local deployed hashes (updated 2026-08-30 after the increment review):
 
 - `Spire1.dll`: `8d510cee7022b94a1abdb65138d9a061`
 - `Spire1.pck`: `aae4930e99f24a2c983b4f323299507a`
-- `ActsFromThePast.dll`: `317ad0345f64fccef14d727ddbc46563`
+- `ActsFromThePast.dll`: `58310ad9a6ccd0e8787eaef9f6b762df` (family-D polarity fix, fork commit `80d8216`)
 - `ActsFromThePast.pck`: `ba60133a597bf7b80bddcccdd4c493db`
+- Increment review 2026-08-30: `research/audits/increment-review-20260830.md` - findings F1-F4 all fixed same day (fork polarity `80d8216`, hook wrapper cwd, KB vol5 corrections, this pointer update). Deployed AFTP dll is now `58310ad9...`; `dist/friends-pack.zip` still holds the OLD dll `317ad034...` - rebuild before sending.
 
 Package: `dist/friends-pack.zip`
 
@@ -34,7 +35,7 @@ Package: `dist/friends-pack.zip`
 
 ## Multiplayer incident and fixes
 
-Latest black-screen log: `C:/Users/o_Obl/AppData/Roaming/SlayTheSpire2/logs/godot.log`
+Latest black-screen log: `C:/Users/o_Obl/AppData/Roaming/SlayTheSpire2/logs/godot2026-08-29T15.51.05.log` (the incident rotated out of godot.log; the current godot.log holds the STALLW1 single-player smoke).
 
 The DARV event intentionally creates one event clone per player. Non-shared events may show different options to different players. The bug was not that the options differed. The bug was that AFTP changed the local option generation on only one peer by reading `DarvOnlyInLegacyActs` directly.
 
