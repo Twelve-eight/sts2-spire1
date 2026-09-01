@@ -59,21 +59,26 @@ internal static class AutoAnthonyCompatBridge
         [typeof(Ironclad)] = (int)GeneratedCharacter.Ironclad,
         [typeof(Silent)] = (int)GeneratedCharacter.Silent,
         [typeof(Defect)] = (int)GeneratedCharacter.Defect,
-        // Watcher（观者）已归档且无 StS2 同名原型，不参与。
+        // 本仓的 Watcher（观者）已归档且无 StS2 同名原型，不参与。
     };
 
-    /// <summary>CharacterId.Entry → GeneratedCharacter 数值（存档路径；Entry 由
-    /// BaseLib PrefixIdPatch 生成：SPIRE1- 前缀 + Slugify(类名)）。</summary>
-    private static readonly Dictionary<string, int> EntryMap = new(StringComparer.Ordinal)
-    {
-        ["SPIRE1-IRONCLAD"] = (int)GeneratedCharacter.Ironclad,
-        ["SPIRE1-SILENT"] = (int)GeneratedCharacter.Silent,
-        ["SPIRE1-DEFECT"] = (int)GeneratedCharacter.Defect,
-    };
+    /// <summary>
+    /// 第三方角色 → 映射（工坊 Boninall 观者 v0.9.24，用户 2026-09-01 裁定走无色池）。
+    /// 类型/ID 经反射在 Apply 期解析（见 ThirdPartyEntries），避免编译期/加载期
+    /// 硬依赖 Watcher mod；该 mod 缺席时条目静默不注册。
+    /// CharacterId.Entry 为 "WATCHER"（纯 ModelDb 注册，无 BaseLib 前缀）。
+    /// </summary>
+    private static readonly Dictionary<Type, int> ThirdPartyMap = new();
+    private static readonly Dictionary<string, int> ThirdPartyEntryMap = new(StringComparer.Ordinal);
+
+    private const string WatcherModAssembly = "Watcher";
+    private const string WatcherCharacterType = "WatcherMod.Watcher";
+    private const string WatcherEntry = "WATCHER";
 
     internal static bool TryMap(Type spire1Character, out GeneratedCharacter generated)
     {
-        if (Map.TryGetValue(spire1Character, out int value))
+        if (Map.TryGetValue(spire1Character, out int value)
+            || ThirdPartyMap.TryGetValue(spire1Character, out value))
         {
             generated = (GeneratedCharacter)value;
             return true;
@@ -84,7 +89,8 @@ internal static class AutoAnthonyCompatBridge
 
     internal static bool TryMap(string characterIdEntry, out GeneratedCharacter generated)
     {
-        if (EntryMap.TryGetValue(characterIdEntry, out int value))
+        if (EntryMap.TryGetValue(characterIdEntry, out int value)
+            || ThirdPartyEntryMap.TryGetValue(characterIdEntry, out value))
         {
             generated = (GeneratedCharacter)value;
             return true;
@@ -92,6 +98,13 @@ internal static class AutoAnthonyCompatBridge
         generated = default;
         return false;
     }
+    private static readonly Dictionary<string, int> EntryMap = new(StringComparer.Ordinal)
+    {
+        ["SPIRE1-IRONCLAD"] = (int)GeneratedCharacter.Ironclad,
+        ["SPIRE1-SILENT"] = (int)GeneratedCharacter.Silent,
+        ["SPIRE1-DEFECT"] = (int)GeneratedCharacter.Defect,
+    };
+
 
     /// <summary>
     /// 挂全部桥接补丁。必须在 ModManager 加载完 AutoAnthony 之后调用（晚于其 initializer），
@@ -118,9 +131,62 @@ internal static class AutoAnthonyCompatBridge
         int patched = 0;
         patched += PatchFrom(harmony);
         patched += PatchPoolsAndDecks(harmony);
+        patched += PatchThirdPartyEntries(harmony);
         _applied = patched > 0;
         MainFile.Logger.Info($"[Spire1] AutoAnthony bridge applied ({patched} patch groups).");
         return _applied;
+    }
+
+    /// <summary>
+    /// 第三方角色注册：工坊观者（Boninall）→ 无色池。Watcher mod 缺席时静默跳过。
+    ///
+    /// 激活映射故意返回 Ironclad 而非 Colorless：AA 的 NormalizeCharacters 会剥掉
+    /// Colorless（ChaosRunDefinitions.cs:1262），From→Colorless 会让激活链直接
+    /// DeactivateRun()。伪 Ironclad 让激活/快照/MP 契约全通；观者的实际卡池由
+    /// ThirdPartyPoolPrefix 单独指向 ColorlessCardPool——其内容被 AA 的
+    /// ColorlessPoolContentsPatch 替换为 GetCards(Colorless) 的混沌卡
+    /// （GetCards 按需 Build,Chaos run 激活时用 ActiveSeed——种子一致,MP 确定）。
+    /// 起手保留观者原生 10 张（BasicCountFor(Colorless)=0,无伪造槽位）。
+    /// </summary>
+    private static int PatchThirdPartyEntries(Harmony harmony)
+    {
+        Assembly? watcherAssembly = AppDomain.CurrentDomain.GetAssemblies()
+            .FirstOrDefault(a => a.GetName().Name == WatcherModAssembly);
+        if (watcherAssembly == null)
+        {
+            return 0; // 工坊观者未安装——不注册
+        }
+
+        Type? watcherType = watcherAssembly.GetType(WatcherCharacterType);
+        if (watcherType == null)
+        {
+            MainFile.Logger.Info("[Spire1] AutoAnthony bridge: Watcher mod present but WatcherMod.Watcher type not found — skipped.");
+            return 0;
+        }
+
+        // 激活身份 = Ironclad（见方法注释）；池身份 = Colorless（ThirdPartyPoolPrefix）。
+        ThirdPartyMap[watcherType] = (int)GeneratedCharacter.Ironclad;
+        ThirdPartyEntryMap[WatcherEntry] = (int)GeneratedCharacter.Ironclad;
+
+        int count = PatchGetter(harmony, watcherType, "CardPool",
+            new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(ThirdPartyPoolPrefix)));
+        if (count > 0)
+        {
+            MainFile.Logger.Info("[Spire1] AutoAnthony bridge: workshop Watcher -> Colorless generated pool (Ironclad activation carrier, native starting deck kept).");
+        }
+        return count;
+    }
+
+    private static bool ThirdPartyPoolPrefix(ref CardPoolModel __result)
+    {
+        if (!ChaosRunDefinitions.IsRunActive)
+        {
+            return true; // 非混沌局:观者原版紫色池
+        }
+        // ColorlessCardPool 的内容已被 AA 的 ColorlessPoolContentsPatch 在 AllCards 层
+        // 替换为混沌卡;这里把池身份指过去(奖励/商店/PrismaticGem 枚举随之全通)。
+        __result = ModelDb.CardPool<MegaCrit.Sts2.Core.Models.CardPools.ColorlessCardPool>();
+        return false;
     }
 
     // ---- 1+2. ChaosCharacterMapping.From 三个重载的 Postfix ----
