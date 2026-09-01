@@ -77,3 +77,15 @@
 | CS0414 | 2 | 字段赋值未用 |
 
 处理策略：不盲目清零；CS4014 与 CS8602 中位于出牌路径的逐条人审，其余登记为已知噪音。
+
+### P-11 升级行为无文案差异（用户报告"武装和武装+没区别"）
+- **症状**：升级前后卡面完全一致（仅卡名 + 徽章变），用户以为升级失效。反复出现、历史审计从未发现。
+- **根因**：行为型升级（一张→全部、单体→全体）只改实现分支，description 零升级差异表达。引擎渲染同一条描述；差异必须由 `{IfUpgraded:show:}` / swap `-旧-+新+` / diff 变量承载。历史三波审计维度是"数值/行为保真+双语键齐备"，从未有"升级差异表达完备性"维度；本地化审计只对齐键集不对齐升级语义。
+- **修复**：5 卡（Armaments/Trip/Blind/Burst/Stack）双语补 swap/变量；Burst zhs 顺带修"非攻击牌→技能牌"误译。Trip/Blind eng 的 `.+ ... .+` 残骸证明曾有人修了一半（只删 -旧- 留 +新+）——半途修复即埋雷。
+- **预防**：`.tmp/upgrade-diff-audit.mjs` 四分类扫描（costOnly/keyword/numeric/behavior）纳入冒烟前置；新卡 behavior 型升级必须带 swap；写 swap 时记住**旧段两侧横线、新段两侧加号**（写反不报错、静默不渲染）。
+
+### P-12 第三方 mod 本地配置门控造成联机分歧（Act4Heart 冒火精英）
+- **症状**：四人联机进精英战瞬间 StateDivergence 被踢；进房前地图上没见冒火特效（用户观察）。
+- **根因**：Act4Heart GreenKeyHooks 的地图标记与进战 buff 都门控在**每端本地** `keys_enable`（dolso.act4_heart.config），MapPoint.Quests 不跨网序列化。本地 false vs host true → host 端怪物多 17 层金属化 → checksum 分歧。
+- **诊断路径**：godot.log 搜 `State divergence` → 读 Local/Remote STATE DUMP 差异字段（本例 POWER.METALLICIZE_POWER_A4H）→ 按 power ID 前缀定位 mod（A4H=Act4Heart）→ 反编译该 mod 找挂载钩子 → 比对本地 config。RitsuLib 诊断包（logs/ritsulib_state_divergence_*.zip）的 state-divergence-report.txt 直接列 differ 字段，首选。
+- **预防**：联机前全队对齐第三方 mod 的本地配置文件（Act4Heart:dolso.act4_heart.config 的 keys_enable）；任何"本地配置门控地图/战斗钩子"的 mod 都是结构性分歧源，见 mechanics-v3 卷七 §3 分歧源族谱。
