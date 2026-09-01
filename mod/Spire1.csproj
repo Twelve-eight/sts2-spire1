@@ -29,6 +29,21 @@
         </Reference>
     </ItemGroup>
 
+    <!-- AutoAnthony interop (workshop 3786611028 "Auto-Anthonyology"): compile-time reference
+         only. Runtime resolves to the workshop-loaded assembly of the same name (same pattern
+         as BaseLib: NuGet/compile copy vs. game-dir runtime copy). Absent on a machine ->
+         condition false -> Spire1 builds without the bridge types referenced from
+         Interop/AutoAnthonyCompatBridge.cs (guarded by the same symbol). -->
+    <ItemGroup Condition="Exists('$(MSBuildThisFileDirectory)../.tmp/interop-refs/AutoAnthony.dll')">
+        <Reference Include="AutoAnthony">
+            <HintPath>$(MSBuildThisFileDirectory)../.tmp/interop-refs/AutoAnthony.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+    <PropertyGroup Condition="Exists('$(MSBuildThisFileDirectory)../.tmp/interop-refs/AutoAnthony.dll')">
+        <DefineConstants>$(DefineConstants);SPIRE1_AUTOANTHONY</DefineConstants>
+    </PropertyGroup>
+
     <ItemGroup Condition="$(Publicize)">
         <PackageReference Include="Krafs.Publicizer" Version="2.3.0" PrivateAssets="All"/>
         <Publicize Include="sts2" IncludeVirtualMembers="false" IncludeCompilerGeneratedMembers="false" />

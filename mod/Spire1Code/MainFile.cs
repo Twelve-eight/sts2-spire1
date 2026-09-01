@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Modding;
 using Spire1.Spire1Code.Config;
 using Spire1.Spire1Code.Patches;
 using Spire1.Spire1Code.Character;
+using Spire1.Spire1Code.Interop;
 using BaseLib.Patches.Localization;
 
 namespace Spire1.Spire1Code;
@@ -59,6 +60,12 @@ public partial class MainFile : Node
         {
             Logger.Error($"Harmony: {failed} patch class(es) failed to apply");
         }
+
+        // AutoAnthony 桥接：必须在 ModManager 已加载 AutoAnthony 之后应用（本 initializer
+        // 的调用时机——ModManager.Initialize 逐 mod 依拓扑序调 initializer——取决于加载
+        // 顺序；AutoAnthony 无依赖、按用户 mod 列表序可能在本 mod 之前或之后。若此刻
+        // 尚未加载，由 AutoAnthonyLoadHook 的 AssemblyLoad 事件兜底重试）。
+        AutoAnthonyLoadHook.TryApplyBridge(harmony);
 
         // 第三方（RitsuLib）弹窗抑制不能进上面的属性扫描——目标类型缺失时 AccessTools
         // 解析会抛异常，会让注册循环每次启动都记一条失败。显式调用、内部自兜底。
