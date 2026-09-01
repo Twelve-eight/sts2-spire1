@@ -1192,3 +1192,42 @@ REMAINING VERIFICATION (user, whenever convenient, next solo session):
 MP note: both peers need both mods; host snapshot is authoritative
 (AutoAnthony's own contract). A StS1 character + engine character sharing one
 GeneratedCharacter share that chaos pool (AutoAnthony dedups by enum).
+
+## Session 25 addendum 2 - upgrade-text-diff audit + MP divergence RCA (2026-09-01 evening)
+
+USER REPORT: "武装 and 武装+ look identical - recurring, never caught by past
+audits." Investigation generalized into a full audit + fix cycle:
+
+Root cause (Armaments): behavior upgrade (_all=true) with ZERO upgrade-text
+expression in cards.json. Engine renders one description; upgrade differences
+must be carried by {IfUpgraded:show:}, -old-+new+ swap, or !var! diff syntax.
+
+Audit tool .tmp/upgrade-diff-audit.mjs (4-class classifier: costOnly /
+keyword / numeric / behavior; expression-body-aware OnUpgrade extractor;
+swap syntax = -OLD-+NEW+ dashes-then-pluses, verified against
+SimpleLoc.UpgradeSwapRegex). Iterations: v1 58 false positives -> accept any
+!Name! var -> v2 29 -> separate costOnly/keyword -> v3 12 -> keyword class
+added -> v4 5 -> swap satisfies numeric -> FINAL 0 after fix. All 5 confirmed
+against research/sts1-kb official upgrade diffs.
+
+Fixed 5 cards (eng+zhs): Armaments (one->all), Trip/Blind (single->ALL; zhs
+was missing entirely, eng had broken swap remnants '.+ to ALL enemies.+' -
+a half-finished past fix that explains "已出现过的bug"), Burst (zhs var +
+'非攻击牌'->'技能牌' mistranslation), Stack (pile-count +3 swap).
+End-to-end SimpleLoc.Simplify simulation on all 10 strings: correct
+{IfUpgraded:show:|} and :diff() output. Build 0 errors 0 warnings, staged to
+.tmp/deploy-stage (game mods/ dir deliberately untouched - user's MP session).
+
+MP divergence RCA (user report "游戏出现了分歧" + "没有看见冒火特效"):
+checksum 161, host-only POWER.METALLICIZE_POWER_A4H:17 on Terror Eel.
+Act4Heart 1.1.7 GreenKeyHooks super-elite: map marking (SuperEliteQuest) runs
+per-peer in ModifyGeneratedMapLate gated on LOCAL config keys_enable; combat
+buff (seed+act derived 4-way roll) gated on the same local mark. User's local
+dolso.act4_heart.config had keys_enable=false vs host true -> no flame on
+user's map (matches "没看见冒火特效"), host applied Metallicize 17 ->
+divergence, client kicked. Act4Heart's ConfigSynchronizer broadcasts host
+config but never validates peer equality (version is host-side counter).
+Mitigation: set keys_enable=true in local config (hot-reloaded via
+FileSystemWatcher); structural gap documented in
+research/audits/upgrade-text-diff-20260901.md appendix. Not our mod's fault
+(Spire1/AFTP not even loaded that run per RitsuLib mod inventory).
