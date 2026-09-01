@@ -21,7 +21,20 @@ internal static class AutoAnthonyLoadHook
     {
         _harmony = harmony;
 
-        if (AutoAnthonyCompatBridge.Apply(harmony))
+        // (2026-09-01 CodeQualityCritic blocker fix) cctor 只含 int 折叠常量后此 try/catch
+        // 属纵深防御:任何残留的 AutoAnthony 类型解析失败都不能炸掉 Spire1 initializer
+        // (ModManager 会把整个 mod 标记为 errored,连累后续 RitsuLib 弹窗抑制等初始化)。
+        bool applied;
+        try
+        {
+            applied = AutoAnthonyCompatBridge.Apply(harmony);
+        }
+        catch (Exception e)
+        {
+            MainFile.Logger.Error($"[Spire1] AutoAnthony bridge failed at init (mod present?): {e.Message}");
+            applied = false;
+        }
+        if (applied)
         {
             return; // 已应用（AutoAnthony 先于我们加载）
         }
