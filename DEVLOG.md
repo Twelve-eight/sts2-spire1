@@ -1231,3 +1231,27 @@ Mitigation: set keys_enable=true in local config (hot-reloaded via
 FileSystemWatcher); structural gap documented in
 research/audits/upgrade-text-diff-20260901.md appendix. Not our mod's fault
 (Spire1/AFTP not even loaded that run per RitsuLib mod inventory).
+
+## Session 25 addendum 3 - KB build (2026-09-01 night)
+
+Knowledge consolidation from this session into the KB:
+
+1. mechanics-v3 vol 7 (thirdparty-mod-interop.md): AutoAnthony 0.2.217 full
+   architecture (activation single-entry ChaosCharacterMapping.From, global
+   pool replacement vs per-character starting deck, host-authoritative pool
+   snapshot contract, 514 shell cards driven by per-run definitions),
+   Act4Heart 1.1.7 super-elite divergence mechanics (local-config-gated map
+   hooks = C-grade divergence source; 3-tier safety model A/B/C for mod map/
+   combat hooks), bridge methodology SOP (single entry, respect-original-
+   semantics, dependency-free probing, compile-time ref + conditional symbol,
+   strong-type public APIs so upstream drift fails our build).
+2. engine-facts.md: upgrade-text rendering rules (IfUpgraded:show / -old-
+   +new+ swap / diff vars; cost badge & keyword line auto-render), upgrade
+   4-class taxonomy, card ID formation chain (Slugify + BaseLib prefix),
+   mod load order (topological, no order guarantee between unrelated mods ->
+   AssemblyLoad fallback pattern), same-name assembly resolution, Act4Heart
+   local-config divergence fact, virtual-dispatch-as-hook-surface fact.
+3. pitfalls.md: P-11 (upgrade behavior without text expression - the
+   Armaments-class defect family + audit blind-spot root cause), P-12
+   (third-party local-config-gated hooks causing MP divergence + diagnostic
+   path via RitsuLib bundle).
