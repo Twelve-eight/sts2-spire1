@@ -1152,3 +1152,43 @@ Known coupling risk (documented in DEVELOP 7f): AutoAnthony updates that move/
 rename From() or the registry APIs -> our patches no-op with an Error log line
 (character mapping) or fail at Apply (pools). Re-audit on every AutoAnthony
 version bump.
+
+### Session 25 addendum - smoke result + user halt (2026-09-01 16:40)
+
+Automated smoke (BRIDGE01, --autoslay): bridge LOADS and patches - "AutoAnthony
+bridge applied (9 patch groups)" logged, AutoAnthony 0.2.217 initialized
+alongside, 5 chaos pools generated (Ironclad 92 / Silent 94 / Defect 92 /
+Necrobinder 92 / Regent 92 cards). But the run never exercised the mapping:
+AutoSlayer picked an engine character (random per seed; no "AutoAnthony bridge:
+<Char> ->" line, 0 CHAOS_ card plays in log). Watcher swept only 1 seed of 6
+before the user's multiplayer session took the machine.
+
+Also observed in that log: AutoAnthony's own startup audit error
+"Expected 65 complete v111 Colorless cards, found 73" (its internal count check
+vs the modded pool - pre-existing, not bridge-caused; bridge was not involved
+in pool generation at startup).
+
+USER DIRECTIVE (16:38): stop launching the game for testing ("停止把mod放进来检
+测。我要和别人玩"). Machine is for multiplayer. mods/Spire1 and AFTP were
+removed from the game dir by the user for the session. All watchers stopped
+(bridge-smoke, bridge-smoke2). No process will be launched by the agent again
+this session.
+
+Final fix landed after the first build deployed (commit 496ad54): pool
+replacement now global-on-IsRunActive (was gated on IsCharacterRunActive -
+would have leaked unplayed StS1 vanilla pools into chaos-run prism pools;
+AutoAnthony replaces ALL engine pools unconditionally). The fixed dll is in
+mod/.godot/mono/temp/bin/Release/Spire1.dll (16:33 build); the 16:19 dll in
+the game dir was deleted with the rest of mods/Spire1 by the user.
+
+REMAINING VERIFICATION (user, whenever convenient, next solo session):
+1. Restore mods/Spire1 (from mod/.godot/mono/temp/bin/Release/ or rebuild).
+2. New run with a StS1 character (Ironclad/Silent/Defect) + AutoAnthony enabled:
+   expect log "AutoAnthony bridge: Ironclad -> Ironclad generated pool",
+   chaos-card starting deck (ReplaceStartingCards default on), chaos cards in
+   rewards/shops.
+3. A saved chaos run as StS1 character should reload with its chaos pool
+   (From(SerializableRun) postfix).
+MP note: both peers need both mods; host snapshot is authoritative
+(AutoAnthony's own contract). A StS1 character + engine character sharing one
+GeneratedCharacter share that chaos pool (AutoAnthony dedups by enum).
