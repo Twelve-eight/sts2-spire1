@@ -47,32 +47,50 @@ internal static class AutoAnthonyCompatBridge
 {
     private static bool _applied;
 
-    /// <summary>Spire1 角色类型 → GeneratedCharacter 映射（核心表）。</summary>
-    private static readonly Dictionary<Type, GeneratedCharacter> Map = new()
+    // (2026-09-01 CodeQualityCritic blocker fix) 类型初始化器绝不能引用 AutoAnthony 类型:
+    // beforefieldinit 下首次触碰本类任何静态字段即运行 cctor,若 Map/EntryMap 直接以
+    // GeneratedCharacter 为值类型,会在 Apply 的程序集探测(以及一切更早的触碰)之前强制
+    // 解析 AutoAnthony.dll —— 未装该 mod 或加载顺序靠后时抛 FileNotFoundException,
+    // .NET 永久缓存 TypeInitializationException,整个 Spire1 initializer 被 ModManager
+    // 标记失败(经离仓 CLR 双程序集复现实锤)。枚举常量在编译期折叠为 int,故以 int 为
+    // 值不产生任何外部类型引用;使用点在方法体内再强转。
+    private static readonly Dictionary<Type, int> Map = new()
     {
-        [typeof(Ironclad)] = GeneratedCharacter.Ironclad,
-        [typeof(Silent)] = GeneratedCharacter.Silent,
-        [typeof(Defect)] = GeneratedCharacter.Defect,
+        [typeof(Ironclad)] = (int)GeneratedCharacter.Ironclad,
+        [typeof(Silent)] = (int)GeneratedCharacter.Silent,
+        [typeof(Defect)] = (int)GeneratedCharacter.Defect,
         // Watcher（观者）已归档且无 StS2 同名原型，不参与。
     };
 
-    /// <summary>CharacterId.Entry → GeneratedCharacter（存档路径；Entry 由
+    /// <summary>CharacterId.Entry → GeneratedCharacter 数值（存档路径；Entry 由
     /// BaseLib PrefixIdPatch 生成：SPIRE1- 前缀 + Slugify(类名)）。</summary>
-    private static readonly Dictionary<string, GeneratedCharacter> EntryMap = new(StringComparer.Ordinal)
+    private static readonly Dictionary<string, int> EntryMap = new(StringComparer.Ordinal)
     {
-        ["SPIRE1-IRONCLAD"] = GeneratedCharacter.Ironclad,
-        ["SPIRE1-SILENT"] = GeneratedCharacter.Silent,
-        ["SPIRE1-DEFECT"] = GeneratedCharacter.Defect,
+        ["SPIRE1-IRONCLAD"] = (int)GeneratedCharacter.Ironclad,
+        ["SPIRE1-SILENT"] = (int)GeneratedCharacter.Silent,
+        ["SPIRE1-DEFECT"] = (int)GeneratedCharacter.Defect,
     };
 
     internal static bool TryMap(Type spire1Character, out GeneratedCharacter generated)
     {
-        return Map.TryGetValue(spire1Character, out generated);
+        if (Map.TryGetValue(spire1Character, out int value))
+        {
+            generated = (GeneratedCharacter)value;
+            return true;
+        }
+        generated = default;
+        return false;
     }
 
     internal static bool TryMap(string characterIdEntry, out GeneratedCharacter generated)
     {
-        return EntryMap.TryGetValue(characterIdEntry, out generated);
+        if (EntryMap.TryGetValue(characterIdEntry, out int value))
+        {
+            generated = (GeneratedCharacter)value;
+            return true;
+        }
+        generated = default;
+        return false;
     }
 
     /// <summary>
@@ -156,9 +174,9 @@ internal static class AutoAnthonyCompatBridge
     // Postfix 签名与目标严格对齐（Harmony 要求 __result 与目标返回类型一致）。
     private static void FromCharacterPostfix(CharacterModel character, ref GeneratedCharacter? __result)
     {
-        if (__result != null)
+        if (__result != null || character == null)
         {
-            return; // AutoAnthony 已认出（引擎角色）——不干涉
+            return; // AutoAnthony 已认出（引擎角色）或入参为空（原方法对 null 也返回 null）——不干涉
         }
         if (TryMap(character.GetType(), out GeneratedCharacter generated))
         {
@@ -172,7 +190,7 @@ internal static class AutoAnthonyCompatBridge
         List<GeneratedCharacter> extra = save.Players
             .Select(p => p.CharacterId?.Entry)
             .Where(e => e != null && TryMap(e, out _))
-            .Select(e => EntryMap[e!])
+            .Select(e => (GeneratedCharacter)EntryMap[e!])
             .ToList();
         MergeInto(ref __result, extra);
     }
@@ -182,7 +200,7 @@ internal static class AutoAnthonyCompatBridge
         List<GeneratedCharacter> extra = history.Players
             .Select(p => p.Character?.Entry)
             .Where(e => e != null && TryMap(e, out _))
-            .Select(e => EntryMap[e!])
+            .Select(e => (GeneratedCharacter)EntryMap[e!])
             .ToList();
         MergeInto(ref __result, extra);
     }
