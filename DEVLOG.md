@@ -1310,3 +1310,20 @@ Smoke on fixed build:
 
 User note: user watched the Regent smoke run live ("this run rolled
 Regent!") - confirmed it is the AutoSlay test run; machine usage coordinated.
+
+### Session 26 addendum - fixed-build bridge-path coverage closed (2026-09-01 late)
+
+Honesty fix: SMK2601 (bridge Defect hit) was the PRE-blocker-fix build. The
+fixed build (96b6589) had only run Regent (native path). Sweep2 (script
+.tmp/night/bridge_smoke2.ps1, pattern anchored to 'AutoAnthony bridge: <X> ->'
+mapping line, not the 'applied' line - the earlier PowerShell match was a
+false positive from Select-String matching 'bridge applied'):
+
+FXB2601 FIRST SEED: Spire1 Defect picked, bridge mapping line fired
+('AutoAnthony bridge: Defect -> Defect generated pool'), 798 CHAOS_DEFECT
+card plays, VICTORY, single benign error (AutoAnthony's own Colorless 65-vs-73
+bare-count self-audit, pre-existing, modded-pool related, non-blocking).
+
+Bridge-path runtime verification on the fixed build: CLOSED.
+Full smoke matrix: Defect+bridge (pre-fix SMK2601, post-fix FXB2601) both
+victory; Regent native control (FIX2601) victory. Machine idle again.
