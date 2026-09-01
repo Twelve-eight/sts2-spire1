@@ -134,6 +134,32 @@ Data files: `research/sts1data/events.json` (52 events: id, per-option official 
 - **Floor budget**: engine AutoSlayer caps at `TotalFloor < 49` (vanilla-calibrated: BaseNumberOfRooms 15/14/13 ≈ 48); our transpiler raises it to 120 so a fourth act fits. Any act set pushing past 120 would need the cap raised again.
 - **Implication for release**: shipping Spire1 without pinning Toggler2 means users with Toggler2 installed get our fallback acts randomly mixed into act slots alongside AFTP/vanilla sets. That may be desirable (variety) or surprising; if we want deterministic behavior we either document a recommended Toggler2 config or ship a config preset.
 
+### 7f. AutoAnthony bridge (session 25, 2026-09-01 — "让 StS1 角色吃随机卡池")
+**缺口**：Auto-Anthonyology（工坊 3786611028，每局随机生成全卡池）的激活链
+`ChaosCharacterMapping.From(CharacterModel)` 用引擎类型检查（`is Ironclad` 等）识别角色；
+我们三个角色是 `PlaceholderCharacterModel` 子类 → 永不被识别 → `DeactivateRun()` 放行，
+StS1 角色开局拿不到任何随机卡（2026-09-01 反编译 0.2.217 实锤，765 文件全量审计）。
+**桥接**（`mod/Spire1Code/Interop/AutoAnthonyCompatBridge.cs` + `AutoAnthonyLoadHook.cs`）：
+1. Postfix `ChaosCharacterMapping.From` 三个重载：Spire1 角色 → 同名 GeneratedCharacter
+   （Ironclad/Silent/Defect；存档按 `SPIRE1-IRONCLAD` 等 Entry、历史按 ModelId.Entry）。
+   原 null→补映射；原非 null（引擎角色）不干涉。单人 `SeedBeforeSingleplayerPatch`、
+   多人 `SeedBeforeMultiplayerPatch`、存档 `SeedBeforeLoadPatch` 三条激活链全部经此口。
+2. Prefix 我们三角色的 `CardPool` getter：`IsRunActive && IsCharacterRunActive` 时返回
+   `ModelDb.CardPool<ChaosXxxCardPool>()`（AutoAnthony 只 patch 五个引擎角色类，够不到我们的）。
+3. Prefix 我们三角色的 `StartingDeck` getter：`ActiveReplaceStartingCards` 时返回
+   `ChaosCardRegistry.Canonical(character, slot) × BasicCountFor`（与它的
+   `CharacterPoolPatchRouting.ReplaceStartingDeck` 同构）。
+**编译期引用**：`.tmp/interop-refs/AutoAnthony.dll`（工坊副本，gitignore）条件引用 + 
+`SPIRE1_AUTOANTHONY` 符号——dll 缺席的构建机产出无桥接的 dll（空壳 `Apply` 返回 false），
+运行时缺席则探测后静默跳过。**运行时解析**与 BaseLib 模式相同：同简单名程序集由
+ModManager 的 AssemblyLoadContext 已加载实例满足。internal 类型（ChaosCharacterMapping）
+经 `Type.GetType` 反射取方法再 Harmony patch。
+**多人**：AutoAnthony 多人路径对桥接透明（同一 From 口），host 快照 authoritative、
+双端装两 mod 即可；MP 一致性是它自身契约，不在本层职责内。
+**版本耦合策略**：公开 API（ChaosRunDefinitions/ChaosCardRegistry/Chaos*CardPool）直接引用——
+AutoAnthony 大改 API 时我们的构建当场失败，强制重新审计（比静默漂移好）。
+**验证状态**：构建 0 错误 0 警告已部署；冒烟待用户下局（游戏进程被四人联机占用）。
+
 ## 8. Verification
 Clean build; smoke-test IN-GAME (character loads, run starts, cards resolve, dungeon selection works, encounters spawn, toggles work). Deliverable = playable mod. Record smoke runs in `DEVLOG.md`.
 
