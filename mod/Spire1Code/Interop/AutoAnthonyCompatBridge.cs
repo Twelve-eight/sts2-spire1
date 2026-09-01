@@ -250,9 +250,13 @@ internal static class AutoAnthonyCompatBridge
 
     private static bool ReplacePool(Type spire1Character, GeneratedCharacter generated, ref CardPoolModel __result)
     {
-        // 条件：Chaos run 激活 且 本局角色就是该 Spire1 角色（AutoAnthony 激活时
-        // ActiveCharacterSet 含映射进去的 GeneratedCharacter）。
-        if (!ChaosRunDefinitions.IsRunActive || !ChaosRunDefinitions.IsCharacterRunActive(generated))
+        // 只查 IsRunActive，不查 IsCharacterRunActive——与 AutoAnthony 对引擎角色的
+        // ReplacePool 语义对齐：池替换必须是全局的。全池枚举者（PrismaticGem、
+        // ColorfulPhilosophers、UnlockState.CharacterCardPools）会把所有角色的池拉进来，
+        // 若只替换本局角色的池，未游玩的 Spire1 角色会漏出原版一代卡（对照：引擎
+        // 五角色的池在 Chaos run 中全部无条件替换）。起手替换保持 per-character
+        // （见 ReplaceDeck），与它的 ReplaceStartingDeck 同构。
+        if (!ChaosRunDefinitions.IsRunActive)
         {
             return true; // 原版池
         }
