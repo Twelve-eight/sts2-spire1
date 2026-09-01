@@ -1093,3 +1093,62 @@ without yielding; the transcript-salvage path (extract assistant thinking
 blocks, ASCII-sanitize) recovered all three completely. Budgets: deep teardown
 needs effort=hi + explicit yield-at-90 instruction; briefs should cap tool
 rounds.
+
+## Session 25 - 2026-09-01 - AutoAnthony bridge (StS1 characters + random pools)
+
+User installed Auto-Anthonyology (workshop 3786611028, "东尼算法") and wants StS1
+characters to work with it. Full decompile of AutoAnthony 0.2.217 (765 files,
+ilspycmd) -> .tmp/autoanthony/.
+
+Root cause (verified in decompile): activation chain
+ChaosCharacterMapping.From(CharacterModel) type-checks the five ENGINE character
+classes (is Ironclad, ...). Spire1 characters are PlaceholderCharacterModel
+subclasses -> never recognized -> SeedBeforeSingleplayerPatch.Prefix calls
+DeactivateRun() and passes through; StS1 characters get zero random cards. Same
+From() gates multiplayer (SeedBeforeMultiplayerPatch), save restore
+(SeedBeforeLoadPatch -> From(SerializableRun)), and run history (From(RunHistory)).
+
+Bridge (commit f680a2a, mod/Spire1Code/Interop/):
+- AutoAnthonyCompatBridge: postfix all three From() overloads mapping
+  SPIRE1 Ironclad/Silent/Defect -> same-named GeneratedCharacter (only when
+  original returned null - engine characters untouched); prefix OUR three
+  characters' CardPool getter (Chaos pool when IsRunActive &&
+  IsCharacterRunActive) and StartingDeck getter (generated starters when
+  ActiveReplaceStartingCards, mirroring CharacterPoolPatchRouting.ReplaceDeck).
+  Watcher archived, not mapped.
+- AutoAnthonyLoadHook: AssemblyLoad event fallback - no dependency edge between
+  the mods, load order is the user's mod-list order; direct Apply at init when
+  AutoAnthony loaded first.
+- csproj: conditional Reference to .tmp/interop-refs/AutoAnthony.dll (workshop
+  copy, gitignored) + SPIRE1_AUTOANTHONY define; absent -> stub, bridge off.
+  Runtime resolution = same simple-name assembly already loaded by ModManager
+  (identical to the BaseLib NuGet-vs-gamedir pattern). internal
+  ChaosCharacterMapping resolved via Type.GetType + GetMethods reflection;
+  postfix bodies use strong types (GeneratedCharacter is public in
+  ChaosCardGenerator).
+
+Design decisions:
+- No manifest dependency on AutoAnthony (hard dep would Failed-load our mod for
+  every user without it). Probe + silent disable instead.
+- Strong-typed refs to its public API (ChaosRunDefinitions/ChaosCardRegistry/
+  Chaos*CardPool) so an AutoAnthony breaking change fails OUR build loudly
+  rather than drifting silently.
+- Multiplayer: From() bridge is transparent to AutoAnthony's own MP contract
+  (host-authoritative pool snapshot; regenerate != 0 -> throw). Both peers need
+  both mods; MP sync is AutoAnthony's own responsibility.
+- Same-name MP merge: two players picking engine Ironclad + SPIRE1 Ironclad
+  share one generated Ironclad pool (AutoAnthony NormalizeCharacters dedups) -
+  consistent with its existing same-character semantics.
+
+Verification: build 0 errors 0 warnings, auto-deployed to mods/Spire1 (dll
+contains AutoAnthonyCompatBridge/AutoAnthonyLoadHook types - string-scanned).
+Smoke DEFERRED: game process in use by the user's live 4-player run (log shows
+CHAOS_REGENT_CARD071 in action - AutoAnthony active there). Watcher
+(hub name=bridge-smoke) waits for process exit, then sweeps --autoslay seeds
+BRIDGE01..06 looking for the "AutoAnthony bridge:" log line; logs to
+.tmp/p1-smoke/bridge-*.log.
+
+Known coupling risk (documented in DEVELOP 7f): AutoAnthony updates that move/
+rename From() or the registry APIs -> our patches no-op with an Error log line
+(character mapping) or fail at Apply (pools). Re-audit on every AutoAnthony
+version bump.
