@@ -1255,3 +1255,58 @@ Knowledge consolidation from this session into the KB:
    Armaments-class defect family + audit blind-spot root cause), P-12
    (third-party local-config-gated hooks causing MP divergence + diagnostic
    path via RitsuLib bundle).
+
+## Session 26 - critic wave + fixed-build smoke (2026-09-01 night)
+
+User directive: smoke allowed; check keyword overlap + possible divergence;
+re-validate ALL historical issues from devlogs; isolated-context critics.
+
+Four isolated critics dispatched (reports: .tmp/critic-wave-20260901/):
+1. HistoryRevalidationCritic: 96 issues inventoried from pitfalls P-01..P-12 +
+   both DEVLOGs + all audits. ZERO REGRESSED. All 3 named regression threads
+   (twin injection, Armaments +3, PureSts1Adds) verified recovered at HEAD.
+   67 HOLDS, 4 PARTIAL (P-01 residue, N-8, L-8, F-7 tails), 12 OPEN (H-4 dead
+   switches, M-3 PureWater, M-4 MarkOfPain, L-1 case-sensitive reflection,
+   coverage.js tool bug, stale comments), 5 external-unverifiable. NEW: M-3/M-4
+   loc-vs-code contradictions are the top player-visible open items.
+2. KeywordOverlapCritic: 33 P-01 double-render instances / 29 cards (residue
+   classes the original 48-card pass missed: trailing Exhaust tails + ALL
+   non-Exhaust keywords). 5 newly-edited upgrade-text cards verified clean;
+   zero orphan swap syntax. Adjacent: FiendFire missing keyword + stale zhs
+   line; Void zhs gain/lose verb reversal; Catalyst zhs missing upgrade swap;
+   loc-drift-report empty-description recommendation is a hazard (would create
+   doubles).
+3. CodeQualityCritic (reviewer): 1 BLOCKER - bridge static maps typed with
+   AutoAnthony enum force cctor -> dll resolution before presence probe ->
+   cached TypeInitializationException kills whole Spire1 initializer on
+   absent/Spire1-first loads (empirically confirmed off-repo with a CLR repro).
+   + null-guard, partial-patch latch, Burst grammar, Stack coupling, csproj
+   binary-drift notes. All Harmony signatures + 10 loc swaps verified correct.
+4. DivergenceRiskCritic: stopped over budget after full read pass (155 req);
+   reclaimed by Main per AGENTS 11. Main verification: all RNG consumers use
+   deterministic engine channels (CombatCardSelection/CombatTargets/
+   encounter Rng); zero wall-clock/UI-gated mutation in our code; statics all
+   read-only content; all patches mode-gated. No High-severity divergence
+   source in mod/Spire1Code. Bridge cctor blocker is load-time (not
+   divergence) but fixed pre-MP anyway.
+
+Fixes applied (commit 96b6589): bridge cctor (int-keyed maps + try/catch),
+null guard, 33 keyword fixes + FiendFire/Void/Burst/Stack. Build 0e0w,
+deployed. 13-case loc assertion suite passes.
+
+Smoke on fixed build:
+- SMK2601 (earlier build): Defect -> bridge fired ('AutoAnthony bridge:
+  Defect -> Defect generated pool'), chaos deck played, VICTORY, 1 benign
+  AA self-audit error (Colorless 65 vs 73 - AA's own bare-count check vs
+  modded pools).
+- FIX2601 (fixed build, in progress at time of writing): Regent (native AA
+  path, no bridge involvement - control case), chaos pool active,
+  CHAOS_REGENT cards playing normally. One AA warning observed:
+  'Batch hand transform expected 2 replacement(s) in Hand, but received 0' -
+  AutoAnthony-internal, on an engine character without any Spire1 code in
+  the path; logged for upstream attention, not ours.
+- Sweep continues (FIX2602..) until a Spire1 character hits on the fixed
+  build to re-verify the bridge path post-blocker-fix.
+
+User note: user watched the Regent smoke run live ("this run rolled
+Regent!") - confirmed it is the AutoSlay test run; machine usage coordinated.
