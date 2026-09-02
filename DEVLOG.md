@@ -1327,3 +1327,37 @@ bare-count self-audit, pre-existing, modded-pool related, non-blocking).
 Bridge-path runtime verification on the fixed build: CLOSED.
 Full smoke matrix: Defect+bridge (pre-fix SMK2601, post-fix FXB2601) both
 victory; Regent native control (FIX2601) victory. Machine idle again.
+
+## 2026-09-02 (session 27) — Watcher bridge smoke green; ChaosBridge v0.1.0 built, verified, published
+
+**Watcher bridge (this repo)** — commit 3ac7fec, smoke WCH2607 all green:
+`workshop Watcher -> Colorless pool` + `Watcher -> Ironclad` carrier lines, native
+Watcher starters played, 360 CHAOS_COLORLESS plays / 0 CHAOS_IRONCLAD (carrier
+did not leak into pool), victory. 34 errors all third-party (33x Rewind mod's
+pre-existing Watcher KeyNotFoundException, 1x AA's benign colorless self-audit).
+
+**ChaosBridge (standalone universal mod)** — `G:\omp works\chaosbridge`, published
+to github.com/Twelve-eight/chaosbridge (private). Design: docs/chaosbridge-design.md
+(commit 238a151). Mechanism identical to the Watcher mapping: Ironclad activation
+carrier + colorless pool identity + native starting deck, but auto-registered for
+EVERY unrecognized modded character (ModelDb.AllCharacters minus engine five minus
+already-patched getters via Harmony.GetPatchInfo deferral).
+
+Gotchas proven this session:
+- ModManager scans mods/ at ANY depth — renaming to `Spire1.disabled/` still loads
+  it. To truly disable, move the folder out of the mods tree entirely.
+- ModelDb.AllCharacters cannot be enumerated at mod-initializer time (content
+  tables empty — KeyNotFoundException 'CHARACTER.IRONCLAD'). ChaosBridge scans
+  lazily at first ChaosCharacterMapping.From call.
+- BaseLib SimpleModConfig auto-generates its UI from public static properties —
+  no manual Register calls.
+
+Verification: user's live session (manual, no AutoSlay) with Spire1 temporarily
+stashed became the e2e test — ChaosBridge fully owned the workshop Watcher
+(registration + carrier lines, chaos pool active). Coexistence verified earlier in
+CB2601/CB2602 (Spire1 chars deferred). Spire1 mod restored to mods/ afterwards.
+
+**Pending**: AFTP Old Beggar zhs text issue — static audit found nothing (771/771
+keys, text matches official StS1 verbatim incl. the odd-but-official '裹着毛衣',
+tags engine-supported, workshop 1.0.5 has latest zhs). Waiting for user screenshot
+of the actual rendering next time they hit the event.
