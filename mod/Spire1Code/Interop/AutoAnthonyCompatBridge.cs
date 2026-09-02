@@ -73,6 +73,7 @@ internal static class AutoAnthonyCompatBridge
 
     private const string WatcherModAssembly = "Watcher";
     private const string WatcherCharacterType = "WatcherMod.Watcher";
+    private const string WatcherPoolType = "WatcherMod.WatcherCardPool";
     private const string WatcherEntry = "WATCHER";
 
     internal static bool TryMap(Type spire1Character, out GeneratedCharacter generated)
@@ -170,9 +171,25 @@ internal static class AutoAnthonyCompatBridge
 
         int count = PatchGetter(harmony, watcherType, "CardPool",
             new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(ThirdPartyPoolPrefix)));
+
+        // 潘多拉魔盒类转换补丁：AA 的 PandorasBoxChaosPatch 对整副牌做 CreateRandom-
+        // CardForTransform，候选来自 original.Pool。混沌无色卡会落到被 AA 换过内容的
+        // ColorlessCardPool（仍是混沌卡），但我们保留的观者原生卡会落到 WatcherCardPool
+        // ——AA 不认识观者，该池内容未被替换，转出来的是原版紫色观者卡（用户实测报告，
+        // 2026-09-02）。同构修复：混沌局把 WatcherCardPool.AllCards 也换成混沌无色内容；
+        // AllCardIds 用并集保住原生卡的池身份解析（CardModel.Pool 经 AllCardIds 反查，
+        // 若原生卡 ID 消失会在第一次访问 Pool 时抛 InvalidProgramException）。
+        Type? poolType = watcherAssembly.GetType(WatcherPoolType);
+        if (poolType != null)
+        {
+            count += PatchGetter(harmony, poolType, "AllCards",
+                new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(ThirdPartyPoolContentsPrefix)));
+            count += PatchGetter(harmony, poolType, "AllCardIds",
+                new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(ThirdPartyPoolIdsPostfix)));
+        }
         if (count > 0)
         {
-            MainFile.Logger.Info("[Spire1] AutoAnthony bridge: workshop Watcher -> Colorless generated pool (Ironclad activation carrier, native starting deck kept).");
+            MainFile.Logger.Info("[Spire1] AutoAnthony bridge: workshop Watcher -> Colorless generated pool (Ironclad activation carrier, native starting deck kept, watcher pool contents chaos-swapped).");
         }
         return count;
     }
@@ -188,6 +205,53 @@ internal static class AutoAnthonyCompatBridge
         __result = ModelDb.CardPool<MegaCrit.Sts2.Core.Models.CardPools.ColorlessCardPool>();
         return false;
     }
+    /// <summary>WatcherCardPool.AllCards 前缀：混沌局返回混沌无色内容
+    /// （与 AA ColorlessPoolContentsPatch 对 ColorlessCardPool 的语义对齐。
+    /// PreserveOriginalCards 开启时附加原生无色卡而非原生观者卡——观者原生
+    /// 卡不是任何 Chaos 池的合法成员，拼接它们会漏回紫色卡）。</summary>
+    private static bool ThirdPartyPoolContentsPrefix(ref IEnumerable<CardModel> __result)
+    {
+        if (!ChaosRunDefinitions.IsRunActive)
+        {
+            return true; // 非混沌局:观者原版 83 张
+        }
+        IEnumerable<CardModel> chaosCards = ChaosCardRegistry.ColorlessTypes
+            .Select(t => ModelDb.GetById<CardModel>(ModelDb.GetId(t)));
+        if (ChaosRunDefinitions.ActivePreserveOriginalCards)
+        {
+            // AA 的 OriginalCardsForPreservedPool 是 internal（引用 dll 未 Publicize），
+            // 反射调用，签名 IReadOnlyList<CardModel> OriginalCardsForPreservedPool(GeneratedCharacter)。
+            MethodInfo? preserved = AccessTools.Method(typeof(ChaosRunDefinitions), "OriginalCardsForPreservedPool");
+            IEnumerable<CardModel>? original = preserved?.Invoke(null, new object[] { GeneratedCharacter.Colorless })
+                as IEnumerable<CardModel>;
+            if (original != null)
+            {
+                chaosCards = chaosCards.Concat(original);
+            }
+        }
+        __result = chaosCards.ToArray();
+        return false;
+    }
+
+    /// <summary>WatcherCardPool.AllCardIds 后缀：并上混沌无色卡 ID。
+    /// CardModel.Pool 用 AllCardIds 反查身份；若前缀把内容全换成混沌卡后
+    /// ID 集合丢失原生卡，手中原生观者卡第一次访问 Pool 时会抛
+    /// InvalidProgramException（"Card ... is not in any card pool!"）。
+    /// getter 声明返回 IEnumerable&lt;ModelId&gt;，后缀签名与之严格一致。</summary>
+    private static void ThirdPartyPoolIdsPostfix(ref IEnumerable<ModelId> __result)
+    {
+        if (!ChaosRunDefinitions.IsRunActive)
+        {
+            return;
+        }
+        List<ModelId> merged = new(__result);
+        foreach (Type chaosType in ChaosCardRegistry.ColorlessTypes)
+        {
+            merged.Add(ModelDb.GetId(chaosType));
+        }
+        __result = merged.Distinct().ToList();
+    }
+
 
     // ---- 1+2. ChaosCharacterMapping.From 三个重载的 Postfix ----
 
