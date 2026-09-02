@@ -1361,3 +1361,33 @@ CB2601/CB2602 (Spire1 chars deferred). Spire1 mod restored to mods/ afterwards.
 keys, text matches official StS1 verbatim incl. the odd-but-official '裹着毛衣',
 tags engine-supported, workshop 1.0.5 has latest zhs). Waiting for user screenshot
 of the actual rendering next time they hit the event.
+
+## 2026-09-02 (session 27, evening) — Pandora's Box watcher-pool leak: root cause, fix, audit
+
+User report: watcher chaos run, Pandora's Box from Darv transformed native
+watcher starters into vanilla purple cards. Full analysis in
+docs/pandora-watcher-pool-leak.md (commit e40db70). Short version:
+
+- AA's Pandora patch transforms EVERY transformable card via original.Pool;
+  chaos cards land in AA-swapped pools, native watcher cards land in
+  WatcherCardPool which AA never swaps. Bridge had pool identity but not pool
+  contents for the watcher's own pool.
+- Fix: WatcherCardPool.AllCards prefix (chaos colorless contents; AA preserved
+  originals appended when PreserveOriginalCards) + AllCardIds postfix (ID union
+  prevents InvalidProgramException from CardModel.Pool ID-scan).
+- Same-class audit: Astrolabe/CardTransformation share the path (covered);
+  merchant/reward/combat paths go through redirected Character.CardPool
+  (covered); Fasten .First(Defend) downgraded after audit.
+
+Smoke PDB2805 (fixed build, watcher): patch line logged, native deck kept, 476
+chaos plays, 0 exceptions, victory. Direct Pandora-hit seed NOT yet obtained
+(both sweeps interrupted: round 1 exhausted budget without watcher+pandora
+coincidence, round 2 killed by user shutdown). REOPEN VERIFICATION NEXT
+SESSION: sweep seeds until watcher run obtains PANDORAS_BOX; expect transformed
+outputs all CHAOS_COLORLESS_*, zero new vanilla WATCHER_* mid-run.
+
+Also this session: NoBlockFromCards frequency question (answer pending — atom
+catalog math computed: colorless catalog has 52 recipes / NoBlockFromCards in
+exactly 1 recipe PanicButton, severe-downside pool is 3 templates; family-pick
+probability analysis was interrupted by the Pandora report; resume if user
+still cares after seeing numbers).
