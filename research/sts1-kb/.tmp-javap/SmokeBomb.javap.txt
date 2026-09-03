@@ -1,0 +1,139 @@
+Compiled from "SmokeBomb.java"
+public class com.megacrit.cardcrawl.potions.SmokeBomb extends com.megacrit.cardcrawl.potions.AbstractPotion {
+  public static final java.lang.String POTION_ID;
+
+  public static final com.megacrit.cardcrawl.localization.PotionStrings potionStrings;
+
+  public com.megacrit.cardcrawl.potions.SmokeBomb();
+    Code:
+       0: aload_0
+       1: getstatic     #1                  // Field potionStrings:Lcom/megacrit/cardcrawl/localization/PotionStrings;
+       4: getfield      #2                  // Field com/megacrit/cardcrawl/localization/PotionStrings.NAME:Ljava/lang/String;
+       7: ldc           #4                  // String SmokeBomb
+       9: getstatic     #5                  // Field com/megacrit/cardcrawl/potions/AbstractPotion$PotionRarity.RARE:Lcom/megacrit/cardcrawl/potions/AbstractPotion$PotionRarity;
+      12: getstatic     #6                  // Field com/megacrit/cardcrawl/potions/AbstractPotion$PotionSize.SPHERE:Lcom/megacrit/cardcrawl/potions/AbstractPotion$PotionSize;
+      15: getstatic     #7                  // Field com/megacrit/cardcrawl/potions/AbstractPotion$PotionColor.SMOKE:Lcom/megacrit/cardcrawl/potions/AbstractPotion$PotionColor;
+      18: invokespecial #8                  // Method com/megacrit/cardcrawl/potions/AbstractPotion."<init>":(Ljava/lang/String;Ljava/lang/String;Lcom/megacrit/cardcrawl/potions/AbstractPotion$PotionRarity;Lcom/megacrit/cardcrawl/potions/AbstractPotion$PotionSize;Lcom/megacrit/cardcrawl/potions/AbstractPotion$PotionColor;)V
+      21: aload_0
+      22: getstatic     #1                  // Field potionStrings:Lcom/megacrit/cardcrawl/localization/PotionStrings;
+      25: getfield      #9                  // Field com/megacrit/cardcrawl/localization/PotionStrings.DESCRIPTIONS:[Ljava/lang/String;
+      28: iconst_0
+      29: aaload
+      30: putfield      #10                 // Field description:Ljava/lang/String;
+      33: aload_0
+      34: iconst_1
+      35: putfield      #11                 // Field isThrown:Z
+      38: aload_0
+      39: getfield      #12                 // Field tips:Ljava/util/ArrayList;
+      42: new           #13                 // class com/megacrit/cardcrawl/helpers/PowerTip
+      45: dup
+      46: aload_0
+      47: getfield      #14                 // Field name:Ljava/lang/String;
+      50: aload_0
+      51: getfield      #10                 // Field description:Ljava/lang/String;
+      54: invokespecial #15                 // Method com/megacrit/cardcrawl/helpers/PowerTip."<init>":(Ljava/lang/String;Ljava/lang/String;)V
+      57: invokevirtual #16                 // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+      60: pop
+      61: return
+
+  public void use(com.megacrit.cardcrawl.core.AbstractCreature);
+    Code:
+       0: getstatic     #17                 // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.player:Lcom/megacrit/cardcrawl/characters/AbstractPlayer;
+       3: astore_1
+       4: invokestatic  #18                 // Method com/megacrit/cardcrawl/dungeons/AbstractDungeon.getCurrRoom:()Lcom/megacrit/cardcrawl/rooms/AbstractRoom;
+       7: getfield      #19                 // Field com/megacrit/cardcrawl/rooms/AbstractRoom.phase:Lcom/megacrit/cardcrawl/rooms/AbstractRoom$RoomPhase;
+      10: getstatic     #20                 // Field com/megacrit/cardcrawl/rooms/AbstractRoom$RoomPhase.COMBAT:Lcom/megacrit/cardcrawl/rooms/AbstractRoom$RoomPhase;
+      13: if_acmpne     105
+      16: invokestatic  #18                 // Method com/megacrit/cardcrawl/dungeons/AbstractDungeon.getCurrRoom:()Lcom/megacrit/cardcrawl/rooms/AbstractRoom;
+      19: iconst_1
+      20: putfield      #21                 // Field com/megacrit/cardcrawl/rooms/AbstractRoom.smoked:Z
+      23: aload_0
+      24: new           #22                 // class com/megacrit/cardcrawl/actions/animations/VFXAction
+      27: dup
+      28: new           #23                 // class com/megacrit/cardcrawl/vfx/combat/SmokeBombEffect
+      31: dup
+      32: aload_1
+      33: getfield      #24                 // Field com/megacrit/cardcrawl/core/AbstractCreature.hb:Lcom/megacrit/cardcrawl/helpers/Hitbox;
+      36: getfield      #25                 // Field com/megacrit/cardcrawl/helpers/Hitbox.cX:F
+      39: aload_1
+      40: getfield      #24                 // Field com/megacrit/cardcrawl/core/AbstractCreature.hb:Lcom/megacrit/cardcrawl/helpers/Hitbox;
+      43: getfield      #26                 // Field com/megacrit/cardcrawl/helpers/Hitbox.cY:F
+      46: invokespecial #27                 // Method com/megacrit/cardcrawl/vfx/combat/SmokeBombEffect."<init>":(FF)V
+      49: invokespecial #28                 // Method com/megacrit/cardcrawl/actions/animations/VFXAction."<init>":(Lcom/megacrit/cardcrawl/vfx/AbstractGameEffect;)V
+      52: invokevirtual #29                 // Method addToBot:(Lcom/megacrit/cardcrawl/actions/AbstractGameAction;)V
+      55: getstatic     #17                 // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.player:Lcom/megacrit/cardcrawl/characters/AbstractPlayer;
+      58: invokevirtual #30                 // Method com/megacrit/cardcrawl/characters/AbstractPlayer.hideHealthBar:()V
+      61: getstatic     #17                 // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.player:Lcom/megacrit/cardcrawl/characters/AbstractPlayer;
+      64: iconst_1
+      65: putfield      #31                 // Field com/megacrit/cardcrawl/characters/AbstractPlayer.isEscaping:Z
+      68: getstatic     #17                 // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.player:Lcom/megacrit/cardcrawl/characters/AbstractPlayer;
+      71: getstatic     #17                 // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.player:Lcom/megacrit/cardcrawl/characters/AbstractPlayer;
+      74: getfield      #32                 // Field com/megacrit/cardcrawl/characters/AbstractPlayer.flipHorizontal:Z
+      77: ifne          84
+      80: iconst_1
+      81: goto          85
+      84: iconst_0
+      85: putfield      #32                 // Field com/megacrit/cardcrawl/characters/AbstractPlayer.flipHorizontal:Z
+      88: getstatic     #33                 // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.overlayMenu:Lcom/megacrit/cardcrawl/core/OverlayMenu;
+      91: getfield      #34                 // Field com/megacrit/cardcrawl/core/OverlayMenu.endTurnButton:Lcom/megacrit/cardcrawl/ui/buttons/EndTurnButton;
+      94: invokevirtual #35                 // Method com/megacrit/cardcrawl/ui/buttons/EndTurnButton.disable:()V
+      97: getstatic     #17                 // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.player:Lcom/megacrit/cardcrawl/characters/AbstractPlayer;
+     100: ldc           #36                 // float 2.5f
+     102: putfield      #37                 // Field com/megacrit/cardcrawl/characters/AbstractPlayer.escapeTimer:F
+     105: return
+
+  public boolean canUse();
+    Code:
+       0: aload_0
+       1: invokespecial #38                 // Method com/megacrit/cardcrawl/potions/AbstractPotion.canUse:()Z
+       4: ifeq          67
+       7: invokestatic  #18                 // Method com/megacrit/cardcrawl/dungeons/AbstractDungeon.getCurrRoom:()Lcom/megacrit/cardcrawl/rooms/AbstractRoom;
+      10: getfield      #39                 // Field com/megacrit/cardcrawl/rooms/AbstractRoom.monsters:Lcom/megacrit/cardcrawl/monsters/MonsterGroup;
+      13: getfield      #40                 // Field com/megacrit/cardcrawl/monsters/MonsterGroup.monsters:Ljava/util/ArrayList;
+      16: invokevirtual #41                 // Method java/util/ArrayList.iterator:()Ljava/util/Iterator;
+      19: astore_1
+      20: aload_1
+      21: invokeinterface #42,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      26: ifeq          65
+      29: aload_1
+      30: invokeinterface #43,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      35: checkcast     #44                 // class com/megacrit/cardcrawl/monsters/AbstractMonster
+      38: astore_2
+      39: aload_2
+      40: ldc           #46                 // String BackAttack
+      42: invokevirtual #47                 // Method com/megacrit/cardcrawl/monsters/AbstractMonster.hasPower:(Ljava/lang/String;)Z
+      45: ifeq          50
+      48: iconst_0
+      49: ireturn
+      50: aload_2
+      51: getfield      #48                 // Field com/megacrit/cardcrawl/monsters/AbstractMonster.type:Lcom/megacrit/cardcrawl/monsters/AbstractMonster$EnemyType;
+      54: getstatic     #49                 // Field com/megacrit/cardcrawl/monsters/AbstractMonster$EnemyType.BOSS:Lcom/megacrit/cardcrawl/monsters/AbstractMonster$EnemyType;
+      57: if_acmpne     62
+      60: iconst_0
+      61: ireturn
+      62: goto          20
+      65: iconst_1
+      66: ireturn
+      67: iconst_0
+      68: ireturn
+
+  public int getPotency(int);
+    Code:
+       0: iconst_0
+       1: ireturn
+
+  public com.megacrit.cardcrawl.potions.AbstractPotion makeCopy();
+    Code:
+       0: new           #3                  // class com/megacrit/cardcrawl/potions/SmokeBomb
+       3: dup
+       4: invokespecial #50                 // Method "<init>":()V
+       7: areturn
+
+  static {};
+    Code:
+       0: getstatic     #51                 // Field com/megacrit/cardcrawl/core/CardCrawlGame.languagePack:Lcom/megacrit/cardcrawl/localization/LocalizedStrings;
+       3: ldc           #4                  // String SmokeBomb
+       5: invokevirtual #52                 // Method com/megacrit/cardcrawl/localization/LocalizedStrings.getPotionString:(Ljava/lang/String;)Lcom/megacrit/cardcrawl/localization/PotionStrings;
+       8: putstatic     #1                  // Field potionStrings:Lcom/megacrit/cardcrawl/localization/PotionStrings;
+      11: return
+}

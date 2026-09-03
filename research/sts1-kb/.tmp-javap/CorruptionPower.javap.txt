@@ -1,0 +1,83 @@
+Compiled from "CorruptionPower.java"
+public class com.megacrit.cardcrawl.powers.CorruptionPower extends com.megacrit.cardcrawl.powers.AbstractPower {
+  public static final java.lang.String POWER_ID;
+
+  private static final com.megacrit.cardcrawl.localization.PowerStrings powerStrings;
+
+  public static final java.lang.String NAME;
+
+  public static final java.lang.String[] DESCRIPTIONS;
+
+  public com.megacrit.cardcrawl.powers.CorruptionPower(com.megacrit.cardcrawl.core.AbstractCreature);
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method com/megacrit/cardcrawl/powers/AbstractPower."<init>":()V
+       4: aload_0
+       5: getstatic     #2                  // Field NAME:Ljava/lang/String;
+       8: putfield      #3                  // Field name:Ljava/lang/String;
+      11: aload_0
+      12: ldc           #5                  // String Corruption
+      14: putfield      #6                  // Field ID:Ljava/lang/String;
+      17: aload_0
+      18: aload_1
+      19: putfield      #7                  // Field owner:Lcom/megacrit/cardcrawl/core/AbstractCreature;
+      22: aload_0
+      23: iconst_m1
+      24: putfield      #8                  // Field amount:I
+      27: aload_0
+      28: getstatic     #9                  // Field DESCRIPTIONS:[Ljava/lang/String;
+      31: iconst_0
+      32: aaload
+      33: putfield      #10                 // Field description:Ljava/lang/String;
+      36: aload_0
+      37: ldc           #11                 // String corruption
+      39: invokevirtual #12                 // Method loadRegion:(Ljava/lang/String;)V
+      42: return
+
+  public void updateDescription();
+    Code:
+       0: aload_0
+       1: getstatic     #9                  // Field DESCRIPTIONS:[Ljava/lang/String;
+       4: iconst_1
+       5: aaload
+       6: putfield      #10                 // Field description:Ljava/lang/String;
+       9: return
+
+  public void onCardDraw(com.megacrit.cardcrawl.cards.AbstractCard);
+    Code:
+       0: aload_1
+       1: getfield      #13                 // Field com/megacrit/cardcrawl/cards/AbstractCard.type:Lcom/megacrit/cardcrawl/cards/AbstractCard$CardType;
+       4: getstatic     #14                 // Field com/megacrit/cardcrawl/cards/AbstractCard$CardType.SKILL:Lcom/megacrit/cardcrawl/cards/AbstractCard$CardType;
+       7: if_acmpne     16
+      10: aload_1
+      11: bipush        -9
+      13: invokevirtual #15                 // Method com/megacrit/cardcrawl/cards/AbstractCard.setCostForTurn:(I)V
+      16: return
+
+  public void onUseCard(com.megacrit.cardcrawl.cards.AbstractCard, com.megacrit.cardcrawl.actions.utility.UseCardAction);
+    Code:
+       0: aload_1
+       1: getfield      #13                 // Field com/megacrit/cardcrawl/cards/AbstractCard.type:Lcom/megacrit/cardcrawl/cards/AbstractCard$CardType;
+       4: getstatic     #14                 // Field com/megacrit/cardcrawl/cards/AbstractCard$CardType.SKILL:Lcom/megacrit/cardcrawl/cards/AbstractCard$CardType;
+       7: if_acmpne     19
+      10: aload_0
+      11: invokevirtual #16                 // Method flash:()V
+      14: aload_2
+      15: iconst_1
+      16: putfield      #17                 // Field com/megacrit/cardcrawl/actions/utility/UseCardAction.exhaustCard:Z
+      19: return
+
+  static {};
+    Code:
+       0: getstatic     #18                 // Field com/megacrit/cardcrawl/core/CardCrawlGame.languagePack:Lcom/megacrit/cardcrawl/localization/LocalizedStrings;
+       3: ldc           #5                  // String Corruption
+       5: invokevirtual #19                 // Method com/megacrit/cardcrawl/localization/LocalizedStrings.getPowerStrings:(Ljava/lang/String;)Lcom/megacrit/cardcrawl/localization/PowerStrings;
+       8: putstatic     #20                 // Field powerStrings:Lcom/megacrit/cardcrawl/localization/PowerStrings;
+      11: getstatic     #20                 // Field powerStrings:Lcom/megacrit/cardcrawl/localization/PowerStrings;
+      14: getfield      #21                 // Field com/megacrit/cardcrawl/localization/PowerStrings.NAME:Ljava/lang/String;
+      17: putstatic     #2                  // Field NAME:Ljava/lang/String;
+      20: getstatic     #20                 // Field powerStrings:Lcom/megacrit/cardcrawl/localization/PowerStrings;
+      23: getfield      #22                 // Field com/megacrit/cardcrawl/localization/PowerStrings.DESCRIPTIONS:[Ljava/lang/String;
+      26: putstatic     #9                  // Field DESCRIPTIONS:[Ljava/lang/String;
+      29: return
+}
