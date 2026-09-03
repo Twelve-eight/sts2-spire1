@@ -33,3 +33,6 @@ friends-pack.zip
 friends-pack.zip
 dist/friends-pack/mods/
 deprecated/
+
+# javap scratch (KB research)
+research/sts1-kb/.tmp-javap/cls/

@@ -1,0 +1,59 @@
+Compiled from "SuicideAction.java"
+public class com.megacrit.cardcrawl.actions.common.SuicideAction extends com.megacrit.cardcrawl.actions.AbstractGameAction {
+  private com.megacrit.cardcrawl.monsters.AbstractMonster m;
+
+  private boolean relicTrigger;
+
+  public com.megacrit.cardcrawl.actions.common.SuicideAction(com.megacrit.cardcrawl.monsters.AbstractMonster);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iconst_1
+       3: invokespecial #1                  // Method "<init>":(Lcom/megacrit/cardcrawl/monsters/AbstractMonster;Z)V
+       6: return
+
+  public com.megacrit.cardcrawl.actions.common.SuicideAction(com.megacrit.cardcrawl.monsters.AbstractMonster, boolean);
+    Code:
+       0: aload_0
+       1: invokespecial #2                  // Method com/megacrit/cardcrawl/actions/AbstractGameAction."<init>":()V
+       4: aload_0
+       5: fconst_0
+       6: putfield      #3                  // Field duration:F
+       9: aload_0
+      10: getstatic     #4                  // Field com/megacrit/cardcrawl/actions/AbstractGameAction$ActionType.DAMAGE:Lcom/megacrit/cardcrawl/actions/AbstractGameAction$ActionType;
+      13: putfield      #5                  // Field actionType:Lcom/megacrit/cardcrawl/actions/AbstractGameAction$ActionType;
+      16: aload_0
+      17: aload_1
+      18: putfield      #6                  // Field m:Lcom/megacrit/cardcrawl/monsters/AbstractMonster;
+      21: aload_0
+      22: iload_2
+      23: putfield      #7                  // Field relicTrigger:Z
+      26: return
+
+  public void update();
+    Code:
+       0: aload_0
+       1: getfield      #3                  // Field duration:F
+       4: fconst_0
+       5: fcmpl
+       6: ifne          43
+       9: aload_0
+      10: getfield      #6                  // Field m:Lcom/megacrit/cardcrawl/monsters/AbstractMonster;
+      13: iconst_0
+      14: putfield      #8                  // Field com/megacrit/cardcrawl/monsters/AbstractMonster.gold:I
+      17: aload_0
+      18: getfield      #6                  // Field m:Lcom/megacrit/cardcrawl/monsters/AbstractMonster;
+      21: iconst_0
+      22: putfield      #9                  // Field com/megacrit/cardcrawl/monsters/AbstractMonster.currentHealth:I
+      25: aload_0
+      26: getfield      #6                  // Field m:Lcom/megacrit/cardcrawl/monsters/AbstractMonster;
+      29: aload_0
+      30: getfield      #7                  // Field relicTrigger:Z
+      33: invokevirtual #10                 // Method com/megacrit/cardcrawl/monsters/AbstractMonster.die:(Z)V
+      36: aload_0
+      37: getfield      #6                  // Field m:Lcom/megacrit/cardcrawl/monsters/AbstractMonster;
+      40: invokevirtual #11                 // Method com/megacrit/cardcrawl/monsters/AbstractMonster.healthBarUpdatedEvent:()V
+      43: aload_0
+      44: invokevirtual #12                 // Method tickDuration:()V
+      47: return
+}
