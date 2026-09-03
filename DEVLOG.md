@@ -1391,3 +1391,57 @@ catalog math computed: colorless catalog has 52 recipes / NoBlockFromCards in
 exactly 1 recipe PanicButton, severe-downside pool is 3 templates; family-pick
 probability analysis was interrupted by the Pandora report; resume if user
 still cares after seeing numbers).
+
+## 2026-09-04 (session 28) — KB 深化：机制优先级仲裁 8 卷（主会话单线）
+
+用户指令：主会话单线把 StS1/StS2 知识库丰富到"渎神自动死亡 vs 无实体谁优先级高"
+这类大批量机制交互仲裁的程度，所有方向同等深度；完成后反思复查一轮。
+
+**新增卷（全部字节码/C# 源取证，编号规则可引用）** — `research/sts1-kb/mechanics/`：
+- death-arbitration.md R01-R22：**旗舰裁决=渎神 vs 无实体**。渎神死亡本体是
+  EndTurnDeathPower.atStartOfTurn 队列的 LoseHPAction(99999, HP_LOSS)（非脚本死）；
+  玩家 damage() 入口无类型门控钳制（>1→1）可拦它；但无实体时长递减在 atEndOfRound
+  （新回合块第 1 步）而渎神在 applyStartOfTurnPowers（第 5 步），ReducePowerAction 在
+  amount>=power.amount 时 addToTop(Remove) ⇒ **1 层不救（先到期）、≥2 层救（钳 1）、
+  回合开始钩子新施加的 1 层也救（不经到期路径）**。妖精/蜥蜴尾可救、MotB 短路、
+  钨杆只 -1、Buffer 归零（onAttackedToChangeDamage 无类型门控）。用户验收口径
+  （≥2 层或确保下回合开始有无实体→只掉 1 血）与 R19+注 4 一致。
+- defense-powers.md R01-R10：五层防御干预点；无实体玩家版(>1,改局部变量)vs怪物版
+  (>0,改 info.output)；Buffer 逐源/Invincible 回合预算；④层钩子吃穿透格挡后的余量。
+- orbs.md R01-R13：通道全序（满槽=addToTop 三连 Animate→Evoke 最左→Channel；非
+  autoEvoke 满槽静默失败）；evokeNewestOrb 不移除=Multi-Cast 基础；RemoveAllOrbs
+  不触发 onEvoke；Dark 累积不随 Focus 重算。
+- stances.md R01-R12：ChangeStanceAction 全序（订阅者先于 Calm 退场能量；同姿态幂等；
+  CannotChangeStancePower 本 build 无施加者=死门）；stance.atStartOfTurn 调用点结案
+  （applyStartOfTurnRelics 首条指令，关闭 triggers.md 开放问题 1）；Divinity 自退先于
+  渎神 LoseHP 入队；uniqueStancesThisCombat 维护但零消费者。
+- energy-cost.md R01-R10：hasEnoughEnergy 七道门序；Confusion 改 cost 本体。
+- potions-combat.md R01-R06：药水 use() 是 UI 点击帧同步直调（不走动作队列）；
+  妖精自动使用不触发 relics.onUsePotion（唯一实现者 Toy Ornithopter）；SmokeBomb
+  同步置 room.smoked/isEscaping。
+- monster-ai.md R01-R10：rollMove=getMove(aiRng.random(99))；moveHistory 写入
+  （byte==-1 不记史）与 lastMove 族；意图管线。
+
+**新增卷** — `research/kb/sts2-combat-semantics.md` S01-S14（engine-dllsrc C#）：
+AttackCommand.Execute（ModifyAttackHitCount 钩子、每击刷新存活目标、
+CalculatedDamageVar 逐击重算——与 StS1 单快照相反）；CreatureCmd.Damage 全序
+（ModifyDamage 统一入口=附魔→加→乘→帽；Osty 前后双相位掉血修正；死亡批量后置）；
+Kill/ShouldDie+preventer+递归 10（StS2 免死形态）；PowerCmd 三态叠层
+（InstancedPerApplier!）+ SkipNextDurationTick 仅玩家侧 debuff；StS1→StS2 仲裁速查表。
+
+**反思复查修正的 4 个错误（自查自纠）**：
+1. defense-powers R09 钨杆挂点偏移写错（918-936→onBloodied 段；实为 damage() offset 466）。
+2. orbs R12"失去 Focus 珠回落"错误：onModifyPower 的珠刷新循环有 hasPower("Focus") 门，
+   Focus 1→0 走 Remove 后门为假 ⇒ 已有珠**冻结在 base+1 不回落**（增=刷新/减=逐次/
+   移除=冻结的不对称）。
+3. monster-ai R06"power 增删不刷新意图"错误：applyPowers 内含 calculateDamage+
+   intentImg/tip 刷新，onModifyPower 即时重算意图；实伤快照可能短暂≠显示。
+4. turn-phase R02"能量跨回合保留"错误：每回合重置发生在 PlayerTurnEffect 构造器
+   （DrawCardAction 3 参 true 构造时同步调 energy.recharge()）；vanilla setEnergy 硬重置，
+   冰淇淋/Conserve 才叠加保留。atStartOfTurn 读旧余额、PostDraw 后读模板值。
+
+**其他**：
+- javap 反汇编快照（52 个 .txt）留在 research/sts1-kb/.tmp-javap/ 供对账（cls/ 已 gitignore）。
+- 提交 63a9841 里混入了 docs/CODE-REVIEW-20260904.md——另一会话的进行中审阅报告，
+  被 git add -A 顺带提交，非本会话产出；未改动其内容，请相关会话知悉。
+- KB 规则总数：mechanics/ 119→202 条。

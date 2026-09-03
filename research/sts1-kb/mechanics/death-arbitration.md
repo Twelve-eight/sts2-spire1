@@ -143,12 +143,14 @@ IntangiblePlayerPower.atEndOfRound():
 注 1：1 层场景的 `addToTop(Remove)` 是在 ReducePowerAction 执行帧插入队首，仍先于其后的 VFX/LoseHP。
 注 2：≥2 层时本回合结束后的下一个 atEndOfRound 会把最后 1 层移除——钳制只挡本次。
 注 3：若渎神与无实体**同回合**施加（先渎神后无实体，如渎神+鬼瓶药水）：power 列表顺序只影响 atStartOfTurn 钩子的遍历序，不影响 R17 的块级先後（atEndOfRound 永远在 atStartOfTurn 之前），裁决不变。
+注 4：钳制判据本质 = **LoseHPAction 结算瞬间 `hasPower("IntangiblePlayer")` 为真**（入口钳制只查存在性、只查 `amount>1`，不消费层数）。因此"下回合开始时由回合开始钩子**新施加**的无实体（哪怕 1 层）也能救"——它不经过 atEndOfRound 到期路径（施加动作在钩子梯更早位置入队，先于 LoseHP 结算），与"上一回合遗留的 1 层会被到期路径先移除"形成对照。综合用户口径：**当前持有 ≥2 层、或确保下回合开始瞬间有无实体在手 → 渎神只掉 1 血**。
 
 **R20 拦截手段对照矩阵** — 出处：各行见 R02/R03/R04/R18/R12 与 §5。置信度：**高**
 
 | 手段 | 挂点 | 对渎神死(99999 HP_LOSS) | 备注 |
 |---|---|---|---|
 | 无实体 ×1 | damage() 入口钳 + atEndOfRound 到期 | **不救**（先到期后失血） | R17-R19 |
+| 无实体 ×1（回合开始时由钩子新施加） | 同上 | **救**（不经到期路径，结算时在列表） | R19 注 4 |
 | 无实体 ×≥2 | 同上 | **救**（失血 1） | 钳制不消费层数 |
 | Buffer ×N | powers.onAttackedToChangeDamage（无类型门控，`>0 → 返回0` + addToTop(Reduce 1)） | **救**（消费 1 层） | 见 defense-powers 卷 R05 |
 | 妖精药水 | damage() 尾部拦截链第 2 位 | **救**（回 30% maxHP，消耗药水） | R03 |
