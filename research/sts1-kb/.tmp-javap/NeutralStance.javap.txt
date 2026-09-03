@@ -1,0 +1,49 @@
+Compiled from "NeutralStance.java"
+public class com.megacrit.cardcrawl.stances.NeutralStance extends com.megacrit.cardcrawl.stances.AbstractStance {
+  public static final java.lang.String STANCE_ID;
+
+  private static final com.megacrit.cardcrawl.localization.StanceStrings stanceString;
+
+  public com.megacrit.cardcrawl.stances.NeutralStance();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method com/megacrit/cardcrawl/stances/AbstractStance."<init>":()V
+       4: aload_0
+       5: ldc           #3                  // String Neutral
+       7: putfield      #4                  // Field ID:Ljava/lang/String;
+      10: aload_0
+      11: aconst_null
+      12: putfield      #5                  // Field img:Lcom/badlogic/gdx/graphics/Texture;
+      15: aload_0
+      16: aconst_null
+      17: putfield      #6                  // Field name:Ljava/lang/String;
+      20: aload_0
+      21: invokevirtual #7                  // Method updateDescription:()V
+      24: return
+
+  public void updateDescription();
+    Code:
+       0: aload_0
+       1: getstatic     #8                  // Field stanceString:Lcom/megacrit/cardcrawl/localization/StanceStrings;
+       4: getfield      #9                  // Field com/megacrit/cardcrawl/localization/StanceStrings.DESCRIPTION:[Ljava/lang/String;
+       7: iconst_0
+       8: aaload
+       9: putfield      #10                 // Field description:Ljava/lang/String;
+      12: return
+
+  public void onEnterStance();
+    Code:
+       0: return
+
+  public void render(com.badlogic.gdx.graphics.g2d.SpriteBatch);
+    Code:
+       0: return
+
+  static {};
+    Code:
+       0: getstatic     #11                 // Field com/megacrit/cardcrawl/core/CardCrawlGame.languagePack:Lcom/megacrit/cardcrawl/localization/LocalizedStrings;
+       3: ldc           #3                  // String Neutral
+       5: invokevirtual #12                 // Method com/megacrit/cardcrawl/localization/LocalizedStrings.getStanceString:(Ljava/lang/String;)Lcom/megacrit/cardcrawl/localization/StanceStrings;
+       8: putstatic     #8                  // Field stanceString:Lcom/megacrit/cardcrawl/localization/StanceStrings;
+      11: return
+}

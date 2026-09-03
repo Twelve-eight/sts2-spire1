@@ -423,7 +423,7 @@ AbstractRoom#update（isBattleOver && actions 空 && timer<=0 时） (AbstractRo
 ---
 
 ## 11. 开放问题 / 低置信项
-1. **stance.atStartOfTurn 的调用点**未定位（签名存在但本文扫描的调用点集中区未发现）；可能在 getNextAction 新回合序列或姿态切换动作内。置信度低。
+1. ~~**stance.atStartOfTurn 的调用点**未定位~~ **已结案**（stances.md R05）：调用点 = `AbstractPlayer#applyStartOfTurnRelics` 首条指令（每回合新回合块与开局块的遗物梯第一步，先于 relic atTurnStart）。置信度：高（字节码 offset 0-7）。
 2. `AbstractPower.onSpecificTrigger`、`checkTrigger`/`onTrigger(Creature)`（ChampionsBelt/MeatOnTheBone/LizardTail 族）的完整调用点矩阵未逐一取证；仅证实 LizardTail 由玩家 damage 致死分支直调、ApplyPowerAction 含 onTrigger 相关引用。置信度低-中。
 3. `DiscardAction` 的 `endTurn=true` 构造在生产代码中的使用者未穷举（该参数改变整手弃牌路径是否发 triggerOnManualDiscard，行为差异已字节码确证）。置信度中。
 4. AwakenedOne/Darkling 设置 halfDead 的具体时机（进入二阶段/复活瞬间）未读其方法体，仅有字符串级证据。置信度中。

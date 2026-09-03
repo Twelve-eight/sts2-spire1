@@ -1,0 +1,181 @@
+Compiled from "DivinityStance.java"
+public class com.megacrit.cardcrawl.stances.DivinityStance extends com.megacrit.cardcrawl.stances.AbstractStance {
+  public static final java.lang.String STANCE_ID;
+
+  private static final com.megacrit.cardcrawl.localization.StanceStrings stanceString;
+
+  private static long sfxId;
+
+  public com.megacrit.cardcrawl.stances.DivinityStance();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method com/megacrit/cardcrawl/stances/AbstractStance."<init>":()V
+       4: aload_0
+       5: ldc           #3                  // String Divinity
+       7: putfield      #4                  // Field ID:Ljava/lang/String;
+      10: aload_0
+      11: getstatic     #5                  // Field stanceString:Lcom/megacrit/cardcrawl/localization/StanceStrings;
+      14: getfield      #6                  // Field com/megacrit/cardcrawl/localization/StanceStrings.NAME:Ljava/lang/String;
+      17: putfield      #7                  // Field name:Ljava/lang/String;
+      20: aload_0
+      21: invokevirtual #8                  // Method updateDescription:()V
+      24: return
+
+  public void updateAnimation();
+    Code:
+       0: getstatic     #9                  // Field com/megacrit/cardcrawl/core/Settings.DISABLE_EFFECTS:Z
+       3: ifne          52
+       6: aload_0
+       7: dup
+       8: getfield      #10                 // Field particleTimer:F
+      11: getstatic     #11                 // Field com/badlogic/gdx/Gdx.graphics:Lcom/badlogic/gdx/Graphics;
+      14: invokeinterface #12,  1           // InterfaceMethod com/badlogic/gdx/Graphics.getDeltaTime:()F
+      19: fsub
+      20: putfield      #10                 // Field particleTimer:F
+      23: aload_0
+      24: getfield      #10                 // Field particleTimer:F
+      27: fconst_0
+      28: fcmpg
+      29: ifge          52
+      32: aload_0
+      33: ldc           #13                 // float 0.2f
+      35: putfield      #10                 // Field particleTimer:F
+      38: getstatic     #14                 // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.effectsQueue:Ljava/util/ArrayList;
+      41: new           #15                 // class com/megacrit/cardcrawl/vfx/stance/DivinityParticleEffect
+      44: dup
+      45: invokespecial #16                 // Method com/megacrit/cardcrawl/vfx/stance/DivinityParticleEffect."<init>":()V
+      48: invokevirtual #17                 // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+      51: pop
+      52: aload_0
+      53: dup
+      54: getfield      #18                 // Field particleTimer2:F
+      57: getstatic     #11                 // Field com/badlogic/gdx/Gdx.graphics:Lcom/badlogic/gdx/Graphics;
+      60: invokeinterface #12,  1           // InterfaceMethod com/badlogic/gdx/Graphics.getDeltaTime:()F
+      65: fsub
+      66: putfield      #18                 // Field particleTimer2:F
+      69: aload_0
+      70: getfield      #18                 // Field particleTimer2:F
+      73: fconst_0
+      74: fcmpg
+      75: ifge          105
+      78: aload_0
+      79: ldc           #19                 // float 0.45f
+      81: ldc           #20                 // float 0.55f
+      83: invokestatic  #21                 // Method com/badlogic/gdx/math/MathUtils.random:(FF)F
+      86: putfield      #18                 // Field particleTimer2:F
+      89: getstatic     #14                 // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.effectsQueue:Ljava/util/ArrayList;
+      92: new           #22                 // class com/megacrit/cardcrawl/vfx/stance/StanceAuraEffect
+      95: dup
+      96: ldc           #3                  // String Divinity
+      98: invokespecial #23                 // Method com/megacrit/cardcrawl/vfx/stance/StanceAuraEffect."<init>":(Ljava/lang/String;)V
+     101: invokevirtual #17                 // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+     104: pop
+     105: return
+
+  public void atStartOfTurn();
+    Code:
+       0: getstatic     #24                 // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.actionManager:Lcom/megacrit/cardcrawl/actions/GameActionManager;
+       3: new           #25                 // class com/megacrit/cardcrawl/actions/watcher/ChangeStanceAction
+       6: dup
+       7: ldc           #27                 // String Neutral
+       9: invokespecial #28                 // Method com/megacrit/cardcrawl/actions/watcher/ChangeStanceAction."<init>":(Ljava/lang/String;)V
+      12: invokevirtual #29                 // Method com/megacrit/cardcrawl/actions/GameActionManager.addToBottom:(Lcom/megacrit/cardcrawl/actions/AbstractGameAction;)V
+      15: return
+
+  public float atDamageGive(float, com.megacrit.cardcrawl.cards.DamageInfo$DamageType);
+    Code:
+       0: aload_2
+       1: getstatic     #30                 // Field com/megacrit/cardcrawl/cards/DamageInfo$DamageType.NORMAL:Lcom/megacrit/cardcrawl/cards/DamageInfo$DamageType;
+       4: if_acmpne     12
+       7: fload_1
+       8: ldc           #31                 // float 3.0f
+      10: fmul
+      11: freturn
+      12: fload_1
+      13: freturn
+
+  public void updateDescription();
+    Code:
+       0: aload_0
+       1: getstatic     #5                  // Field stanceString:Lcom/megacrit/cardcrawl/localization/StanceStrings;
+       4: getfield      #32                 // Field com/megacrit/cardcrawl/localization/StanceStrings.DESCRIPTION:[Ljava/lang/String;
+       7: iconst_0
+       8: aaload
+       9: putfield      #33                 // Field description:Ljava/lang/String;
+      12: return
+
+  public void onEnterStance();
+    Code:
+       0: getstatic     #34                 // Field sfxId:J
+       3: ldc2_w        #35                 // long -1l
+       6: lcmp
+       7: ifeq          14
+      10: aload_0
+      11: invokevirtual #37                 // Method stopIdleSfx:()V
+      14: getstatic     #38                 // Field com/megacrit/cardcrawl/core/CardCrawlGame.sound:Lcom/megacrit/cardcrawl/audio/SoundMaster;
+      17: ldc           #39                 // String STANCE_ENTER_DIVINITY
+      19: invokevirtual #40                 // Method com/megacrit/cardcrawl/audio/SoundMaster.play:(Ljava/lang/String;)J
+      22: pop2
+      23: getstatic     #38                 // Field com/megacrit/cardcrawl/core/CardCrawlGame.sound:Lcom/megacrit/cardcrawl/audio/SoundMaster;
+      26: ldc           #41                 // String STANCE_LOOP_DIVINITY
+      28: invokevirtual #42                 // Method com/megacrit/cardcrawl/audio/SoundMaster.playAndLoop:(Ljava/lang/String;)J
+      31: putstatic     #34                 // Field sfxId:J
+      34: getstatic     #14                 // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.effectsQueue:Ljava/util/ArrayList;
+      37: new           #43                 // class com/megacrit/cardcrawl/vfx/BorderFlashEffect
+      40: dup
+      41: getstatic     #44                 // Field com/badlogic/gdx/graphics/Color.PINK:Lcom/badlogic/gdx/graphics/Color;
+      44: iconst_1
+      45: invokespecial #45                 // Method com/megacrit/cardcrawl/vfx/BorderFlashEffect."<init>":(Lcom/badlogic/gdx/graphics/Color;Z)V
+      48: invokevirtual #17                 // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+      51: pop
+      52: getstatic     #14                 // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.effectsQueue:Ljava/util/ArrayList;
+      55: new           #46                 // class com/megacrit/cardcrawl/vfx/stance/StanceChangeParticleGenerator
+      58: dup
+      59: getstatic     #47                 // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.player:Lcom/megacrit/cardcrawl/characters/AbstractPlayer;
+      62: getfield      #48                 // Field com/megacrit/cardcrawl/characters/AbstractPlayer.hb:Lcom/megacrit/cardcrawl/helpers/Hitbox;
+      65: getfield      #49                 // Field com/megacrit/cardcrawl/helpers/Hitbox.cX:F
+      68: getstatic     #47                 // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.player:Lcom/megacrit/cardcrawl/characters/AbstractPlayer;
+      71: getfield      #48                 // Field com/megacrit/cardcrawl/characters/AbstractPlayer.hb:Lcom/megacrit/cardcrawl/helpers/Hitbox;
+      74: getfield      #50                 // Field com/megacrit/cardcrawl/helpers/Hitbox.cY:F
+      77: ldc           #3                  // String Divinity
+      79: invokespecial #51                 // Method com/megacrit/cardcrawl/vfx/stance/StanceChangeParticleGenerator."<init>":(FFLjava/lang/String;)V
+      82: invokevirtual #17                 // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+      85: pop
+      86: getstatic     #24                 // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.actionManager:Lcom/megacrit/cardcrawl/actions/GameActionManager;
+      89: new           #52                 // class com/megacrit/cardcrawl/actions/common/GainEnergyAction
+      92: dup
+      93: iconst_3
+      94: invokespecial #53                 // Method com/megacrit/cardcrawl/actions/common/GainEnergyAction."<init>":(I)V
+      97: invokevirtual #29                 // Method com/megacrit/cardcrawl/actions/GameActionManager.addToBottom:(Lcom/megacrit/cardcrawl/actions/AbstractGameAction;)V
+     100: return
+
+  public void onExitStance();
+    Code:
+       0: aload_0
+       1: invokevirtual #37                 // Method stopIdleSfx:()V
+       4: return
+
+  public void stopIdleSfx();
+    Code:
+       0: getstatic     #34                 // Field sfxId:J
+       3: ldc2_w        #35                 // long -1l
+       6: lcmp
+       7: ifeq          27
+      10: getstatic     #38                 // Field com/megacrit/cardcrawl/core/CardCrawlGame.sound:Lcom/megacrit/cardcrawl/audio/SoundMaster;
+      13: ldc           #41                 // String STANCE_LOOP_DIVINITY
+      15: getstatic     #34                 // Field sfxId:J
+      18: invokevirtual #54                 // Method com/megacrit/cardcrawl/audio/SoundMaster.stop:(Ljava/lang/String;J)V
+      21: ldc2_w        #35                 // long -1l
+      24: putstatic     #34                 // Field sfxId:J
+      27: return
+
+  static {};
+    Code:
+       0: getstatic     #55                 // Field com/megacrit/cardcrawl/core/CardCrawlGame.languagePack:Lcom/megacrit/cardcrawl/localization/LocalizedStrings;
+       3: ldc           #3                  // String Divinity
+       5: invokevirtual #56                 // Method com/megacrit/cardcrawl/localization/LocalizedStrings.getStanceString:(Ljava/lang/String;)Lcom/megacrit/cardcrawl/localization/StanceStrings;
+       8: putstatic     #5                  // Field stanceString:Lcom/megacrit/cardcrawl/localization/StanceStrings;
+      11: ldc2_w        #35                 // long -1l
+      14: putstatic     #34                 // Field sfxId:J
+      17: return
+}
