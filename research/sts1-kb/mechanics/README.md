@@ -24,8 +24,10 @@ wiki（slay-the-spire.fandom.com）仅作交叉佐证；HTML 页 403，经 `api.
 | [triggers.md](triggers.md) | 18 | Power/Relic/Card/Monster/Stance 五基类钩子总表、onPlayCard/onUseCard/onAfterUseCard 四时刻对照、死亡链/胜利链、计数遗物取证、同容器获得顺序结论、同步直调 vs 队列化对照 |
 | [damage-pipeline.md](damage-pipeline.md) | 17 | DamageType 三型语义、攻防两端乘区次序（Vulnerable 在攻方侧）、atDamageGive/final 修改器链、多重打击单快照结论、格挡吸收点、LoseHP 分流 |
 | [status-stacking.md](status-stacking.md) | 21 | ApplyPowerAction 完整分支（Artifact 拦截/合并 vs 新建/Night Terror 特例）、负值下限与 999 钳制的真实位置、debuff 时长递减唯一发生地、justApplied 双条件 |
+| [death-arbitration.md](death-arbitration.md) | 22 | 玩家死亡总闸与免死拦截链（MotB→妖精→蜥蜴尾）、致死来源分类学、渎神 EndTurnDeathPower 全解、**渎神 vs 无实体旗舰仲裁**（1 层不救/≥2 层救的时序推导）、MotB 治疗封死、SuicideAction/cannotLose |
+| [defense-powers.md](defense-powers.md) | 10 | 防御干预五层挂点图（入口钳制/格挡/④层钩子/onLoseHpLast）、无实体三实现差异、Buffer 逐源消费、Invincible 回合预算、钨杆平减、格挡保留中央门控、仲裁案例表 |
 
-合计 **119 条编号规则**，每条独立可引用（`文件名 Rnn`），可直接用于移植仲裁。
+合计 **151 条编号规则**，每条独立可引用（`文件名 Rnn`），可直接用于移植仲裁。
 
 ## 用户示例问题的确定性答案（验收项）
 
