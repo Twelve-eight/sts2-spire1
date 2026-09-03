@@ -83,7 +83,7 @@ atStartOfTurn(): this.amount = maxAmt;   // 持有者回合开始重置
 ## 5. 平减与格挡保留
 
 **R09 钨杆：onLoseHpLast 平减 1，`>0` 门** — 出处 `TungstenRod#onLoseHpLast` offset 0-13（`amount>0 → flash; return amount-1`）。置信度：**高**
-挂 ⑤ 层（relics.onLoseHpLast，玩家 damage() offset 918-936 附近，death-arbitration.md R02 之前）⇒ 对任何类型（含 HP_LOSS）生效；1 点伤害被减成 0（掉血量 `amount>0` 才扣，0 不掉）；对渎神 99999 → 99998（death-arbitration.md R20）。
+挂 ⑤ 层（relics.onLoseHpLast，调用点 `AbstractPlayer#damage` offset 466，在 HP 扣减与 `<1` 死亡闸之前）⇒ 对任何类型（含 HP_LOSS）生效；1 点伤害被减成 0（掉血量 `amount>0` 才扣，0 不掉）；对渎神 99999 → 99998（death-arbitration.md R20）。
 
 **R10 格挡保留三件套是回合块中央门控，power 本体为空壳** — 出处 `GameActionManager#getNextAction` offset 2127-2174。置信度：**高**
 ```
