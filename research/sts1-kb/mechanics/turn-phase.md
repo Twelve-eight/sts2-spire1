@@ -54,7 +54,7 @@ flowchart TD
   16. `useNextCombatActions()`（冲刷跨战斗缓冲）
 
   出处：`AbstractRoom#update`（COMBAT 分支 offset 219–385）。置信度高。
-- **R02【首回合能量只发一次】** 每场战斗基础能量 = `EnergyManager.energyMaster`（角色基础值，通常 3），由开局队列第一个动作发放。**新回合块不补发能量——未用完的能量跨回合保留**。`EnergyPanel#addEnergy` 上限 999，≥9 解锁 ADRENALINE 成就。⇒ 移植常见误区："每回合重置为 3" 是错的。置信度高。
+- **R02【首回合能量只发一次 / 每回合重置的真实位置】**（**2026-09-04 勘误更新，详见 energy-cost.md R03**）：开局队列第一个动作 `GainEnergyAndEnableControlsAction(energyMaster)` 发放基础能量并解除 `turnHasEnded` 闩。**每个新回合的能量重置发生在新回合块内 `DrawCardAction(3参,true)` 的构造瞬间**——其构造器同步 `new PlayerTurnEffect()`，该视效构造器直调 `player.energy.recharge()`：无冰淇淋/Conserve 时 `setEnergy(energyMaster)` **硬重置**，余额清零；冰淇淋为 addEnergy 叠加保留。原结论"新回合块不补发能量、未用完能量跨回合保留"对 vanilla **不成立**（保留仅限冰淇淋类）。`EnergyPanel#addEnergy` 上限 999，≥9 解锁 ADRENALINE 成就。钩子时序：`atStartOfTurn` 读到旧余额，`atStartOfTurnPostDraw`/重置后才读到模板值。置信度高。
 - **R03【turnHasEnded 闩】** 开局把 `turnHasEnded=true` 后，若不解除，动作排空时会误触"新回合块"造成双重抽牌。实际由 **`GainEnergyAndEnableControlsAction#update` 的最后一行 `actionManager.turnHasEnded=false`** 解除（发完能量才放行新回合检测）。这是理解开局为何恰好抽 5 张的关键字节码事实。置信度高。
 - **R04【PostDraw 命名陷阱】** 无论开局还是后续新回合块，`atTurnStartPostDraw`（遗物）/`atStartOfTurnPostDraw`（power）都是**紧跟 DrawCardAction 入队之后同步直调**——此时抽牌动作还在队列里未执行，卡尚未进手牌。语义是"排在抽牌之后入队"，不是"抽完之后"。依赖'已抽到手'状态的逻辑必须挂别的钩子。出处：`AbstractRoom#update` offset 355 与 `GameActionManager#getNextAction` offset 2205–2214。置信度高。
 - **R05【怪物开局不动】** 开局不 rollMove、不行动；`monsterAttacksQueued` 构造时即为 true，直到第一次结束回合才被 `AbstractRoom$1#update` 复位为 false 并 `queueMonsters()`。怪物的首次意图 roll 在各自 `usePreBattleAction/useUniversalPreBattleAction`（`MonsterGroup#init` 后经 `preBattlePrep` 路径调用，跳过读档场景 `loading_post_combat`）。置信度高。
