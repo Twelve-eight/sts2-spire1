@@ -1,0 +1,49 @@
+Compiled from "TriggerEndOfTurnOrbsAction.java"
+public class com.megacrit.cardcrawl.actions.defect.TriggerEndOfTurnOrbsAction extends com.megacrit.cardcrawl.actions.AbstractGameAction {
+  public com.megacrit.cardcrawl.actions.defect.TriggerEndOfTurnOrbsAction();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method com/megacrit/cardcrawl/actions/AbstractGameAction."<init>":()V
+       4: return
+
+  public void update();
+    Code:
+       0: getstatic     #2                  // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.player:Lcom/megacrit/cardcrawl/characters/AbstractPlayer;
+       3: getfield      #3                  // Field com/megacrit/cardcrawl/characters/AbstractPlayer.orbs:Ljava/util/ArrayList;
+       6: invokevirtual #4                  // Method java/util/ArrayList.isEmpty:()Z
+       9: ifne          91
+      12: getstatic     #2                  // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.player:Lcom/megacrit/cardcrawl/characters/AbstractPlayer;
+      15: getfield      #3                  // Field com/megacrit/cardcrawl/characters/AbstractPlayer.orbs:Ljava/util/ArrayList;
+      18: invokevirtual #5                  // Method java/util/ArrayList.iterator:()Ljava/util/Iterator;
+      21: astore_1
+      22: aload_1
+      23: invokeinterface #6,  1            // InterfaceMethod java/util/Iterator.hasNext:()Z
+      28: ifeq          48
+      31: aload_1
+      32: invokeinterface #7,  1            // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      37: checkcast     #8                  // class com/megacrit/cardcrawl/orbs/AbstractOrb
+      40: astore_2
+      41: aload_2
+      42: invokevirtual #9                  // Method com/megacrit/cardcrawl/orbs/AbstractOrb.onEndOfTurn:()V
+      45: goto          22
+      48: getstatic     #2                  // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.player:Lcom/megacrit/cardcrawl/characters/AbstractPlayer;
+      51: ldc           #11                 // String Cables
+      53: invokevirtual #12                 // Method com/megacrit/cardcrawl/characters/AbstractPlayer.hasRelic:(Ljava/lang/String;)Z
+      56: ifeq          91
+      59: getstatic     #2                  // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.player:Lcom/megacrit/cardcrawl/characters/AbstractPlayer;
+      62: getfield      #3                  // Field com/megacrit/cardcrawl/characters/AbstractPlayer.orbs:Ljava/util/ArrayList;
+      65: iconst_0
+      66: invokevirtual #13                 // Method java/util/ArrayList.get:(I)Ljava/lang/Object;
+      69: instanceof    #14                 // class com/megacrit/cardcrawl/orbs/EmptyOrbSlot
+      72: ifne          91
+      75: getstatic     #2                  // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.player:Lcom/megacrit/cardcrawl/characters/AbstractPlayer;
+      78: getfield      #3                  // Field com/megacrit/cardcrawl/characters/AbstractPlayer.orbs:Ljava/util/ArrayList;
+      81: iconst_0
+      82: invokevirtual #13                 // Method java/util/ArrayList.get:(I)Ljava/lang/Object;
+      85: checkcast     #8                  // class com/megacrit/cardcrawl/orbs/AbstractOrb
+      88: invokevirtual #9                  // Method com/megacrit/cardcrawl/orbs/AbstractOrb.onEndOfTurn:()V
+      91: aload_0
+      92: iconst_1
+      93: putfield      #15                 // Field isDone:Z
+      96: return
+}

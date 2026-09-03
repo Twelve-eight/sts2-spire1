@@ -1,0 +1,40 @@
+Compiled from "IncreaseMaxOrbAction.java"
+public class com.megacrit.cardcrawl.actions.defect.IncreaseMaxOrbAction extends com.megacrit.cardcrawl.actions.AbstractGameAction {
+  public com.megacrit.cardcrawl.actions.defect.IncreaseMaxOrbAction(int);
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method com/megacrit/cardcrawl/actions/AbstractGameAction."<init>":()V
+       4: aload_0
+       5: getstatic     #2                  // Field com/megacrit/cardcrawl/core/Settings.ACTION_DUR_FAST:F
+       8: putfield      #3                  // Field duration:F
+      11: aload_0
+      12: iload_1
+      13: putfield      #4                  // Field amount:I
+      16: aload_0
+      17: getstatic     #5                  // Field com/megacrit/cardcrawl/actions/AbstractGameAction$ActionType.BLOCK:Lcom/megacrit/cardcrawl/actions/AbstractGameAction$ActionType;
+      20: putfield      #6                  // Field actionType:Lcom/megacrit/cardcrawl/actions/AbstractGameAction$ActionType;
+      23: return
+
+  public void update();
+    Code:
+       0: aload_0
+       1: getfield      #3                  // Field duration:F
+       4: getstatic     #2                  // Field com/megacrit/cardcrawl/core/Settings.ACTION_DUR_FAST:F
+       7: fcmpl
+       8: ifne          35
+      11: iconst_0
+      12: istore_1
+      13: iload_1
+      14: aload_0
+      15: getfield      #4                  // Field amount:I
+      18: if_icmpge     35
+      21: getstatic     #7                  // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.player:Lcom/megacrit/cardcrawl/characters/AbstractPlayer;
+      24: iconst_1
+      25: iconst_1
+      26: invokevirtual #8                  // Method com/megacrit/cardcrawl/characters/AbstractPlayer.increaseMaxOrbSlots:(IZ)V
+      29: iinc          1, 1
+      32: goto          13
+      35: aload_0
+      36: invokevirtual #9                  // Method tickDuration:()V
+      39: return
+}
