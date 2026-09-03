@@ -38,8 +38,8 @@ vanilla 中 rollMove 的队列化包装只有一个（RollMoveAction）；`Reviv
 意图显示 = `calculateDamage(move.baseDamage)`：怪物 powers.give(NORMAL) → 玩家 powers.receive（易伤 ×1.5/Paper Frog ×1.75）→ 玩家 stance.receive（Wrath ×2）→ BackAttack ×1.5 → finalGive → finalReceive → floor（damage-pipeline.md R07/R08 同构）。**实伤**在 `applyPowers()`（3708 起）对 `move.damage` 列表逐个 `DamageInfo.applyPowers(this, player)`，存进预演算的 `DamageInfo.output`（R08）。
 ⇒ 仲裁要点：意图数字会随玩家状态（力/易伤/Wrath）**刷新时机**（R06）变化，但实伤取"applyPowers 执行时刻"的快照。
 
-**R06 意图刷新时机** — 出处 `PlayerTurnEffect#<init>` 尾部 `MonsterGroup.showIntent()`（energy-cost.md R03 引）+ `MonsterGroup#showIntent`（71 起遍历逐怪）。置信度：**高**
-每回合玩家横幅构造时全场意图重显；power 增删（onModifyPower）**不**自动重算怪物意图（StS1 拿到力量后意图数字不动，直到下回合或显式刷新——与 StS2 的 `UpdateIntent` 在 power 变化时刷新不同，见 `../../kb/sts2-combat-semantics.md` S11）。
+**R06 意图刷新时机** — 出处 `AbstractMonster#applyPowers` offset 97-131（`move.baseDamage > -1 → calculateDamage(base)` → `intentImg` 重取 + `updateIntentTip`）+ `AbstractDungeon#onModifyPower`（energy-cost.md R03 引：逐怪调 `applyPowers()`）+ `PlayerTurnEffect#<init>` 尾部 `MonsterGroup.showIntent()`。置信度：**高**
+**任何 power 增删都会重算意图**：`onModifyPower` → 逐怪 `applyPowers()` → ① `this.damage` 列表逐个 `DamageInfo.applyPowers` 重演算（实伤快照，BackAttack ×1.5 在此，offset 77-92）② `calculateDamage(base)` 重算意图显示数字 ③ `intentImg`/tip 刷新。`showIntent()`（每回合横幅构造时）只负责**重绘**，不负责重算。⇒ 仲裁：玩家拿到力量/给怪挂易伤的瞬间，怪的意图数字立即变化；实伤取的是怪物上一次 `applyPowers` 时刻的快照（R08 damage-pipeline），**实伤快照与意图显示可能不一致**（如出牌过程中玩家丢失易伤，onModifyPower 已重算，实伤随后按新值）。
 
 ---
 
@@ -70,4 +70,4 @@ vanilla 中 rollMove 的队列化包装只有一个（RollMoveAction）；`Reviv
 1. 逐怪 takeTurn 尾部自调 rollMove 的比例未穷举（R04）。置信度：**中**。
 2. `moveHistory` 上限（是否有裁剪）未取证。置信度：**低**。
 3. `EnemyMoveInfo` 第 4/5/6 参的准确语义（multiplier/isDefined）未逐字段核。置信度：**中**。
-4. StS1 侧意图在 `onModifyPower` 不刷新的结论依赖"applyStartOfTurn 系与 showIntent 调用点扫描"反证，无正向全量扫描。置信度：**中**。
+4. ~~意图在 onModifyPower 是否刷新~~ **已结案**（R06）：刷新（经 applyPowers 内 calculateDamage）。"实伤快照 vs 意图显示可能短暂不一致"的具体场景未做运行时验证。置信度：**中**。

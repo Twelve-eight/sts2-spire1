@@ -104,12 +104,19 @@ else:
 ```
 **Dark 覆写：只重算 passiveAmount，绝不触碰 evokeAmount**（`Dark#applyFocus` offset 0-41）——被动部分与基类公式相同（`max(0, basePassive + focus.amount)`），但 evokeAmount 保持通道以来的累积值。⇒ 焦点变化/丢失不会重置暗珠已累积的炸伤；暗珠的被动增速随焦点走、累积存量不动。
 
-**R12 焦点变化即时作用于全部已有珠（onModifyPower 全局刷新）** — 出处 `AbstractDungeon#onModifyPower` offset 0-60 + Frost/Lightning/Dark/Plasma/EmptyOrbSlot 各自 `updateDescription()` 首行 `applyFocus()`。置信度：**高**
-`onModifyPower()`：`hand.applyPowers()` → **若玩家有 Focus → 遍历全部 orbs 调 `orb.updateDescription()`**（其内部第一步就是 applyFocus）→ 全怪物 `applyPowers()`。ApplyPowerAction/RemoveSpecificPowerAction/ReducePowerAction 等在增删 power 后都会调 onModifyPower ⇒ **获得/失去 Focus 的瞬间，所有在场珠的被动与激发数值立即重算**（暗珠 evoke 除外，R11）。唯一的显式 applyFocus 调用点除 onModifyPower 链路外只有 channelOrb（R04，新珠落地时兜底）。
-推论（仲裁用）：Focus 中途归零（如 Reprogram 移除）时，已有珠**回落到 base 值**，不是保留旧高值；仅 Dark 的累积量免于此回落。
+**R12 焦点变化对已有珠的作用是**不对称**的：增加刷新、递减逐次刷新、完全移除不刷新** — 出处 `AbstractDungeon#onModifyPower` offset 0-60（`if (player.hasPower("Focus"))` 门）+ Frost/Lightning/Dark/Plasma/EmptyOrbSlot 各自 `updateDescription()` 首行 `applyFocus()` + `RemoveSpecificPowerAction#update`（`onRemove` → remove → onModifyPower）+ `ReducePowerAction#update` 两分支。置信度：**高**
+```
+onModifyPower(): hand.applyPowers();  if (hasPower("Focus")) { for orb: orb.updateDescription(); }  // 门!
+```
+- **获得/增加 Focus**：ApplyPowerAction 后 onModifyPower，门为真 → 全员珠 refresh（数值上调）。
+- **Focus 递减但仍在**（ReducePowerAction 走 reduce 分支，offset 63-78 内有 onModifyPower）：每次递减后全员珠下调一档。
+- **Focus 1→0 走 Remove 分支 / 直接 RemoveSpecificPowerAction**：onModifyPower 在**移除之后**调用，`hasPower("Focus")` 已为假 → **宝珠刷新循环被跳过**；且 Remove 分支（ReducePowerAction offset 81-98）本身不调 onModifyPower。⇒ **已有珠冻结在最后一次成功刷新的值（= base+1），不回落 base**；此后不再跟随任何 Focus 变化（`AbstractOrb.update()`/`setSlot` 均不重算， orbs.md R12 前置证据），直到该珠被激发移除或新珠通道（新珠走 R04 的 applyFocus 兜底）。
+- 唯一的显式 applyFocus 调用点除 onModifyPower 链路外只有 channelOrb（R04）。
+仲裁推论：Biased Cognition（+4 Focus，每回合 -1）到期过程 = 4→3→2→1 每回合全员下调，1→0 那一回合起已有珠**停在 base+1**；Reprogram 一类一次性移除 Focus 则已有珠**保留全部旧加成**。
+**勘误记录**：本卷初版曾写"失去 Focus 珠立即回落 base"，与字节码不符，以本条为准。
 
-**R13 焦点上限/下限** — 出处 R11 公式（`max(0, base + focus)`）。置信度：**高**
-Focus power 负值合法（`base + 负值` 可被钳到 0）；FocusPower 在 `stackPower` 内 `amount == 0`（offset 16-41）/`reducePower` 内同类条件时 `addToTop(RemoveSpecificPowerAction)` 自移除（另有 25 层 FOCUSED 成就、999 钳制）⇒ "焦点消失"与"焦点=0"行为等价（无 Focus → else 分支 = base 值）。
+**R13 焦点上限/下限** — 出处 R11 公式（`max(0, base + focus)`）+ `FocusPower#stackPower` offset 0-75。置信度：**高**
+Focus power 负值合法（`base + 负值` 可被钳到 0）；FocusPower 在 `stackPower` 内 `amount == 0`（offset 16-41）/`reducePower` 内同类条件时 `addToTop(RemoveSpecificPowerAction)` 自移除（另有 25 层 FOCUSED 成就、999 钳制）。"无 Focus 时新通道的珠"走 else 分支 = base 值（R11）；**已有珠**的行为见 R12 的不对称结论。
 
 ---
 
@@ -120,8 +127,9 @@ Focus power 负值合法（`base + 负值` 可被钳到 0）；FocusPower 在 `s
 | 满槽时通道（Storm 闪电等 autoEvoke 或直调 channelOrb） | 先激发最左珠（其效果 addToTop 先结算），再通道新珠 | R04 |
 | 满槽时非 autoEvoke 的 ChannelAction | 无事发生（静默失败） | R05 |
 | Evoke All + Dark（暗珠在中间） | 逐个激发：每次 onEvoke 的 DarkOrbEvoke addToTop，在下一枚激发之前结算；暗珠打"当时血量最低"敌 | R06/R08 |
-| Focus +4 打出时场上已有 2 Frost(2) | 两 Frost 立即变 passive 6（onModifyPower 链），下回合尾各 +6 格挡 | R12 |
-| Biased Cognition 到期 Focus-4 归零 | 全珠回落 base 2；Dark 已累积的 evoke 不回落 | R11/R12/R13 |
+| Focus +4 打出时场上已有 2 Frost(2) | 两 Frost 立即变 passive 6（onModifyPower 门为真，全员刷新） | R12 |
+| Biased Cognition 逐回合 -1 到期 | 4→1 每回合全员下调；1→0 起已有珠**冻结在 base+1**，不回落 base | R12 |
+| Reprogram 一次移除 Focus | 已有珠保留全部旧加成（onModifyPower 门为假，无刷新） | R12 |
 | Cables + 首位 Plasma | 回合开始 Plasma 触发两次：+2 能量 | R10 |
 | 电球被动 vs 敌 5 格挡 | THORNS 可被格挡吸收（不吃力/虚/易伤） | R09 + damage-pipeline R13 |
 | 减 1 槽（DecreaseMaxOrb）而最右是充能 Lightning | Lightning 消失，不激发不掉效果 | R03 |
