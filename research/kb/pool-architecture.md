@@ -25,6 +25,15 @@ ConcatModelsFromMods(poolModel, pool): 首次访问该池时置 isFrozen=true（
 **I0c 引擎角色五件套（2026-09-05 补充）** — 出处 `Models.Characters/{Ironclad,Silent,Regent,Necrobinder,Defect}.cs`。置信度：**高**
 每角色四绑定：`CardPool`（各自专属池）/ `PotionPool` / `StartingRelics`（各 1 枚：BurningBlood / RingOfTheSnake / DivineRight / BoundPhylactery / CrackedCore）/ `StartingDeck`（数组字面量：Ironclad 10、Silent 12、Regent 10、Necrobinder 10、Defect 10）。⇒ **官方 StS2 自带 Defect**——我方移植的"一代 Defect"与其同池同名卡碰撞是**结构性**的（SharedCardReuse/Splash 案的深层背景），任何按卡名匹配的兼容层都必须考虑官方 Defect 卡的存在。
 
+**I2c-baseline StS2 官方池容量基线（2026-09-05，GenerateAllCards 数组直证）** — 出处 `Models.CardPools/*.cs`。置信度：**高**
+```
+角色池：Ironclad 90 / Silent 91 / Regent 91 / Necrobinder 91 / Defect 91
+共享池：Colorless 65 / Curse 18 / Event 28 / Quest 4 / Deprived 13 / Deprecated 1
+对照（我方 mod，tools/pool-audit.mjs 基线）：Spire1CardPool 39（8 直挂+31 孪生）、
+  Spire1LegacyPool 87、官方四池引用 Defect 37/Silent 41/Watcher 78/Colorless 8/Curse 12
+```
+⇒ 容量契约（I2c ≥8 Common）在 vanilla 池上裕量巨大；事故只发生在自建小池（当年 Spire1 Ironclad Common=6）。新池/新角色的容量审计以本表为对照基线。
+
 ## 2. 不变量 I1：可调用集合 ≠ 池对象（Splash 事故）
 
 **陈述**：任何"从其他角色选牌"类机制，候选集必须是**集合差**——`全体可获取卡牌 − 当前角色可调用集合`（按卡牌 Id 计算）——而不是"全体池对象列表减去 owner 的池对象"。
