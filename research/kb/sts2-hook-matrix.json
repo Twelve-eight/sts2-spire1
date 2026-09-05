@@ -1,0 +1,578 @@
+{
+ "AfterCardEnteredCombat": [
+  "Cards/BansheesCry",
+  "Cards/Flatten",
+  "Cards/Midnight",
+  "Cards/Pinpoint",
+  "Cards/Stomp",
+  "Powers/GalvanicPower",
+  "Powers/HexPower",
+  "Powers/PhantomBladesPower",
+  "Powers/RingingPower",
+  "Powers/SmoggyPower",
+  "Powers/SwordSagePower",
+  "Powers/TangledPower",
+  "Powers/VitalSparkPower",
+  "Relics/GhostSeed"
+ ],
+ "AfterCardPlayed": [
+  "Cards/BansheesCry",
+  "Cards/Pinpoint",
+  "Powers/AfterimagePower",
+  "Powers/BlackHolePower",
+  "Powers/CalamityPower",
+  "Powers/CurlUpPower",
+  "Powers/DevourLifePower",
+  "Powers/EchoFormPower",
+  "Powers/EnragePower",
+  "Powers/GalvanicPower",
+  "Powers/GravityPower",
+  "Powers/HauntPower",
+  "Powers/ImitationLearningPower",
+  "Powers/MasterPlannerPower",
+  "Powers/MonologuePower",
+  "Powers/OblivionPower",
+  "Powers/PaleBlueDotPower",
+  "Powers/PanachePower",
+  "Powers/RagePower",
+  "Powers/RupturePower",
+  "Powers/SerpentFormPower",
+  "Powers/SlowPower",
+  "Powers/SmoggyPower",
+  "Powers/SneakyPower",
+  "Powers/StormPower",
+  "Powers/StranglePower",
+  "Powers/SubroutinePower",
+  "Powers/TenderPower",
+  "Powers/VitalSparkPower",
+  "Powers/VoidFormPower",
+  "Powers/WitheringPresencePower",
+  "Relics/ArtOfWar",
+  "Relics/BrilliantScarf",
+  "Relics/DaughterOfTheWind",
+  "Relics/GamePiece",
+  "Relics/HelicalDart",
+  "Relics/IronClub",
+  "Relics/IvoryTile",
+  "Relics/Kunai",
+  "Relics/Kusarigama",
+  "Relics/LetterOpener",
+  "Relics/LostWisp",
+  "Relics/MummifiedHand",
+  "Relics/MusicBox",
+  "Relics/Nunchaku",
+  "Relics/OrnamentalFan",
+  "Relics/PaelsLegion",
+  "Relics/PenNib",
+  "Relics/Permafrost",
+  "Relics/Pocketwatch",
+  "Relics/RainbowRing",
+  "Relics/RazorTooth",
+  "Relics/RippleBasin",
+  "Relics/Shuriken",
+  "Relics/TuningFork",
+  "Relics/UnsettlingLamp",
+  "Relics/Vambrace",
+  "Relics/VelvetChoker"
+ ],
+ "BeforeHandDraw": [
+  "Cards/Bolas",
+  "Cards/ThrummingHatchet",
+  "Powers/CallOfTheVoidPower",
+  "Powers/CreativeAiPower",
+  "Powers/ForegoneConclusionPower",
+  "Powers/HelloWorldPower",
+  "Powers/InfiniteBladesPower",
+  "Powers/NightmarePower",
+  "Powers/SentryModePower",
+  "Powers/SpectrumShiftPower",
+  "Relics/BlessedAntler",
+  "Relics/FuneraryMask",
+  "Relics/JeweledMask",
+  "Relics/NinjaScroll",
+  "Relics/Pendulum",
+  "Relics/PollinousCore",
+  "Relics/RadiantPearl",
+  "Relics/Toolbox"
+ ],
+ "AfterAutoPrePlayPhaseEnteredEarly": [
+  "Cards/Bombardment"
+ ],
+ "BeforeRoomEntered": [
+  "Cards/Dowsing"
+ ],
+ "AfterCardExhausted": [
+  "Cards/DrumOfBattle",
+  "Cards/Midnight",
+  "Powers/DarkEmbracePower",
+  "Powers/FeelNoPainPower",
+  "Relics/BurningSticks",
+  "Relics/CharonsAshes",
+  "Relics/ForgottenSoul",
+  "Relics/JossPaper"
+ ],
+ "AfterAttack": [
+  "Cards/Flatten",
+  "Powers/GigantificationPower",
+  "Powers/PainfulStabsPower",
+  "Powers/SkittishPower",
+  "Powers/SuckPower",
+  "Powers/VigorPower",
+  "Relics/BoneFlute"
+ ],
+ "AfterCombatEnd": [
+  "Cards/Guilty",
+  "Powers/ForbiddenGrimoirePower",
+  "Powers/IllusionPower",
+  "Powers/ImprovementPower",
+  "Powers/RoyaltiesPower",
+  "Relics/ArtOfWar",
+  "Relics/BeltBuckle",
+  "Relics/BrilliantScarf",
+  "Relics/BurningSticks",
+  "Relics/CentennialPuzzle",
+  "Relics/ChosenCheese",
+  "Relics/EmotionChip",
+  "Relics/FakeHappyFlower",
+  "Relics/FishingRod",
+  "Relics/HappyFlower",
+  "Relics/JossPaper",
+  "Relics/Kunai",
+  "Relics/Kusarigama",
+  "Relics/LetterOpener",
+  "Relics/Metronome",
+  "Relics/MiniRegent",
+  "Relics/MusicBox",
+  "Relics/OrnamentalFan",
+  "Relics/PaelsEye",
+  "Relics/PaelsFlesh",
+  "Relics/PaelsLegion",
+  "Relics/PaelsTears",
+  "Relics/PaelsTooth",
+  "Relics/Pendulum",
+  "Relics/Pocketwatch",
+  "Relics/PollinousCore",
+  "Relics/PumpkinCandle",
+  "Relics/RainbowRing",
+  "Relics/RedSkull",
+  "Relics/Regalite",
+  "Relics/RippleBasin",
+  "Relics/RuinedHelmet",
+  "Relics/Shuriken",
+  "Relics/StoneCalendar",
+  "Relics/ThrowingAxe",
+  "Relics/ToyBox",
+  "Relics/UnsettlingLamp",
+  "Relics/Vambrace",
+  "Relics/VelvetChoker",
+  "Relics/WongosMysteryTicket"
+ ],
+ "AfterAutoPostPlayPhaseEntered": [
+  "Cards/HowlFromBeyond",
+  "Cards/IAmInvincible",
+  "Powers/StampedePower"
+ ],
+ "AfterCardDrawn": [
+  "Cards/KinglyKick",
+  "Cards/KinglyPunch",
+  "Cards/Void",
+  "Powers/AutomationPower",
+  "Powers/CacophonyPower",
+  "Powers/ChainsOfBindingPower",
+  "Powers/ConfusedPower",
+  "Powers/CorrosiveWavePower",
+  "Powers/IterationPower",
+  "Powers/PagestormPower",
+  "Powers/SpeedsterPower"
+ ],
+ "AfterCardPlayedLate": [
+  "Cards/MakeItSo",
+  "Cards/RightHandHand"
+ ],
+ "AfterCardGeneratedForCombat": [
+  "Cards/RocketPunch",
+  "Monsters/Aeonglass",
+  "Powers/ArsenalPower",
+  "Powers/PillarOfCreationPower",
+  "Powers/SmokestackPower",
+  "Powers/SoulboundPower",
+  "Powers/TrashToTreasurePower",
+  "Relics/Regalite"
+ ],
+ "AfterCardChangedPiles": [
+  "Cards/SovereignBlade",
+  "Relics/BingBong",
+  "Relics/BookOfFiveRings",
+  "Relics/DarkstonePeriapt",
+  "Relics/LuckyFysh"
+ ],
+ "AfterMapGenerated": [
+  "Cards/SpoilsMap"
+ ],
+ "BeforeCardRemoved": [
+  "Cards/SpoilsMap"
+ ],
+ "BeforeCardPlayed": [
+  "Cards/Stomp",
+  "Powers/AfterimagePower",
+  "Powers/CalamityPower",
+  "Powers/ChainsOfBindingPower",
+  "Powers/DanseMacabrePower",
+  "Powers/FreeAttackPower",
+  "Powers/FreePowerPower",
+  "Powers/FreeSkillPower",
+  "Powers/GravityPower",
+  "Powers/ImitationLearningPower",
+  "Powers/JugglingPower",
+  "Powers/MonologuePower",
+  "Powers/OblivionPower",
+  "Powers/RupturePower",
+  "Powers/SerpentFormPower",
+  "Powers/SlothPower",
+  "Powers/SpiritOfAshPower",
+  "Powers/StormPower",
+  "Powers/StranglePower",
+  "Powers/SubroutinePower",
+  "Powers/SurroundedPower",
+  "Powers/TheSealedThronePower",
+  "Powers/VeilpiercerPower",
+  "Relics/ChemicalX",
+  "Relics/IntimidatingHelmet",
+  "Relics/MusicBox",
+  "Relics/PaelsEye",
+  "Relics/PenNib"
+ ],
+ "AfterCurrentHpChanged": [
+  "Monsters/Crusher",
+  "Monsters/Rocket",
+  "Powers/NecroMasteryPower",
+  "Relics/MeatOnTheBone",
+  "Relics/RedSkull"
+ ],
+ "BeforeDeath": [
+  "Monsters/Crusher",
+  "Monsters/Rocket",
+  "Powers/HeistPower",
+  "Powers/SwipePower"
+ ],
+ "AfterDamageReceived": [
+  "Monsters/LagavulinMatriarch",
+  "Powers/AsleepPower",
+  "Powers/CurlUpPower",
+  "Powers/FlameBarrierPower",
+  "Powers/FlutterPower",
+  "Powers/HardenedShellPower",
+  "Powers/InfernoPower",
+  "Powers/PersonalHivePower",
+  "Powers/PlowPower",
+  "Powers/ReflectPower",
+  "Powers/RupturePower",
+  "Powers/ShriekPower",
+  "Powers/SlipperyPower",
+  "Powers/SlumberPower",
+  "Powers/TheGambitPower",
+  "Relics/BeatingRemnant",
+  "Relics/CentennialPuzzle",
+  "Relics/DemonTongue",
+  "Relics/EmotionChip",
+  "Relics/LavaLamp",
+  "Relics/SelfFormingClay"
+ ],
+ "AfterCardChangedPilesLate": [
+  "Monsters/SoulFysh"
+ ],
+ "AfterTakingExtraTurn": [
+  "Powers/AmbergrisPower",
+  "Relics/PaelsEye"
+ ],
+ "AfterBlockGained": [
+  "Powers/BeaconOfHopePower",
+  "Powers/JuggernautPower"
+ ],
+ "AfterSideTurnStart": [
+  "Powers/BiasedCognitionPower",
+  "Powers/BlurPower",
+  "Powers/ClarityPower",
+  "Powers/CoolantPower",
+  "Powers/CountdownPower",
+  "Powers/DemonFormPower",
+  "Powers/DrawCardsNextTurnPower",
+  "Powers/FeralPower",
+  "Powers/FurnacePower",
+  "Powers/NeurosurgePower",
+  "Powers/NoxiousFumesPower",
+  "Powers/PlatingPower",
+  "Powers/PoisonPower",
+  "Powers/PrepTimePower",
+  "Powers/RampartPower",
+  "Powers/ReflectPower",
+  "Powers/ShadowStepPower",
+  "Powers/SlowPower",
+  "Powers/WraithFormPower",
+  "Relics/Akabeko",
+  "Relics/BigHat",
+  "Relics/BoomingConch",
+  "Relics/Bread",
+  "Relics/Brimstone",
+  "Relics/Candelabra",
+  "Relics/Chandelier",
+  "Relics/Crossbow",
+  "Relics/DiamondDiadem",
+  "Relics/DivineDestiny",
+  "Relics/FakeHappyFlower",
+  "Relics/FencingManual",
+  "Relics/HappyFlower",
+  "Relics/InfusedCore",
+  "Relics/Lantern",
+  "Relics/LetterOpener",
+  "Relics/OrangeDough",
+  "Relics/PaelsEye",
+  "Relics/PaelsFlesh",
+  "Relics/PaelsLegion",
+  "Relics/PaelsTears",
+  "Relics/PhylacteryUnbound",
+  "Relics/Pocketwatch",
+  "Relics/RunicCapacitor",
+  "Relics/Sai",
+  "Relics/SealOfGold",
+  "Relics/StoneCalendar",
+  "Relics/SymbioticVirus",
+  "Relics/VeryHotCocoa"
+ ],
+ "AfterStarsGained": [
+  "Powers/BlackHolePower"
+ ],
+ "AfterBlockCleared": [
+  "Powers/BlockNextTurnPower",
+  "Powers/SelfFormingClayPower",
+  "Powers/ToricToughnessPower",
+  "Relics/CaptainsWheel",
+  "Relics/HornCleat",
+  "Relics/SparklingRouge"
+ ],
+ "AfterBlockBroken": [
+  "Powers/BurrowedPower",
+  "Relics/HandDrill"
+ ],
+ "AfterStarsSpent": [
+  "Powers/ChildOfTheStarsPower",
+  "Relics/GalacticDust",
+  "Relics/MiniRegent"
+ ],
+ "AfterDamageGiven": [
+  "Powers/ConcoctPower",
+  "Powers/EnvenomPower",
+  "Powers/ImbalancedPower",
+  "Powers/MonarchsGazePower",
+  "Powers/PaperCutsPower",
+  "Powers/ReaperFormPower",
+  "Powers/SicEmPower",
+  "Powers/UnderworldPower"
+ ],
+ "AfterPlayerTurnStart": [
+  "Powers/CrimsonMantlePower",
+  "Powers/EntropyPower",
+  "Powers/HibernatePower",
+  "Powers/InfernoPower",
+  "Powers/LoopPower",
+  "Powers/RollingBoulderPower",
+  "Powers/SummonNextTurnPower",
+  "Powers/ToolsOfTheTradePower",
+  "Powers/TyrannyPower",
+  "Relics/Bellows",
+  "Relics/BoneTea",
+  "Relics/ChoicesParadox",
+  "Relics/EmotionChip",
+  "Relics/FestivePopper",
+  "Relics/GamblingChip",
+  "Relics/MercuryHourglass",
+  "Relics/MrStruggles",
+  "Relics/RoyalPoison",
+  "Relics/ToastyMittens",
+  "Relics/VexingPuzzlebox"
+ ],
+ "AfterEnergyReset": [
+  "Powers/EnergyNextTurnPower",
+  "Powers/GenesisPower",
+  "Powers/LightningRodPower",
+  "Powers/RadiancePower",
+  "Powers/SpinnerPower",
+  "Powers/StarNextTurnPower",
+  "Relics/ArtOfWar",
+  "Relics/FakeVenerableTeaSet",
+  "Relics/VenerableTeaSet"
+ ],
+ "BeforeCombatStart": [
+  "Powers/GalvanicPower",
+  "Powers/VitalSparkPower",
+  "Relics/Anchor",
+  "Relics/BeltBuckle",
+  "Relics/BoundPhylactery",
+  "Relics/Byrdpip",
+  "Relics/DelicateFrond",
+  "Relics/FakeAnchor",
+  "Relics/FakeSneckoEye",
+  "Relics/FurCoat",
+  "Relics/Kusarigama",
+  "Relics/LetterOpener",
+  "Relics/MeatOnTheBone",
+  "Relics/PaelsFlesh",
+  "Relics/PaelsLegion",
+  "Relics/Pantograph",
+  "Relics/PhylacteryUnbound",
+  "Relics/SneckoEye",
+  "Relics/TeaOfDiscourtesy",
+  "Relics/UnsettlingLamp",
+  "Relics/Vambrace"
+ ],
+ "BeforeAttack": [
+  "Powers/GigantificationPower",
+  "Powers/HellraiserPower",
+  "Powers/VigorPower"
+ ],
+ "AfterForge": [
+  "Powers/HammerTimePower"
+ ],
+ "AfterCardDrawnEarly": [
+  "Powers/HellraiserPower"
+ ],
+ "AfterAutoPrePlayPhaseEntered": [
+  "Powers/MayhemPower",
+  "Relics/HistoryCourse"
+ ],
+ "AfterEnergySpent": [
+  "Powers/OrbitPower"
+ ],
+ "AfterPowerAmountChanged": [
+  "Powers/PossessSpeedPower",
+  "Powers/PossessStrengthPower",
+  "Powers/SandpitPower",
+  "Powers/ShroudPower",
+  "Powers/SleightOfFleshPower",
+  "Powers/SwordSagePower",
+  "Powers/TemporaryDexterityPower",
+  "Powers/TemporaryFocusPower",
+  "Powers/TemporaryStrengthPower",
+  "Powers/ViciousPower",
+  "Powers/VitalSparkPower"
+ ],
+ "AfterCreatureAddedToCombat": [
+  "Powers/SandpitPower",
+  "Relics/FurCoat",
+  "Relics/PhilosophersStone"
+ ],
+ "AfterOstyRevived": [
+  "Powers/SandpitPower"
+ ],
+ "AfterSideTurnStartLate": [
+  "Powers/SandpitPower"
+ ],
+ "AfterShuffle": [
+  "Powers/StratagemPower",
+  "Relics/BiiigHug",
+  "Relics/TheAbacus"
+ ],
+ "BeforePotionUsed": [
+  "Powers/SurroundedPower"
+ ],
+ "BeforeDamageReceived": [
+  "Powers/ThornsPower"
+ ],
+ "AfterOrbEvoked": [
+  "Powers/ThunderPower"
+ ],
+ "AfterCombatVictory": [
+  "Relics/BeltBuckle",
+  "Relics/BlackBlood",
+  "Relics/BurningBlood",
+  "Relics/SwordOfStone",
+  "Relics/WarHammer"
+ ],
+ "AfterPotionDiscarded": [
+  "Relics/BeltBuckle"
+ ],
+ "AfterPotionProcured": [
+  "Relics/BeltBuckle"
+ ],
+ "AfterPotionUsed": [
+  "Relics/BeltBuckle",
+  "Relics/ReptileTrinket"
+ ],
+ "AfterRoomEntered": [
+  "Relics/BigMushroom",
+  "Relics/BronzeScales",
+  "Relics/BurningSticks",
+  "Relics/DataDisk",
+  "Relics/DivineRight",
+  "Relics/EmberTea",
+  "Relics/EternalFeather",
+  "Relics/FakeVenerableTeaSet",
+  "Relics/GhostSeed",
+  "Relics/Girya",
+  "Relics/Gorget",
+  "Relics/LavaLamp",
+  "Relics/LordsParasol",
+  "Relics/MawBank",
+  "Relics/MealTicket",
+  "Relics/Metronome",
+  "Relics/OddlySmoothStone",
+  "Relics/Pantograph",
+  "Relics/Permafrost",
+  "Relics/PhilosophersStone",
+  "Relics/Planisphere",
+  "Relics/RedSkull",
+  "Relics/RegalPillow",
+  "Relics/SilverCrucible",
+  "Relics/SlingOfCourage",
+  "Relics/StoneCalendar",
+  "Relics/StoneCracker",
+  "Relics/SwordOfJade",
+  "Relics/ThrowingAxe",
+  "Relics/Vajra",
+  "Relics/VelvetChoker",
+  "Relics/VenerableTeaSet",
+  "Relics/WingedBoots"
+ ],
+ "AfterPlayerTurnStartLate": [
+  "Relics/BloodVial",
+  "Relics/FakeBloodVial"
+ ],
+ "AfterFlush": [
+  "Relics/Bookmark"
+ ],
+ "AfterEnergyResetLate": [
+  "Relics/BoundPhylactery"
+ ],
+ "AfterGoldGained": [
+  "Relics/DragonFruit"
+ ],
+ "BeforeCombatRewardOffered": [
+  "Relics/LastingCandy"
+ ],
+ "AfterItemPurchased": [
+  "Relics/MawBank"
+ ],
+ "AfterCombatVictoryEarly": [
+  "Relics/MeatOnTheBone"
+ ],
+ "AfterOrbChanneled": [
+  "Relics/Metronome"
+ ],
+ "BeforeCombatStartLate": [
+  "Relics/PetrifiedToad"
+ ],
+ "AfterRestSiteHeal": [
+  "Relics/RegalPillow",
+  "Relics/StoneHumidifier"
+ ],
+ "AfterCardDiscarded": [
+  "Relics/Tingsha",
+  "Relics/ToughBandages"
+ ],
+ "AfterHandEmptied": [
+  "Relics/UnceasingTop"
+ ],
+ "AfterAutoPrePlayPhaseEnteredLate": [
+  "Relics/WhisperingEarring"
+ ]
+}
