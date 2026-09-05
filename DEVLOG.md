@@ -1518,3 +1518,42 @@ Affliction 系统、OrbModel 子类数据、StS2 ChecksumTracker/联机一致性
 3. StS1 宝箱三档概率字段值（loot-rewards 开放问题 1）
 4. StS2 OrbModel 子类数据层（Frost/Lightning 等价物数值）
 5. StS1 地图生成（大卷，chaosbridge 不急需）
+
+## 2026-09-05 (session 29 续2) — 用户点题：池架构/玩法不变量卷 + 池归属 lint + 方向总结
+
+用户以两起实机事故（Splash 候选集、AutoAnthony 对第三方角色失效）点题：KB 要丰富到
+"完整记录玩法机制、代码实现逻辑"的程度，使 asker 型 agent 能直接读出 bug——autoslay
+类机械冒烟在此类问题上零检出能力（两案均为用户实机揭示）。
+
+**事故原貌取证**（DEVLOG 保真）：
+- Splash（修复 #10，DEVLOG:740）：原实现 list.Remove(owner.CardPool) 按池**对象**排除；
+  SharedCardReuse 令"可调用集合"⊃"自己池对象"，移植 Defect 从"其他角色"选出自己已有
+  的官方 Defect 卡。修复 = SplashOwnSetSubtractPatch 按 Id.Entry 集合差。
+- AutoAnthony（Session 25，DEVLOG:1097）：ChaosCharacterMapping.From 类型门只认五个
+  引擎角色类；第三方角色（Placeholder 子类）不可见 → 零随机牌。桥接 = Spire1 桥 +
+  ChaosBridge 通用接管（池身份+池内容）。用户记忆中"工坊观者未建紫色池"为同根因的
+  早期表述（chaosbridge-design：AA 从不 swap WatcherCardPool）。
+
+**新增卷**：research/kb/pool-architecture.md —— I0 两代池架构（StS2 关键证据：
+ModelDb.AllCharacters 是硬编码 5 元素数组，ModelDb.cs:145；CardPoolModel.AllCardIds
+HashSet 天然支持集合差）；I1 可调用集合≠池对象；I2 池注册契约三条（角色注册/卡归属/
+容量——ROOM_FULL_OF_CHEESE ≥8 Common）；I3 颜色池不相交与"无色=共享"假设。
+每条含：陈述/vanilla 为何安全/mod 如何打破/正确模式/检测手段+冒烟盲区声明。
+
+**开发模式提升（卷内 G1-G4）**：
+- G1 KB 先行：跨池选牌类特性必须先写集合运算规格（全集/排除集/容量/第三方行为）。
+- G2 语义评审门（asker 位）：pool/registry 改动合入前对照不变量清单逐条提问。
+- G3 静态 lint：tools/pool-audit.mjs 落地（[Pool] 归属解析 + SharedCardReuse 孪生
+  白名单；兼容 C# 主构造函数；注意 [Pool] Inherited=true——归属可来自基类链）。
+  首跑基线：306 文件/310 类，全部可解析归属，0 孤儿；Spire1CardPool 8 直挂+31 孪生。
+- G4 冒烟边界声明：autoslay 检出域=崩溃/异常/资产缺失/覆盖增长；玩法语义偏差
+  （选错集合/第三方失效/错色错池）不在其检出域，不得以冒烟绿放行此类特性。
+
+**研究方向总结（用户两案 → KB 待办）**：
+D1 池架构与归属契约（已成卷）；D2 可调用集合语义（已成卷）；D3 引擎注册表可见性
+与第三方兼容层（chaosbridge-design 已有，卷内互链）；D4 池容量契约（已成卷）；
+D5 玩法语义不变量目录（卷已建立，今后每次"vanilla 安全假设被 mod 打破"的事故追加
+一条）；D6 开发模式四件套（已成卷）。
+后续深挖候选：①StS2 原生"跨池选牌"卡全量清单（哪些卡用了池并集/差集，逐一标注算
+法定义）；②ModHelper.ConcatModelsFromMods 的注册顺序与去重语义；③StS2
+ModelDb.AllCards 与 AllCharacters 的补丁注入点全景（BaseLib/ChaosBridge/AA 三方）。
