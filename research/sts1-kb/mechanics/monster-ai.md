@@ -65,9 +65,22 @@ vanilla 中 rollMove 的队列化包装只有一个（RollMoveAction）；`Reviv
 
 ---
 
+## 5b. 逐怪钩子面普查（数据层 v0，2026-09-05）
+
+**R13 全量 73 类扫描（tools/stS1-monster-scan.js → monsters-scan.json；含基类与 MonsterGroup 两个非怪噪声）** — 出处 javap 方法面签名。置信度：**高**（签名级）
+```
+rollMove 覆写：0 个怪物（唯一声明在基类）——vanilla 怪物全部走基类 rollMove=getMove(aiRng.random(99))，
+  "首掷在 usePreBattleAction/useUniversalPreBattleAction"由基类默认实现承担（universalPreBattle=1 即基类）
+changeState（阶段变形）：37；damage() 覆写：35；die() 覆写：46；
+usePreBattleAction 覆写：39；escape/escapeNext：5 只（GremlinFat/Thief/Tsundere/Warrior/Wizard）；
+heal 覆写：1；summon 特征：GremlinLeader
+```
+修正记录：R04 的"多数怪物在自身 takeTurn() 尾部自调 rollMove（中置信）"与此数据一致（调用继承版）；
+"覆写 rollMove 的怪物（如 AwakenedOne）"表述有误——AwakenedOne 自定义的是 getMove 内部逻辑，非 rollMove 本身。
+
 ## 6. 开放问题 / 低置信项
 
-1. 逐怪 takeTurn 尾部自调 rollMove 的比例未穷举（R04）。置信度：**中**。
+1. ~~逐怪 takeTurn 尾部自调 rollMove 的比例~~ 与 R13 数据合并后降级为常规事实（继承基类调用）；takeTurn 内部逐怪细节仍属数据层任务。
 2. `moveHistory` 上限（是否有裁剪）未取证。置信度：**低**。
 3. `EnemyMoveInfo` 第 4/5/6 参的准确语义（multiplier/isDefined）未逐字段核。置信度：**中**。
 4. ~~意图在 onModifyPower 是否刷新~~ **已结案**（R06）：刷新（经 applyPowers 内 calculateDamage）。"实伤快照 vs 意图显示可能短暂不一致"的具体场景未做运行时验证。置信度：**中**。
