@@ -1,0 +1,85 @@
+# 卡牌奖励生成管线（Card Reward Pipeline）— StS1 战斗语义知识库
+
+## 本卷范围
+战斗胜利后卡牌奖励的完整生成算法：池构建（initializeCardPools，含角色覆写点——chaosbridge 相关）、数量修正（relic/daily）、稀有度滚动（rollRarity + Blizzard 保底计数器的方向与钳制）、去重重试、升级掷骰、预览钩子。与 `../relics.json` 数据层互补。
+**图例**：置信度 **高**=字节码直接可证 / **中**=推断（注明）。基准 jar：desktop-1.0.jar v2.x。出处 `AbstractDungeon` / `AbstractRoom` javap 偏移。
+
+---
+
+## 1. 池构建（initializeCardPools）
+
+**R01 池清单与角色覆写点** — 出处 `AbstractDungeon#initializeCardPools`（方法头 offset 0-115）。置信度：**高**（结构）/ **中**（去重细节未逐行）
+五个池先 clear：`commonCardPool / uncommonCardPool / rareCardPool / colorlessCardPool / curseCardPool`（另有 `srcUncommonCardPool` 备份池）。随后：
+```
+CardLibrary.addColorlessCards（"Colorless Cards" 日替再放宽）；"Diverse" 日替 → addRed/Green/BlueCards 全色；
+"Watcher" 未解锁则跳过 addPurpleCards；
+★ player.getCardPool(list) —— AbstractPlayer 虚方法 = 角色卡池的引擎级覆写点
+  （chaosbridge 的 WatcherCardPool patch 与此处语义对应）；
+addColorlessCards() 再并入 colorlessCardPool / curseCardPool，最后按 rarity 字段
+分发进 common/uncommon/rare 池。
+```
+
+## 2. 奖励数量与逐槽生成（getRewardCards）
+
+**R02 数量决定链** — 出处 `AbstractDungeon#getRewardCards` offset 8-59。置信度：**高**
+`numCards = 3` → 遗物按**容器顺序**逐个 `changeNumberOfCardsInReward(n)`（可累乘/累加，实现自定）→ "Binary" 日替 -1。
+
+**R03 Blizzard 保底计数器（方向与钳制）** — 出处 offset 108-145 + 静态初始化（AbstractDungeon javap 行 610-626）：置信度：**高**
+```
+cardBlizzStartOffset=5, cardBlizzGrowth=1, cardBlizzMaxOffset=-40；战斗/初始化时 cardBlizzRandomizer=5
+本槽 roll 出 RARE → cardBlizzRandomizer = 5（重置）
+本槽 roll 出 UNCOMMON → 不变
+本槽 roll 出 COMMON → cardBlizzRandomizer -= 1；若 <= -40 → 钳为 -40
+```
+**R04 稀有度判定** — 出处 `AbstractDungeon#rollRarity(Random)` offset 0-33 + `AbstractRoom#getCardRarity(int,boolean)` offset 0-124 + `AbstractRoom#<init>` offset 108-116 + `MonsterRoomElite#<init>` offset 30-38。置信度：**高**
+```
+roll = cardRng.random(99) + cardBlizzRandomizer
+if (roll < rareCardChance)     → RARE    （遗物 changeRareCardRewardChance 可调；较 base 提高时 flash）
+else if (roll < uncommonCardChance) → UNCOMMON（changeUncommonCardRewardChance）
+else                            → COMMON
+阈值：普通战斗 baseRare=3 / baseUncommon=37；精英 10 / 40（alterCardRarityProbabilities 为日替钩子）
+```
+推论：初始 blizz=+5 时 roll ∈ [5,104] ⇒ **开战首张不可能 RARE**（roll<3 需 blizz 先降）；连续 COMMON 把 blizz 推向 -40，roll 下探进入稀有区间——保底方向与 wiki 口传一致且现在有精确系数。
+
+**R05 逐槽抽取与去重重试** — 出处 `getRewardCards` offset 159-250。置信度：**高**
+```
+do { retry=false;
+     card = hasRelic("PrismaticShard") ? CardLibrary.getAnyColorCard(rarity)
+                                       : getCard(rarity)      // 按池 getRandomCard(useRng=true)
+     若本批已有相同 cardID → retry=true 重抽
+   } while (retry);
+   card != null → 加入本批
+```
+
+**R06 复制/升级/预览段** — 出处 offset 271-427。置信度：**高**
+```
+逐个 makeCopy() 为返回列表；
+if (copy.rarity != RARE && cardRng.randomBoolean(cardUpgradedChance) && canUpgrade()) → copy.upgrade()
+   ⇒ RARE 奖励卡永不走此自动升级；
+逐 copy 调 relics.onPreviewObtainCard(copy)（遗物梯，容器序）
+```
+`cardUpgradedChance` 为 per-dungeon 静态字段（各幕构造器赋值，本卷未枚举具体值——开放问题 2）。
+
+**R07 无 RNG 变体** — 出处 `getCardWithoutRng` offset 0-84。置信度：**高**
+同分派但 `getRandomCard(false)`（不消耗 RNG），RARE 槽在无 RNG 场景改从 `returnRandomCurse()` 取诅咒池。
+
+---
+
+## 3. 仲裁案例表
+
+| 场景 | 结局 | 依据 |
+|---|---|---|
+| 战斗开局第一张奖励（无任何影响） | RARE 不可能（blizz=+5），UNCOMMON/COMMON 分界 37 | R04 推论 |
+| 连续多张 COMMON | blizz 递减 → 后续 roll 整体下移 → RARE/UNCOMMON 概率上升 | R03/R04 |
+| 精英战后 | rare/unc 阈值 10/40，且 blizz 计数器延续全局 | R04 |
+| 问号牌屋/Prismatic Shard | 抽取改走全色库，稀有度流程不变 | R05 |
+| 重复 cardID | 同槽重抽（去重循环），池空则可返回 null → 该槽被跳过（列表少一张） | R05 |
+| RARE 卡 + 高升级概率遗物 | 不自动升级（RARE 被显式排除） | R06 |
+| 你的影响奖励数量遗物 | 按遗物容器顺序链式修改 | R02 |
+
+## 4. 开放问题 / 低置信项
+
+1. `initializeCardPools` 中 srcUncommonCardPool 备份的消费方（transform/去重辅助）未穷举。置信度：**中**。
+2. 各幕 `cardUpgradedChance` 具体值（Exordium/City/Beyond 构造器）未取证。置信度：**未定**。
+3. `changeNumberOfCardsInReward` 的 vanilla 实现者清单未枚举（Question Card? 类）。
+4. Boss/商店/事件的奖励生成走 `RewardItem` 其他分支，本卷只覆盖战斗胜利卡池路径。置信度：**范围声明**。
