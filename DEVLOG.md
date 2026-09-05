@@ -1627,3 +1627,5 @@ ModelDb.AllCards 与 AllCharacters 的补丁注入点全景（BaseLib/ChaosBridg
   深度语义（双人同时选择/跳过的合并规则）留作 I15 专卷。
 - **队列**：①I15 联机奖励分配专卷 ②StS1 剩余事件抽查（12 个）③StS1 逐怪数据层 v1
   （getMove 内部语义，非本会话）④不变量回填（待下次实机事故）。
+- 续3十一补：I15 联机奖励分配（每玩家独立 rewardsStack 三态机、双入口纪律、
+  OnSkipped 语义、乱序缓冲）。提交后推送。
