@@ -1638,3 +1638,5 @@ ModelDb.AllCards 与 AllCharacters 的补丁注入点全景（BaseLib/ChaosBridg
   两处 ldc 提取待人工复核）。工具 stS1-event-cards.js。提交后推送。
 - 续3十五补：R11 定稿（DrugDealer=J.A.X.；NoteForYourself=pref 驱动赠卡默认
   Iron Wave——跨局偏好机制，独特模式）。工具正则修正（允许点号）。提交后推送。
+- 续3十六补：loot-rewards L12 遗物掉落池（五池弹头式、三级降级链→Circlet、
+  remove(0) 实证）。开放问题 3 结案。提交后推送。
