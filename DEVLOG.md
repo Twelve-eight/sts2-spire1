@@ -1585,3 +1585,8 @@ ModelDb.AllCards 与 AllCharacters 的补丁注入点全景（BaseLib/ChaosBridg
   下一方向（按序）：①DualWield 定向验证+修复（实现会话：控制台 card play → 补两键 → 冒烟）
   ②不变量目录继续扩充（StS2 联机池快照、事件卡牌来源审计）
   ③G2 清单与 tools 的联动已闭环，等待下一次实机事故回填。
+- **勘误（06f343a 段）**：DualWield"缺键即炸"为 lint 误报——卡牌 loc id 分隔符是下划线
+  （SPIRE1-DUAL_WIELD，键两语言都在），连字符是 events 域习惯。ForeignInfluence/Wish
+  走 3 参 FromChooseACardScreen（横幅=通用 CHOOSE_CARD_HEADER）不需要键。审计器已改
+  （I7 只约束直读 SelectionScreenPrompt 的卡），门全绿。教训入 research-methods M18
+  （宣告发现前先从存量键反推命名约定）。提交 8b7cf57。
