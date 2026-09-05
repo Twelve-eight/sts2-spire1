@@ -1489,3 +1489,32 @@ Kill/ShouldDie+preventer+递归 10（StS2 免死形态）；PowerCmd 三态叠�
 **状态**：持续工作中（用户未叫停）。下一批候选：StS1 逐怪行为数据层、StS2
 Affliction 系统、OrbModel 子类数据、StS2 ChecksumTracker/联机一致性、 relics.json
 与 relic-triggers.md 对账。
+
+## 2026-09-05 (session 29 续) — KB 持续深化第 3 批（主会话单线，仍在继续）
+
+新增卷（提交 3df6f61..32a1ea9）：
+- mechanics/card-rewards.md R01-R07：奖励卡池全序。Blizzard 保底精确常数
+  （StartOffset=5/Growth=1/MaxOffset=-40；COMMON 递减、RARE 重置、UNCOMMON 不变；
+  roll=cardRng.random(99)+blizz ⇒ 开战首张奖励不可能 RARE）。阈值：普通 3/37、
+  精英 10/40（MonsterRoomElite ctor 直证）。RARE 不走自动升级骰。
+  player.getCardPool = 角色卡池引擎覆写点（chaosbridge 对应）。
+- kb/sts2-hook-matrix.md + scan-sts2-hooks.mjs + JSON：62/71 钩子的实现者全名单。
+  架构结论：StS2 分发=遍历全模型调虚方法，无容器/插入序——次序由 Early/Late 变体
+  钩子显式表达（14 个变体清单）。免费系挂 BeforeCardPlayed、计数遗物族挂
+  AfterCardPlayed（每遍 playCount 一次）；Poison/DemonForm 在 StS2 挂
+  AfterSideTurnStart；BiasedCognition 在 StS2 是 Power。
+- kb/sts2-afflictions.md F01-F04：ShouldAfflict 引擎钩子 + 类型白名单 + Unplayable
+  默认拒；一卡一附灵同类型叠数值（与附魔同构）；OnPlay 在附魔之后；
+  Hexed 示范"附灵卡面层 + Power 结算层"双件套。7 个 vanilla 附灵清单。
+- mechanics/loot-rewards.md L01-L07：药水稀有度 65/25/10（potionRng）；宝箱
+  treasureRng；商店价 = getPrice(rarity) × merchantRng.random(0.9,1.1)，基础价
+  50/75/150/9999；四 RNG 流分账重申。
+
+索引：mechanics/ 250 条；kb/README 补 hook-matrix 与 afflictions 行。
+
+下一批候选（按价值排序）：
+1. StS2 玩家回合 SetupPlayerTurn 逐行（能量重置/抽牌数/开场球触发的确切顺序）
+2. StS1 各幕 cardUpgradedChance 具体值（card-rewards 开放问题 2）
+3. StS1 宝箱三档概率字段值（loot-rewards 开放问题 1）
+4. StS2 OrbModel 子类数据层（Frost/Lightning 等价物数值）
+5. StS1 地图生成（大卷，chaosbridge 不急需）
