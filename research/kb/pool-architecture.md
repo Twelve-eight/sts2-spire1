@@ -13,6 +13,15 @@
 **I0b StS2** — 出处 `Models/CardPoolModel.cs`、`Models/ModelDb.cs`。置信度：**高**
 `CardPoolModel` 抽象基类（`AllCards = GenerateAllCards() + ModHelper.ConcatModelsFromMods`，`AllCardIds` 是 HashSet 供 O(1) 归属查询）；`CharacterModel.CardPool` 为抽象属性（行 105）——**每角色必须给出一个池对象**。`ModelDb.AllCharacters` 在 vanilla 是**硬编码 5 元素数组**（Ironclad/Silent/Regent/Necrobinder/…行 145-150），第三方角色靠 Harmony patch（BaseLib 系）注入；`ModelDb.AllCards` = 全池并集 ∪ 全角色起始牌组（Distinct）。
 
+**I0b+ 池内容注册通道（2026-09-05 补充，关闭本卷开放问题 3）** — 出处 `MegaCrit.Sts2.Core.Modding/ModHelper.cs#AddModelToPool/#ConcatModelsFromMods`。置信度：**高**
+```
+AddModelToPool(poolType, modelType): 登记进 _moddedContentForPools[poolType].modelsToAdd（List<Type>）
+  若该池已 isFrozen → 抛 InvalidOperationException("too late! add content before the game is initialized")
+ConcatModelsFromMods(poolModel, pool): 首次访问该池时置 isFrozen=true（冻结），随后
+  pool.Concat(modelsToAdd 按 ModelDb.GetById 解析的实例)
+```
+⇒ 三条仲裁事实：①**注册时序契约**——AddModelToPool 必须发生在该池首次 `AllCards` 访问之前（与 chaosbridge 笔记"初始化期不能枚举 AllCharacters"同族：内容注册 vs 首次枚举的竞态）；②追加序 = 注册序，mod 卡排在官方卡之后（随机均匀性不受影响，顺序敏感消费者会感知）；③跨池重复卡在单池视角合法存在、本层不去重（I3 的机制根源；全局 Distinct 只在 ModelDb.AllCards）。BaseLib 的 `[Pool]` 属性 + ContentPatches（`GetCustomAttribute<PoolAttribute>() ?? throw`，Attribute 的 Inherited=true ⇒ 走基类链解析）只是该引擎通道的**发现层**——GA 事故即"链上解析到了错误归属"，池归属 lint（tools/pool-audit.mjs）必须复刻同样的继承链语义。
+
 ## 2. 不变量 I1：可调用集合 ≠ 池对象（Splash 事故）
 
 **陈述**：任何"从其他角色选牌"类机制，候选集必须是**集合差**——`全体可获取卡牌 − 当前角色可调用集合`（按卡牌 Id 计算）——而不是"全体池对象列表减去 owner 的池对象"。
@@ -50,4 +59,4 @@
 
 1. 工坊观者未建紫色池的动机（偷懒 vs 色号耗尽顾虑）未与作者求证——chaosbridge 用"接管既有池"绕开而非回答该问题。
 2. StS1 `getCardPool` 覆写点的全部 vanilla 调用方未穷举（奖励/商店/事件各一处已证）。
-3. StS2 `ModHelper.ConcatModelsFromMods` 的注册顺序与去重语义未逐行展开（第三方卡进池的官方通道）。
+3. ~~ModHelper.ConcatModelsFromMods 语义~~ **已结案**（2026-09-05，I0b+）：追加序=注册序、首次访问即冻结、AddModelToPool 冻结后抛异常、本层不去重。置信度：**高**。
