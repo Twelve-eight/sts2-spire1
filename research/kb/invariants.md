@@ -62,7 +62,16 @@
 **为何重要**：直读 AllCards 的代码会（a）把未解锁/错误纪元的卡发给玩家；（b）在联机局发单人限定卡（或反之）——两类都无异常、纯语义错误，冒烟不可见。
 **正确做法**：一切候选集/赠卡/变形入口走 GetUnlockedCards 并传入运行真实 constraint（各 vanilla 调用点均传 `RunState.CardMultiplayerConstraint`）；移植卡的 `MultiplayerConstraint` 若未声明默认 None（恒可用）——如需限定必须显式。
 **检测**：评审 grep `.AllCards` 的消费点（ModelDb.AllCards 的 Distinct 全集另有用途，区分对待）；跨对照 invariants I4（联机状态一致性）。
-**出处**：`Entities.Cards/CardMultiplayerConstraint.cs`（枚举全量）+ `Models/CardPoolModel.cs#GetUnlockedCards/#FilterThroughEpochs`。置信度：**高**。
+**出处**：`Entities.Cards/CardMultiplayerConstraint.cs`（枚举全量）+ `Models/CardPoolModel.cs#GetUnlockedCards/#FilterThroughEpochs` + 约束推导 `Runs/IRunState.cs`（`Players.Count <= 1 → SingleplayerOnly，否则 MultiplayerOnly`）。置信度：**高**。
+
+## I12 联机同步拓扑：一切跨端状态变更走专用 Synchronizer；checksum 纪律不容绕过
+
+**陈述**：StS2 联机把"跨端可达的状态变更"全部收敛到 `Multiplayer.Game/*Synchronizer` 专用通道：ActChange、Event、EventCombat、Flavor、MapSelection(+Vote)、Reward、RewardsSet、RestSite、TreasureRoomRelic、Reaction、OneOff（`MegaCrit.Sts2.Core.Multiplayer.Game/` 全目录）+ 战斗态 `Multiplayer/CombatStateSynchronizer`。任何**绕过 Synchronizer 直改共享状态**的补丁=单侧生效（I4 的机制根源）。
+**checksum 纪律**（`ChecksumTracker.cs`）：宿主/客户非对称——client 生成后发 `ChecksumDataMessage`，host 接收比对（行 119-140）；每端维护**最近 20 条** TrackedChecksum 滚动窗（行 180-186），按 id 配对、乱序进队列等待、过期 divergence 报错（行 205-211）；分歧经 `StateDivergenceMessage`/`StateDivergenceException` 显式化。指纹上下文 = action 类型名或上下文字符串（行 168-170）。CombatManager/回合机在每段变更后插桩（"After player turn phase one end" 等，turn-machine 卷 T06）。
+**mod 内容一致性边界**：引擎只同步**状态**；池**内容**一致性由"两端装同一套 mod"保证（DEVLOG 实录：双方 BaseLib 同版本号不同构建源仍完成整场战斗，但分装包 character.txt 只影响可见性；BaseLib 构建源不一是真实隐患）。第三方随机池 mod（AutoAnthony）自带 host-authoritative 池快照与 regenerate 校验（chaosbridge-design.md），引擎不管 mod 池的同步。
+**正确做法**：我方补丁联机三查（per-player 上下文/无静态单例/走 Cmd+Synchronizer）；新增跨端可见行为必须新建或复用 Synchronizer 而非本地直改。
+**检测**：代码评审（直改 pile/_powers 的补丁模式）；联机最小集复测 + checksum 日志比对（`.tmp/p1-smoke` 流程）。**冒烟为何测不出**：autoslay 单机；checksum 只在真双人局活跃。
+**出处**：`Multiplayer.Game/ChecksumTracker.cs`（全文 303 行）+ Synchronizer 目录清单。置信度：**高**。
 
 ---
 
