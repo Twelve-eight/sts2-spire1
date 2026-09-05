@@ -1606,3 +1606,7 @@ ModelDb.AllCards 与 AllCharacters 的补丁注入点全景（BaseLib/ChaosBridg
 - 续3五补：StS1 逐怪钩子面普查数据层 v0（73 类；0 怪物覆写 rollMove/首掷由基类
   universalPreBattle 承担；逃逸家族=5 Gremlin；changeState 37/damage 35/die 46/
   preBattle 39；GremlinLeader summon）。工具 stS1-monster-scan.js + JSON。提交 47f4c99。
+- 续3六补：T06 结案（checksum 插桩点全量：CombatManager 五处+EventRoom+RestSite+
+  RunManager action 级）；kb/sts2-mock-testing.md T1-T3（46 官方 Mock 类分布、
+  Mock=真实模型子类的测试哲学、TestMode 表现层闸门、本项目 Mock→控制台→冒烟
+  三层验证策略）。提交 4d208f6/75473ef。
