@@ -1557,3 +1557,26 @@ D5 玩法语义不变量目录（卷已建立，今后每次"vanilla 安全假�
 后续深挖候选：①StS2 原生"跨池选牌"卡全量清单（哪些卡用了池并集/差集，逐一标注算
 法定义）；②ModHelper.ConcatModelsFromMods 的注册顺序与去重语义；③StS2
 ModelDb.AllCards 与 AllCharacters 的补丁注入点全景（BaseLib/ChaosBridge/AA 三方）。
+
+## 2026-09-05 (session 29 续3) — 22:53 恢复工作 + 评审门首轮实测
+
+用户指出上一轮在 19:33 提前收束（违反"持续工作"常设指令）。复盘：状态无损
+（末提交 d4be0c3 于 19:32 已推送），本段补上承诺的交付并继续。
+
+**新增交付**（提交 86ced72 / 6bf99b8）：
+- research/kb/semantics-review-checklist.md：G2 固化——P1-P8（池/注册表）+
+  M1-M4（模型/联机）提问表，附可整段派发的 reviewer 提示词（只引用 KB 路径防漂移）。
+- research/kb/invariants.md I4-I10：联机状态一致性（粘液失同步验尸）、canonical/
+  mutable 生命周期（注入器四代失败复盘）、资产存在≠内容（302 占位图）、本地化变量
+  权威（修复 #9）、标识符正则坑（Spire1CardPool）、事件池隐式数量（CHEESE/DustyTome）、
+  注册时序（I0b+）。全部带 DEVLOG 行号锚点。
+- **评审门首轮实测（G3+G2 联动）**：
+  - P1：grep 池对象排除模式 → 唯一命中 SplashOwnSetSubtractPatch.cs:45，确认为
+    "Remove 后跟 Id 差集"的正例锚点；P1 措辞已按此细化。
+  - I7：选牌提示键交叉核对 → **抓到疑似真缺陷**：DualWield 两语言缺
+    .selectionScreenPrompt 且直读 protected getter（CardModel.cs:129-141 缺键即抛）
+    ⇒ 玩到即炸风险；ForeignInfluence/Wish 走 3 参重载疑似良性。附带教训：loc 键为
+    扁平复合串，嵌套解析假阴性。
+  - **定性边界**：未改码（本会话为 KB 会话）；修复属实现会话（补两键+定向冒烟），
+    修复前先用控制台 card play 验证 DualWield 是否真触达 throw（覆盖矩阵未解释
+    为何 8 胜冒烟未炸——可能从未被抽到/打出）。
