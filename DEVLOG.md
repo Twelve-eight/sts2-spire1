@@ -1445,3 +1445,47 @@ Kill/ShouldDie+preventer+递归 10（StS2 免死形态）；PowerCmd 三态叠�
 - 提交 63a9841 里混入了 docs/CODE-REVIEW-20260904.md——另一会话的进行中审阅报告，
   被 git add -A 顺带提交，非本会话产出；未改动其内容，请相关会话知悉。
 - KB 规则总数：mechanics/ 119→202 条。
+
+## 2026-09-05 (session 29) — KB 持续深化第 2 批：全量矩阵 + StS2 四卷 + 方法卷（主会话单线，持续工作中）
+
+用户指令：主会话单线程研究知识库，在要求停止前持续工作。追加要求：研究中遇到的
+实际问题与方法（内联转义等）也要记录。
+
+**新增卷（8 篇，提交 dc193cf..d48be1f）**：
+- research/kb/research-methods.md M1-M17：方法与实录坑（javap 别走 -cp；unzip 通配符
+  不跨目录 + 清单 CRLF 陷阱；MSYS 反斜杠/ugrep 怪癖/Node 内联转义→落文件；常量池扫描
+  法及其"引用≠调用"局限；钩子扫描必须签名正则（子串污染实录）；双钩子复核；FIFO/
+  构造期 vs 执行期时序推导；onModifyPower 全局刷新枢纽；随机源分账；StS2 C# 工作流；
+  自检纪律 M15-M17）。工具固化 research/sts1-kb/scan-hooks.mjs。
+- mechanics/power-lifecycle.md R01-R12：161 power 全量钩子矩阵。要点：毒在持有者
+  自己回合开始结算；Metallicize/PlatedArmor/LikeWater 只挂 PreEndTurnCards（金属化
+  格挡能挡悔恨）；Equilibrium/Ritual/Malleable 双钩子各司其职；justApplied 9 家族；
+  DoubleDamagePower 在 give 层。
+- mechanics/relic-triggers.md R01-R16：190 遗物全量钩子矩阵。要点：规则位 boss 遗物
+  （Sozu/Ectoplasm/BustedCrown/FusionHammer/RunicDome/CoffeeDripper）零战斗钩子=
+  引擎 hasRelic 查询建模；MarkOfPain 真实挂点 atBattleStart（常量池"引用≠调用"实证）。
+- mechanics/turn-control.md R01-R06：ScryAction 全序（onScry→选顶 N 张→确认→
+  moveToDiscardPile→弃牌堆 triggerOnScry 直调）；skipMonsterTurn 消费者全集
+  （Vault 使 applyEndOfTurnPowers 整段跳过 ⇒ 玩家 debuff 该轮不递减）；
+  callEndTurnEarlySequence 绕过哨兵链（TimeWarp/Vault 类回合尾少跑一整段）。
+- kb/sts2-card-play.md C01-C06：手动出牌先扣资源再 OnPlay（与 StS1 相反）；
+  星星按 1:2 抵超额能量钩子；OnPlayWrapper 主循环（playCount 循环重跑=复制品模型、
+  附魔 OnPlay 在卡效果后、ResultPile 分流 None/Exhaust/Add）；AutoPlay 免费且 X 捕获
+  全部能量。
+- kb/sts2-monster-ai.md A01-A07：显式 FSM（ConditionalBranch 按序取首个真分支、
+  首个 move 锁初始状态、RunRng.MonsterAi 独立流）；进场即 RollMove；敌人回合循环
+  逐怪间 CheckWinCondition；AmountOnTurnStart 快照；ShouldClearBlock preventer
+  （Barricade=preventer 钩子非特判）；CheckForEmptyHand 延迟检查设计注记。
+- kb/sts2-combat-turn-machine.md T01-T08：PlayerTurnPhase 全集；回合循环持有
+  CombatTurnState 快照（跨战斗防串扰）；EndTurnSignal 等待 RunningAction 完成 +
+  陈旧信号防护；回合尾两段式（AutoPostPlay→回合尾卡→Ethereal(ShouldEtherealTrigger)
+  →BeforeFlush→Flush(ShouldFlush 总闸+逐卡 retain)→AfterSideTurnEnd）。
+- kb/sts2-orbs-enchantments.md O01-O07：Channel 自动加首槽+满槽先 EvokeNext；
+  EvokeNext/Last/dequeue:false 与 StS1 激发家族一一映射；TriggerPassive 的
+  ModifyOrbPassiveTriggerCount=Cables 泛化、ModifyOrbValue=Focus 泛化（无冻结回落
+  问题）；附魔一卡一枚、同类型叠数值、伤害计算最外层、OnPlay 在卡效果后。
+
+**索引更新**：mechanics/ 202→236 条；kb/README 新增 6 行索引。
+**状态**：持续工作中（用户未叫停）。下一批候选：StS1 逐怪行为数据层、StS2
+Affliction 系统、OrbModel 子类数据、StS2 ChecksumTracker/联机一致性、 relics.json
+与 relic-triggers.md 对账。

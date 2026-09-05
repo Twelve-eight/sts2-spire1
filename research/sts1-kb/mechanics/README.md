@@ -31,8 +31,11 @@ wiki（slay-the-spire.fandom.com）仅作交叉佐证；HTML 页 403，经 `api.
 | [energy-cost.md](energy-cost.md) | 10 | 能量三变量模型、**每回合重置点=PlayerTurnEffect 构造器**（勘误 turn-phase R02）、开局发放链、hasEnoughEnergy 七道门、费用生命周期与 Confusion/Madness、freeToPlay/X 费 |
 | [potions-combat.md](potions-combat.md) | 6 | 药水点击即同步 use()（非队列化）、PotionPopUp 结算序、SmokeBomb 同步置位、妖精自动使用不触发 onUsePotion、药水槽销毁 |
 | [monster-ai.md](monster-ai.md) | 10 | rollMove/getMove/aiRng、moveHistory 写入与 lastMove 族读取、setMove 家族、意图数字管线与**onModifyPower 即时重算意图**（实伤快照可能与显示不一致）、monsterQueue 调度、escape 语义 |
+| [power-lifecycle.md](power-lifecycle.md) | 12 | 全量 161 power 类按钩子归档：回合四时点成员清单、justApplied 9 家族、双钩子 power（Equilibrium/Ritual/Malleable）、伤害/格挡钩子使用者、叠层定制 |
+| [relic-triggers.md](relic-triggers.md) | 16 | 全量 190 遗物类按钩子归档：开场两段/回合两段/计数族/受击族/胜利链；规则位 boss 遗物零钩子=引擎查询建模 |
+| [turn-control.md](turn-control.md) | 6 | 窥视 ScryAction 全序（triggerOnScry 扫尾）、skipMonsterTurn 消费者全集（Vault 连玩家 debuff 递减一起跳过）、callEndTurnEarlySequence 绕过哨兵链 |
 
-合计 **202 条编号规则**，每条独立可引用（`文件名 Rnn`），可直接用于移植仲裁。
+合计 **236 条编号规则**，每条独立可引用（`文件名 Rnn`），可直接用于移植仲裁。
 
 ## 用户示例问题的确定性答案（验收项）
 
