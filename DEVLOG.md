@@ -1596,3 +1596,6 @@ ModelDb.AllCards 与 AllCharacters 的补丁注入点全景（BaseLib/ChaosBridg
   pool-architecture(I0b+)、cross-pool(C 系列)、event-pool-usage(E 系列)、
   invariants(I4-I11)、semantics-review-checklist(P/M/I11 三套提问)、
   tools/{pool-audit,semantics-audit}.mjs。全部已推送。
+- 续3三补：StS1 事件赠卡普查（R08-R09，56 事件类；getCopy 指定卡为主/池随机为辅，
+  与 StS2 CreateForReward 范式对照）+ 工具 stS1-event-pool-usage.js。提交 244a67d。
+  注：本轮 node -e 内联第三次踩坑后已全部改落文件脚本（M5 纪律执行）。
