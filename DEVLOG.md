@@ -1590,3 +1590,9 @@ ModelDb.AllCards 与 AllCharacters 的补丁注入点全景（BaseLib/ChaosBridg
   走 3 参 FromChooseACardScreen（横幅=通用 CHOOSE_CARD_HEADER）不需要键。审计器已改
   （I7 只约束直读 SelectionScreenPrompt 的卡），门全绿。教训入 research-methods M18
   （宣告发现前先从存量键反推命名约定）。提交 8b7cf57。
+- 续3再补：I11 候选集双重过滤契约（解锁态+联机约束；GetUnlockedCards 唯一规范入口，
+  直读 AllCards 双漏）。评审清单加 I11 行。提交 0d13fca。
+  KB 状态小结（本日 19:33-23:0x 连续段）：新增/修正 research-methods(M18/M19)、
+  pool-architecture(I0b+)、cross-pool(C 系列)、event-pool-usage(E 系列)、
+  invariants(I4-I11)、semantics-review-checklist(P/M/I11 三套提问)、
+  tools/{pool-audit,semantics-audit}.mjs。全部已推送。
