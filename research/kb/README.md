@@ -11,6 +11,7 @@
 | sts2-hook-matrix.md | StS2 钩子实现矩阵（62/71 钩子，扫描器 scan-sts2-hooks.mjs + JSON）：早/晚相位变体体系、出牌/回合/伤害各族名单、StS1 顺序依赖的移植警示 | 源码重导出或新结案时追加 |
 | sts2-afflictions.md | StS2 负面附灵卷 F01-F04：施加门序（ShouldAfflict 钩子/类型白名单/Unplayable 门）、一卡一附灵、OnPlay 位置（附魔后）、逻辑旁挂 Power 的双件套模式、7 个 vanilla 附灵清单 | 源码重导出或新结案时追加 |
 | pool-architecture.md | 卡池架构与玩法语义不变量卷 I0-I3/G1-G4：两代池架构、可调用集合≠池对象（Splash 案）、池注册契约与引擎注册表可见性（AutoAnthony/GA 案）、颜色池不相交假设、开发模式提升（KB 先行规格/语义评审门/静态 lint/冒烟边界） | 每次池/注册表相关事故或特性后追加 |
+| sts2-cross-pool-cards.md | StS2 用池卡普查 C01-C06：26 张四分类（唯一原生跨池=Splash）、Splash 原生池对象排除模式精读（含 Count>1 护栏与文本差异）、VisualCardPool 纯显示、移植五规则 | 源码重导出或新结案时追加 |
 | research-methods.md | KB 研究方法与实录坑 M1-M17：javap/unzip/MSYS/ugrep/Node 坑、常量池扫描法、签名正则、时序推导、StS2 C# 工作流、自检纪律 | 每遇新坑/新方法即追加 |
 | pitfalls.md | 陷阱模式库 P-01..P-10：症状/根因/修复/预防 四段式 | 每个结案 bug 追加一条 |
 | debug-protocols.md | 取证 SOP：冻结协议、divergence 对拍、drain 管线、控制台、良性噪音清单 | 协议变化时更新 |
