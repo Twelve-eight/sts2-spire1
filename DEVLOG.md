@@ -1629,3 +1629,6 @@ ModelDb.AllCards 与 AllCharacters 的补丁注入点全景（BaseLib/ChaosBridg
   （getMove 内部语义，非本会话）④不变量回填（待下次实机事故）。
 - 续3十一补：I15 联机奖励分配（每玩家独立 rewardsStack 三态机、双入口纪律、
   OnSkipped 语义、乱序缓冲）。提交后推送。
+- 续3十二补：I2c 容量基线表（vanilla 五角色池 90-91、共享池 65/18/28/4/13/1；
+  我方 mod 池对照）+ I0c 起始牌组构成（三回归角色与 StS1 完全一致；
+  Regent=FallingStar+Venerate、Necrobinder=Bodyguard+Unleash）。提交后推送。
