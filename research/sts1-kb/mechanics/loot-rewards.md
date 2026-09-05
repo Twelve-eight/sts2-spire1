@@ -60,7 +60,7 @@ RARE:     rareRelicPool.isEmpty() → key = "Circlet"（占位遗物兜底）
 
 ## 6. 开放问题 / 低置信项
 
-1. ~~三档宝箱概率字段~~ **部分结案**（2026-09-05 Exordium ctor 直证）：small=50 / medium=33 / large=17（TheCity/TheBeyond 同构位常数一致；TheEnding 未逐字段终验）。置信度：**高**（三幕）/ **中**（TheEnding）。
+1. ~~三档宝箱概率字段~~ **全量结案**（2026-09-05 四幕构造器直证）：Exordium/TheCity/TheBeyond = small 50 / medium 33 / large 17；**TheEnding = 0 / 100 / 0**（只出中箱；同 ctor：treasureRoomChance=0、eventRoomChance=0.22、eliteRoomChance=0.08）。置信度：**高**。
 2. 商店遗物/药水位与 OnSaleTag 的完整公式未逐行展开。
 3. ~~returnRandomRelic 族~~ **已结案**（L12）。
 4. BASIC 牌 getPrice 位（普通卡组牌不入店，理论 9999 或 50 未终验）。
