@@ -56,6 +56,14 @@
 **正确做法**：ChaosBridge 模式——对每个后续装配的程序集增量扫描注册；不假设加载顺序（无依赖边时顺序随用户 mod 列表，engine-facts.md 行 27）。
 **检测**：多 mod 组合冒烟（桥接日志行断言，如 "AutoAnthony bridge: X -> Y"）。
 
+## I11 候选集双重过滤契约：任何池读取必须过 GetUnlockedCards（解锁态 + 联机约束）
+
+**陈述**：StS2 池读取的规范入口是 `pool.GetUnlockedCards(unlockState, CardMultiplayerConstraint)`——内部做两件事：`FilterThroughEpochs`（解锁/纪元门，虚方法）+ 按运行类型的 `MultiplayerConstraint` 互斥过滤（None/MultiplayerOnly/SingleplayerOnly 三态，CardPoolModel.cs 行 101-116）。绕过它直读 `AllCards` 会同时漏掉两层。
+**为何重要**：直读 AllCards 的代码会（a）把未解锁/错误纪元的卡发给玩家；（b）在联机局发单人限定卡（或反之）——两类都无异常、纯语义错误，冒烟不可见。
+**正确做法**：一切候选集/赠卡/变形入口走 GetUnlockedCards 并传入运行真实 constraint（各 vanilla 调用点均传 `RunState.CardMultiplayerConstraint`）；移植卡的 `MultiplayerConstraint` 若未声明默认 None（恒可用）——如需限定必须显式。
+**检测**：评审 grep `.AllCards` 的消费点（ModelDb.AllCards 的 Distinct 全集另有用途，区分对待）；跨对照 invariants I4（联机状态一致性）。
+**出处**：`Entities.Cards/CardMultiplayerConstraint.cs`（枚举全量）+ `Models/CardPoolModel.cs#GetUnlockedCards/#FilterThroughEpochs`。置信度：**高**。
+
 ---
 
 ## 维护规则

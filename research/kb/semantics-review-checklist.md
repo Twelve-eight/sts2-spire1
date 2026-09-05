@@ -25,6 +25,7 @@
 | M1 | 是否直接使用 canonical 模型做战斗操作？ | Obtain/CloneCard/入堆前必须 `ToMutable()`；canonical 直传 = "used in incorrect place" | 无 canonical 直用 |
 | M2 | 联机状态：改动是否引入"单侧生效"的牌堆/状态变更？ | 抽牌/弃牌/入堆走 Cmd 层（同步分发），不是本地直改 pile；对照粘液失同步验尸的教训 | 无绕过同步层的写入 |
 | M3 | RNG 流分账正确吗？ | 新随机使用明确命名流（CombatCardGeneration/CombatTargets/MonsterAi/…），不借用他流 | 流名在规格中出现 |
+| I11 | 候选集读取走 GetUnlockedCards（解锁态+联机约束）了吗？ | grep 消费点 .AllCards；确认传参为 RunState.CardMultiplayerConstraint | 无直读 AllCards 的赠卡/候选路径 |
 | M4 | 异步 task 被丢弃时异常可见吗？ | fire-and-forget 必须 ContinueWith/RunSafely 记录 | 无静默吞异常 |
 
 ## 3. 可直接派发的评审提示词（reviewer 角色用）
