@@ -1610,3 +1610,7 @@ ModelDb.AllCards 与 AllCharacters 的补丁注入点全景（BaseLib/ChaosBridg
   RunManager action 级）；kb/sts2-mock-testing.md T1-T3（46 官方 Mock 类分布、
   Mock=真实模型子类的测试哲学、TestMode 表现层闸门、本项目 Mock→控制台→冒烟
   三层验证策略）。提交 4d208f6/75473ef。
+- 续3七补：I0c 引擎角色五件套（Ironclad/Silent/Regent/Necrobinder/Defect 四绑定全录；
+  官方 StS2 自带 Defect ⇒ 移植一代 Defect 的同名卡碰撞是结构性的）。提交 1d44de1。
+  本段连续增量小结（用户"继续"指令）：I12/宝珠 O08/怪物普查/Checksum 结案/Mock 卷/
+  I0c 五角色 + 此前 I4-I11/评审门/两普查/审计器。KB 完整度显著提升，全部已推送。
