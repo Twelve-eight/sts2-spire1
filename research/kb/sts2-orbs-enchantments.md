@@ -76,9 +76,23 @@ OrbCmd.Passive(countAffectedByHooks=true)  → orb.TriggerPassive(ctx, target)�
 | 空槽占位 | EmptyOrbSlot 占位对象（R01） | OrbQueue.Count < Capacity（无占位对象） | 数据模型差异，遍历逻辑别照抄 |
 | 被动触发计数 | 固定 1 | triggerCount 循环（O04） | StS1"多段被动"类卡移植时用 countAffectedByHooks=true |
 
+## 3b. EA 宝珠数值普查（2026-09-05 补充）
+
+**O08 五珠数值与触发侧** — 出处 `Models.Orbs/{Frost,Lightning,Dark,Plasma,Glass}Orb.cs`。置信度：**高**
+
+| 珠 | PassiveVal | EvokeVal | 回合触发侧 | 备注 |
+|---|---|---|---|---|
+| Frost | 2（格挡） | 5 | BeforeTurnEnd | 与 StS1 基值一致（orbs.md R09） |
+| Lightning | 3（伤害） | 8 | BeforeTurnEnd | 与 StS1 一致 |
+| Dark | 6（累加增速） | `_evokeVal`（累积字段，不经 ModifyOrbValue） | BeforeTurnEnd | 累积语义与 StS1 同源；焦点不重置存量（对照 orbs.md R11） |
+| Plasma | 1（能量） | 2 | **AfterTurnStart**（唯一回合开始珠） | PassiveVal **不经 ModifyOrbValue**——能量珠豁免焦点类修正 |
+| Glass | `_passiveVal`（经 ModifyOrbValue） | PassiveVal × 2 | BeforeTurnEnd | EA 新珠；evoke=被动×2 |
+
+跨代仲裁：四基础珠基值与 StS1 完全相同 ⇒ 数值层移植可直采；差异在**钩子挂点改为子类覆写**（O05）与 Glass 的衍生关系（evoke 依赖 PassiveVal 属性而非独立字段——焦点类修正会同步放大 evoke）。
+
 ## 4. 开放问题 / 低置信项
 
-1. 具体 OrbModel 子类清单与各自 Passive/Evoke 数值（EA 版本内容层）未枚举——数据层任务。
+1. ~~具体 OrbModel 子类清单与数值~~ **已结案**（O08：五珠全录）。
 2. `OrbModel.Evoke` 返回目标集的消费方（Evoke 内 targets 用途）未逐行展开。
 3. Affliction 系统（Afflict 族/负面附灵与卡的交互）未展开，平行于附魔。
 4. OrbQueue.Insert 的调用方（插队类效果）未枚举。
