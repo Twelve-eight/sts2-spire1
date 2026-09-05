@@ -34,9 +34,10 @@ wiki（slay-the-spire.fandom.com）仅作交叉佐证；HTML 页 403，经 `api.
 | [power-lifecycle.md](power-lifecycle.md) | 12 | 全量 161 power 类按钩子归档：回合四时点成员清单、justApplied 9 家族、双钩子 power（Equilibrium/Ritual/Malleable）、伤害/格挡钩子使用者、叠层定制 |
 | [relic-triggers.md](relic-triggers.md) | 16 | 全量 190 遗物类按钩子归档：开场两段/回合两段/计数族/受击族/胜利链；规则位 boss 遗物零钩子=引擎查询建模 |
 | [turn-control.md](turn-control.md) | 6 | 窥视 ScryAction 全序（triggerOnScry 扫尾）、skipMonsterTurn 消费者全集（Vault 连玩家 debuff 递减一起跳过）、callEndTurnEarlySequence 绕过哨兵链 |
+| [loot-rewards.md](loot-rewards.md) | 7 | 药水掉落 65/25/10（potionRng）、宝箱 treasureRng 滚动、商店定价 =基础价×U(0.9,1.1)（50/75/150/9999 直证）、四 RNG 流分账 |
 | [card-rewards.md](card-rewards.md) | 7 | 卡牌奖励生成：池构建与角色覆写点、Blizzard 保底计数器（+5/-1/-40 方向实证）、稀有度阈值（普通 3/37 精英 10/40）、去重重试、RARE 不自动升级 |
 
-合计 **243 条编号规则**，每条独立可引用（`文件名 Rnn`），可直接用于移植仲裁。
+合计 **250 条编号规则**，每条独立可引用（`文件名 Rnn`），可直接用于移植仲裁。
 
 ## 用户示例问题的确定性答案（验收项）
 
