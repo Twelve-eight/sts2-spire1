@@ -50,7 +50,7 @@ notes.push(['P1 exclusion patterns', p1hits.length ? 'FINDINGS' : 'ok']);
 
 // ---- I7: selection-screen prompt keys --------------------------------------
 const cardsDir = path.join(codeRoot, 'Cards');
-const snake = s => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toUpperCase();
+const snake = s => s.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toUpperCase(); // card loc ids use UNDERSCORE
 const users = [];
 (function walk(d) {
   for (const e of fs.readdirSync(d, { withFileTypes: true })) {
@@ -60,7 +60,7 @@ const users = [];
       const src = fs.readFileSync(p, 'utf8');
       const m = src.match(/class ([A-Za-z0-9_]+)\s*(\(|:)/);
       if (m && m[1] === e.name.replace('.cs', '') &&
-          /FromChooseACardScreen|SelectionScreenPrompt/.test(src)) users.push(m[1]);
+          /SelectionScreenPrompt/.test(src)) users.push(m[1]); // only direct property readers need the key; 3-arg FromChooseACardScreen uses generic banner
     }
   }
 })(cardsDir);
