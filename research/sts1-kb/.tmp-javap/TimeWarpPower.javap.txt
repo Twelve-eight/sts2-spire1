@@ -1,0 +1,158 @@
+Compiled from "TimeWarpPower.java"
+public class com.megacrit.cardcrawl.powers.TimeWarpPower extends com.megacrit.cardcrawl.powers.AbstractPower {
+  public static final java.lang.String POWER_ID;
+
+  private static final com.megacrit.cardcrawl.localization.PowerStrings powerStrings;
+
+  public static final java.lang.String NAME;
+
+  public static final java.lang.String[] DESC;
+
+  private static final int STR_AMT;
+
+  private static final int COUNTDOWN_AMT;
+
+  public com.megacrit.cardcrawl.powers.TimeWarpPower(com.megacrit.cardcrawl.core.AbstractCreature);
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method com/megacrit/cardcrawl/powers/AbstractPower."<init>":()V
+       4: aload_0
+       5: getstatic     #2                  // Field NAME:Ljava/lang/String;
+       8: putfield      #3                  // Field name:Ljava/lang/String;
+      11: aload_0
+      12: ldc           #5                  // String Time Warp
+      14: putfield      #6                  // Field ID:Ljava/lang/String;
+      17: aload_0
+      18: aload_1
+      19: putfield      #7                  // Field owner:Lcom/megacrit/cardcrawl/core/AbstractCreature;
+      22: aload_0
+      23: iconst_0
+      24: putfield      #8                  // Field amount:I
+      27: aload_0
+      28: invokevirtual #9                  // Method updateDescription:()V
+      31: aload_0
+      32: ldc           #10                 // String time
+      34: invokevirtual #11                 // Method loadRegion:(Ljava/lang/String;)V
+      37: aload_0
+      38: getstatic     #12                 // Field com/megacrit/cardcrawl/powers/AbstractPower$PowerType.BUFF:Lcom/megacrit/cardcrawl/powers/AbstractPower$PowerType;
+      41: putfield      #13                 // Field type:Lcom/megacrit/cardcrawl/powers/AbstractPower$PowerType;
+      44: return
+
+  public void playApplyPowerSfx();
+    Code:
+       0: getstatic     #14                 // Field com/megacrit/cardcrawl/core/CardCrawlGame.sound:Lcom/megacrit/cardcrawl/audio/SoundMaster;
+       3: ldc           #15                 // String POWER_TIME_WARP
+       5: ldc           #16                 // float 0.05f
+       7: invokevirtual #17                 // Method com/megacrit/cardcrawl/audio/SoundMaster.play:(Ljava/lang/String;F)J
+      10: pop2
+      11: return
+
+  public void updateDescription();
+    Code:
+       0: aload_0
+       1: new           #18                 // class java/lang/StringBuilder
+       4: dup
+       5: invokespecial #19                 // Method java/lang/StringBuilder."<init>":()V
+       8: getstatic     #20                 // Field DESC:[Ljava/lang/String;
+      11: iconst_0
+      12: aaload
+      13: invokevirtual #21                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      16: bipush        12
+      18: invokevirtual #22                 // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+      21: getstatic     #20                 // Field DESC:[Ljava/lang/String;
+      24: iconst_1
+      25: aaload
+      26: invokevirtual #21                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      29: iconst_2
+      30: invokevirtual #22                 // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+      33: getstatic     #20                 // Field DESC:[Ljava/lang/String;
+      36: iconst_2
+      37: aaload
+      38: invokevirtual #21                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      41: invokevirtual #23                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+      44: putfield      #24                 // Field description:Ljava/lang/String;
+      47: return
+
+  public void onAfterUseCard(com.megacrit.cardcrawl.cards.AbstractCard, com.megacrit.cardcrawl.actions.utility.UseCardAction);
+    Code:
+       0: aload_0
+       1: invokevirtual #25                 // Method flashWithoutSound:()V
+       4: aload_0
+       5: dup
+       6: getfield      #8                  // Field amount:I
+       9: iconst_1
+      10: iadd
+      11: putfield      #8                  // Field amount:I
+      14: aload_0
+      15: getfield      #8                  // Field amount:I
+      18: bipush        12
+      20: if_icmpne     140
+      23: aload_0
+      24: iconst_0
+      25: putfield      #8                  // Field amount:I
+      28: aload_0
+      29: invokevirtual #26                 // Method playApplyPowerSfx:()V
+      32: getstatic     #27                 // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.actionManager:Lcom/megacrit/cardcrawl/actions/GameActionManager;
+      35: invokevirtual #28                 // Method com/megacrit/cardcrawl/actions/GameActionManager.callEndTurnEarlySequence:()V
+      38: getstatic     #14                 // Field com/megacrit/cardcrawl/core/CardCrawlGame.sound:Lcom/megacrit/cardcrawl/audio/SoundMaster;
+      41: ldc           #15                 // String POWER_TIME_WARP
+      43: ldc           #16                 // float 0.05f
+      45: invokevirtual #17                 // Method com/megacrit/cardcrawl/audio/SoundMaster.play:(Ljava/lang/String;F)J
+      48: pop2
+      49: getstatic     #29                 // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.effectsQueue:Ljava/util/ArrayList;
+      52: new           #30                 // class com/megacrit/cardcrawl/vfx/BorderFlashEffect
+      55: dup
+      56: getstatic     #31                 // Field com/badlogic/gdx/graphics/Color.GOLD:Lcom/badlogic/gdx/graphics/Color;
+      59: iconst_1
+      60: invokespecial #32                 // Method com/megacrit/cardcrawl/vfx/BorderFlashEffect."<init>":(Lcom/badlogic/gdx/graphics/Color;Z)V
+      63: invokevirtual #33                 // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+      66: pop
+      67: getstatic     #34                 // Field com/megacrit/cardcrawl/dungeons/AbstractDungeon.topLevelEffectsQueue:Ljava/util/ArrayList;
+      70: new           #35                 // class com/megacrit/cardcrawl/vfx/combat/TimeWarpTurnEndEffect
+      73: dup
+      74: invokespecial #36                 // Method com/megacrit/cardcrawl/vfx/combat/TimeWarpTurnEndEffect."<init>":()V
+      77: invokevirtual #33                 // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+      80: pop
+      81: invokestatic  #37                 // Method com/megacrit/cardcrawl/dungeons/AbstractDungeon.getMonsters:()Lcom/megacrit/cardcrawl/monsters/MonsterGroup;
+      84: getfield      #38                 // Field com/megacrit/cardcrawl/monsters/MonsterGroup.monsters:Ljava/util/ArrayList;
+      87: invokevirtual #39                 // Method java/util/ArrayList.iterator:()Ljava/util/Iterator;
+      90: astore_3
+      91: aload_3
+      92: invokeinterface #40,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      97: ifeq          140
+     100: aload_3
+     101: invokeinterface #41,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     106: checkcast     #42                 // class com/megacrit/cardcrawl/monsters/AbstractMonster
+     109: astore        4
+     111: aload_0
+     112: new           #43                 // class com/megacrit/cardcrawl/actions/common/ApplyPowerAction
+     115: dup
+     116: aload         4
+     118: aload         4
+     120: new           #44                 // class com/megacrit/cardcrawl/powers/StrengthPower
+     123: dup
+     124: aload         4
+     126: iconst_2
+     127: invokespecial #45                 // Method com/megacrit/cardcrawl/powers/StrengthPower."<init>":(Lcom/megacrit/cardcrawl/core/AbstractCreature;I)V
+     130: iconst_2
+     131: invokespecial #46                 // Method com/megacrit/cardcrawl/actions/common/ApplyPowerAction."<init>":(Lcom/megacrit/cardcrawl/core/AbstractCreature;Lcom/megacrit/cardcrawl/core/AbstractCreature;Lcom/megacrit/cardcrawl/powers/AbstractPower;I)V
+     134: invokevirtual #47                 // Method addToBot:(Lcom/megacrit/cardcrawl/actions/AbstractGameAction;)V
+     137: goto          91
+     140: aload_0
+     141: invokevirtual #9                  // Method updateDescription:()V
+     144: return
+
+  static {};
+    Code:
+       0: getstatic     #48                 // Field com/megacrit/cardcrawl/core/CardCrawlGame.languagePack:Lcom/megacrit/cardcrawl/localization/LocalizedStrings;
+       3: ldc           #5                  // String Time Warp
+       5: invokevirtual #49                 // Method com/megacrit/cardcrawl/localization/LocalizedStrings.getPowerStrings:(Ljava/lang/String;)Lcom/megacrit/cardcrawl/localization/PowerStrings;
+       8: putstatic     #50                 // Field powerStrings:Lcom/megacrit/cardcrawl/localization/PowerStrings;
+      11: getstatic     #50                 // Field powerStrings:Lcom/megacrit/cardcrawl/localization/PowerStrings;
+      14: getfield      #51                 // Field com/megacrit/cardcrawl/localization/PowerStrings.NAME:Ljava/lang/String;
+      17: putstatic     #2                  // Field NAME:Ljava/lang/String;
+      20: getstatic     #50                 // Field powerStrings:Lcom/megacrit/cardcrawl/localization/PowerStrings;
+      23: getfield      #52                 // Field com/megacrit/cardcrawl/localization/PowerStrings.DESCRIPTIONS:[Ljava/lang/String;
+      26: putstatic     #20                 // Field DESC:[Ljava/lang/String;
+      29: return
+}
