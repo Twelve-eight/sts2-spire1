@@ -1580,3 +1580,8 @@ ModelDb.AllCards 与 AllCharacters 的补丁注入点全景（BaseLib/ChaosBridg
   - **定性边界**：未改码（本会话为 KB 会话）；修复属实现会话（补两键+定向冒烟），
     修复前先用控制台 card play 验证 DualWield 是否真触达 throw（覆盖矩阵未解释
     为何 8 胜冒烟未炸——可能从未被抽到/打出）。
+- 续3补：评审门机械子集固化为 tools/semantics-audit.mjs（P4+P1+I7 一键运行；
+  首跑 verdict=request-changes，DualWield 发现在案）。提交 06f343a。
+  下一方向（按序）：①DualWield 定向验证+修复（实现会话：控制台 card play → 补两键 → 冒烟）
+  ②不变量目录继续扩充（StS2 联机池快照、事件卡牌来源审计）
+  ③G2 清单与 tools 的联动已闭环，等待下一次实机事故回填。
