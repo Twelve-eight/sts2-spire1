@@ -1619,3 +1619,11 @@ ModelDb.AllCards 与 AllCharacters 的补丁注入点全景（BaseLib/ChaosBridg
   I13 行。提交 9b327c4。
 - 续3九补：card-rewards R10（TheLibrary 20 抽 1 去重/rollRarity 复用实证；
   GremlinMatchGame 奖品分支）。提交后推送。
+- 续3十补：I14 联机加入契约（JoinFlow.AttemptJoin 只传 unlockState+飞升上限；
+  池不传输由两端 mod 集重建）+ M12 RNG 目录补全（RunRngSet 12 条 run 级流全名 +
+  PlayerRngType 3 条玩家级流）。提交 c62eb5f。
+- **下一卷预研**：RewardsSetSynchronizer/RewardSynchronizer（453+341 行）——每玩家
+  rewardsStack + BufferedMessage 乱序缓冲 + RewardSetCompleteState 三态机；概览已扫，
+  深度语义（双人同时选择/跳过的合并规则）留作 I15 专卷。
+- **队列**：①I15 联机奖励分配专卷 ②StS1 剩余事件抽查（12 个）③StS1 逐怪数据层 v1
+  （getMove 内部语义，非本会话）④不变量回填（待下次实机事故）。
