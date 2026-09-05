@@ -46,9 +46,21 @@ price = AbstractCard.getPrice(rarity) × merchantRng.random(0.9, 1.1)
 | 打折标签 | 存在独立 OnSaleTag 机制位 | L06 |
 | 多 RNG 流移植 | card/treasure/merchant/potion 四流独立种子，禁止共用 | L01/L02/L04 + M12 |
 
-## 5. 开放问题 / 低置信项
+## 5. 遗物掉落池（returnRandomRelic 族）
+
+**L12 五池弹头式发放** — 出处 `AbstractDungeon#returnRandomRelicKey(RelicTier)`（javap 行 2247-2450 一带）。置信度：**高**
+```
+池 = common/uncommon/rare/shop/bossRelicPool（ArrayList<String>，初始化时按 relicRng 洗好）
+COMMON:  commonRelicPool.isEmpty() → 递归转 UNCOMMON
+UNCOMMON: uncommonRelicPool.isEmpty() → 递归转 RARE
+RARE:     rareRelicPool.isEmpty() → key = "Circlet"（占位遗物兜底）
+取卡 = pool.remove(0)      ← ★ 恒弹头部（iconst_0 直证）
+```
+要点：**洗牌一次、按序弹头** ⇒ 同一局内遗物不重复（remove 即出池）、且发放顺序由初始化洗牌完全确定（relicRng 流）。空池三级降级链 common→uncommon→rare→Circlet 与社区认知一致且有字节码实锚。返回侧 `returnRandomRelic(tier)` = key → CardLibrary.getRelic 包装。
+
+## 6. 开放问题 / 低置信项
 
 1. ~~三档宝箱概率字段~~ **部分结案**（2026-09-05 Exordium ctor 直证）：small=50 / medium=33 / large=17（TheCity/TheBeyond 同构位常数一致；TheEnding 未逐字段终验）。置信度：**高**（三幕）/ **中**（TheEnding）。
 2. 商店遗物/药水位与 OnSaleTag 的完整公式未逐行展开。
-3. `returnRandomRelic` 的 tier 池与去重（relicRng）未成卷——遗物数据层任务。
+3. ~~returnRandomRelic 族~~ **已结案**（L12）。
 4. BASIC 牌 getPrice 位（普通卡组牌不入店，理论 9999 或 50 未终验）。
