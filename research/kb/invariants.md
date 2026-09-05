@@ -81,6 +81,13 @@
 **RNG 持久面**：`SerializablePlayerRngSet` 按流类型存 Seed + 计数（Dictionary<PlayerRngType, SerializableRng>）⇒ 读档续局确定性成立的前提是**流清单不被新版本改名/增删**（PlayerRngType 枚举是存档格式的一部分）。
 **出处**：`Saves/SerializableRun.cs`（Acts/Modifiers/EventsSeen/Players/MapHistory/Ascension/NumReloads）、`Saves.Runs/SerializablePlayer.cs`（HP/MaxEnergy/Gold/BaseOrbSlotCount/Deck/Relics/Potions/Discovered*）、`Saves.Runs/SerializableCard.cs`、`SavedPropertyAttribute.cs`。置信度：**高**。
 
+## I14 联机加入契约：握手只带解锁态，跑局内容宿主权威
+
+**陈述**：`Multiplayer.Game/JoinFlow.cs#AttemptJoin`（行 168-183）：客户端 → 宿主只发 `maxAscensionUnlocked + unlockState.ToSerializable()`；跑局内容由宿主权威持有与分发（客户端经同步消息接收）。**池不传输**——两端各自按本机 mod 集重建（I0b+），因此"两端同 mod 同版本"是内容一致的前提（I12）。
+**事故证据**：DEVLOG 联机验尸——双方 BaseLib 同版本号不同构建源仍完成整场战斗（可见性分装无碍状态一致），但内容差异属高危（同 ModelId 不同语义会静默分叉，checksum 只在变更点采样）。
+**检测**：联机冒烟最小集 + 校验和日志比对；兼容层（ChaosBridge/AA 桥）必须两端同装（chaosbridge-design.md 前提）。
+**出处**：`JoinFlow.cs#AttemptJoin`。置信度：**高**。
+
 ---
 
 ## 维护规则

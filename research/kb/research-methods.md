@@ -68,7 +68,7 @@ tr -d '\r' < classlist.txt | xargs unzip -o -q desktop-1.0.jar -d cls   # 见 P-
 
 **M11 onModifyPower 是全局刷新枢纽**：任何 power 增删后 `AbstractDungeon.onModifyPower()` 会刷手牌数值、**条件刷新宝珠**（`hasPower("Focus")` 门！）、逐怪 `applyPowers()`（重算实伤快照与意图显示）。排查"数值没刷新/意外刷新/意图与实伤不一致"类问题第一站看这里。注意门的两侧不对称：Focus 完全移除后宝珠**冻结不回落**（orbs.md R12 勘误实录）。
 
-**M12 随机源分账**：aiRng（怪物 move）/ shuffleRng（洗牌）/ cardRandomRng（随机选卡/勺子）/ StS2 的 RunState.Rng.*（CombatTargets 等）——卷间引用统一用这些名字，别写"随机数"。
+**M12 随机源分账**：aiRng（怪物 move）/ shuffleRng（洗牌）/ cardRandomRng（随机选卡/勺子）/ treasureRng / merchantRng / potionRng（StS1 六流，loot-rewards.md L01-L04）；StS2 侧 `RunRngSet`（Runs/RunRngSet.cs）共 **12 条 run 级流**：UpFront / Shuffle / UnknownMapPoint / CombatCardGeneration / CombatPotionGeneration / CombatCardSelection / CombatEnergyCosts / CombatTargets / MonsterAi / Niche / CombatOrbs / TreasureRoomRelics，另有 **PlayerRngType 三条玩家级流**（Rewards / Shops / Transformations，可存档、跨战役）——卷间引用统一用这些名字，别写"随机数"。
 
 ## 6. StS2 C# 侧工作流
 
