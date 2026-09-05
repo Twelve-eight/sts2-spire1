@@ -95,7 +95,7 @@
 **乱序容忍**：消息按 setId 缓冲（BufferedMessage），集合未知时入队、产生后回放；`RewardSynchronizer`（341 行）另有 RunLocation 定向缓冲（RewardObtained/GoldLost/CardRemoved 三类消息）。
 **正确做法**：影响奖励的补丁必须同时考虑本地与远端消息两条入口（改一条漏一条=单侧生效，I4 同族）；跳过语义（OnSkipped）不可绕过。
 **检测**：联机双人同选/一选一跳/双跳三场景冒烟；代码评审找只挂本地入口的补丁。
-**出处**：`Multiplayer.Game/RewardsSetSynchronizer.cs`（行 25-395）、`RewardSynchronizer.cs`。置信度：**高**（结构）/ **中**（深度合并语义：双 Completed 竞态细节未逐行）。
+**深水区补（2026-09-05）**：本地入口是**网络优先**——`SelectLocalReward` 先 `SendMessage(RewardSelectedMessage)` 再本地应用（乐观应用，行 207-232）；远端消息若 setId ≥ 本端 nextId（集合尚未创建）→ 进 bufferedMessages 等创建后回放（行 249-273）；重复完成不崩——`CompleteRewardsSet` 检出已完成只 Log.Error（行 371-380）。关闭本条"中置信"残留。
 
 ---
 
