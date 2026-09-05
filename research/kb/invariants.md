@@ -33,6 +33,7 @@
 **事故证据**：DEVLOG 行 732-738（修复 #9）：全量扫描器收敛 5 卡 10 处失配（Aggregate !E!、Claw !M!→!Increase!、Halt/Prostrate !M!→!MagicNumber!、Streamline !M!→!CostReduction!）；"715f42d 的对齐 eng 标准不充分"。另见行 732 修复 #8：`CardModel.SelectionScreenPrompt`（CardModel.cs:129）缺 `.selectionScreenPrompt` 键直接 throw → 出牌僵死。
 **正确做法**：新卡落地时以 C# 注册名为准写双语文案；用选牌界面的卡必须带 selectionScreenPrompt 键（两语言）；审计脚本比对"每卡注册变量名 vs 中英通配符"（既有扫描器模式，注意 loc 键带连字符——假绿教训见 DEVLOG 非 cards 域审计段）。
 **检测**：通配符审计脚本（ cards + events 两域已零失配，作为回归基线）；lint 应纳入新卡 PR。
+**2026-09-05 评审门实测（I7 的选牌提示键子项）**：交叉核对`FromChooseACardScreen/SelectionScreenPrompt` 使用卡 vs loc 键（注意键是**扁平复合串** `SPIRE1-<大写蛇形>.selectionScreenPrompt`，嵌套解析会假阴性）：10 张选牌卡中 **DualWield 两语言缺键且直读属性（CardModel.cs:129-141 缺键即抛）= 玩到即炸的真实风险**（铁甲局覆盖 36/44 未解释为何冒烟未触达——需控制台 `card play` 定向验证）；ForeignInfluence/Wish 缺键但走 3 参重载（CardSelectCmd.cs:252，未见回读卡属性）——疑似良性待运行时确认。三个键的补法与 fix #8（Seek/Nightmare）同构。
 
 ## I8 类名/标识符假设：静态解析必须兼容数字与符号变体
 
