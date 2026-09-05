@@ -1599,3 +1599,7 @@ ModelDb.AllCards 与 AllCharacters 的补丁注入点全景（BaseLib/ChaosBridg
 - 续3三补：StS1 事件赠卡普查（R08-R09，56 事件类；getCopy 指定卡为主/池随机为辅，
   与 StS2 CreateForReward 范式对照）+ 工具 stS1-event-pool-usage.js。提交 244a67d。
   注：本轮 node -e 内联第三次踩坑后已全部改落文件脚本（M5 纪律执行）。
+- 续3四补：I12 联机同步拓扑+checksum 纪律（ChecksumTracker 全文：host 比对/20 条滚动窗/
+  id 配对乱序队列/StateDivergenceException；11 个 Synchronizer 通道清单）；EA 宝珠普查
+  O08（五珠数值与 StS1 同源、Glass 新珠 evoke=Passive×2、Plasma 豁免 ModifyOrbValue、
+  Plasma 唯一回合开始珠）。提交 9e8adb4/7a08890。
