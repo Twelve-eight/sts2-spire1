@@ -1,0 +1,1037 @@
+[
+ {
+  "name": "powers/AbstractPower",
+  "hooks": [
+   "atStartOfTurn",
+   "atStartOfTurnPostDraw",
+   "duringTurn",
+   "atEndOfTurn",
+   "atEndOfTurnPreEndTurnCards",
+   "atEndOfRound",
+   "onEnergyRecharge",
+   "atEnergyGain",
+   "stackPower",
+   "reducePower",
+   "onRemove",
+   "onInitialApplication",
+   "onSpecificTrigger",
+   "onUseCard",
+   "onAfterUseCard",
+   "atDamageGive",
+   "atDamageReceive",
+   "atDamageFinalGive",
+   "atDamageFinalReceive",
+   "modifyBlock",
+   "onAttackedToChangeDamage",
+   "onAttackToChangeDamage",
+   "onAttacked",
+   "onLoseHp",
+   "wasHPLost",
+   "onHeal",
+   "onExhaust",
+   "onCardDraw",
+   "onChannel",
+   "onEvokeOrb",
+   "onChangeStance",
+   "onScry",
+   "onVictory"
+  ]
+ },
+ {
+  "name": "powers/AccuracyPower",
+  "hooks": [
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/AfterImagePower",
+  "hooks": [
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/AmplifyPower",
+  "hooks": [
+   "atEndOfTurn",
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/AngerPower",
+  "hooks": [
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/AngryPower",
+  "hooks": [
+   "onAttacked"
+  ]
+ },
+ {
+  "name": "powers/ArtifactPower",
+  "hooks": [
+   "onSpecificTrigger"
+  ]
+ },
+ {
+  "name": "powers/AttackBurnPower",
+  "hooks": [
+   "atEndOfRound",
+   "justApplied",
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/BackAttackPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/BarricadePower",
+  "hooks": []
+ },
+ {
+  "name": "powers/BeatOfDeathPower",
+  "hooks": [
+   "onAfterUseCard"
+  ]
+ },
+ {
+  "name": "powers/BerserkPower",
+  "hooks": [
+   "atStartOfTurn"
+  ]
+ },
+ {
+  "name": "powers/BiasPower",
+  "hooks": [
+   "atStartOfTurn",
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/BlurPower",
+  "hooks": [
+   "atEndOfRound"
+  ]
+ },
+ {
+  "name": "powers/BrutalityPower",
+  "hooks": [
+   "atStartOfTurnPostDraw"
+  ]
+ },
+ {
+  "name": "powers/BufferPower",
+  "hooks": [
+   "stackPower",
+   "onAttackedToChangeDamage"
+  ]
+ },
+ {
+  "name": "powers/BurstPower",
+  "hooks": [
+   "atEndOfTurn",
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/ChokePower",
+  "hooks": [
+   "atStartOfTurn",
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/CollectPower",
+  "hooks": [
+   "onEnergyRecharge",
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/CombustPower",
+  "hooks": [
+   "atEndOfTurn",
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/ConfusionPower",
+  "hooks": [
+   "onCardDraw"
+  ]
+ },
+ {
+  "name": "powers/ConservePower",
+  "hooks": [
+   "atEndOfRound"
+  ]
+ },
+ {
+  "name": "powers/ConstrictedPower",
+  "hooks": [
+   "atEndOfTurn"
+  ]
+ },
+ {
+  "name": "powers/CorpseExplosionPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/CorruptionPower",
+  "hooks": [
+   "onUseCard",
+   "onCardDraw"
+  ]
+ },
+ {
+  "name": "powers/CreativeAIPower",
+  "hooks": [
+   "atStartOfTurn"
+  ]
+ },
+ {
+  "name": "powers/CuriosityPower",
+  "hooks": [
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/CurlUpPower",
+  "hooks": [
+   "onAttacked"
+  ]
+ },
+ {
+  "name": "powers/DarkEmbracePower",
+  "hooks": [
+   "onExhaust"
+  ]
+ },
+ {
+  "name": "powers/DemonFormPower",
+  "hooks": [
+   "atStartOfTurnPostDraw"
+  ]
+ },
+ {
+  "name": "powers/deprecated/DEPRECATEDAlwaysMadPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/deprecated/DEPRECATEDCondensePower",
+  "hooks": [
+   "stackPower",
+   "onLoseHp"
+  ]
+ },
+ {
+  "name": "powers/deprecated/DEPRECATEDDisciplinePower",
+  "hooks": [
+   "atStartOfTurn",
+   "atEndOfTurn"
+  ]
+ },
+ {
+  "name": "powers/deprecated/DEPRECATEDEmotionalTurmoilPower",
+  "hooks": [
+   "atStartOfTurnPostDraw"
+  ]
+ },
+ {
+  "name": "powers/deprecated/DEPRECATEDFlickedPower",
+  "hooks": [
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/deprecated/DEPRECATEDFlowPower",
+  "hooks": [
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/deprecated/DEPRECATEDGroundedPower",
+  "hooks": [
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/deprecated/DEPRECATEDHotHotPower",
+  "hooks": [
+   "onAttacked"
+  ]
+ },
+ {
+  "name": "powers/deprecated/DEPRECATEDMasterRealityPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/deprecated/DEPRECATEDMasteryPower",
+  "hooks": [
+   "onChangeStance"
+  ]
+ },
+ {
+  "name": "powers/deprecated/DEPRECATEDRetributionPower",
+  "hooks": [
+   "onAttacked"
+  ]
+ },
+ {
+  "name": "powers/deprecated/DEPRECATEDSerenityPower",
+  "hooks": [
+   "onAttacked"
+  ]
+ },
+ {
+  "name": "powers/DexterityPower",
+  "hooks": [
+   "stackPower",
+   "reducePower",
+   "modifyBlock"
+  ]
+ },
+ {
+  "name": "powers/DoubleDamagePower",
+  "hooks": [
+   "atEndOfRound",
+   "justApplied",
+   "atDamageGive"
+  ]
+ },
+ {
+  "name": "powers/DoubleTapPower",
+  "hooks": [
+   "atEndOfTurn",
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/DrawCardNextTurnPower",
+  "hooks": [
+   "atStartOfTurnPostDraw"
+  ]
+ },
+ {
+  "name": "powers/DrawPower",
+  "hooks": [
+   "reducePower",
+   "onRemove"
+  ]
+ },
+ {
+  "name": "powers/DrawReductionPower",
+  "hooks": [
+   "atEndOfRound",
+   "justApplied",
+   "onRemove",
+   "onInitialApplication"
+  ]
+ },
+ {
+  "name": "powers/DuplicationPower",
+  "hooks": [
+   "atEndOfRound",
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/EchoPower",
+  "hooks": [
+   "atStartOfTurn",
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/ElectroPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/EnergizedBluePower",
+  "hooks": [
+   "onEnergyRecharge",
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/EnergizedPower",
+  "hooks": [
+   "onEnergyRecharge",
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/EntanglePower",
+  "hooks": [
+   "atEndOfTurn"
+  ]
+ },
+ {
+  "name": "powers/EnvenomPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/EquilibriumPower",
+  "hooks": [
+   "atEndOfTurn",
+   "atEndOfRound"
+  ]
+ },
+ {
+  "name": "powers/EvolvePower",
+  "hooks": [
+   "onCardDraw"
+  ]
+ },
+ {
+  "name": "powers/ExplosivePower",
+  "hooks": [
+   "duringTurn"
+  ]
+ },
+ {
+  "name": "powers/FadingPower",
+  "hooks": [
+   "duringTurn"
+  ]
+ },
+ {
+  "name": "powers/FeelNoPainPower",
+  "hooks": [
+   "onExhaust"
+  ]
+ },
+ {
+  "name": "powers/FireBreathingPower",
+  "hooks": [
+   "onCardDraw"
+  ]
+ },
+ {
+  "name": "powers/FlameBarrierPower",
+  "hooks": [
+   "atStartOfTurn",
+   "stackPower",
+   "onAttacked"
+  ]
+ },
+ {
+  "name": "powers/FlightPower",
+  "hooks": [
+   "atStartOfTurn",
+   "onRemove",
+   "atDamageFinalReceive",
+   "onAttacked"
+  ]
+ },
+ {
+  "name": "powers/FocusPower",
+  "hooks": [
+   "stackPower",
+   "reducePower"
+  ]
+ },
+ {
+  "name": "powers/ForcefieldPower",
+  "hooks": [
+   "atDamageFinalReceive"
+  ]
+ },
+ {
+  "name": "powers/FrailPower",
+  "hooks": [
+   "atEndOfRound",
+   "justApplied",
+   "modifyBlock"
+  ]
+ },
+ {
+  "name": "powers/GainStrengthPower",
+  "hooks": [
+   "atEndOfTurn",
+   "stackPower",
+   "reducePower"
+  ]
+ },
+ {
+  "name": "powers/GenericStrengthUpPower",
+  "hooks": [
+   "atEndOfRound"
+  ]
+ },
+ {
+  "name": "powers/GrowthPower",
+  "hooks": [
+   "atEndOfRound"
+  ]
+ },
+ {
+  "name": "powers/HeatsinkPower",
+  "hooks": [
+   "stackPower",
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/HelloPower",
+  "hooks": [
+   "atStartOfTurn",
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/HexPower",
+  "hooks": [
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/InfiniteBladesPower",
+  "hooks": [
+   "atStartOfTurn",
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/IntangiblePlayerPower",
+  "hooks": [
+   "atEndOfRound",
+   "atDamageFinalReceive"
+  ]
+ },
+ {
+  "name": "powers/IntangiblePower",
+  "hooks": [
+   "atEndOfTurn",
+   "justApplied",
+   "atDamageFinalReceive"
+  ]
+ },
+ {
+  "name": "powers/InvinciblePower",
+  "hooks": [
+   "atStartOfTurn",
+   "onAttackedToChangeDamage"
+  ]
+ },
+ {
+  "name": "powers/JuggernautPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/LightningMasteryPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/LockOnPower",
+  "hooks": [
+   "atEndOfRound"
+  ]
+ },
+ {
+  "name": "powers/LoopPower",
+  "hooks": [
+   "atStartOfTurn"
+  ]
+ },
+ {
+  "name": "powers/LoseDexterityPower",
+  "hooks": [
+   "atEndOfTurn"
+  ]
+ },
+ {
+  "name": "powers/LoseStrengthPower",
+  "hooks": [
+   "atEndOfTurn"
+  ]
+ },
+ {
+  "name": "powers/MagnetismPower",
+  "hooks": [
+   "atStartOfTurn",
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/MalleablePower",
+  "hooks": [
+   "atEndOfTurn",
+   "atEndOfRound",
+   "stackPower",
+   "onAttacked"
+  ]
+ },
+ {
+  "name": "powers/MayhemPower",
+  "hooks": [
+   "atStartOfTurn"
+  ]
+ },
+ {
+  "name": "powers/MetallicizePower",
+  "hooks": [
+   "atEndOfTurnPreEndTurnCards"
+  ]
+ },
+ {
+  "name": "powers/MinionPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/ModeShiftPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/NextTurnBlockPower",
+  "hooks": [
+   "atStartOfTurn"
+  ]
+ },
+ {
+  "name": "powers/NightmarePower",
+  "hooks": [
+   "atStartOfTurn"
+  ]
+ },
+ {
+  "name": "powers/NoBlockPower",
+  "hooks": [
+   "atEndOfRound",
+   "justApplied"
+  ]
+ },
+ {
+  "name": "powers/NoDrawPower",
+  "hooks": [
+   "atEndOfTurn"
+  ]
+ },
+ {
+  "name": "powers/NoxiousFumesPower",
+  "hooks": [
+   "atStartOfTurnPostDraw",
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/PainfulStabsPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/PanachePower",
+  "hooks": [
+   "atStartOfTurn",
+   "stackPower",
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/PenNibPower",
+  "hooks": [
+   "onUseCard",
+   "atDamageGive"
+  ]
+ },
+ {
+  "name": "powers/PhantasmalPower",
+  "hooks": [
+   "atStartOfTurn"
+  ]
+ },
+ {
+  "name": "powers/PlatedArmorPower",
+  "hooks": [
+   "atEndOfTurnPreEndTurnCards",
+   "stackPower",
+   "onRemove",
+   "wasHPLost"
+  ]
+ },
+ {
+  "name": "powers/PoisonPower",
+  "hooks": [
+   "atStartOfTurn",
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/RagePower",
+  "hooks": [
+   "atEndOfTurn",
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/ReactivePower",
+  "hooks": [
+   "onAttacked"
+  ]
+ },
+ {
+  "name": "powers/ReboundPower",
+  "hooks": [
+   "atEndOfTurn",
+   "onAfterUseCard"
+  ]
+ },
+ {
+  "name": "powers/RechargingCorePower",
+  "hooks": [
+   "atStartOfTurn"
+  ]
+ },
+ {
+  "name": "powers/RegenerateMonsterPower",
+  "hooks": [
+   "atEndOfTurn"
+  ]
+ },
+ {
+  "name": "powers/RegenPower",
+  "hooks": [
+   "atEndOfTurn",
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/RegrowPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/RepairPower",
+  "hooks": [
+   "onVictory"
+  ]
+ },
+ {
+  "name": "powers/ResurrectPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/RetainCardPower",
+  "hooks": [
+   "atEndOfTurn"
+  ]
+ },
+ {
+  "name": "powers/RitualPower",
+  "hooks": [
+   "atEndOfTurn",
+   "atEndOfRound"
+  ]
+ },
+ {
+  "name": "powers/RupturePower",
+  "hooks": [
+   "wasHPLost"
+  ]
+ },
+ {
+  "name": "powers/SadisticPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/SharpHidePower",
+  "hooks": [
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/ShiftingPower",
+  "hooks": [
+   "onAttacked"
+  ]
+ },
+ {
+  "name": "powers/SkillBurnPower",
+  "hooks": [
+   "atEndOfRound",
+   "justApplied",
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/SlowPower",
+  "hooks": [
+   "atEndOfRound",
+   "onAfterUseCard",
+   "atDamageReceive"
+  ]
+ },
+ {
+  "name": "powers/SplitPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/SporeCloudPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/StasisPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/StaticDischargePower",
+  "hooks": [
+   "onAttacked"
+  ]
+ },
+ {
+  "name": "powers/StormPower",
+  "hooks": [
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/StrengthPower",
+  "hooks": [
+   "stackPower",
+   "reducePower",
+   "atDamageGive"
+  ]
+ },
+ {
+  "name": "powers/StrikeUpPower",
+  "hooks": [
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/SurroundedPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/TheBombPower",
+  "hooks": [
+   "atEndOfTurn"
+  ]
+ },
+ {
+  "name": "powers/ThieveryPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/ThornsPower",
+  "hooks": [
+   "stackPower",
+   "onAttacked"
+  ]
+ },
+ {
+  "name": "powers/ThousandCutsPower",
+  "hooks": [
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/TimeMazePower",
+  "hooks": [
+   "atStartOfTurn",
+   "onAfterUseCard"
+  ]
+ },
+ {
+  "name": "powers/TimeWarpPower",
+  "hooks": [
+   "onAfterUseCard"
+  ]
+ },
+ {
+  "name": "powers/ToolsOfTheTradePower",
+  "hooks": [
+   "atStartOfTurnPostDraw"
+  ]
+ },
+ {
+  "name": "powers/UnawakenedPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/VulnerablePower",
+  "hooks": [
+   "atEndOfRound",
+   "justApplied",
+   "atDamageReceive"
+  ]
+ },
+ {
+  "name": "powers/watcher/BattleHymnPower",
+  "hooks": [
+   "atStartOfTurn",
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/watcher/BlockReturnPower",
+  "hooks": [
+   "stackPower",
+   "onAttacked"
+  ]
+ },
+ {
+  "name": "powers/watcher/CannotChangeStancePower",
+  "hooks": [
+   "atEndOfTurn"
+  ]
+ },
+ {
+  "name": "powers/watcher/DevaPower",
+  "hooks": [
+   "onEnergyRecharge",
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/watcher/DevotionPower",
+  "hooks": [
+   "atStartOfTurnPostDraw"
+  ]
+ },
+ {
+  "name": "powers/watcher/EndTurnDeathPower",
+  "hooks": [
+   "atStartOfTurn"
+  ]
+ },
+ {
+  "name": "powers/watcher/EnergyDownPower",
+  "hooks": [
+   "atStartOfTurn"
+  ]
+ },
+ {
+  "name": "powers/watcher/EstablishmentPower",
+  "hooks": [
+   "atEndOfTurn"
+  ]
+ },
+ {
+  "name": "powers/watcher/ForesightPower",
+  "hooks": [
+   "atStartOfTurn"
+  ]
+ },
+ {
+  "name": "powers/watcher/FreeAttackPower",
+  "hooks": [
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "powers/watcher/LikeWaterPower",
+  "hooks": [
+   "atEndOfTurnPreEndTurnCards",
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/watcher/LiveForeverPower",
+  "hooks": [
+   "atEndOfTurn"
+  ]
+ },
+ {
+  "name": "powers/watcher/MantraPower",
+  "hooks": [
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/watcher/MarkPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/watcher/MasterRealityPower",
+  "hooks": []
+ },
+ {
+  "name": "powers/watcher/MentalFortressPower",
+  "hooks": [
+   "onChangeStance"
+  ]
+ },
+ {
+  "name": "powers/watcher/NirvanaPower",
+  "hooks": [
+   "onScry"
+  ]
+ },
+ {
+  "name": "powers/watcher/NoSkillsPower",
+  "hooks": [
+   "atEndOfTurn"
+  ]
+ },
+ {
+  "name": "powers/watcher/OmegaPower",
+  "hooks": [
+   "atEndOfTurn"
+  ]
+ },
+ {
+  "name": "powers/watcher/OmnisciencePower",
+  "hooks": []
+ },
+ {
+  "name": "powers/watcher/RushdownPower",
+  "hooks": [
+   "onChangeStance"
+  ]
+ },
+ {
+  "name": "powers/watcher/StudyPower",
+  "hooks": [
+   "atEndOfTurn"
+  ]
+ },
+ {
+  "name": "powers/watcher/VaultPower",
+  "hooks": [
+   "atEndOfRound"
+  ]
+ },
+ {
+  "name": "powers/watcher/VigorPower",
+  "hooks": [
+   "onUseCard",
+   "atDamageGive"
+  ]
+ },
+ {
+  "name": "powers/watcher/WaveOfTheHandPower",
+  "hooks": [
+   "atEndOfRound"
+  ]
+ },
+ {
+  "name": "powers/watcher/WrathNextTurnPower",
+  "hooks": [
+   "atStartOfTurn"
+  ]
+ },
+ {
+  "name": "powers/WeakPower",
+  "hooks": [
+   "atEndOfRound",
+   "justApplied",
+   "atDamageGive"
+  ]
+ },
+ {
+  "name": "powers/WinterPower",
+  "hooks": [
+   "atStartOfTurn",
+   "stackPower"
+  ]
+ },
+ {
+  "name": "powers/WraithFormPower",
+  "hooks": [
+   "atEndOfTurn",
+   "stackPower"
+  ]
+ }
+]

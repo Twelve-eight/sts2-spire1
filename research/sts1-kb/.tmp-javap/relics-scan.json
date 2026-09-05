@@ -1,0 +1,1111 @@
+[
+ {
+  "name": "relics/Abacus",
+  "hooks": [
+   "onShuffle"
+  ]
+ },
+ {
+  "name": "relics/AbstractRelic",
+  "hooks": [
+   "onEnergyRecharge",
+   "onUseCard",
+   "onAttackedToChangeDamage",
+   "onAttackToChangeDamage",
+   "onAttacked",
+   "wasHPLost",
+   "onExhaust",
+   "onCardDraw",
+   "onEvokeOrb",
+   "onChangeStance",
+   "onShuffle",
+   "onTrigger",
+   "checkTrigger",
+   "atTurnStart",
+   "atTurnStartPostDraw",
+   "atBattleStart",
+   "atBattleStartPreDraw",
+   "onPlayerEndTurn",
+   "onManualDiscard",
+   "onMonsterDeath",
+   "onVictory",
+   "onBloodied",
+   "onEquip",
+   "counter"
+  ]
+ },
+ {
+  "name": "relics/Akabeko",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/Anchor",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/AncientTeaSet",
+  "hooks": [
+   "atTurnStart"
+  ]
+ },
+ {
+  "name": "relics/ArtOfWar",
+  "hooks": [
+   "onUseCard",
+   "atTurnStart",
+   "onVictory"
+  ]
+ },
+ {
+  "name": "relics/Astrolabe",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/BagOfMarbles",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/BagOfPreparation",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/BirdFacedUrn",
+  "hooks": [
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "relics/BlackBlood",
+  "hooks": [
+   "onVictory"
+  ]
+ },
+ {
+  "name": "relics/BlackStar",
+  "hooks": [
+   "onVictory"
+  ]
+ },
+ {
+  "name": "relics/BloodVial",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/BloodyIdol",
+  "hooks": []
+ },
+ {
+  "name": "relics/BlueCandle",
+  "hooks": [
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "relics/Boot",
+  "hooks": [
+   "onAttackToChangeDamage"
+  ]
+ },
+ {
+  "name": "relics/BottledFlame",
+  "hooks": [
+   "atBattleStart",
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/BottledLightning",
+  "hooks": [
+   "atBattleStart",
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/BottledTornado",
+  "hooks": [
+   "atBattleStart",
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/Brimstone",
+  "hooks": [
+   "atTurnStart"
+  ]
+ },
+ {
+  "name": "relics/BronzeScales",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/BurningBlood",
+  "hooks": [
+   "onVictory"
+  ]
+ },
+ {
+  "name": "relics/BustedCrown",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/Calipers",
+  "hooks": []
+ },
+ {
+  "name": "relics/CallingBell",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/CaptainsWheel",
+  "hooks": [
+   "atTurnStart",
+   "atBattleStart",
+   "onVictory"
+  ]
+ },
+ {
+  "name": "relics/Cauldron",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/CentennialPuzzle",
+  "hooks": [
+   "wasHPLost",
+   "onVictory"
+  ]
+ },
+ {
+  "name": "relics/CeramicFish",
+  "hooks": []
+ },
+ {
+  "name": "relics/ChampionsBelt",
+  "hooks": []
+ },
+ {
+  "name": "relics/CharonsAshes",
+  "hooks": [
+   "onExhaust"
+  ]
+ },
+ {
+  "name": "relics/ChemicalX",
+  "hooks": []
+ },
+ {
+  "name": "relics/Circlet",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/CloakClasp",
+  "hooks": [
+   "onPlayerEndTurn"
+  ]
+ },
+ {
+  "name": "relics/ClockworkSouvenir",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/CoffeeDripper",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/Courier",
+  "hooks": []
+ },
+ {
+  "name": "relics/CrackedCore",
+  "hooks": []
+ },
+ {
+  "name": "relics/CultistMask",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/CursedKey",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/Damaru",
+  "hooks": [
+   "atTurnStart"
+  ]
+ },
+ {
+  "name": "relics/DarkstonePeriapt",
+  "hooks": []
+ },
+ {
+  "name": "relics/DataDisk",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/DeadBranch",
+  "hooks": [
+   "onExhaust"
+  ]
+ },
+ {
+  "name": "relics/deprecated/DEPRECATEDDodecahedron",
+  "hooks": [
+   "onAttacked",
+   "atTurnStart",
+   "atBattleStart",
+   "onVictory"
+  ]
+ },
+ {
+  "name": "relics/deprecated/DEPRECATEDYin",
+  "hooks": [
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "relics/deprecated/DEPRECATED_DarkCore",
+  "hooks": []
+ },
+ {
+  "name": "relics/deprecated/DerpRock",
+  "hooks": []
+ },
+ {
+  "name": "relics/DiscerningMonocle",
+  "hooks": []
+ },
+ {
+  "name": "relics/DollysMirror",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/DreamCatcher",
+  "hooks": []
+ },
+ {
+  "name": "relics/Duality",
+  "hooks": [
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "relics/DuVuDoll",
+  "hooks": [
+   "atBattleStart",
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/Ectoplasm",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/EmotionChip",
+  "hooks": [
+   "wasHPLost",
+   "atTurnStart",
+   "onVictory"
+  ]
+ },
+ {
+  "name": "relics/EmptyCage",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/Enchiridion",
+  "hooks": []
+ },
+ {
+  "name": "relics/EternalFeather",
+  "hooks": []
+ },
+ {
+  "name": "relics/FaceOfCleric",
+  "hooks": [
+   "onVictory"
+  ]
+ },
+ {
+  "name": "relics/FossilizedHelix",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/FrozenCore",
+  "hooks": [
+   "onPlayerEndTurn"
+  ]
+ },
+ {
+  "name": "relics/FrozenEgg2",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/FrozenEye",
+  "hooks": []
+ },
+ {
+  "name": "relics/FusionHammer",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/GamblingChip",
+  "hooks": [
+   "atTurnStartPostDraw",
+   "atBattleStartPreDraw"
+  ]
+ },
+ {
+  "name": "relics/Ginger",
+  "hooks": []
+ },
+ {
+  "name": "relics/Girya",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/GoldenEye",
+  "hooks": []
+ },
+ {
+  "name": "relics/GoldenIdol",
+  "hooks": []
+ },
+ {
+  "name": "relics/GoldPlatedCables",
+  "hooks": []
+ },
+ {
+  "name": "relics/GremlinHorn",
+  "hooks": [
+   "onMonsterDeath"
+  ]
+ },
+ {
+  "name": "relics/GremlinMask",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/HandDrill",
+  "hooks": []
+ },
+ {
+  "name": "relics/HappyFlower",
+  "hooks": [
+   "atTurnStart",
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/HolyWater",
+  "hooks": [
+   "atBattleStartPreDraw"
+  ]
+ },
+ {
+  "name": "relics/HornCleat",
+  "hooks": [
+   "atTurnStart",
+   "atBattleStart",
+   "onVictory"
+  ]
+ },
+ {
+  "name": "relics/HoveringKite",
+  "hooks": [
+   "atTurnStart",
+   "onManualDiscard"
+  ]
+ },
+ {
+  "name": "relics/IceCream",
+  "hooks": []
+ },
+ {
+  "name": "relics/IncenseBurner",
+  "hooks": [
+   "atTurnStart",
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/InkBottle",
+  "hooks": [
+   "onUseCard",
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/Inserter",
+  "hooks": [
+   "atTurnStart",
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/JuzuBracelet",
+  "hooks": []
+ },
+ {
+  "name": "relics/Kunai",
+  "hooks": [
+   "onUseCard",
+   "atTurnStart",
+   "onVictory"
+  ]
+ },
+ {
+  "name": "relics/Lantern",
+  "hooks": [
+   "atTurnStart"
+  ]
+ },
+ {
+  "name": "relics/LetterOpener",
+  "hooks": [
+   "onUseCard",
+   "atTurnStart",
+   "onVictory"
+  ]
+ },
+ {
+  "name": "relics/LizardTail",
+  "hooks": [
+   "onTrigger"
+  ]
+ },
+ {
+  "name": "relics/MagicFlower",
+  "hooks": []
+ },
+ {
+  "name": "relics/Mango",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/MarkOfPain",
+  "hooks": [
+   "atBattleStart",
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/MarkOfTheBloom",
+  "hooks": []
+ },
+ {
+  "name": "relics/Matryoshka",
+  "hooks": []
+ },
+ {
+  "name": "relics/MawBank",
+  "hooks": []
+ },
+ {
+  "name": "relics/MealTicket",
+  "hooks": []
+ },
+ {
+  "name": "relics/MeatOnTheBone",
+  "hooks": [
+   "onTrigger",
+   "onBloodied"
+  ]
+ },
+ {
+  "name": "relics/MedicalKit",
+  "hooks": [
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "relics/Melange",
+  "hooks": [
+   "onShuffle"
+  ]
+ },
+ {
+  "name": "relics/MembershipCard",
+  "hooks": []
+ },
+ {
+  "name": "relics/MercuryHourglass",
+  "hooks": [
+   "atTurnStart"
+  ]
+ },
+ {
+  "name": "relics/MoltenEgg2",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/MummifiedHand",
+  "hooks": [
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "relics/MutagenicStrength",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/Necronomicon",
+  "hooks": [
+   "onUseCard",
+   "checkTrigger",
+   "atTurnStart",
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/NeowsLament",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/NilrysCodex",
+  "hooks": [
+   "onPlayerEndTurn"
+  ]
+ },
+ {
+  "name": "relics/NinjaScroll",
+  "hooks": [
+   "atBattleStartPreDraw"
+  ]
+ },
+ {
+  "name": "relics/NlothsGift",
+  "hooks": []
+ },
+ {
+  "name": "relics/NlothsMask",
+  "hooks": []
+ },
+ {
+  "name": "relics/NuclearBattery",
+  "hooks": []
+ },
+ {
+  "name": "relics/Nunchaku",
+  "hooks": [
+   "onUseCard"
+  ]
+ },
+ {
+  "name": "relics/OddlySmoothStone",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/OddMushroom",
+  "hooks": []
+ },
+ {
+  "name": "relics/OldCoin",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/Omamori",
+  "hooks": []
+ },
+ {
+  "name": "relics/OrangePellets",
+  "hooks": [
+   "onUseCard",
+   "atTurnStart"
+  ]
+ },
+ {
+  "name": "relics/Orichalcum",
+  "hooks": [
+   "atTurnStart",
+   "onPlayerEndTurn",
+   "onVictory"
+  ]
+ },
+ {
+  "name": "relics/OrnamentalFan",
+  "hooks": [
+   "onUseCard",
+   "atTurnStart",
+   "onVictory"
+  ]
+ },
+ {
+  "name": "relics/Orrery",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/PandorasBox",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/Pantograph",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/PaperCrane",
+  "hooks": []
+ },
+ {
+  "name": "relics/PaperFrog",
+  "hooks": []
+ },
+ {
+  "name": "relics/PeacePipe",
+  "hooks": []
+ },
+ {
+  "name": "relics/Pear",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/PenNib",
+  "hooks": [
+   "onUseCard",
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/PhilosopherStone",
+  "hooks": [
+   "atBattleStart",
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/Pocketwatch",
+  "hooks": [
+   "atTurnStartPostDraw",
+   "atBattleStart",
+   "onVictory"
+  ]
+ },
+ {
+  "name": "relics/PotionBelt",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/PrayerWheel",
+  "hooks": []
+ },
+ {
+  "name": "relics/PreservedInsect",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/PrismaticShard",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/PureWater",
+  "hooks": [
+   "atBattleStartPreDraw"
+  ]
+ },
+ {
+  "name": "relics/QuestionCard",
+  "hooks": []
+ },
+ {
+  "name": "relics/RedCirclet",
+  "hooks": []
+ },
+ {
+  "name": "relics/RedMask",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/RedSkull",
+  "hooks": [
+   "atBattleStart",
+   "onVictory",
+   "onBloodied"
+  ]
+ },
+ {
+  "name": "relics/RegalPillow",
+  "hooks": []
+ },
+ {
+  "name": "relics/RingOfTheSerpent",
+  "hooks": [
+   "atTurnStart",
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/RunicCapacitor",
+  "hooks": [
+   "atTurnStart"
+  ]
+ },
+ {
+  "name": "relics/RunicCube",
+  "hooks": [
+   "wasHPLost"
+  ]
+ },
+ {
+  "name": "relics/RunicDome",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/RunicPyramid",
+  "hooks": []
+ },
+ {
+  "name": "relics/SacredBark",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/SelfFormingClay",
+  "hooks": [
+   "wasHPLost"
+  ]
+ },
+ {
+  "name": "relics/Shovel",
+  "hooks": []
+ },
+ {
+  "name": "relics/Shuriken",
+  "hooks": [
+   "onUseCard",
+   "atTurnStart",
+   "onVictory"
+  ]
+ },
+ {
+  "name": "relics/SingingBowl",
+  "hooks": []
+ },
+ {
+  "name": "relics/SlaversCollar",
+  "hooks": [
+   "onVictory"
+  ]
+ },
+ {
+  "name": "relics/Sling",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/SmilingMask",
+  "hooks": []
+ },
+ {
+  "name": "relics/SnakeRing",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/SneckoEye",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/SneckoSkull",
+  "hooks": []
+ },
+ {
+  "name": "relics/Sozu",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/SpiritPoop",
+  "hooks": []
+ },
+ {
+  "name": "relics/SsserpentHead",
+  "hooks": []
+ },
+ {
+  "name": "relics/StoneCalendar",
+  "hooks": [
+   "atTurnStart",
+   "atBattleStart",
+   "onPlayerEndTurn",
+   "onVictory"
+  ]
+ },
+ {
+  "name": "relics/StrangeSpoon",
+  "hooks": []
+ },
+ {
+  "name": "relics/Strawberry",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/StrikeDummy",
+  "hooks": []
+ },
+ {
+  "name": "relics/Sundial",
+  "hooks": [
+   "onShuffle",
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/SymbioticVirus",
+  "hooks": []
+ },
+ {
+  "name": "relics/TeardropLocket",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/Test1",
+  "hooks": []
+ },
+ {
+  "name": "relics/Test3",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/Test4",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/Test5",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/Test6",
+  "hooks": [
+   "atTurnStart",
+   "onPlayerEndTurn",
+   "onVictory"
+  ]
+ },
+ {
+  "name": "relics/TheSpecimen",
+  "hooks": [
+   "onMonsterDeath"
+  ]
+ },
+ {
+  "name": "relics/ThreadAndNeedle",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/Tingsha",
+  "hooks": [
+   "onManualDiscard"
+  ]
+ },
+ {
+  "name": "relics/TinyChest",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/TinyHouse",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/Toolbox",
+  "hooks": [
+   "atBattleStartPreDraw"
+  ]
+ },
+ {
+  "name": "relics/Torii",
+  "hooks": [
+   "onAttacked"
+  ]
+ },
+ {
+  "name": "relics/ToughBandages",
+  "hooks": [
+   "onManualDiscard"
+  ]
+ },
+ {
+  "name": "relics/ToxicEgg2",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/ToyOrnithopter",
+  "hooks": []
+ },
+ {
+  "name": "relics/TungstenRod",
+  "hooks": []
+ },
+ {
+  "name": "relics/Turnip",
+  "hooks": []
+ },
+ {
+  "name": "relics/TwistedFunnel",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/UnceasingTop",
+  "hooks": [
+   "atTurnStart"
+  ]
+ },
+ {
+  "name": "relics/Vajra",
+  "hooks": [
+   "atBattleStart"
+  ]
+ },
+ {
+  "name": "relics/VelvetChoker",
+  "hooks": [
+   "atTurnStart",
+   "atBattleStart",
+   "onVictory",
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/VioletLotus",
+  "hooks": [
+   "onChangeStance"
+  ]
+ },
+ {
+  "name": "relics/Waffle",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/WarPaint",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/WarpedTongs",
+  "hooks": [
+   "atTurnStartPostDraw"
+  ]
+ },
+ {
+  "name": "relics/Whetstone",
+  "hooks": [
+   "onEquip"
+  ]
+ },
+ {
+  "name": "relics/WhiteBeast",
+  "hooks": []
+ },
+ {
+  "name": "relics/WingBoots",
+  "hooks": []
+ },
+ {
+  "name": "relics/WristBlade",
+  "hooks": []
+ }
+]
