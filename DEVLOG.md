@@ -1634,3 +1634,5 @@ ModelDb.AllCards 与 AllCharacters 的补丁注入点全景（BaseLib/ChaosBridg
   Regent=FallingStar+Venerate、Necrobinder=Bodyguard+Unleash）。提交后推送。
 - 续3十三补：纪元过滤层解码（Ironclad2/5/7Epoch 包示范；BaseLib mod 卡恒可用）。
   I11 细化为三层过滤。提交后推送。
+- 续3十四补：R11 事件诅咒来源表（10 事件与已知数据吻合；DrugDealer/NoteForYourself
+  两处 ldc 提取待人工复核）。工具 stS1-event-cards.js。提交后推送。
