@@ -75,4 +75,4 @@ WaitForUnpause → playersEndingTurn（extra-turn 玩家优先）
 1. `EndEnemyTurn(1076)` 收尾（敌侧回合尾 power tick、切边）未逐行展开。
 2. `SwitchFromPlayerToEnemySide(1854)` 的 extra-turn 清理细节（PlayersTakingExtraTurn.Clear 已见，其余未展开）。
 3. `StartCombatInternal(576)` 开局初始化（能量/抽牌/遗物开场钩子的确切顺序）未逐行展开——A05 已覆盖玩家侧 StartTurn 部分。
-4. ChecksumTracker 的插桩位置清单（联机一致性用）未系统化。
+4. ~~ChecksumTracker 插桩位置清单~~ **已结案**（2026-09-05 全量 grep）：CombatManager 五处（After player turn start / After player turn phase one end / after player turn phase two end / After enemy turn start / After enemy turn end）+ EventRoom（Exiting event room {id}）+ RestSiteRoom（Exiting rest site）+ RunManager（finished action execution {action}）。置信度：**高**。
