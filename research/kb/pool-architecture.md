@@ -22,6 +22,9 @@ ConcatModelsFromMods(poolModel, pool): 首次访问该池时置 isFrozen=true（
 ```
 ⇒ 三条仲裁事实：①**注册时序契约**——AddModelToPool 必须发生在该池首次 `AllCards` 访问之前（与 chaosbridge 笔记"初始化期不能枚举 AllCharacters"同族：内容注册 vs 首次枚举的竞态）；②追加序 = 注册序，mod 卡排在官方卡之后（随机均匀性不受影响，顺序敏感消费者会感知）；③跨池重复卡在单池视角合法存在、本层不去重（I3 的机制根源；全局 Distinct 只在 ModelDb.AllCards）。BaseLib 的 `[Pool]` 属性 + ContentPatches（`GetCustomAttribute<PoolAttribute>() ?? throw`，Attribute 的 Inherited=true ⇒ 走基类链解析）只是该引擎通道的**发现层**——GA 事故即"链上解析到了错误归属"，池归属 lint（tools/pool-audit.mjs）必须复刻同样的继承链语义。
 
+**I0c 引擎角色五件套（2026-09-05 补充）** — 出处 `Models.Characters/{Ironclad,Silent,Regent,Necrobinder,Defect}.cs`。置信度：**高**
+每角色四绑定：`CardPool`（各自专属池）/ `PotionPool` / `StartingRelics`（各 1 枚：BurningBlood / RingOfTheSnake / DivineRight / BoundPhylactery / CrackedCore）/ `StartingDeck`（数组字面量：Ironclad 10、Silent 12、Regent 10、Necrobinder 10、Defect 10）。⇒ **官方 StS2 自带 Defect**——我方移植的"一代 Defect"与其同池同名卡碰撞是**结构性**的（SharedCardReuse/Splash 案的深层背景），任何按卡名匹配的兼容层都必须考虑官方 Defect 卡的存在。
+
 ## 2. 不变量 I1：可调用集合 ≠ 池对象（Splash 事故）
 
 **陈述**：任何"从其他角色选牌"类机制，候选集必须是**集合差**——`全体可获取卡牌 − 当前角色可调用集合`（按卡牌 Id 计算）——而不是"全体池对象列表减去 owner 的池对象"。
