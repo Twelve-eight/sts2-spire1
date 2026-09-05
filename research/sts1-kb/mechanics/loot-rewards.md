@@ -48,7 +48,7 @@ price = AbstractCard.getPrice(rarity) × merchantRng.random(0.9, 1.1)
 
 ## 5. 开放问题 / 低置信项
 
-1. 三档宝箱概率字段（smallChestChance 等）各幕具体值未取证。
+1. ~~三档宝箱概率字段~~ **部分结案**（2026-09-05 Exordium ctor 直证）：small=50 / medium=33 / large=17（TheCity/TheBeyond 同构位常数一致；TheEnding 未逐字段终验）。置信度：**高**（三幕）/ **中**（TheEnding）。
 2. 商店遗物/药水位与 OnSaleTag 的完整公式未逐行展开。
 3. `returnRandomRelic` 的 tier 池与去重（relicRng）未成卷——遗物数据层任务。
 4. BASIC 牌 getPrice 位（普通卡组牌不入店，理论 9999 或 50 未终验）。
