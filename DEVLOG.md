@@ -1617,3 +1617,5 @@ ModelDb.AllCards 与 AllCharacters 的补丁注入点全景（BaseLib/ChaosBridg
 - 续3八补：I13 存档持久面契约（SerializableCard 五字段白名单；跨战斗成长必须
   [SavedProperty]；ModelId 身份=类改名断老档；RNG 集合存 seed+计数）。评审清单加
   I13 行。提交 9b327c4。
+- 续3九补：card-rewards R10（TheLibrary 20 抽 1 去重/rollRarity 复用实证；
+  GremlinMatchGame 奖品分支）。提交后推送。
