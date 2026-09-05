@@ -23,7 +23,7 @@ const out = [];
       for (let i = 0; i < lines.length; i++) {
         if (/helpers\/CardLibrary\.(getCopy|getCard)/.test(lines[i])) {
           for (let j = i - 1; j >= Math.max(0, i - 6); j--) {
-            const m = lines[j].match(/String\s+([A-Za-z0-9]+)/);
+            const m = lines[j].match(/String\s+(.+?)\s*$/);
             if (m) { grants.push(m[1]); break; }
           }
         }

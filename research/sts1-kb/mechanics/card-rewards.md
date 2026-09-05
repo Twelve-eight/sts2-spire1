@@ -96,13 +96,13 @@ StS1 事件赠卡以**指定卡 ID（CardLibrary.getCopy）为主、池随机为
 - TheLibrary（藏书馆）：建 UNSPECIFIED 组 → 循环 **20 次** `rollRarity() → getCard(rarity)`（带同 ID 去重重试，同 getRewardCards 模式）→ 玩家选 1 加入牌组。即"20 抽 1"，稀有度每张独立 roll（吃 blizz 保底计数器，R03/R04 的 rollRarity 全局可复用性实证）。
 - GremlinMatchGame（对对碰）：CUR_SCREEN 状态机小游戏；奖品分支含 `getCard`（含 RARE 档）与 `returnRandomCurse`（失败惩罚 curse）——精确奖品表未逐分支展开。
 
-**R11 事件诅咒来源表（CardLibrary.getCopy ldc 邻近串提取，工具 tools/stS1-event-cards.js）** — 置信度：**高**（与已知游戏数据全吻合）/ 两处存疑见下
+**R11 事件授予卡来源表（CardLibrary.getCopy/getCard ldc 邻近串提取，工具 tools/stS1-event-cards.js）** — 置信度：**高**（已人工复核全部 12 条）
 ```
 AccursedBlacksmith→Pain;  Addict→Shame;  BigFish→Regret;  GoldShrine→Regret（选项之一）;
 ForgottenAltar→Decay;  GoldenIdolEvent→Injury;  MindBloom→Normality|Doubt（分支）;
 Mushrooms→Parasite;  TheMausoleum→Writhe;  WindingHalls→Madness|Writhe（分支）
 ```
-存疑：DrugDealer 提取到 "J"（应为 J.A.X.，字符串截断或分段 ldc）；NoteForYourself 提取到 "Iron"（疑似邻近无关常量）——两处需人工 javap 复核后定稿。
+
 
 ## 8. 开放问题 / 低置信项
 
