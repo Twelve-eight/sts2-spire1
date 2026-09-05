@@ -77,7 +77,22 @@ if (copy.rarity != RARE && cardRng.randomBoolean(cardUpgradedChance) && canUpgra
 | RARE 卡 + 高升级概率遗物 | 不自动升级（RARE 被显式排除） | R06 |
 | 你的影响奖励数量遗物 | 按遗物容器顺序链式修改 | R02 |
 
-## 4. 开放问题 / 低置信项
+## 4. 事件赠卡普查（StS1 侧）
+
+**R08 事件用池 API 全量（56 事件类，工具 tools/stS1-event-pool-usage.js）** — 出处 javap 常量方法引用扫描。置信度：**高**
+```
+AbstractDungeon.getCard(rarity)：GremlinMatchGame、TheLibrary（池随机奖品型）
+returnRandomCurse：GremlinMatchGame
+CardLibrary.getCopy(指定卡)：AccursedBlacksmith、BigFish、DrugDealer、ForgottenAltar、
+  MindBloom、Mushrooms、Sssserpent、TheMausoleum、WindingHalls（事件按卡 ID 精确赠卡）
+returnRandomRelic（遗物侧）：Addict、BigFish、DeadAdventurer、GremlinWheelGame、
+  ScrapOoze、TheMausoleum、WeMeetAgain
+CardLibrary.getCard：NoteForYourself
+```
+**R09 两代范式对照** — 结论。置信度：**高**
+StS1 事件赠卡以**指定卡 ID（CardLibrary.getCopy）为主、池随机为辅**；StS2 事件几乎全部走 `CreateForReward + 池`（sts2-event-pool-usage.md E02，仅 ColorfulPhilosophers 硬编码色序）。⇒ 移植 StS1 事件到 StS2 时"指定卡"要改写为 FromCard 池外注入或专用 options；移植 StS2 事件到 StS1 时要建池或 getCopy 化。跨代移植事件不共享同一赠卡 API 范式。
+
+## 6. 开放问题 / 低置信项
 
 1. `initializeCardPools` 中 srcUncommonCardPool 备份的消费方（transform/去重辅助）未穷举。置信度：**中**。
 2. ~~各幕 cardUpgradedChance 具体值~~ **已结案**（2026-09-05 各幕构造器直证）：Exordium=0.0、TheCity=0.125、TheBeyond=0.25、TheEnding=飞升<12 为 0.5 / ≥12 为 0.25（TheEnding ctor 条件分支）。置信度：**高**。
