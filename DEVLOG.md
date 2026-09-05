@@ -1603,3 +1603,6 @@ ModelDb.AllCards 与 AllCharacters 的补丁注入点全景（BaseLib/ChaosBridg
   id 配对乱序队列/StateDivergenceException；11 个 Synchronizer 通道清单）；EA 宝珠普查
   O08（五珠数值与 StS1 同源、Glass 新珠 evoke=Passive×2、Plasma 豁免 ModifyOrbValue、
   Plasma 唯一回合开始珠）。提交 9e8adb4/7a08890。
+- 续3五补：StS1 逐怪钩子面普查数据层 v0（73 类；0 怪物覆写 rollMove/首掷由基类
+  universalPreBattle 承担；逃逸家族=5 Gremlin；changeState 37/damage 35/die 46/
+  preBattle 39；GremlinLeader summon）。工具 stS1-monster-scan.js + JSON。提交 47f4c99。
