@@ -88,6 +88,15 @@
 **检测**：联机冒烟最小集 + 校验和日志比对；兼容层（ChaosBridge/AA 桥）必须两端同装（chaosbridge-design.md 前提）。
 **出处**：`JoinFlow.cs#AttemptJoin`。置信度：**高**。
 
+## I15 联机奖励分配：每玩家独立奖励栈，无共享池
+
+**陈述**：`RewardsSetSynchronizer`（453 行）为每玩家维护独立 `rewardsStack`（RewardSetState 栈）+ `completedRewards[setId]` 三态（None/Completed/Skipped）；本地 `SelectLocalReward/SkipLocalRewardsSet` 与远端 `HandleRewardSelectedMessage/HandleRewardSetSkippedMessage` 汇入同一 `SelectRewardForPlayer(player, …)`——**各自结算各自的奖励集**，不存在"抢同一张卡"的共享池语义。
+**完成判定**：`set.AllRewardsSuccessfullySelected` → Completed；跳过 → 未选奖励逐个 `OnSkipped()`（药水消失类语义在 reward 实现里）→ Skipped；完成后弹栈 + completionSource 放行。
+**乱序容忍**：消息按 setId 缓冲（BufferedMessage），集合未知时入队、产生后回放；`RewardSynchronizer`（341 行）另有 RunLocation 定向缓冲（RewardObtained/GoldLost/CardRemoved 三类消息）。
+**正确做法**：影响奖励的补丁必须同时考虑本地与远端消息两条入口（改一条漏一条=单侧生效，I4 同族）；跳过语义（OnSkipped）不可绕过。
+**检测**：联机双人同选/一选一跳/双跳三场景冒烟；代码评审找只挂本地入口的补丁。
+**出处**：`Multiplayer.Game/RewardsSetSynchronizer.cs`（行 25-395）、`RewardSynchronizer.cs`。置信度：**高**（结构）/ **中**（深度合并语义：双 Completed 竞态细节未逐行）。
+
 ---
 
 ## 维护规则
