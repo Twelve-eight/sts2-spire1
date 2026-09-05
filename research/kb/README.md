@@ -15,6 +15,7 @@
 | invariants.md | 引擎/mod 契约与不变量目录 I4-I10（池架构卷之外）：联机状态一致性、canonical/mutable 生命周期、资产存在≠内容、本地化变量名权威、标识符静态解析坑、事件池隐式数量要求、注册时序 | 每次实机事故结案后追加 |
 | semantics-review-checklist.md | 语义评审门清单（G2 固化）：P1-P8 池/注册表 + M1-M4 模型/联机提问表 + 可整段派发的 reviewer 提示词 | 不变量目录每新增一条同步加问 |
 | sts2-event-pool-usage.md | StS2 事件/修正器用池普查 E01-E05：15 文件建档、CreateForReward+单池 options 范式、NoCardPoolModifications 旗、ColorfulPhilosophers 硬编码色序（I2a 实例）、RNG 分账 | 源码重导出或新结案时追加 |
+| sts2-mock-testing.md | StS2 Mock 测试模式 T1-T3：46 个官方 Mock 类分布、Mock 即真实模型子类的测试哲学、TestMode 表现层闸门、本项目三层验证策略落地 | 新增 Mock 基建或测试方法时追加 |
 | research-methods.md | KB 研究方法与实录坑 M1-M17：javap/unzip/MSYS/ugrep/Node 坑、常量池扫描法、签名正则、时序推导、StS2 C# 工作流、自检纪律 | 每遇新坑/新方法即追加 |
 | pitfalls.md | 陷阱模式库 P-01..P-10：症状/根因/修复/预防 四段式 | 每个结案 bug 追加一条 |
 | debug-protocols.md | 取证 SOP：冻结协议、divergence 对拍、drain 管线、控制台、良性噪音清单 | 协议变化时更新 |
