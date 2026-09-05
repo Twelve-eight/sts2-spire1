@@ -80,6 +80,6 @@ if (copy.rarity != RARE && cardRng.randomBoolean(cardUpgradedChance) && canUpgra
 ## 4. 开放问题 / 低置信项
 
 1. `initializeCardPools` 中 srcUncommonCardPool 备份的消费方（transform/去重辅助）未穷举。置信度：**中**。
-2. 各幕 `cardUpgradedChance` 具体值（Exordium/City/Beyond 构造器）未取证。置信度：**未定**。
+2. ~~各幕 cardUpgradedChance 具体值~~ **已结案**（2026-09-05 各幕构造器直证）：Exordium=0.0、TheCity=0.125、TheBeyond=0.25、TheEnding=飞升<12 为 0.5 / ≥12 为 0.25（TheEnding ctor 条件分支）。置信度：**高**。
 3. `changeNumberOfCardsInReward` 的 vanilla 实现者清单未枚举（Question Card? 类）。
 4. Boss/商店/事件的奖励生成走 `RewardItem` 其他分支，本卷只覆盖战斗胜利卡池路径。置信度：**范围声明**。
