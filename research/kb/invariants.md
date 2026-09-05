@@ -73,6 +73,14 @@
 **检测**：代码评审（直改 pile/_powers 的补丁模式）；联机最小集复测 + checksum 日志比对（`.tmp/p1-smoke` 流程）。**冒烟为何测不出**：autoslay 单机；checksum 只在真双人局活跃。
 **出处**：`Multiplayer.Game/ChecksumTracker.cs`（全文 303 行）+ Synchronizer 目录清单。置信度：**高**。
 
+## I13 存档持久面契约：卡牌只有五个字段能活过存档边界
+
+**陈述**：`SerializableCard`（Saves.Runs/SerializableCard.cs）持久化集合 = **{ ModelId, CurrentUpgradeLevel, Enchantment, SavedProperties(Props), FloorAddedToDeck }**，别无其他。一切战斗内临态（damage/block/temporary/costForTurn 类）不在持久面。
+**推论（移植硬约束）**：任何跨战斗成长（永久加攻、费用永久降、复活标记……）**必须**落在 `[SavedProperty]` 标注的模型属性上（Attribute: SerializationCondition 默认 AlwaysSave + order 字段控制序列化先后）——GeneticAlgorithm 的 DeckVersion 方案即此契约的正确实现（DEVLOG GA 修正段）；忘走 SavedProperty = 下场战斗/读档后成长静默蒸发，无异常。
+**模型身份**：存档以 **ModelId** 引用模型（ModelIdRunSaveConverter），mod 模型靠程序集类型稳定生成 id——重命名类 = 老存档断链（含 SPIRE1-* 卡）。
+**RNG 持久面**：`SerializablePlayerRngSet` 按流类型存 Seed + 计数（Dictionary<PlayerRngType, SerializableRng>）⇒ 读档续局确定性成立的前提是**流清单不被新版本改名/增删**（PlayerRngType 枚举是存档格式的一部分）。
+**出处**：`Saves/SerializableRun.cs`（Acts/Modifiers/EventsSeen/Players/MapHistory/Ascension/NumReloads）、`Saves.Runs/SerializablePlayer.cs`（HP/MaxEnergy/Gold/BaseOrbSlotCount/Deck/Relics/Potions/Discovered*）、`Saves.Runs/SerializableCard.cs`、`SavedPropertyAttribute.cs`。置信度：**高**。
+
 ---
 
 ## 维护规则
