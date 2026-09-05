@@ -92,7 +92,11 @@ CardLibrary.getCard：NoteForYourself
 **R09 两代范式对照** — 结论。置信度：**高**
 StS1 事件赠卡以**指定卡 ID（CardLibrary.getCopy）为主、池随机为辅**；StS2 事件几乎全部走 `CreateForReward + 池`（sts2-event-pool-usage.md E02，仅 ColorfulPhilosophers 硬编码色序）。⇒ 移植 StS1 事件到 StS2 时"指定卡"要改写为 FromCard 池外注入或专用 options；移植 StS2 事件到 StS1 时要建池或 getCopy 化。跨代移植事件不共享同一赠卡 API 范式。
 
-## 6. 开放问题 / 低置信项
+**R10 池随机事件的两个样本** — 出处 `events/city/TheLibrary`、`events/shrines/GremlinMatchGame` javap。置信度：**高**（结构）/ **中**（奖品表细节）
+- TheLibrary（藏书馆）：建 UNSPECIFIED 组 → 循环 **20 次** `rollRarity() → getCard(rarity)`（带同 ID 去重重试，同 getRewardCards 模式）→ 玩家选 1 加入牌组。即"20 抽 1"，稀有度每张独立 roll（吃 blizz 保底计数器，R03/R04 的 rollRarity 全局可复用性实证）。
+- GremlinMatchGame（对对碰）：CUR_SCREEN 状态机小游戏；奖品分支含 `getCard`（含 RARE 档）与 `returnRandomCurse`（失败惩罚 curse）——精确奖品表未逐分支展开。
+
+## 7. 开放问题 / 低置信项
 
 1. `initializeCardPools` 中 srcUncommonCardPool 备份的消费方（transform/去重辅助）未穷举。置信度：**中**。
 2. ~~各幕 cardUpgradedChance 具体值~~ **已结案**（2026-09-05 各幕构造器直证）：Exordium=0.0、TheCity=0.125、TheBeyond=0.25、TheEnding=飞升<12 为 0.5 / ≥12 为 0.25（TheEnding ctor 条件分支）。置信度：**高**。
