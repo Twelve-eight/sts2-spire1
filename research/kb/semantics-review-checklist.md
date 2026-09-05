@@ -45,6 +45,8 @@ research/kb/semantics-review-checklist.md（本文件）。
 
 ## 4. 机械子集的一键执行
 
+注意：I7 检查只约束**直读 SelectionScreenPrompt 属性**的卡；仅用 3 参 FromChooseACardScreen 的卡不需要键（通用横幅）。卡牌 loc id 分隔符为下划线、events 域为连字符——两域不同，扫描器别混用。
+
 `node tools/semantics-audit.mjs` 运行可自动化子集（P4 归属 lint + P1 排除模式白名单 + I7 选牌键交叉核对），输出 findings 与 verdict；P2/P3/P5-P8、M1-M4 仍由评审人对照本清单作答。首轮运行（2026-09-05）结果：P4/P1 绿，I7 抓出 DualWield 双语言缺键+直读属性（request-changes，见 invariants.md I7 实测段）。
 
 ## 5. 维护规则
