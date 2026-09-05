@@ -62,7 +62,7 @@
 **为何重要**：直读 AllCards 的代码会（a）把未解锁/错误纪元的卡发给玩家；（b）在联机局发单人限定卡（或反之）——两类都无异常、纯语义错误，冒烟不可见。
 **正确做法**：一切候选集/赠卡/变形入口走 GetUnlockedCards 并传入运行真实 constraint（各 vanilla 调用点均传 `RunState.CardMultiplayerConstraint`）；移植卡的 `MultiplayerConstraint` 若未声明默认 None（恒可用）——如需限定必须显式。
 **检测**：评审 grep `.AllCards` 的消费点（ModelDb.AllCards 的 Distinct 全集另有用途，区分对待）；跨对照 invariants I4（联机状态一致性）。
-**出处**：`Entities.Cards/CardMultiplayerConstraint.cs`（枚举全量）+ `Models/CardPoolModel.cs#GetUnlockedCards/#FilterThroughEpochs` + 约束推导 `Runs/IRunState.cs`（`Players.Count <= 1 → SingleplayerOnly，否则 MultiplayerOnly`）。置信度：**高**。
+**三层细化**（2026-09-05 补）：解锁门的具体实现 = 各角色池**覆写 FilterThroughEpochs**，按 Epoch 解锁包逐个 `RemoveAll(IsEpochRevealed<XEpoch>() ? 保留 : 删)`（IroncladCardPool.cs 行 122-140：Ironclad2/5/7Epoch 三包示范；五角色池+Colorless 均覆写）。⇒ 候选集过滤实为**三层**：纪元包（池子类实现）→ 联机约束（枚举互斥）→ （I13 的）存档侧不持久化该状态。BaseLib `CustomCardPoolModel` 未覆写 ⇒ **mod 卡恒可用**（移植 mod 期望行为；要解锁门须自行覆写）。出处补 `Models.CardPools/IroncladCardPool.cs#FilterThroughEpochs`。
 
 ## I12 联机同步拓扑：一切跨端状态变更走专用 Synchronizer；checksum 纪律不容绕过
 

@@ -25,6 +25,8 @@ ConcatModelsFromMods(poolModel, pool): 首次访问该池时置 isFrozen=true（
 **I0c 引擎角色五件套（2026-09-05 补充）** — 出处 `Models.Characters/{Ironclad,Silent,Regent,Necrobinder,Defect}.cs`。置信度：**高**
 每角色四绑定：`CardPool`（各自专属池）/ `PotionPool` / `StartingRelics`（各 1 枚：BurningBlood / RingOfTheSnake / DivineRight / BoundPhylactery / CrackedCore）/ `StartingDeck`（数组字面量：Ironclad 10、Silent 12、Regent 10、Necrobinder 10、Defect 10）。⇒ **官方 StS2 自带 Defect**——我方移植的"一代 Defect"与其同池同名卡碰撞是**结构性**的（SharedCardReuse/Splash 案的深层背景），任何按卡名匹配的兼容层都必须考虑官方 Defect 卡的存在。
 
+**I2c-note 纪元过滤层**：官方池覆写 `FilterThroughEpochs` 按 Epoch 解锁包做 RemoveAll（Ironclad2/5/7Epoch 示范）；BaseLib CustomCardPoolModel 不覆写 ⇒ mod 卡恒可用。详见 invariants.md I11 三层细化。本层独立于联机约束与 blizz 随机。
+
 **I2c-baseline StS2 官方池容量基线（2026-09-05，GenerateAllCards 数组直证）** — 出处 `Models.CardPools/*.cs`。置信度：**高**
 ```
 角色池：Ironclad 90 / Silent 91 / Regent 91 / Necrobinder 91 / Defect 91
