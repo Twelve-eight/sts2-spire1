@@ -43,7 +43,11 @@ research/kb/semantics-review-checklist.md（本文件）。
 - 输出格式：逐条编号结论 + 一个总体 verdict（approve / request-changes + 最小修复清单）。
 ```
 
-## 4. 维护规则
+## 4. 机械子集的一键执行
+
+`node tools/semantics-audit.mjs` 运行可自动化子集（P4 归属 lint + P1 排除模式白名单 + I7 选牌键交叉核对），输出 findings 与 verdict；P2/P3/P5-P8、M1-M4 仍由评审人对照本清单作答。首轮运行（2026-09-05）结果：P4/P1 绿，I7 抓出 DualWield 双语言缺键+直读属性（request-changes，见 invariants.md I7 实测段）。
+
+## 5. 维护规则
 
 - 每次实机事故结案后：DEVLOG 记录 → `invariants.md` 增加不变量条目 → 本清单加对应提问（三处缺一不可）。
 - 本清单是评审提示的**唯一权威副本**；子代理提示只引用路径，不复制内容（防漂移）。
