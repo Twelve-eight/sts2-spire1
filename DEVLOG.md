@@ -1642,3 +1642,28 @@ ModelDb.AllCards 与 AllCharacters 的补丁注入点全景（BaseLib/ChaosBridg
   remove(0) 实证）。开放问题 3 结案。提交后推送。
 - 续3十七补：宝箱概率全量结案（TheEnding 0/100/0 只出中箱；四幕对照齐）。
   提交后推送。
+
+## Session 30 - 2026-09-06 - 全项目交接给 omp(handoff)
+
+用户指令:落盘开发经历、提供交接文档;项目交接由 omp 继续;omp 对 zcode 接手后
+的一切一无所知,将开新对话从本文档恢复。
+
+本会话(zcode 审阅线)产出:
+- 批判审阅定稿 `docs/CODE-REVIEW-20260904.md`(发现 R1-R15;P0×2 在 Pandora 修复
+  e40db70 内:池补丁落基类 getter 全局化 + 存档 postfix 字典用错;R1=三幕 boss
+  零奖励根因链全程实证,修复设计已写明;R5 复用通道五卡违规;R6/R8 覆盖缺口;
+  R7 十处稀有度)。**修复均未实施**。
+- 可复跑工具 `tools/audit-card-fidelity.mjs`(304 卡三方数值审计)+ 
+  `tools/audit-monster-hp.mjs`(66 怪 HP,全对)。
+- 理论 KB `research/kb/review-theory-20260904.md`(六定律)。
+
+KB 深化代理(sessions 28-29)被用户终止;其未提交的交接草稿(HANDOVER-20260906.md,
+88 行)内容已全部合并进交接文档后删除原文件——KB 使用指南/开发纪律 G1-G4/
+事故史速查/首小时清单/禁区均保留。PLAN-2026-09-05.md(omp 自己 staged 的 P1-P13)
+checkbox 未动,恢复时与续3 已落地条目(L12/宝箱概率)对账。
+
+**交接文档 = `SESSION-HANDOFF-20260906.md`(全项目唯一)**:含首读索引、优先队列
+(P0×2 → R1 → R7/R5 → R6/R8 → P2/P3 → PLAN)、待验证队列、工具清单、环境硬约束、
+KB 指南、开发纪律、事故史速查、omp 第一小时清单、禁区。代码基线 `9453ebc`
+(其后的提交均为文档/KB/工具),**已部署 dll 仍含两个 P0,omp 第一动作 = R2→R3→
+构建部署冒烟**。
