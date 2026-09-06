@@ -184,10 +184,15 @@ Most of the original list is now closed — resolved in session 5 and documented
     one-off exception costs a custom upgrade entry point for zero reachable gameplay
     (upgraded Burn only appears via StS1-specific effects that StS2 does not port).
   - R6/R8 coverage exemptions: card-layer gap (~30 colorless cards, DoubleTap/Exhume/
-    Amplify/Electrodynamics/LockOn/SearingBlow, 4 curses pending grant-source check) and
-    the relic layer (29/180+) are **acknowledged open coverage debt**, not silently
-    dropped — the R6 batch (nine engine twins) is in flight; the relic batch needs a
-    scope decision (full port vs curated set) from the user before writing code.
+    Amplify/Electrodynamics/LockOn/SearingBlow) and the relic layer (29/180+) are
+    **acknowledged open coverage debt**, not silently dropped — the R6 batch (nine
+    engine twins) is in flight; the relic batch needs a scope decision (full port vs
+    curated set) from the user before writing code. **The 4 "missing" curses are now
+    adjudicated (2026-09-06, grant-source check)**: Normality is granted by MindBloom
+    and Writhe by TheMausoleum/WindingHalls as shipped StS2 engine cards (§7a reuse —
+    no own class needed); CurseOfTheBell and Pride have **zero grant sources** in our
+    ported event set (Bell belongs to an unported event, Pride to StS1's Ascension
+    curse mechanic) — no reachable gameplay, therefore intentionally not implemented.
   - R14 MP hash-bypass split: `IgnoreMpModDifferences` (mod-list, default ON, mostly
     false positives) is now separate from `IgnoreMpHashMismatch` (ModelID hash, default
     OFF — a hash mismatch means at least one side's gameplay-mod binary drifted;

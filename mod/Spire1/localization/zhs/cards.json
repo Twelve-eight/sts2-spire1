@@ -674,4 +674,13 @@
   "SPIRE1-NECRONOMICURSE.description": "这个 诅咒 无法逃脱。",
   "SPIRE1-MADNESS.title": "疯狂",
   "SPIRE1-MADNESS.description": "你手牌中一张随机牌在本场战斗中耗能变为0。"
+  ,
+  "SPIRE1-SLIMED.title": "黏液",
+  "SPIRE1-SLIMED.description": "消耗 。",
+  "SPIRE1-APOTHEOSIS.title": "神化",
+  "SPIRE1-APOTHEOSIS.description": "在本场战斗中 升级 你的所有牌。 NL 消耗 。",
+  "SPIRE1-DISCOVERY.title": "发现",
+  "SPIRE1-DISCOVERY.description": "-从3张随机牌中选择1张加入你的手牌。这张牌在本回合耗能变为0。 NL 消耗 。-+从3张随机牌中选择1张加入你的手牌。这张牌在本回合耗能变为0。+",
+  "SPIRE1-THE_BOMB.title": "炸弹",
+  "SPIRE1-THE_BOMB.description": "在 !Turns! 回合结束后，对所有敌人造成 !BombDamage! 点伤害。"
 }

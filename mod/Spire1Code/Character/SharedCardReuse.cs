@@ -76,7 +76,12 @@ internal static class SharedCardReuse
         typeof(Sts2Cards.Headbutt),       // 1E, 9 dmg (+2), place discard card on draw top
         typeof(Sts2Cards.IronWave),       // 1E, 5 dmg & 5 block (+3 each)
         typeof(Sts2Cards.PommelStrike),   // 1E, 9 dmg (+2), draw 1 (+1)
-        typeof(Sts2Cards.ShrugItOff),     // 1E, 8 block (+3), draw 1
+        // R6 (2026-09-06, CODE-REVIEW §R6): three engine twins verified field-by-field vs the
+        // jar (cost/base/upgrade delta/keywords/target/rarity ALL match — evidence in
+        // mod/_staging/R6-nine-twins-verdict.md).
+        typeof(Sts2Cards.Hemokinesis),    // 1E, 15 dmg (+5), lose 2 HP
+        typeof(Sts2Cards.Offering),       // 0E, lose 6 HP, 2 Energy, draw 3 (+2), Exhaust
+        typeof(Sts2Cards.PerfectedStrike),// 2E, 6 dmg + 2 per Strike card (+1), Strike tag
         typeof(Sts2Cards.Thunderclap),    // 1E, 4 dmg (+3) & 1 Vulnerable to ALL
         typeof(Sts2Cards.TwinStrike),
         typeof(Sts2Cards.Barricade),
