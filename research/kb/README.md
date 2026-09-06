@@ -23,7 +23,7 @@
 | loc-drift-report.md | 本地化 vs 官方原文相似度对账（318 条，A/B/C 分级） | loc_drift.js 可重跑刷新 |
 
 关联卷：
-- 一代数据与机制语义：`../sts1-kb/`（cards/relics/potions/events + mechanics/ 202 规则）
+- 一代数据与机制语义：`../sts1-kb/`（cards/relics/potions/events + mechanics/ 262 规则）
 - 审计报告：`../audits/`（critique / devlog-audit / morning-summary / upstream-issue-draft）
 
 原则：**skill 放方法，KB 放事实**。任何"下次还会用到的事实"进本目录；

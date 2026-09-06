@@ -30,14 +30,14 @@ wiki（slay-the-spire.fandom.com）仅作交叉佐证；HTML 页 403，经 `api.
 | [stances.md](stances.md) | 12 | ChangeStanceAction 全序（CannotChangeStance 门/同姿态幂等/订阅者先于 Calm 退场能量）、四姿态钩子表、stance.atStartOfTurn 调用点结案、Divinity 自退 vs 渎神死时序、uniqueStancesThisCombat 无消费者 |
 | [energy-cost.md](energy-cost.md) | 10 | 能量三变量模型、**每回合重置点=PlayerTurnEffect 构造器**（勘误 turn-phase R02）、开局发放链、hasEnoughEnergy 七道门、费用生命周期与 Confusion/Madness、freeToPlay/X 费 |
 | [potions-combat.md](potions-combat.md) | 6 | 药水点击即同步 use()（非队列化）、PotionPopUp 结算序、SmokeBomb 同步置位、妖精自动使用不触发 onUsePotion、药水槽销毁 |
-| [monster-ai.md](monster-ai.md) | 10 | rollMove/getMove/aiRng、moveHistory 写入与 lastMove 族读取、setMove 家族、意图数字管线与**onModifyPower 即时重算意图**（实伤快照可能与显示不一致）、monsterQueue 调度、escape 语义 |
+| [monster-ai.md](monster-ai.md) | 11 | rollMove/getMove/aiRng、moveHistory 写入与 lastMove 族读取、setMove 家族、意图数字管线与**onModifyPower 即时重算意图**（实伤快照可能与显示不一致）、monsterQueue 调度、escape 语义、全量 73 类扫描归档 |
 | [power-lifecycle.md](power-lifecycle.md) | 12 | 全量 161 power 类按钩子归档：回合四时点成员清单、justApplied 9 家族、双钩子 power（Equilibrium/Ritual/Malleable）、伤害/格挡钩子使用者、叠层定制 |
 | [relic-triggers.md](relic-triggers.md) | 16 | 全量 190 遗物类按钩子归档：开场两段/回合两段/计数族/受击族/胜利链；规则位 boss 遗物零钩子=引擎查询建模 |
 | [turn-control.md](turn-control.md) | 6 | 窥视 ScryAction 全序（triggerOnScry 扫尾）、skipMonsterTurn 消费者全集（Vault 连玩家 debuff 递减一起跳过）、callEndTurnEarlySequence 绕过哨兵链 |
-| [loot-rewards.md](loot-rewards.md) | 7 | 药水掉落 65/25/10（potionRng）、宝箱 treasureRng 滚动、商店定价 =基础价×U(0.9,1.1)（50/75/150/9999 直证）、四 RNG 流分账 |
+| [loot-rewards.md](loot-rewards.md) | 8 | 药水掉落 65/25/10（potionRng）、宝箱 treasureRng 滚动（TheEnding 0/100/0 medium-only）、商店定价 =基础价×U(0.9,1.1)（50/75/150/9999 直证）、四 RNG 流分账、L12 五池弹头式遗物发放（remove(0) pop-after-shuffle、三级降级链到 Circlet 占位、商店/boss 池） |
 | [card-rewards.md](card-rewards.md) | 11 | 卡牌奖励生成：池构建与角色覆写点、Blizzard 保底计数器（+5/-1/-40 方向实证）、稀有度阈值（普通 3/37 精英 10/40）、去重重试、RARE 不自动升级 |
 
-合计 **254 条编号规则**，每条独立可引用（`文件名 Rnn`），可直接用于移植仲裁。
+合计 **262 条编号规则**（2026-09-06 复核：逐卷 `grep -cE '^\*\*[A-Z][0-9]'` 求和 + keys 卷 6 知识块；表内行求和 262 与之一致），每条独立可引用（`文件名 Rnn`），可直接用于移植仲裁。计数复核命令绑定本行——断言半衰期律要求"已验证"附带复跑入口。
 
 ## 用户示例问题的确定性答案（验收项）
 

@@ -168,7 +168,30 @@ Most of the original list is now closed — resolved in session 5 and documented
 - **CLOSED**: `CardKeyword` members; power class names; command builders (`DamageCmd`/`PowerCmd`/`CreatureCmd`/`CardPileCmd`); per-character energy override; `MonsterModel` stat/name/art API + move-state selection (see `docs/BaseLib-API.md` §2 `CustomMonsterModel` and `research/BaseLib-unused-surface.md` §2).
 - **RESOLVED BY PIVOT (session 14)**: M3 dungeon-selector hook question is moot for the primary path (ecosystem supplies acts); revisit only if the fallback activates. Character-select visibility + shared-pool filter hooks stay relevant to the layer (P3).
 - **UNBLOCKED by AFTP decompilation (session 13, verify against shipped v1.0.5 dll before writing)**: `N'loth's Gift` — Prefix on `CardRarityOdds.RollWithoutChangingFutureOdds(CardRarityOddsType, ref float offset)` rewriting `offset = baseRareOdds*3 - baseRareOdds` when owned (no pity-state mutation; optional Dup-transpiler captures the roll for Flash). `FaceTrader` — implement `CultistHeadpiece`/`FaceOfCleric`/`GremlinVisage`/`NlothsHungryFace`/`SsserpentHead` as `CustomRelicModel`s pooled in `EventRelicPool`, event rolls uniformly over unowned faces. `Madness` — AFTP `Cards.Madness` is the working reference.
-- `Girya`'s rest-site option — STILL OPEN; BaseLib itself flags incomplete.
+- **Known deviations & dispositions (R-wave 2026-09-06, from docs/CODE-REVIEW-20260904.md)**:
+  - R10 conditional-event spawn gating: the 13 "run-condition gated" StS1 events
+    (AccursedBlacksmith, Bonfire, Designer, Duplicator, FaceTrader, FountainOfCurseRemoval,
+    Lab, Nloth, NoteForYourself, WeMeetAgain, WomanInBlue, KnowingSkull, TheJoust) ship
+    with empty `Acts`/fixed act membership and NO spawn-condition gating — in StS1 their
+    appearance is conditioned on resources/possessions. **Disposition: deferred**, not
+    rejected — implement per-event `IsAllowed(IRunState)` after the StS1-side conditions
+    are javap-verified from the jar's `EventHelper.getEvent`. Cost is small but the
+    condition truth table (13 events × exact thresholds) is a bytecode-mining session;
+    tracked as the next P1 batch.
+  - R15 `Burn` upgrade: StS1 Burn is upgradable (+2/+4 damage); our class keeps
+    `MaxUpgradeLevel => 0` (StS2 status semantics). **Accepted deviation** — StS2 status
+    cards are never offered for upgrade by the engine's upgrade flow; implementing a
+    one-off exception costs a custom upgrade entry point for zero reachable gameplay
+    (upgraded Burn only appears via StS1-specific effects that StS2 does not port).
+  - R6/R8 coverage exemptions: card-layer gap (~30 colorless cards, DoubleTap/Exhume/
+    Amplify/Electrodynamics/LockOn/SearingBlow, 4 curses pending grant-source check) and
+    the relic layer (29/180+) are **acknowledged open coverage debt**, not silently
+    dropped — the R6 batch (nine engine twins) is in flight; the relic batch needs a
+    scope decision (full port vs curated set) from the user before writing code.
+  - R14 MP hash-bypass split: `IgnoreMpModDifferences` (mod-list, default ON, mostly
+    false positives) is now separate from `IgnoreMpHashMismatch` (ModelID hash, default
+    OFF — a hash mismatch means at least one side's gameplay-mod binary drifted;
+    forcing through is an explicit opt-in for cross-version play).
 
 ## 10. References
 **Library interface docs (`docs/`) — read these before writing code against a library:**

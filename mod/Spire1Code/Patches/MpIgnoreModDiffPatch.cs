@@ -50,8 +50,12 @@ internal static class MpIgnoreModDiffPatch
             return;
         }
 
-        // VersionMismatch 有两种成因：真版本不同（保持拦截）或哈希不符（放行）。
+        // VersionMismatch 有两种成因：真版本不同（保持拦截）或哈希不符（R14 2026-09-06
+        // 起需独立开关 IgnoreMpHashMismatch，默认关——哈希=玩法二进制指纹，不符时
+        // Serialization 安全无保证；清单级假阳性已由 IgnoreMpModDifferences 覆盖，
+        // 哈希级放行必须是显式选择）。
         if (__result.status == HandshakeStatus.VersionMismatch
+            && Spire1Config.IgnoreMpHashMismatch
             && string.Equals(local.version, remote.version, System.StringComparison.OrdinalIgnoreCase))
         {
             MainFile.Logger.Warn(

@@ -51,12 +51,20 @@ internal class Spire1Config : SimpleModConfig
     public static bool DebugShowLocKeys { get; set; } = false;
 
     /// <summary>
-    /// 联机容错：握手时忽略双方 mod 清单差异与 ModelID 哈希差异强制放行
-    /// （真实游戏版本不符仍然拦截），并抑制 RitsuLib 失同步诊断弹窗
-    /// （诊断 zip 仍照常写入 logs 目录供事后取证）。
+    /// 联机容错（清单级）：握手时忽略双方 mod 清单差异强制放行。
+    /// 今晚实测（divergence zip #563/#249）清单差异几乎全是"本地目录 vs 工坊来源"
+    /// 假阳性；玩法安全仍依赖相同玩法 mod 二进制（哈希级另见下方开关）。
     /// 仅当双方都装了含此补丁的构建时才完整生效。
     /// </summary>
     public static bool IgnoreMpModDifferences { get; set; } = true;
+
+    /// <summary>
+    /// 联机容错（哈希级，R14 2026-09-06）：游戏版本相同但 ModelID 哈希不符时
+    /// 放行。哈希 = 玩法内容二进制指纹，清单一致但哈希不符意味着至少一侧的
+    /// 玩法 mod 二进制漂移（版本更新不同步/本地补丁），Serialization 安全无保证。
+    /// 因此与清单级放行分离、默认关——确有跨版本联机需求时手动开。
+    /// </summary>
+    public static bool IgnoreMpHashMismatch { get; set; } = false;
 
     /// <summary>
     /// 地图页显示"跳过当前节点"救援按钮：卡死在火堆等房间时打开地图，

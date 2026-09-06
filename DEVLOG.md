@@ -1667,3 +1667,56 @@ checkbox 未动,恢复时与续3 已落地条目(L12/宝箱概率)对账。
 KB 指南、开发纪律、事故史速查、omp 第一小时清单、禁区。代码基线 `9453ebc`
 (其后的提交均为文档/KB/工具),**已部署 dll 仍含两个 P0,omp 第一动作 = R2→R3→
 构建部署冒烟**。
+
+## Session 31 - 2026-09-06 晚 - omp 接手：R 波修复实施（P0×2 + P1 主批落地）
+
+交接文档第一小时清单执行完毕 + 修复波主批实施。代码从 `9453ebc` 基线推进到 `49c05b3`
+（本会话首个代码提交）。
+
+### 已实施（主会话，全部构建 0 错误后提交推送）
+- **R2 [P0]** `AutoAnthonyCompatBridge`：`ThirdPartyPoolContentsPrefix`/`ThirdPartyPoolIdsPostfix`
+  加 `CardPoolModel __instance` 守卫，绑定 `ThirdPartyPoolInstance`（Apply 期 `ModelDb.GetById`
+  解析的观者池 canonical 实例）——镜像 AA 自家 `ColorlessPoolContentsPatch` 纪律。工坊池
+  未重声明属性时 Harmony 落基类 getter 的全局化问题就此收口（守卫比"改 patch
+  GenerateAllCards"少一个前提：不依赖工坊池重写该成员）。
+- **R3 [P0]** `FromSavePostfix`/`FromHistoryPostfix` 改用 TryMap out 值，删除
+  `.Where(TryMap)` 后回查 `EntryMap` 的 KeyNotFoundException 炸点。
+- **R1 [P1]** 新补丁 `Patches/Act3BossRewardPatch.cs`：postfix 补发三幕 boss 奖励。
+  触发窄集 = boss 房 + 引擎已早退（Rewards 空）+ `CurrentActIndex==Count-2` + 下一幕是
+  TheEnding（名字比对，兼容 Act4Heart 与本仓 fallback 两实现）。按引擎 Boss 分支原始构成
+  补发（金币+药水 roll+3 卡，全 public 构造器）；纯原版/AFTP-only 数学上不可触发；
+  try/catch 包裹防补丁故障炸发奖路径。**实机三态冒烟（有钥匙/无钥匙/纯三幕）仍待用户。**
+- **R5 [P1]** `SharedCardReuse` 新增 `FieldDriftTwins`（Claw/Barrage/Flechettes/Chill/
+  Darkness）——经本会话 javap 复核五卡全部实锤漂移（Claw 升级 upgradeDamage(2)；Chill
+  升级仅 isInnate=true 保 Exhaust；Darkness 升级仅换文案；Barrage/Flechettes 基伤 4↔5）。
+  五卡改注入我方 Spire1LegacyPool 忠实类；漂移条目解析不到我方类时显式报错不再静默。
+- **R7 [P1]** 十一张稀有度修复（审阅十张 + 审计新发现 DarkShackles，审阅漏数）：
+  BandageUp/Blind/Finesse/FlashOfSteel/GoodInstincts/SwiftStrike/Trip→Uncommon，
+  Brutality/LimitBreak→Rare，DarkShackles→Uncommon。`audit-card-fidelity --scope=all`
+  rarity 行全部归零（残余 mismatch 为 Token/Status/Special 特判噪声 + 既有已知项）。
+- **R14** `IgnoreMpHashMismatch` 独立开关（默认关）拆出哈希级放行；清单级
+  `IgnoreMpModDifferences` 保持默认开（假阳性主导）。
+- **R10/R15/R6/R8 处置决策**记入 DEVELOP §9（R10 deferred 待 javap 条件真值表；R15 接受
+  偏差；R6 批次在飞；R8 待用户定圣遗物层范围）。
+- **P12（部分）** mechanics/README 索引刷新（loot 7→8 补 L12 行、monster-ai 10→11、合计
+  254→262 绑定复跑命令）；kb/README 过时"202 规则"→262。
+
+### Subagent 批次（4 切片，3 已回）
+- **R13**（已验收合入）：Evaluate+ 置入 Insight+ —— `CreateCard` → `CardCmd.Upgrade` →
+  `AddGeneratedCardToCombat` 引擎标准链（Begone/PrimalForce 同型）。javap 意外发现：StS1
+  原版 Evaluate.use() 本身无升级分支（与官方 UPGRADE_DESCRIPTION 矛盾），按文案承诺实现，
+  报告留置信标注。同类风险卡扫描：Pray/ReachHeaven/DeusExMachina/Alpha/Beta/Study 均一致；
+  CarveReality/DeceiveReality UNCONFIRMED 留主会话。
+- **R9**（已验收合入）：`ThreeCultistsEncounter`（3×Cultist，坐标 -465/-20、-130/15、200/-5
+  逐字节码）+ `ShelledParasiteAndFungiEncounter`（-260/15 + 120/0）；官方 RunHistory 名
+  （Triple Cultists/三邪教徒、Parasite and Fungi Beast/寄生怪与真菌兽）；gold 与引擎默认
+  10-20 一致免覆写；§7d Act-2 现按 19/19 一一对应。子代理自跑 scoped 编译 0 错 0 警。
+- **R6/R12** 在飞（javap 逐卡核对/重写）。
+
+### 验证状态（诚实口径）
+- 构建 Release 0 错误（271 既有 nullable 警告）；部署 dll/pck 与构建产物 md5 一致
+  （`9376b5e1…`/`449f5a8e…`）；ilspycmd 确认部署 dll 含 `Act3BossRewardPatch`。
+- 机械门：pool-audit 0 孤儿、semantics-audit 全绿、audit-card-fidelity 修复行归零、
+  audit-monster-hp 三条既有解析噪声。
+- **未做实机冒烟**：R1 三态、R2 混沌局 Pandora 种子 sweep（交接文档 §5 待验证队列）、
+  R9 新遭遇生成。游戏进程当时未运行，部署已完成；下一局 autoslay/真人局覆盖。
