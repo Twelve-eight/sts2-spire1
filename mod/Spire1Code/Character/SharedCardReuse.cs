@@ -215,11 +215,11 @@ internal static class SharedCardReuse
         }
     }
 
-    /// <summary>非 pure 模式：官方孪生默认注入 shipped 版；稀有度漂移条目（StS2 改了稀有度）
-    /// 改注入自研 StS1 忠实版，防止二代平衡改动渗入一代层。</summary>
+    /// <summary>非 pure 模式：官方孪生默认注入 shipped 版；漂移条目（StS2 改过稀有度
+    /// 或任意数值/升级字段）改注入自研 StS1 忠实版，防止二代平衡改动渗入一代层。</summary>
     private static void InjectTwin(System.Type pool, System.Type twin)
     {
-        if (RarityDriftTwins.Contains(twin.Name))
+        if (RarityDriftTwins.Contains(twin.Name) || FieldDriftTwins.Contains(twin.Name))
         {
             var own = ResolveOwnImplementation(twin);
             if (own != null)
@@ -227,6 +227,8 @@ internal static class SharedCardReuse
                 ModHelper.AddModelToPool(pool, own);
                 return;
             }
+            // 漂移条目解析不到我方实现类 = 静默注入漂移版，不可接受——显式报错。
+            MainFile.Logger.Error($"[Spire1] SharedCardReuse: drift twin {twin.Name} has no own implementation — injecting shipped (drifted) version. THIS IS A BUG.");
         }
         ModHelper.AddModelToPool(pool, twin);
     }
@@ -237,6 +239,24 @@ internal static class SharedCardReuse
         "Bludgeon",    // StS1 RARE → StS2 Uncommon
         "Acrobatics",  // StS1 COMMON → StS2 Uncommon
         "Predator",    // StS1 UNCOMMON → StS2 Common
+    ];
+
+    /// <summary>R5（2026-09-06 审阅，docs/CODE-REVIEW-20260904.md §R5）：经 jar↔引擎
+    /// 三方审计证伪的"逐字段一致"孪生——升级通道或基伤与 StS1 不同，注入 shipped
+    /// 版会漏二代平衡进一代层。我方忠实类已在 Spire1LegacyPool（见 Cards/ 同名文件），
+    /// 此处改注入我方版（ResolveOwnImplementation）。</summary>
+    private static readonly HashSet<string> FieldDriftTwins =
+    [
+        // Claw：StS1 升级 +2 伤（3→5）；StS2 升级 Damage+1/Increase+1（4/+3）
+        "Claw",
+        // Barrage：StS1 基伤 4；StS2 基伤 5
+        "Barrage",
+        // Flechettes：StS1 基伤 4；StS2 基伤 5
+        "Flechettes",
+        // Chill：StS1 升级加 Innate、保留 Exhaust；StS2 升级移除 Exhaust
+        "Chill",
+        // Darkness：StS1 升级只换文案（触发全部暗球被动一次不变）；StS2 升级触发两次
+        "Darkness",
     ];
 
     private static void AddOwnImplementations(System.Type pool, System.Type[] twins)

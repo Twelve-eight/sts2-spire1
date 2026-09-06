@@ -9,7 +9,7 @@ namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Colorless — Good Instincts (Common Skill). Gain 6 Block (9 upgraded). 0 cost.</summary>
 [Pool(typeof(ColorlessCardPool))]
-public class GoodInstincts() : Spire1Card(0, CardType.Skill, CardRarity.Common, TargetType.Self)
+public class GoodInstincts() : Spire1Card(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(6, ValueProp.Move)];
 

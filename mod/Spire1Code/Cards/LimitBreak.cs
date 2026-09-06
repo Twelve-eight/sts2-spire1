@@ -9,7 +9,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Ironclad - Limit Break (Uncommon Skill). Double your Strength. Exhaust (removed when upgraded).</summary>
-public class LimitBreak() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.None)
+public class LimitBreak() : Spire1Card(1, CardType.Skill, CardRarity.Rare, TargetType.None)
 {
 
     public override IEnumerable<CardKeyword> CanonicalKeywords =>

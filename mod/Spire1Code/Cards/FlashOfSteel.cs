@@ -9,7 +9,7 @@ namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Colorless — Flash of Steel (Common Attack). Deal 3 damage and draw 1 card (6 damage upgraded). 0 cost.</summary>
 [Pool(typeof(ColorlessCardPool))]
-public class FlashOfSteel() : Spire1Card(0, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
+public class FlashOfSteel() : Spire1Card(0, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new DamageVar(3, ValueProp.Move), new CardsVar(1)];

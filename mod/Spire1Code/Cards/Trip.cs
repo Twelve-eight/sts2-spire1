@@ -13,7 +13,7 @@ namespace Spire1.Spire1Code.Cards;
 /// card+play overload routes single-target (play.Target) vs all (card.GetTargets() -&gt; HittableEnemies).
 /// </summary>
 [Pool(typeof(ColorlessCardPool))]
-public class Trip() : Spire1Card(0, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy)
+public class Trip() : Spire1Card(0, CardType.Skill, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     public override TargetType TargetType => IsUpgraded ? TargetType.AllEnemies : base.TargetType;
 

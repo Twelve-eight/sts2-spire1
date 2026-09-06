@@ -9,7 +9,7 @@ namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Colorless — Swift Strike (Common Attack). Deal 7 damage (10 upgraded). 0 cost.</summary>
 [Pool(typeof(ColorlessCardPool))]
-public class SwiftStrike() : Spire1Card(0, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
+public class SwiftStrike() : Spire1Card(0, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(7, ValueProp.Move)];
 

@@ -76,6 +76,12 @@ internal static class AutoAnthonyCompatBridge
     private const string WatcherPoolType = "WatcherMod.WatcherCardPool";
     private const string WatcherEntry = "WATCHER";
 
+    /// <summary>工坊观者池的 canonical 实例（Apply 期由 ModelDb 解析）。R2 守卫用：
+    /// WatcherCardPool 未重声明 AllCards/AllCardIds，我们的补丁经继承链落在基类
+    /// getter 上（声明域=全部卡池），必须用实例比对把作用域收回观者池本身。
+    /// null = 观者 mod 缺席或池未注册（Apply 没跑过），补丁守卫一律放行。</summary>
+    private static CardPoolModel? ThirdPartyPoolInstance;
+
     internal static bool TryMap(Type spire1Character, out GeneratedCharacter generated)
     {
         if (Map.TryGetValue(spire1Character, out int value)
@@ -179,9 +185,14 @@ internal static class AutoAnthonyCompatBridge
         // 2026-09-02）。同构修复：混沌局把 WatcherCardPool.AllCards 也换成混沌无色内容；
         // AllCardIds 用并集保住原生卡的池身份解析（CardModel.Pool 经 AllCardIds 反查，
         // 若原生卡 ID 消失会在第一次访问 Pool 时抛 InvalidProgramException）。
+        //
+        // R2（2026-09-06 审阅）：WatcherCardPool 未重声明这两个属性，PatchGetter 经
+        // 继承链把补丁钉在基类 CardPoolModel 的 getter 上（声明域=全部卡池），守卫
+        // 靠 ThirdPartyPoolInstance 实例比对收回作用域——见两个补丁方法处的注释。
         Type? poolType = watcherAssembly.GetType(WatcherPoolType);
         if (poolType != null)
         {
+            ThirdPartyPoolInstance = (CardPoolModel?)ModelDb.GetById<CardPoolModel>(ModelDb.GetId(poolType));
             count += PatchGetter(harmony, poolType, "AllCards",
                 new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(ThirdPartyPoolContentsPrefix)));
             count += PatchGetter(harmony, poolType, "AllCardIds",
@@ -208,9 +219,19 @@ internal static class AutoAnthonyCompatBridge
     /// <summary>WatcherCardPool.AllCards 前缀：混沌局返回混沌无色内容
     /// （与 AA ColorlessPoolContentsPatch 对 ColorlessCardPool 的语义对齐。
     /// PreserveOriginalCards 开启时附加原生无色卡而非原生观者卡——观者原生
-    /// 卡不是任何 Chaos 池的合法成员，拼接它们会漏回紫色卡）。</summary>
-    private static bool ThirdPartyPoolContentsPrefix(ref IEnumerable<CardModel> __result)
+    /// 卡不是任何 Chaos 池的合法成员，拼接它们会漏回紫色卡）。
+    ///
+    /// R2 守卫（2026-09-06 审阅）：工坊 WatcherCardPool 未重声明 AllCards/AllCardIds，
+    /// Harmony 沿继承链把本补丁解析到基类 CardPoolModel.get_AllCards（声明域=基类，
+    /// 对全部卡池生效）。必须镜像 AA ColorlessPoolContentsPatch 的 __instance 类型
+    /// 守卫——与 PatchThirdPartyEntries 捕获的 poolType（即 WatcherCardPool）比对；
+    /// 其他池实例直接放行原方法。</summary>
+    private static bool ThirdPartyPoolContentsPrefix(CardPoolModel __instance, ref IEnumerable<CardModel> __result)
     {
+        if (!ReferenceEquals(__instance, ThirdPartyPoolInstance))
+        {
+            return true; // R2：基类 getter 全局解析下的其他池——不干涉
+        }
         if (!ChaosRunDefinitions.IsRunActive)
         {
             return true; // 非混沌局:观者原版 83 张
@@ -237,9 +258,14 @@ internal static class AutoAnthonyCompatBridge
     /// CardModel.Pool 用 AllCardIds 反查身份；若前缀把内容全换成混沌卡后
     /// ID 集合丢失原生卡，手中原生观者卡第一次访问 Pool 时会抛
     /// InvalidProgramException（"Card ... is not in any card pool!"）。
-    /// getter 声明返回 IEnumerable&lt;ModelId&gt;，后缀签名与之严格一致。</summary>
-    private static void ThirdPartyPoolIdsPostfix(ref IEnumerable<ModelId> __result)
+    /// getter 声明返回 IEnumerable&lt;ModelId&gt;，后缀签名与之严格一致。
+    /// R2 守卫同上：基类 getter 全局解析，只对观者池实例生效。</summary>
+    private static void ThirdPartyPoolIdsPostfix(CardPoolModel __instance, ref IEnumerable<ModelId> __result)
     {
+        if (!ReferenceEquals(__instance, ThirdPartyPoolInstance))
+        {
+            return; // R2：其他池——不干涉
+        }
         if (!ChaosRunDefinitions.IsRunActive)
         {
             return;
@@ -251,6 +277,7 @@ internal static class AutoAnthonyCompatBridge
         }
         __result = merged.Distinct().ToList();
     }
+
 
 
     // ---- 1+2. ChaosCharacterMapping.From 三个重载的 Postfix ----
@@ -317,23 +344,34 @@ internal static class AutoAnthonyCompatBridge
 
     private static void FromSavePostfix(SerializableRun save, ref GeneratedCharacter[] __result)
     {
-        List<GeneratedCharacter> extra = save.Players
-            .Select(p => p.CharacterId?.Entry)
-            .Where(e => e != null && TryMap(e, out _))
-            .Select(e => (GeneratedCharacter)EntryMap[e!])
-            .ToList();
+        // R3（2026-09-06 审阅）：原实现 .Where(TryMap) 过滤后回查 EntryMap[e]，而
+        // "WATCHER" 只在 ThirdPartyEntryMap 注册——含观者条目的存档加载必抛
+        // KeyNotFoundException。改用 TryMap 的 out 值，映射来源保持与其一致。
+        List<GeneratedCharacter> extra = new();
+        foreach (string? entry in save.Players.Select(p => p.CharacterId?.Entry))
+        {
+            if (entry != null && TryMap(entry, out GeneratedCharacter generated))
+            {
+                extra.Add(generated);
+            }
+        }
         MergeInto(ref __result, extra);
     }
 
     private static void FromHistoryPostfix(RunHistory history, ref GeneratedCharacter[] __result)
     {
-        List<GeneratedCharacter> extra = history.Players
-            .Select(p => p.Character?.Entry)
-            .Where(e => e != null && TryMap(e, out _))
-            .Select(e => (GeneratedCharacter)EntryMap[e!])
-            .ToList();
+        // R3 同上：历史页同样以 TryMap out 值取结果，不回查单一字典。
+        List<GeneratedCharacter> extra = new();
+        foreach (string? entry in history.Players.Select(p => p.Character?.Entry))
+        {
+            if (entry != null && TryMap(entry, out GeneratedCharacter generated))
+            {
+                extra.Add(generated);
+            }
+        }
         MergeInto(ref __result, extra);
     }
+
 
     private static void MergeInto(ref GeneratedCharacter[] result, List<GeneratedCharacter> extra)
     {

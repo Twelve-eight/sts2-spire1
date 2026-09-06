@@ -16,7 +16,7 @@ namespace Spire1.Spire1Code.Cards;
 /// the positive PowerVar amount and the power internally applies -X Strength, exactly like the base-game Dark Shackles card.
 /// </summary>
 [Pool(typeof(Spire1LegacyPool))]
-public class DarkShackles() : Spire1Card(0, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy)
+public class DarkShackles() : Spire1Card(0, CardType.Skill, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 
