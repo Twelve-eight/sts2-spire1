@@ -1765,3 +1765,171 @@ ASCII control and ASCII punctuation). Applied .tmp/scrub-illegal.mjs:
   anchor for the next session; old handoff kept as history).
 - Future rule: use ASCII equivalents only when writing anything a model
   may ingest; re-run .tmp/scan-illegal.mjs after new content lands.
+
+## Session 32 - 2026-09-06 - relay incident wrap-up (P3 paused; next-session protocol inside)
+
+### 0. READ FIRST - mandatory for the next session
+
+RELAY INCIDENT NOT RESOLVED: the model router relay (agentrouter/glm-5.3)
+returns HTTP 500 "sensitive words detected" (type=new_api_error
+param=sensitive_words_detected) for this session's history. The harness
+fails over to tokenrhythm.studio/deepseek-v4-flash, which still works.
+Evidence: C:\Users\o_Obl\.omp\logs\omp.2026-09-06.26564.log line 46
+(22:33:07 +08:00, request id 20260906223315180483591j8jcdY4QfXJaj) and
+omp.2026-09-06.2480.log line 41 (21:41:23, request id
+20260906214129651261927j8jcdaituHyd3). User restarted the client twice:
+still 500.
+
+Root cause chain (this session):
+1. The read tool's structural-summary mode (range-less read) renders
+   elided code with the U+2026 horizontal-ellipsis char. This polluted
+   the conversation twice (check-agent-text.mjs, scrub-illegal.mjs reads).
+2. A grep of omp:// harness docs returned doc text containing em dashes
+   (U+2014), arrows (U+2192/U+2190/U+2194), section sign (U+00A7), curly
+   quotes (U+201C/U+201D), X mark (U+274C), not-equal (U+2260). These
+   entered history and stayed.
+3. The relay rejects requests containing such chars (and possibly a
+   word-level sensitive word - hypothesis B below).
+4. The client rewrites the session file from in-memory history on
+   restart/save, so file-level scrubbing is whack-a-mole. The durable fix
+   is the request-level hook.
+
+Fixes deployed (do not delete):
+- Hook G:\omp works\.omp\hooks\pre\strip-illegal.ts (and copy at
+  G:\omp works\sts2-spire1\.omp\hooks\pre\strip-illegal.ts). Two layers:
+  (a) tool_result - strips non-approved chars from tool output BEFORE it
+  enters history (prevention); (b) context - strips the assembled request
+  messages right before they are sent (final gate). Map = repo
+  .tmp/scrub-illegal.mjs map + U+274C/U+2757/U+2753. KEEPS CJK ideographs,
+  CJK/fullwidth punctuation, accented Latin, Cyrillic, guillemets.
+  Verified with mock test (G:\omp works\.tmp\test-strip.mjs, node run):
+  ALL TESTS PASSED. Hooks load at session start (same mechanism as
+  backup.ts).
+- Session files scrubbed with full map (backups kept as .bak-u2026 /
+  .bak-illegal next to each file):
+  C:\Users\o_Obl\.omp\agent\sessions\--G--omp works--\
+  2026-09-06T13-57-00-178Z_01a07702-1492-748d-a057-8e131a295244.jsonl
+  2026-09-06T11-25-01-874Z_01a07676-f232-77e6-b008-85fd9d90be88.jsonl
+  NOTE: the client re-polluted the live file after the scrub (from
+  memory), so the hook is the only reliable guard.
+
+NEXT-SESSION PROTOCOL:
+1. Isolation test FIRST: open a brand-new session, send pure-ASCII
+   "1+3". If GLM still 500s there, the relay/model itself is broken -
+   stop all relay work and tell the user (history is exonerated).
+2. If GLM works in the fresh session: resume THIS session's file (or
+   continue fresh with this DEVLOG as context). The strip-illegal hook
+   (loaded at session start) strips chars at request time, so history
+   pollution can no longer reach the relay. Continue P3 from section 3.
+3. If 500 returns only with old history and the hook does not fix it,
+   hypothesis B: a word-level sensitive word (not a char) is in the
+   history. Bisect: start new session, paste ONLY the user messages
+   (pure ASCII), then add tool outputs in chunks until the 500 returns.
+4. NEVER call read without an explicit line range (injects U+2026).
+   Scan files first: node G:\omp works\.tmp\scan-text.mjs <file>
+   (hex-only output; PURE-ASCII = safe; else route through the
+   language-translator agent or read with ranges).
+5. NEVER grep/read harness docs (omp://) or other docs with smart
+   punctuation; tool OUTPUT text enters history (this is how the em
+   dashes leaked).
+6. Utility scripts (all pure ASCII, all in G:\omp works\.tmp\):
+   scan-text.mjs (non-ASCII histogram), scrub-session.mjs (full-map
+   session scrub with .bak-illegal), scrub-u2026.mjs (U+2026 only),
+   test-strip.mjs (hook logic test), print-asc-loc.mjs (jar ascension
+   localization printer).
+7. If the relay cuts again: check ~/.omp/logs/omp.<date>.*.log for
+   "sensitive words detected" - the error carries a request id.
+
+### 1. Session start state (verified)
+
+- git: clean, all pushed. HEAD 02515ba (hygiene scrub commit).
+- Deploy: build dll and deployed dll md5 identical (b6e408b3...).
+- Read SESSION-HANDOFF-20260906-EN.md (pure ASCII) - project state per
+  that handoff is current: R-wave fully implemented, only R8 (relic
+  layer, user scope decision) open; P3 in flight; P1/P2/P4-P11 open.
+
+### 2. Incident details
+
+- First pollution: range-less read of tools/check-agent-text.mjs
+  (structural summary with U+2026). Second: grep of omp:// docs (em
+  dashes etc.). The old session file (11-25) had 339 U+2026 + 115 curly
+  quotes; the live file peaked at 2150 em dashes, 416 arrows, 29 Sec
+  signs, 21+21 curly quotes, 13 X, 20 not-equal before full scrub.
+- Sequence: U+2026-only scrub -> user restart -> still 500 (em dashes
+  remained) -> full-map scrub + two-layer hook -> user restart -> still
+  500 (file re-polluted from memory; hook load state unverified; word-
+  level filter hypothesis remains).
+- User's relay reports the failure as "sensitive words detected", which
+  is a word-list filter; the char hypothesis (chars counted as
+  sensitive) is NOT confirmed. Do not claim it is fixed.
+
+### 3. P3 ascension KB - resume point (do not lose)
+
+Extraction artifacts (all pure ASCII):
+- javap dumps: sts2-spire1\.tmp\audit\javap-asc\ (27 files: AbstractDungeon,
+  AbstractPlayer, AbstractMonster, AbstractRoom, 5 dungeons, SaveFile,
+  9 monsters, 4 characters incl. AscendersBane).
+- eng localization extracted to sts2-spire1\.tmp\loc-eng\
+  (localization/eng/ui.json, tutorials.json). Official ascension text
+  lives in ui.json; extraction printer ready:
+  node sts2-spire1\.tmp\print-asc-loc.mjs (escapes non-ASCII).
+
+Decoded facts (bytecode offsets from dumps):
+- A5 (>=5): act transition heals only 75% of missing HP:
+  heal(round((maxHP-currentHP)*0.75f), false) else heal(maxHP,false).
+  AbstractDungeon method at dump lines 7198-7219 (offsets 195-233).
+- A6 (>=6): run start (floorNum<=1, Exordium): currentHealth =
+  round(maxHealth*0.9f). Offsets 298-323.
+- A10 (>=10): masterDeck.addToTop(new AscendersBane()) +
+  UnlockTracker.markCardAsSeen("AscendersBane"). Offsets 326-355.
+- A14 (>=14): decreaseMaxHealth(getAscensionMaxHPLoss()); amount = per
+  character via AbstractPlayer.getAscensionMaxHPLoss (NOT extracted).
+  Offsets 278-295.
+- A1 (>=1): elite room count = round(n * eliteRoomChance * 1.6f) vs
+  base n * eliteRoomChance; "Elite Swarm" mod uses x2.5f. AbstractDungeon
+  map-gen method, dump lines 1539-1586 (offsets 256-373).
+- A11 (>=11): AbstractPlayer ctor potionSlots -= 1 (offsets 382-397).
+  Level number 11 confirmed by gate (handoff's "A18" label was wrong).
+- A12 (>=12): TheCity/TheBeyond ctor cardUpgradedChance 0.25 -> 0.125f;
+  TheEnding 0.5 -> 0.25f (dump lines 149-158 etc.). Field is
+  cardUpgradedChance (not colorlessRareChance).
+- A13 (>=13): AbstractRoom combat gold * 0.75f rounded (offsets 633-647);
+  "Cursed Run" mod check nearby.
+- A20 (>=20): AbstractMonster.onFinalBossVictoryLogic: if
+  bossList.size()==2, goto 199 (skips final-act availability logic).
+  Offsets 3900-3909. NOT a bossList manipulation - a skip gate.
+- Monster ctor gate map (grep of all dumps): normals (JawWorm, Cultist,
+  Snecko) have gates >=7 (setHp), >=2, >=17; elites (GremlinNob,
+  Lagavulin, GiantHead) gates >=8 (setHp), >=3, >=18; bosses
+  (AwakenedOne, Champ) gates >=9 (setHp), >=4, >=19. EXACT HP/damage
+  values NOT yet extracted (ctor bodies only partially read).
+- A15/A16 gate locations UNKNOWN (not in the 27 dumps; candidates:
+  shop/score code, e.g. ShopScreen, or a second-tier HP somewhere else).
+- SaveFile persists is_ascension_mode + ascension_level (verified).
+
+Remaining P3 work:
+1. Run print-asc-loc.mjs; record official English text for A1-A20.
+2. Extract exact monster ctor values (read JawWorm/Cultist/GremlinNob/
+   AwakenedOne ctor ranges with explicit line selectors ONLY).
+3. Hunt A15/A16 (javap additional classes from the jar; jar path
+   G:\steam\steamapps\common\SlayTheSpire\desktop-1.0.jar, javap via
+   JAVA_HOME=C:\Program Files\Zulu\zulu-21).
+4. Write research/sts1-kb/mechanics/ascension.md (A01-A20, offsets,
+   follow volume pattern - volumes are Chinese; translator agent can
+   render pattern files to English first).
+5. Update research/sts1-kb/mechanics/README.md (add row, total 262 ->
+   282, recompute table sum, refresh bound re-run command).
+6. Mark P3 done in research/kb/PLAN-2026-09-05.md; commit + push.
+7. Then backlog: P1 relic pools init L13, P2 shop mechanics (reconcile
+   with loot-rewards.md L04-L06), P4 bottled/innate matrix, P5-P9 KB
+   volumes, P10 cookbook, P11 SavedProperty lint. R8 still awaits user
+   scope decision. R10 deferred (EventHelper truth table).
+
+### 4. Verification status (honest)
+
+- Hook logic: ALL TESTS PASSED (mock; both layers).
+- Hook LOADING in the live client: NOT verified from logs (no hook-load
+  lines found). Hooks load at session start per backup.ts comment.
+- GLM after restart: STILL 500 (user report). Unresolved. See protocol
+  section 0. Do not claim the relay issue is fixed until a fresh-session
+  test passes.
