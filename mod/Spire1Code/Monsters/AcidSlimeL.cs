@@ -19,7 +19,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// <summary>
 /// StS1 "Acid Slime (L)" (65-69 HP, A7: 68-72).
 /// Moves: Corrosive Spit (11/12 dmg + 2 Slimed to discard), Slime Tackle (16/18), Split, Lick (2 Weak).
-/// Donor: leaf_slime_m — the only shipped green slime rig; no L-size slime ships in StS2.
+/// Donor: leaf_slime_m - the only shipped green slime rig; no L-size slime ships in StS2.
 /// </summary>
 public sealed class AcidSlimeL : Spire1Monster, ISlimeSplitSpawn
 {
@@ -66,7 +66,7 @@ public sealed class AcidSlimeL : Spire1Monster, ISlimeSplitSpawn
         //                >=70: lastMove(LICK) ? 40% WOUND / 60% TACKLE : WEAK
         // Modelled as flat-weighted branches (an APPROXIMATION): the bytecode's conditional
         // sub-rolls (50/50 re-rolls, 40/60 redirects on cap violation) yield a different
-        // long-run mix than these flat weights — measured (2e6-turn MC, reverify 2026-08-26):
+        // long-run mix than these flat weights - measured (2e6-turn MC, reverify 2026-08-26):
         // vanilla L-base = 35.7/29.6/34.7 vs model 31.0/38.1/31.0, i.e. TACKLE runs ~8.5pp
         // hotter here; M-A17 matches (39.0/39.9/21.1 vs 38.9/38.9/22.2). Accepted as a
         // documented approximation, not claimed as exact.

@@ -28,5 +28,5 @@
   "SPIRE1-IGNORE_MP_MOD_DIFFERENCES.hover.desc": "Force the handshake through mod-list and ModelID-hash mismatches (real game-version mismatch still blocks) and suppress the RitsuLib divergence popup. Fully effective only when both peers run this build; diagnostics still land in the logs directory.",
   "SPIRE1-ENABLE_SKIP_NODE_BUTTON.title": "Map Skip-Node Button",
   "SPIRE1-ENABLE_SKIP_NODE_BUTTON.hover.title": "Map Skip-Node Button",
-  "SPIRE1-ENABLE_SKIP_NODE_BUTTON.hover.desc": "Show a rescue button on the map screen: if you are stuck in a room, unlock map travel and click your next node. Uses the native vote pipeline — no desync risk."
+  "SPIRE1-ENABLE_SKIP_NODE_BUTTON.hover.desc": "Show a rescue button on the map screen: if you are stuck in a room, unlock map travel and click your next node. Uses the native vote pipeline - no desync risk."
 }

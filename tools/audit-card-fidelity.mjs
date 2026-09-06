@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// audit-card-fidelity.mjs — three-way card fidelity audit (StS1 jar vs StS2 engine vs Spire1 mod)
+// audit-card-fidelity.mjs - three-way card fidelity audit (StS1 jar vs StS2 engine vs Spire1 mod)
 //
 // Scope:
 //   --scope=mod    all mod/Spire1Code/Cards/*.cs vs StS1 jar
@@ -9,10 +9,10 @@
 // Authoritative StS1 source: desktop-1.0.jar via javap (constants before putfield of
 // baseDamage/baseBlock/baseMagicNumber in <init>; upgradeDamage/upgradeBlock/
 // upgradeMagicNumber/upgradeCost + flag assignments in upgrade()).
-// KB JSON (research/sts1-kb) supplies cost/cost_upgraded/type/rarity + class→color mapping.
+// KB JSON (research/sts1-kb) supplies cost/cost_upgraded/type/rarity + class->color mapping.
 //
 // Output: .tmp/audit/card-fidelity-report.json + console summary.
-// Parse gaps are flagged (MANUAL/NOJAR/NOPARSE) — never guessed around.
+// Parse gaps are flagged (MANUAL/NOJAR/NOPARSE) - never guessed around.
 
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
@@ -73,7 +73,7 @@ const NAME_REMAP = {
 };
 
 function num(tok) {
-  // javap constant push → number (strip the bytecode offset prefix "12: ")
+  // javap constant push -> number (strip the bytecode offset prefix "12: ")
   if (!tok) return undefined;
   tok = tok.trim().replace(/^\d+:\s*/, "");
   const m = /^(bipush|sipush|ldc\w*)\s+.*?(-?\d+(?:\.\d+)?)/.exec(tok);
@@ -91,7 +91,7 @@ function parseJar(text, cls) {
   lines.forEach((l, i) => {
     if (/^\s+(public|protected|private|).*\b(init|upgrade)\(/.test(l) || /^\s+public void upgrade\(\)/.test(l)) starts.push(i);
   });
-  // ctor = first method whose header contains "(" and "init" via "<init>"? javap shows "public com.megacrit...Claw(...)" — card ctor has class name.
+  // ctor = first method whose header contains "(" and "init" via "<init>"? javap shows "public com.megacrit...Claw(...)" - card ctor has class name.
   let ctorStart = -1, upgStart = -1;
   lines.forEach((l, i) => {
     if (new RegExp(`\\b${cls}\\(`).test(l) && ctorStart < 0) ctorStart = i;
@@ -159,14 +159,14 @@ function parseJar(text, cls) {
 }
 
 function grabCalls(lines, call) {
-  // upgradeDamage(N) — argument pushed before invoke; take the const preceding the invoke line
+  // upgradeDamage(N) - argument pushed before invoke; take the const preceding the invoke line
   for (let i = 0; i < lines.length; i++) {
     if (lines[i].includes(call)) {
       for (let j = i - 1; j >= Math.max(0, i - 4); j--) {
         const n = num(lines[j]);
         if (n !== undefined) return n;
       }
-      return undefined; // no const visible — treat as unknown
+      return undefined; // no const visible - treat as unknown
     }
   }
   return undefined;
@@ -223,7 +223,7 @@ function cmp(scopeName, cls, jarInfo, csharpInfo, kbInfo) {
   if (!jarInfo || jarInfo._fail) return { cls, scope: scopeName, verdict: "NOJAR", detail: jarInfo?._fail || "javap failed" };
   if (!csharpInfo || csharpInfo._fail) return { cls, scope: scopeName, verdict: "NOPARSE", detail: csharpInfo?._fail || "csharp not parsed" };
   if (kbInfo?.cost === -1 && (csharpInfo.cost === 0 || csharpInfo.cost === -1)) {
-    // X-cost: StS1 code uses -1, KB records 0 — encoding artifact, not a mismatch
+    // X-cost: StS1 code uses -1, KB records 0 - encoding artifact, not a mismatch
   } else {
     push("cost", csharpInfo.cost, kbInfo ? kbInfo.cost : jarInfo.base.cost);
   }

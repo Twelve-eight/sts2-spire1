@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Powers;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Watcher — Nirvana (Uncommon Power). Whenever you Scry, gain 3 Block (4 upgraded).</summary>
+/// <summary>StS1 Watcher - Nirvana (Uncommon Power). Whenever you Scry, gain 3 Block (4 upgraded).</summary>
 [Pool(typeof(WatcherCardPool))]
 public class Nirvana() : Spire1Card(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
 {

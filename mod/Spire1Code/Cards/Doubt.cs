@@ -10,7 +10,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Ironclad — Doubt (Curse). Unplayable. At the end of your turn, gain 1 Weak.
+/// StS1 Ironclad - Doubt (Curse). Unplayable. At the end of your turn, gain 1 Weak.
 /// Mirror of the base-game Doubt: applies at turn end and sets SkipNextDurationTick so the
 /// Weak is not ticked down immediately and lasts through the enemy's turn.
 /// </summary>

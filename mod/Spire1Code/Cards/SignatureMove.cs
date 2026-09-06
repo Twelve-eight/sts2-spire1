@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Signature Move (Uncommon Attack). Playable only while it is the only Attack in your hand;
+/// StS1 Watcher - Signature Move (Uncommon Attack). Playable only while it is the only Attack in your hand;
 /// deal 30 damage (40 upgraded). Playability shape from the mod's Clash.
 /// </summary>
 [Pool(typeof(WatcherCardPool))]

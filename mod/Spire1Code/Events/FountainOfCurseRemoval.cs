@@ -9,8 +9,8 @@ using MegaCrit.Sts2.Core.Models;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 shrine — The Divine Fountain. Drink to remove every curse from the deck (Ascender's Bane is
-/// kept, exactly as in StS1, which also kept Curse of the Bell and Necronomicurse — neither of those
+/// StS1 shrine - The Divine Fountain. Drink to remove every curse from the deck (Ascender's Bane is
+/// kept, exactly as in StS1, which also kept Curse of the Bell and Necronomicurse - neither of those
 /// two cards exists in this mod), or leave.
 /// </summary>
 public class FountainOfCurseRemoval : Spire1Event
@@ -29,7 +29,7 @@ public class FountainOfCurseRemoval : Spire1Event
     private async Task Drink()
     {
         // StS1 removes every deck card of type CURSE except the unremovable ones (AscendersBane,
-        // Curse of the Bell, Necronomicurse — the latter two do not exist in this mod). The Eternal
+        // Curse of the Bell, Necronomicurse - the latter two do not exist in this mod). The Eternal
         // keyword is the StS2 equivalent of "cannot be removed".
         List<CardModel> curses = PileType.Deck.GetPile(Owner).Cards
             .Where(c => c.Type == CardType.Curse && c.IsRemovable)

@@ -15,7 +15,7 @@ namespace Spire1.Spire1Code.Powers;
 /// Deliberately NOT the shipped <see cref="MegaCrit.Sts2.Core.Models.Powers.ThornsPower"/>: Thorns
 /// retaliates per damage instance received (<c>BeforeDamageReceived</c>), so a multi-hit attack
 /// triggers it several times and a non-damaging attack not at all. Sharp Hide fires exactly once
-/// per Attack card played, hit or miss, which is what <c>AfterCardPlayed</c> reproduces — the same
+/// per Attack card played, hit or miss, which is what <c>AfterCardPlayed</c> reproduces - the same
 /// hook the shipped <c>SneakyPower</c> uses for its "whenever an enemy plays an Attack" trigger.
 /// </para>
 /// </summary>

@@ -11,7 +11,7 @@ using BaseLib.Utils;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Ironclad — Burn (Status). Unplayable. At the end of your turn, take 2 damage.
+/// StS1 Ironclad - Burn (Status). Unplayable. At the end of your turn, take 2 damage.
 /// Mirror of the base-game Burn (which deals via HasTurnEndInHandEffect + OnTurnEndInHand).
 /// Burn+ (4 damage) not implemented: base-game Burn has MaxUpgradeLevel 0 and statuses never upgrade.
 /// </summary>

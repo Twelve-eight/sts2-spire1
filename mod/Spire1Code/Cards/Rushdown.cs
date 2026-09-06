@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Rushdown (Uncommon Power, StS1 id "Adaptation"). Whenever you enter Wrath, draw 2 cards.
+/// StS1 Watcher - Rushdown (Uncommon Power, StS1 id "Adaptation"). Whenever you enter Wrath, draw 2 cards.
 /// The upgrade only lowers the cost from 1 to 0; the draw count never changes.
 /// </summary>
 [Pool(typeof(WatcherCardPool))]

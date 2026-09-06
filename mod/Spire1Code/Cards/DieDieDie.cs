@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Die Die Die (Rare Attack). Deal 13 damage to ALL enemies (17 upgraded). Exhaust.</summary>
+/// <summary>StS1 Silent - Die Die Die (Rare Attack). Deal 13 damage to ALL enemies (17 upgraded). Exhaust.</summary>
 [Pool(typeof(SilentCardPool))]
 public class DieDieDie() : Spire1Card(1, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies)
 {

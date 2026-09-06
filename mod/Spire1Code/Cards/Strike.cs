@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Strike (Basic). Deal 6 damage (9 upgraded).</summary>
+/// <summary>StS1 Ironclad - Strike (Basic). Deal 6 damage (9 upgraded).</summary>
 [Pool(typeof(Spire1CardPool))]
 public class Strike() : Spire1Card(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
 {

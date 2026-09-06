@@ -6,7 +6,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Rampage (Uncommon Attack). Deal 8 damage; increase this card's damage by 5 each play this combat (8 upgraded).</summary>
+/// <summary>StS1 Ironclad - Rampage (Uncommon Attack). Deal 8 damage; increase this card's damage by 5 each play this combat (8 upgraded).</summary>
 public class Rampage() : Spire1Card(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     // Accumulated bonus + per-play increment stored as card DynamicVars so the calc lambda stays STATIC

@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Powers;
 
-/// <summary>StS1 Silent — Tools of the Trade. At the start of your turn, draw 1 card and discard 1 card (per stack).</summary>
+/// <summary>StS1 Silent - Tools of the Trade. At the start of your turn, draw 1 card and discard 1 card (per stack).</summary>
 public class ToolsOfTheTradePower : CustomPowerModel
 {
     public override PowerType Type => PowerType.Buff;

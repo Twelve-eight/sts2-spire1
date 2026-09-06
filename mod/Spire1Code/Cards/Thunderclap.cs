@@ -8,7 +8,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Thunderclap (Common). Deal 4 + 1 Vulnerable to ALL enemies (7 upgraded).</summary>
+/// <summary>StS1 Ironclad - Thunderclap (Common). Deal 4 + 1 Vulnerable to ALL enemies (7 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class Thunderclap() : Spire1Card(1, CardType.Attack, CardRarity.Common, TargetType.AllEnemies)
 {

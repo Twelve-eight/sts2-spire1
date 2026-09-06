@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Extensions;
 namespace Spire1.Spire1Code.Powers;
 
 /// <summary>
-/// StS1 Watcher — Rushdown. Whenever you ENTER Wrath, draw cards equal to this power's amount.
+/// StS1 Watcher - Rushdown. Whenever you ENTER Wrath, draw cards equal to this power's amount.
 /// Only the transition INTO Wrath counts, so leaving Wrath (or moving between other stances) draws nothing.
 /// </summary>
 public class RushdownPower : CustomPowerModel, IOnStanceChanged

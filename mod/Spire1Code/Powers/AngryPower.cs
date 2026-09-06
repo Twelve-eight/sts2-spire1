@@ -10,7 +10,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Powers;
 
 /// <summary>
-/// StS1 <c>com.megacrit.cardcrawl.powers.AngryPower</c> — "Whenever this creature receives
+/// StS1 <c>com.megacrit.cardcrawl.powers.AngryPower</c> - "Whenever this creature receives
 /// attack damage, gain <see cref="Amount"/> Strength."
 /// <para>
 /// Bytecode gate (<c>onAttacked(DamageInfo, int damageAmount)</c>, re-verified directly against

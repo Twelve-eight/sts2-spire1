@@ -10,7 +10,7 @@ using MegaCrit.Sts2.Core.Models;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 shrine — Upgrade Shrine. Pray to upgrade a card (locked when no card is upgradable), or leave.
+/// StS1 shrine - Upgrade Shrine. Pray to upgrade a card (locked when no card is upgradable), or leave.
 /// </summary>
 public class UpgradeShrine : Spire1Event
 {

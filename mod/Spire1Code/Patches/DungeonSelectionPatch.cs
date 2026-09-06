@@ -10,7 +10,7 @@ namespace Spire1.Spire1Code.Patches;
 /// <summary>
 /// The StS1 dungeon selector, in one patch.
 /// <para>
-/// StS2 has no act-sequencing API — no next-act or act-order hook exists. It does not need one:
+/// StS2 has no act-sequencing API - no next-act or act-order hook exists. It does not need one:
 /// <c>NGame.StartNewSingleplayerRun</c> takes the run's act list as a parameter
 /// (<c>"The canonical acts that should be in the run"</c>) and hands it straight to
 /// <c>RunState.CreateForNewRun</c>, which stores it as <c>RunState.Acts</c> and walks it by list
@@ -20,7 +20,7 @@ namespace Spire1.Spire1Code.Patches;
 /// <para>
 /// The StS1 acts themselves pass <c>-1</c> to <c>CustomActModel</c> (see <see cref="Spire1Act"/>),
 /// which lands them on <c>Index = -2</c>. The engine reads <c>act.Index</c> in exactly one place,
-/// <c>ModelDb.cs:334</c>, and guards it with <c>if (act.Index &gt;= 0)</c> — so a negative index
+/// <c>ModelDb.cs:334</c>, and guards it with <c>if (act.Index &gt;= 0)</c> - so a negative index
 /// keeps an act out of <c>ActsByIndex</c> and therefore out of every natural act slot, without
 /// any risk of an out-of-range access. That is precisely the "registered but never spawns
 /// naturally" state a selector wants, and it is why installing this mod cannot change a vanilla

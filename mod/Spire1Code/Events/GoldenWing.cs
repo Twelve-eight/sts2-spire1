@@ -14,7 +14,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 — Wing Statue (Golden Wing). Praying removes a card at the cost of 7 HP; destroying the
+/// StS1 - Wing Statue (Golden Wing). Praying removes a card at the cost of 7 HP; destroying the
 /// statue is only possible when the deck contains an Attack with 10+ base damage, and pays 50-80 gold.
 /// </summary>
 public class GoldenWing : Spire1Event

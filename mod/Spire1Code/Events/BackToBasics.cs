@@ -10,7 +10,7 @@ using MegaCrit.Sts2.Core.Models.Acts;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 The City — Ancient Writing (Back to Basics).
+/// StS1 The City - Ancient Writing (Back to Basics).
 /// Upgrade all Strikes and Defends, or remove one card from the deck.
 /// StS1 matches on the STARTER_STRIKE / STARTER_DEFEND card tags; the mod's Strike/Defend
 /// starter cards carry <see cref="CardTag.Strike"/> / <see cref="CardTag.Defend"/>.

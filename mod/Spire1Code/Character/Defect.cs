@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Relics;
 namespace Spire1.Spire1Code.Character;
 
 /// <summary>
-/// "StS1 - Defect" — the vanilla Slay the Spire 1 Defect as an additive StS2 character.
+/// "StS1 - Defect" - the vanilla Slay the Spire 1 Defect as an additive StS2 character.
 /// Uses base-game Defect visuals via <see cref="PlaceholderCharacterModel"/> (PlaceholderID = "defect"),
 /// so no custom art is required. ID = SPIRE1-DEFECT.
 /// </summary>
@@ -31,7 +31,7 @@ public class Defect : PlaceholderCharacterModel
 
     // Vanilla starter deck: 4 Strike, 4 Defend, 1 Zap, 1 Dualcast. StS2 ships identical
     // versions of all four (see .tmp/duplicate-cards-report.md), so the deck uses the base-game
-    // models — fully qualified, because Spire1.Spire1Code.Cards defines retired same-named mod
+    // models - fully qualified, because Spire1.Spire1Code.Cards defines retired same-named mod
     // copies that now live in Spire1LegacyPool.
     public override IEnumerable<CardModel> StartingDeck =>
     [
@@ -41,7 +41,7 @@ public class Defect : PlaceholderCharacterModel
         ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.Dualcast>(),
     ];
 
-    // Starting relic: Cracked Core (channel 1 Lightning at start of combat) — mod class, ID SPIRE1-CRACKED_CORE.
+    // Starting relic: Cracked Core (channel 1 Lightning at start of combat) - mod class, ID SPIRE1-CRACKED_CORE.
     public override IReadOnlyList<RelicModel> StartingRelics => [ModelDb.Relic<CrackedCore>()];
 
     public override CardPoolModel CardPool => ModelDb.CardPool<DefectCardPool>();

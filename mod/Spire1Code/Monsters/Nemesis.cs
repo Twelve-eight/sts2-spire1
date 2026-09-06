@@ -19,40 +19,40 @@ namespace Spire1.Spire1Code.Monsters;
 /// StS1 Act-3 elite "Nemesis" (<c>com.megacrit.cardcrawl.monsters.beyond.Nemesis</c>). 官方中文名：天罚。
 /// <para>
 /// Bytecode: HP 185, A8 200; SCYTHE_DMG 45, FIRE_DMG 6 (A3 7), FIRE_TIMES 3, BURN_AMT 3 (A18 5).
-/// Elite type. Every turn ends by granting itself IntangiblePower(1) if absent — the engine's
+/// Elite type. Every turn ends by granting itself IntangiblePower(1) if absent - the engine's
 /// <see cref="IntangiblePower"/> caps incoming damage at 1, exactly like vanilla's <c>damage()</c>
-/// override (output &gt; 0 &amp;&amp; hasPower("Intangible") → output = 1).
+/// override (output &gt; 0 &amp;&amp; hasPower("Intangible") -> output = 1).
 /// </para>
 /// <para>
-/// getMove: <c>scytheCooldown--</c> once per roll; first move is roll &lt; 50 → TRI_ATTACK else
-/// TRI_BURN. Later bands follow the bytecode: r&lt;30 → SCYTHE if not last and cooldown ≤ 0
-/// (cooldown = 2) else 50/50 coin; coin heads → TRI_ATTACK unless last two, tails → TRI_BURN
-/// unless last. 30≤r&lt;65 → TRI_ATTACK unless last two; else coin heads → SCYTHE if cooldown ≤ 0
-/// else TRI_BURN, tails → TRI_BURN. r≥65 → TRI_BURN unless last; else coin heads → SCYTHE if
-/// cooldown ≤ 0 else TRI_ATTACK, tails → TRI_ATTACK. The one roll and one coin flip are drawn once
+/// getMove: <c>scytheCooldown--</c> once per roll; first move is roll &lt; 50 -> TRI_ATTACK else
+/// TRI_BURN. Later bands follow the bytecode: r&lt;30 -> SCYTHE if not last and cooldown <= 0
+/// (cooldown = 2) else 50/50 coin; coin heads -> TRI_ATTACK unless last two, tails -> TRI_BURN
+/// unless last. 30<=r&lt;65 -> TRI_ATTACK unless last two; else coin heads -> SCYTHE if cooldown <= 0
+/// else TRI_BURN, tails -> TRI_BURN. r>=65 -> TRI_BURN unless last; else coin heads -> SCYTHE if
+/// cooldown <= 0 else TRI_ATTACK, tails -> TRI_ATTACK. The one roll and one coin flip are drawn once
 /// per round (StS1 draws aiRng once per getMove); the cooldown tick is folded into the same latch.
 /// </para>
 /// <para>
-/// Donor: <c>spectral_knight</c> — a ghostly armored knight wielding a greatsword; closest visual
+/// Donor: <c>spectral_knight</c> - a ghostly armored knight wielding a greatsword; closest visual
 /// match for the wraith-like _scytheState wielder.
 /// </para>
 /// </summary>
 public sealed class Nemesis : Spire1Monster
 {
-    // HP 185, A8 → 200
+    // HP 185, A8 -> 200
     public override int MinInitialHp => AscensionHelper.GetValueIfAscension(AscensionLevel.ToughEnemies, 200, 185);
     public override int MaxInitialHp => MinInitialHp;
 
     // SCYTHE_DMG = 45 (no ascension variant)
     private const int ScytheDamage = 45;
 
-    // FIRE_DMG = 6; ascension >= 3 → 7
+    // FIRE_DMG = 6; ascension >= 3 -> 7
     private int FireDamage => AscensionHelper.GetValueIfAscension(AscensionLevel.DeadlyEnemies, 7, 6);
 
     // FIRE_TIMES = 3
     private const int FireTimes = 3;
 
-    // BURN_AMT = 3; A18 → 5 (mapped to the topmost available tier)
+    // BURN_AMT = 3; A18 -> 5 (mapped to the topmost available tier)
     private int BurnAmount => AscensionHelper.GetValueIfAscension(AscensionLevel.DoubleBoss, 5, 3);
 
     protected override string DonorId => "spectral_knight";
@@ -83,13 +83,13 @@ public sealed class Nemesis : Spire1Monster
             new MultiAttackIntent(FireDamage, FireTimes));
         MoveState triBurn = new("TRI_BURN_MOVE", TriBurnMove, new DebuffIntent());
 
-        // Opening (first move only): roll < 50 → TRI_ATTACK else TRI_BURN.
+        // Opening (first move only): roll < 50 -> TRI_ATTACK else TRI_BURN.
         RandomBranchState opening = new("NEMESIS_OPENING");
         opening.AddBranch(triAttack, MoveRepeatType.CanRepeatForever, () => FirstMoveRoll() < 50 ? 100f : 0f);
         opening.AddBranch(triBurn, MoveRepeatType.CanRepeatForever, () => FirstMoveRoll() < 50 ? 0f : 100f);
 
-        // Band A (r < 30): SCYTHE when ready, else coin (heads → TRI_ATTACK unless last two,
-        // tails → TRI_BURN unless last).
+        // Band A (r < 30): SCYTHE when ready, else coin (heads -> TRI_ATTACK unless last two,
+        // tails -> TRI_BURN unless last).
         ConditionalBranchState bandA = new("NEMESIS_BAND_A");
         RandomBranchState bandACoin = new("NEMESIS_BAND_A_COIN");
         bandA.AddState(_scytheState, () => ScytheReady());
@@ -103,8 +103,8 @@ public sealed class Nemesis : Spire1Monster
         coinTailsA.AddState(triBurn, () => !LastWas(triBurn));
         coinTailsA.AddState(triAttack, () => true);
 
-        // Band B (30 <= r < 65): TRI_ATTACK unless last two; else coin → SCYTHE if cooldown ≤ 0
-        // else TRI_BURN; tails → TRI_BURN.
+        // Band B (30 <= r < 65): TRI_ATTACK unless last two; else coin -> SCYTHE if cooldown <= 0
+        // else TRI_BURN; tails -> TRI_BURN.
         ConditionalBranchState bandB = new("NEMESIS_BAND_B");
         RandomBranchState bandBCoin = new("NEMESIS_BAND_B_COIN");
         bandB.AddState(triAttack, () => !LastTwoWere(triAttack));
@@ -115,8 +115,8 @@ public sealed class Nemesis : Spire1Monster
         coinHeadsB.AddState(_scytheState, () => _scytheCooldown <= 0);
         coinHeadsB.AddState(triBurn, () => true);
 
-        // Band C (r >= 65): TRI_BURN unless last; else coin → SCYTHE if cooldown ≤ 0 else
-        // TRI_ATTACK; tails → TRI_ATTACK.
+        // Band C (r >= 65): TRI_BURN unless last; else coin -> SCYTHE if cooldown <= 0 else
+        // TRI_ATTACK; tails -> TRI_ATTACK.
         ConditionalBranchState bandC = new("NEMESIS_BAND_C");
         RandomBranchState bandCCoin = new("NEMESIS_BAND_C_COIN");
         bandC.AddState(triBurn, () => !LastWas(triBurn));
@@ -216,7 +216,7 @@ public sealed class Nemesis : Spire1Monster
 
     private async Task EnsureIntangible()
     {
-        // takeTurn epilogue: if !hasPower("Intangible") → ApplyPower(IntangiblePower, 1).
+        // takeTurn epilogue: if !hasPower("Intangible") -> ApplyPower(IntangiblePower, 1).
         if (!base.Creature.HasPower<IntangiblePower>())
         {
             await PowerCmd.Apply<IntangiblePower>(

@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Cloak and Dagger (Common). Gain 6 Block, add 1 Shiv into your hand (2 Shivs upgraded).</summary>
+/// <summary>StS1 Silent - Cloak and Dagger (Common). Gain 6 Block, add 1 Shiv into your hand (2 Shivs upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class CloakAndDagger() : Spire1Card(1, CardType.Skill, CardRarity.Common, TargetType.Self)
 {

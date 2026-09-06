@@ -12,7 +12,7 @@ using MegaCrit.Sts2.Core.Rooms;
 
 namespace Spire1.Spire1Code.Relics;
 
-/// <summary>StS1 — Kunai (Uncommon). Every time you play 3 Attacks in a single turn, gain 1 Dexterity.</summary>
+/// <summary>StS1 - Kunai (Uncommon). Every time you play 3 Attacks in a single turn, gain 1 Dexterity.</summary>
 public class Kunai : Spire1Relic
 {
     private bool _isActivating;

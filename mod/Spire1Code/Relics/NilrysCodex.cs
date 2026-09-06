@@ -11,7 +11,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 namespace Spire1.Spire1Code.Relics;
 
 /// <summary>
-/// StS1 — Nilry's Codex (Event; one of the three mutually exclusive Cursed Tome rewards).
+/// StS1 - Nilry's Codex (Event; one of the three mutually exclusive Cursed Tome rewards).
 /// At the end of your turn, you may shuffle 1 of 3 random cards into your draw pile.
 /// </summary>
 public class NilrysCodex : Spire1Relic
@@ -50,7 +50,7 @@ public class NilrysCodex : Spire1Relic
         // CardFactory.GetDistinctForCombat (CardFactory.cs:119-129) is distinct by construction, which is
         // the equivalent of StS1's "loop returnTrulyRandomCardInCombat() until 3 distinct cardIDs are held".
         // Note this is the UNTYPED returnTrulyRandomCardInCombat, so unlike Enchiridion there is no
-        // card-type filter here — the whole unlocked pool is eligible. Discovery.cs:27 is the shipped call
+        // card-type filter here - the whole unlocked pool is eligible. Discovery.cs:27 is the shipped call
         // with the same pool expression, the same count and the same Rng.
         List<CardModel> choices = CardFactory.GetDistinctForCombat(
                 Owner,
@@ -67,8 +67,8 @@ public class NilrysCodex : Spire1Relic
 
         Flash();
 
-        // StS1 opens cardRewardScreen.customCombatOpen(choices, CardRewardScreen.TEXT[1], true) — the
-        // trailing `true` makes the pick cancellable — so canSkip: true is required to match, and the return
+        // StS1 opens cardRewardScreen.customCombatOpen(choices, CardRewardScreen.TEXT[1], true) - the
+        // trailing `true` makes the pick cancellable - so canSkip: true is required to match, and the return
         // is nullable precisely because of it (CardSelectCmd.cs:252). Opening this from a turn-end hook is
         // supported: FromChooseACardScreen calls UndoEndTurnIfNecessary(player) at CardSelectCmd.cs:263.
         // The overload takes no prompt argument, so StS1's TEXT[1] needs no localization key.
@@ -82,7 +82,7 @@ public class NilrysCodex : Spire1Relic
         // and that 4-argument constructor chains through the 5-argument one to the 6-argument one, passing
         // its boolean straight through: verified in desktop-1.0.jar bytecode, where the 6-arg ctor stores
         // `iload 4` into `putfield randomSpot:Z`, and CodexAction passes iconst_1 for it. So the card lands
-        // at a random depth — a genuine shuffle-in. That also agrees with the official description ("you may
+        // at a random depth - a genuine shuffle-in. That also agrees with the official description ("you may
         // shuffle 1 of 3 random cards into your draw pile") and with relics.json's behavior field.
         // CardPilePosition.Random is a real member (CardPilePosition.cs:8) and resolves to a uniformly
         // random index via Rng.Shuffle.NextInt(pile.Cards.Count + 1) (CardPileCmd.cs:510).

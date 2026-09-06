@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Powers;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Watcher — Devotion (Rare Power). At the start of your turn, gain 2 Mantra (3 upgraded).</summary>
+/// <summary>StS1 Watcher - Devotion (Rare Power). At the start of your turn, gain 2 Mantra (3 upgraded).</summary>
 [Pool(typeof(WatcherCardPool))]
 public class Devotion() : Spire1Card(1, CardType.Power, CardRarity.Rare, TargetType.None)
 {

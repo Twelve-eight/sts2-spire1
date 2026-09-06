@@ -12,7 +12,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Ironclad — Blood for Blood (Uncommon Attack). Deal 18 damage. Costs 1 less for each time you lost HP this combat.
+/// StS1 Ironclad - Blood for Blood (Uncommon Attack). Deal 18 damage. Costs 1 less for each time you lost HP this combat.
 /// (Upgraded: base cost 3, 22 damage.)
 /// </summary>
 public class BloodForBlood() : Spire1Card(4, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)

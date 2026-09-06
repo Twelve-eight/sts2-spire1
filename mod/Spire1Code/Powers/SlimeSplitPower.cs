@@ -4,7 +4,7 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Models;
 namespace Spire1.Spire1Code.Powers;
 /// <summary>
-/// StS1 Split power (slimes). While the owner is alive, the combat cannot end — this covers
+/// StS1 Split power (slimes). While the owner is alive, the combat cannot end - this covers
 /// the window where the splitting slime has died but its children have not been added yet.
 /// Vanilla equivalent: <c>com.megacrit.cardcrawl.powers.SplitPower</c> on AcidSlime_L /
 /// SpikeSlime_L, whose <c>die()</c> also refuses to end the encounter while a

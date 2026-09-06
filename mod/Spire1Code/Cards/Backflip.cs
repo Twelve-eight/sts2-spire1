@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Backflip (Common). Gain 5 Block, draw 2 cards (8 upgraded).</summary>
+/// <summary>StS1 Silent - Backflip (Common). Gain 5 Block, draw 2 cards (8 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class Backflip() : Spire1Card(1, CardType.Skill, CardRarity.Common, TargetType.None)
 {

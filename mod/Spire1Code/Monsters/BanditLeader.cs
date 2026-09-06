@@ -16,8 +16,8 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The City — BanditLeader (<c>com.megacrit.cardcrawl.monsters.city.BanditLeader</c>;
-/// 官方中文名「罗密欧」, "Romeo"). Masked Bandits trio frontman — event-spawned only,
+/// StS1 The City - BanditLeader (<c>com.megacrit.cardcrawl.monsters.city.BanditLeader</c>;
+/// 官方中文名「罗密欧」, "Romeo"). Masked Bandits trio frontman - event-spawned only,
 /// never a regular encounter (Main-agent bytecode audit 2026-08).
 /// <para>
 /// Bytecode: HP 35-39, A7 37-41; CROSS_SLASH 15 (A2 17); AGONIZING_SLASH 10 (A2 12) +
@@ -35,7 +35,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// A18 deterministic branch.
 /// </para>
 /// <para>
-/// Art: donor rig <c>mysterious_knight</c> — a caped, armored duelist humanoid, visually
+/// Art: donor rig <c>mysterious_knight</c> - a caped, armored duelist humanoid, visually
 /// closest to Romeo's tall swordsman silhouette among shipped rigs. NOTE (FLAGGED): the
 /// mysterious_knight rig has no idle_loop/attack/hurt/die track set confirmed in source;
 /// if in-game it animates oddly, fall back to <c>axe_ruby_raider</c> (default-track axe

@@ -9,7 +9,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Powers;
 
 /// <summary>
-/// StS1 Watcher — Talk to the Hand. Debuff on ONE enemy: whenever a player attacks that enemy, the attacker gains
+/// StS1 Watcher - Talk to the Hand. Debuff on ONE enemy: whenever a player attacks that enemy, the attacker gains
 /// Block equal to this power's amount. Block is granted even when the hit is fully blocked and on the killing blow,
 /// matching StS1's onAttacked timing, which is why this listens on AfterDamageGiven (fires for every damage result)
 /// rather than AfterDamageReceived (skipped when the target dies). Hook shape copied from the mod's EnvenomPower.

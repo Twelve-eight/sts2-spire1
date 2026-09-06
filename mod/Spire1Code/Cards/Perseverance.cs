@@ -11,12 +11,12 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Perseverance (Uncommon Skill, Retain). Gain 5 Block (7 upgraded); each time this card is
+/// StS1 Watcher - Perseverance (Uncommon Skill, Retain). Gain 5 Block (7 upgraded); each time this card is
 /// Retained, its Block grows by 2 (3 upgraded) for the rest of the combat.
 /// Retention is observed with the card's AfterFlush hook: CombatManager.FlushPlayerHand decides retention through
 /// CardModel.ShouldRetainThisTurn and then hands the retained-card list to every combat hook listener, cards
 /// included. The growth is stored in a DynamicVar so the calculated-block lambda stays static (no instance-field
-/// capture), which keeps MutableClone during reward/preview generation safe — same shape as Rampage.
+/// capture), which keeps MutableClone during reward/preview generation safe - same shape as Rampage.
 /// </summary>
 [Pool(typeof(WatcherCardPool))]
 public class Perseverance() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)

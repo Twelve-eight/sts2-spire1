@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Doppelganger (Rare Skill, X-cost). Next turn, draw X cards and gain X Energy (X+1 upgraded). Exhaust.</summary>
+/// <summary>StS1 Silent - Doppelganger (Rare Skill, X-cost). Next turn, draw X cards and gain X Energy (X+1 upgraded). Exhaust.</summary>
 [Pool(typeof(SilentCardPool))]
 public class Doppelganger() : Spire1Card(0, CardType.Skill, CardRarity.Rare, TargetType.Self)
 {

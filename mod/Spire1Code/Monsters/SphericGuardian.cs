@@ -15,24 +15,24 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The City — Spheric Guardian (<c>com.megacrit.cardcrawl.monsters.city.SphericGuardian</c>).
+/// StS1 The City - Spheric Guardian (<c>com.megacrit.cardcrawl.monsters.city.SphericGuardian</c>).
 /// 官方中文名：圆球守护者。
 /// <para>
 /// Bytecode: HP fixed 20 (constructor maxHealth, no setHp range and no ascension HP tier);
 /// dmg 10 (A2 11). usePreBattleAction: BarricadePower + ArtifactPower(3) + GainBlockAction(40)
-/// — the "shell": barricade keeps block between turns and 3 artifact absorbs the first debuffs.
+/// - the "shell": barricade keeps block between turns and 3 artifact absorbs the first debuffs.
 /// getMove: first move ACTIVATE (DEFEND); second move FRAIL_ATTACK (ATTACK_DEBUFF);
-/// afterwards lastMove(SLAM) ? HARDEN : SLAM. takeTurn: SLAM = 2×BLUNT_HEAVY hits;
+/// afterwards lastMove(SLAM) ? HARDEN : SLAM. takeTurn: SLAM = 2xBLUNT_HEAVY hits;
 /// ACTIVATE = GainBlock(A17+ ? 35 : 25); HARDEN = GainBlock(15) + hit;
 /// FRAIL_ATTACK = hit + Frail 5 on the player.
 /// </para>
 /// <para>
-/// Ascension mapping: damage A2 tier → <see cref="AscensionLevel.DeadlyEnemies"/>; the A17
+/// Ascension mapping: damage A2 tier -> <see cref="AscensionLevel.DeadlyEnemies"/>; the A17
 /// Activate-block tier (35) maps onto DeadlyEnemies like GremlinNob's A18 branch; HP has no
 /// vanilla ascension tier so ToughEnemies is intentionally unused here.
 /// </para>
 /// <para>
-/// Donor: <c>globe_head</c> — the shipped floating sphere creature; closest spherical silhouette
+/// Donor: <c>globe_head</c> - the shipped floating sphere creature; closest spherical silhouette
 /// among the shipped scenes for a hovering guardian orb.
 /// </para>
 /// </summary>
@@ -40,7 +40,7 @@ public sealed class SphericGuardian : Spire1Monster
 {
 
     protected override string DonorId => "globe_head";
-    // AbstractMonster(NAME, ID, 20, ...) — fixed 20 HP, no setHp call, no ascension HP branch.
+    // AbstractMonster(NAME, ID, 20, ...) - fixed 20 HP, no setHp call, no ascension HP branch.
     public override int MinInitialHp => 20;
 
     public override int MaxInitialHp => 20;
@@ -89,7 +89,7 @@ public sealed class SphericGuardian : Spire1Monster
         slam.FollowUpState = branch;
         harden.FollowUpState = branch;
 
-        // Bytecode getMove: scripted ACTIVATE then FRAIL_ATTACK opening, then alternate — a Slam
+        // Bytecode getMove: scripted ACTIVATE then FRAIL_ATTACK opening, then alternate - a Slam
         // is always followed by Harden, anything else rolls Slam again.
         branch.AddState(activate, () => !_firstMoveDone);
         branch.AddState(frailAttack, () => !_secondMoveDone);

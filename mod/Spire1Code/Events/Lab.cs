@@ -10,7 +10,7 @@ using MegaCrit.Sts2.Core.Rewards;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 shrine — Lab. Search the lab for 3 random potions (2 at Ascension 15+), offered as rewards.
+/// StS1 shrine - Lab. Search the lab for 3 random potions (2 at Ascension 15+), offered as rewards.
 /// </summary>
 public class Lab : Spire1Event
 {

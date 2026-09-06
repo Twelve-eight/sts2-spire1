@@ -4,7 +4,7 @@ using Spire1.Spire1Code.Monsters;
 namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
-/// StS1 Act-3 "Maw" strong encounter — single <see cref="Maw"/>.
+/// StS1 Act-3 "Maw" strong encounter - single <see cref="Maw"/>.
 /// </summary>
 public sealed class MawEncounter : Spire1Encounter
 {

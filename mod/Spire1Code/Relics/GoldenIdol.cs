@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.Rooms;
 
 namespace Spire1.Spire1Code.Relics;
 
-/// <summary>StS1 — Golden Idol (Event). Enemies drop 25% more Gold.</summary>
+/// <summary>StS1 - Golden Idol (Event). Enemies drop 25% more Gold.</summary>
 public class GoldenIdol : Spire1Relic
 {
     /// <summary>StS1 <c>GoldenIdol.MULTIPLIER</c>. The relic class itself declares nothing else.</summary>
@@ -31,11 +31,11 @@ public class GoldenIdol : Spire1Relic
     //
     // TryModifyRewards (AbstractModel.cs:2140) is the 1:1 StS2 counterpart: it runs once per generated
     // RewardsSet, after every Reward.Populate() (RewardsSet.cs:132-136), and it receives both the reward
-    // list and the room those rewards belong to — exactly the two things StS1's check needs.
+    // list and the room those rewards belong to - exactly the two things StS1's check needs.
     //
     // Deliberately NOT ModifyGoldGained (AbstractModel.cs:1635): that hook fires for every
     // PlayerCmd.GainGold (PlayerCmd.cs:144), which would also boost Hand of Greed, Heist, Maw Bank and
-    // every event gold payout. Vanilla boosts none of those — only RewardItem gold.
+    // every event gold payout. Vanilla boosts none of those - only RewardItem gold.
     public override bool TryModifyRewards(Player player, List<Reward> rewards, AbstractRoom? room)
     {
         // A null room means the rewards are not room completion (an event choice or a relic pickup).
@@ -60,7 +60,7 @@ public class GoldenIdol : Spire1Relic
                 continue;
 
             // GoldReward.Amount has a private setter (GoldReward.cs:38), so the reward has to be
-            // replaced rather than edited — the same move shipped Midas makes (Midas.cs:19). The
+            // replaced rather than edited - the same move shipped Midas makes (Midas.cs:19). The
             // replacement is already populated (Amount >= 0), so RewardsSet.cs:137-143 leaves it alone.
             // ToSerializable() is the only public read of the "stolen back" flag, which selects the
             // COMBAT_REWARD_GOLD_STOLEN description (GoldReward.cs:44), so it is carried over instead
@@ -85,7 +85,7 @@ public class GoldenIdol : Spire1Relic
     /// <summary>
     /// StS1: <c>bonusGold += MathUtils.round(goldAmt * 0.25f)</c>. libGDX's round is
     /// <c>(int)(value + 16384.5d) - 16384</c>, i.e. floor(value + 0.5) for non-negative input, so the
-    /// bonus rounds half up and is truncated exactly once — 10 gold gives +3, 9 gold gives +2. This is
+    /// bonus rounds half up and is truncated exactly once - 10 gold gives +3, 9 gold gives +2. This is
     /// not the same as paying out 1.25x the gold, hence the explicit floor rather than a bare multiply.
     /// </summary>
     private static int BonusGoldFor(int goldAmount) =>

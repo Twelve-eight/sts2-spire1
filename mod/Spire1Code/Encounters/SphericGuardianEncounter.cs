@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Spheric Guardian" weak encounter (<c>MonsterHelper.getEncounter("Spheric Guardian")</c>,
-/// bytecode <c>new MonsterGroup(new SphericGuardian())</c> — single monster).
+/// bytecode <c>new MonsterGroup(new SphericGuardian())</c> - single monster).
 /// </summary>
 public sealed class SphericGuardianEncounter : Spire1Encounter
 {

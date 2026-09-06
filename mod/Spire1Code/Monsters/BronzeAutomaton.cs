@@ -19,7 +19,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The City boss — Bronze Automaton (<c>com.megacrit.cardcrawl.monsters.city.BronzeAutomaton</c>).
+/// StS1 The City boss - Bronze Automaton (<c>com.megacrit.cardcrawl.monsters.city.BronzeAutomaton</c>).
 /// 官方中文名：铜制机械人偶（<c>.tmp/m25-zhs-names.json</c>）。
 /// <para>
 /// Bytecode (<c>city_BronzeAutomaton.txt</c>): setHp(300), A9 320; blockAmt 9 (A9 12);
@@ -30,33 +30,33 @@ namespace Spire1.Spire1Code.Monsters;
 /// STUN intent); BOOST(5) gains blockAmt block and strAmt strength (DEFEND_BUFF intent).
 /// </para>
 /// <para>
-/// getMove is fully deterministic — there is no roll input at all:
-/// firstTurn → SPAWN_ORBS; then <c>numTurns == 4</c> → HYPER_BEAM (numTurns reset);
-/// lastMove(HYPER_BEAM) → A19 ? BOOST : STUNNED; lastMove(STUNNED|BOOST|SPAWN_ORBS) → FLAIL;
+/// getMove is fully deterministic - there is no roll input at all:
+/// firstTurn -> SPAWN_ORBS; then <c>numTurns == 4</c> -> HYPER_BEAM (numTurns reset);
+/// lastMove(HYPER_BEAM) -> A19 ? BOOST : STUNNED; lastMove(STUNNED|BOOST|SPAWN_ORBS) -> FLAIL;
 /// else BOOST. numTurns increments on every FLAIL/BOOST selection, so between hyper beams the
-/// cycle is Flail→Boost→Flail→Boost (four counted turns). Modelled as one conditional branch in
-/// vanilla predicate order, with the counter maintained at perform time — nothing can force or
+/// cycle is Flail->Boost->Flail->Boost (four counted turns). Modelled as one conditional branch in
+/// vanilla predicate order, with the counter maintained at perform time - nothing can force or
 /// re-roll this boss's moves mid-flight, and branch predicates must stay side-effect-free
 /// (BookOfStabbing idiom). All five move states chain back into the same branch.
 /// </para>
 /// <para>
 /// die(): screen-shake cosmetics plus onBossVictoryLogic() are engine-side here; the mechanical
-/// part — every survivor left in the room suicides (HideHealthBar + SuicideAction + Inflame VFX)
-/// so killing the boss ends the fight instantly even with orbs alive — is reproduced in
+/// part - every survivor left in the room suicides (HideHealthBar + SuicideAction + Inflame VFX)
+/// so killing the boss ends the fight instantly even with orbs alive - is reproduced in
 /// <see cref="AfterDeath"/> via <see cref="CreatureCmd.Kill"/>, the engine's normal death path.
 /// The orbs are primary enemies (no MinionPower port-side), so the engine's own
 /// secondary-enemy cascade does not cover them and the explicit sweep is required.
 /// BGM handling, markBossAsSeen and the AUTOMATON unlock/achievement have no mod surface and are
 /// dropped. Spawn positions/slots (<c>(-300f,200f)</c>/<c>(200f,130f)</c>) do not map onto
-/// CreatureCmd.Add's side-based layout, and the per-orb random spawn SFX is cosmetic — both are
+/// CreatureCmd.Add's side-based layout, and the per-orb random spawn SFX is cosmetic - both are
 /// not ported (SlimeBoss split precedent).
 /// </para>
 /// <para>
-/// Ascension mapping follows the shipped boss convention (cf. SlimeBoss): A9 HP/block tier →
-/// <see cref="AscensionLevel.ToughEnemies"/>, A4 damage tiers →
+/// Ascension mapping follows the shipped boss convention (cf. SlimeBoss): A9 HP/block tier ->
+/// <see cref="AscensionLevel.ToughEnemies"/>, A4 damage tiers ->
 /// <see cref="AscensionLevel.DeadlyEnemies"/>, and the A19 post-beam "BOOST instead of STUNNED"
-/// deterministic branch → <see cref="AscensionHelper.HasAscension"/><c>(</c><see cref="AscensionLevel.DoubleBoss"/><c>)</c>.
-/// Donor: <c>mecha_knight</c> — the shipped giant armored mech rig (idle_loop/hurt/die plus
+/// deterministic branch -> <see cref="AscensionHelper.HasAscension"/><c>(</c><see cref="AscensionLevel.DoubleBoss"/><c>)</c>.
+/// Donor: <c>mecha_knight</c> - the shipped giant armored mech rig (idle_loop/hurt/die plus
 /// attack_flame/attack_cleave/charge/wind_up tracks); closest silhouette among the shipped scenes
 /// for the city's towering bronze robot boss, whose shipped model even sits on the same
 /// 300/320 HP tier.
@@ -91,8 +91,8 @@ public sealed class BronzeAutomaton : Spire1Monster
 
     /// <summary>
     /// Remaps the engine's default animation triggers onto the tracks this donor rig actually has
-    /// (MechaKnight.GenerateAnimator is the authority for the names): Attack → attack_cleave,
-    /// Cast → attack_flame (the flamethrower track doubles as the hyper-beam burn), Hit → hurt.
+    /// (MechaKnight.GenerateAnimator is the authority for the names): Attack -> attack_cleave,
+    /// Cast -> attack_flame (the flamethrower track doubles as the hyper-beam burn), Hit -> hurt.
     /// The rig has no cast track of its own; without this mapping the engine defaults would drop
     /// both attack animations silently (Lagavulin precedent).
     /// </summary>
@@ -139,7 +139,7 @@ public sealed class BronzeAutomaton : Spire1Monster
     }
 
     /// <summary>
-    /// takeTurn SPAWN_ORBS: two SpawnMonsterAction calls, one BronzeOrb each (UNKNOWN intent —
+    /// takeTurn SPAWN_ORBS: two SpawnMonsterAction calls, one BronzeOrb each (UNKNOWN intent -
     /// vanilla shows no summon icon). Vanilla passes aiRng-randomized spawn SFX per orb; cosmetic.
     /// </summary>
     private async Task SpawnOrbsMove(IReadOnlyList<Creature> targets)
@@ -171,7 +171,7 @@ public sealed class BronzeAutomaton : Spire1Monster
     {
         // takeTurn HYPER_BEAM resets numTurns to 0 (vanilla does it inside getMove).
         _numTurns = 0;
-        // LaserBeamEffect windup above the hitbox, then DamageAction(NONE) — no impact fx.
+        // LaserBeamEffect windup above the hitbox, then DamageAction(NONE) - no impact fx.
         await CreatureCmd.TriggerAnim(base.Creature, "Cast", 0.6f);
         await DamageCmd.Attack(BeamDamage).FromMonster(this)
             .Execute(null);
@@ -189,7 +189,7 @@ public sealed class BronzeAutomaton : Spire1Monster
 
     private Task StunnedMove(IReadOnlyList<Creature> targets)
     {
-        // takeTurn STUNNED: TextAboveCreatureAction(STUNNED) only — the turn is wasted.
+        // takeTurn STUNNED: TextAboveCreatureAction(STUNNED) only - the turn is wasted.
         return Task.CompletedTask;
     }
 

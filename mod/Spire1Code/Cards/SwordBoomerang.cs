@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Sword Boomerang (Common). Deal 3 damage to a random enemy 3 times (4 upgraded).</summary>
+/// <summary>StS1 Ironclad - Sword Boomerang (Common). Deal 3 damage to a random enemy 3 times (4 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class SwordBoomerang() : Spire1Card(1, CardType.Attack, CardRarity.Common, TargetType.RandomEnemy)
 {

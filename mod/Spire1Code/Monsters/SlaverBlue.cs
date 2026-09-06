@@ -13,7 +13,7 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 Exordium — Blue Slaver (<c>com.megacrit.cardcrawl.monsters.exordium.SlaverBlue</c>).
+/// StS1 Exordium - Blue Slaver (<c>com.megacrit.cardcrawl.monsters.exordium.SlaverBlue</c>).
 /// <para>
 /// Bytecode: HP 46-50, A2 48-52; STAB_DMG 12 (A2 13), RAKE_DMG 7 (A2 8), weakAmt 1.
 /// getMove roll r: r&gt;=40 &amp;&amp; !lastTwo(STAB) -&gt; STAB; else (A17: last!=RAKE ? RAKE : STAB)

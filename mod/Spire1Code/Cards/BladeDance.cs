@@ -8,9 +8,9 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Blade Dance (Common). Add 3 Shivs into your hand (4 upgraded).
+/// <summary>StS1 Silent - Blade Dance (Common). Add 3 Shivs into your hand (4 upgraded).
 /// ACTIVE in SilentCardPool: the shipped StS2 BladeDance self-exhausts (CanonicalKeywords
-/// => [Exhaust], re-verified 2026-08-24 vs desktop-1.0.jar which has no exhaust) — a B-group
+/// => [Exhaust], re-verified 2026-08-24 vs desktop-1.0.jar which has no exhaust) - a B-group
 /// drift, so per SharedCardReuse rules our vanilla-faithful class serves instead.</summary>
 [Pool(typeof(SilentCardPool))]
 public class BladeDance() : Spire1Card(1, CardType.Skill, CardRarity.Common, TargetType.None)

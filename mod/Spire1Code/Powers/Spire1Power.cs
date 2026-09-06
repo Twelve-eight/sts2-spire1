@@ -1,4 +1,4 @@
-﻿using BaseLib.Abstracts;
+using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using Spire1.Spire1Code.Extensions;
 using MegaCrit.Sts2.Core.Entities.Powers;

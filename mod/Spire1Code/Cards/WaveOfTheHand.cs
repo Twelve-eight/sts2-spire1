@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Wave of the Hand (Uncommon Skill). For the rest of this turn, every time you gain Block you apply
+/// StS1 Watcher - Wave of the Hand (Uncommon Skill). For the rest of this turn, every time you gain Block you apply
 /// 1 Weak (2 upgraded) to ALL enemies.
 /// </summary>
 [Pool(typeof(WatcherCardPool))]

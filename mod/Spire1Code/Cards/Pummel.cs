@@ -6,7 +6,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Pummel (Uncommon Attack). Deal 2 damage 4 times, Exhaust (5 times upgraded).</summary>
+/// <summary>StS1 Ironclad - Pummel (Uncommon Attack). Deal 2 damage 4 times, Exhaust (5 times upgraded).</summary>
 public class Pummel() : Spire1Card(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];

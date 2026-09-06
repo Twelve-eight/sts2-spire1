@@ -8,7 +8,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Intimidate (Uncommon). Apply 1 Weak to ALL enemies, Exhaust (2 upgraded).</summary>
+/// <summary>StS1 Ironclad - Intimidate (Uncommon). Apply 1 Weak to ALL enemies, Exhaust (2 upgraded).</summary>
 public class Intimidate() : Spire1Card(0, CardType.Skill, CardRarity.Uncommon, TargetType.AllEnemies)
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];

@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Exordium Wildlife" strong encounter (<c>MonsterHelper.bottomWildlife()</c>).
-/// Bytecode: exactly 2 monsters — slot 0 = <c>bottomGetStrongWildlife</c> (uniform
+/// Bytecode: exactly 2 monsters - slot 0 = <c>bottomGetStrongWildlife</c> (uniform
 /// FungiBeast / JawWorm), slot 1 = <c>bottomGetWeakWildlife</c> (uniform over {getLouse,
 /// SpikeSlime_M, AcidSlime_M}, getLouse a 50/50 LouseNormal/LouseDefensive roll).
 /// (The 3-monster branch in the bytecode is dead code: it is guarded by

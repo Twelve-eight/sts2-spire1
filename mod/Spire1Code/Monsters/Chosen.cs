@@ -14,16 +14,16 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The City — Chosen (<c>com.megacrit.cardcrawl.monsters.city.Chosen</c>). 官方中文名：被拣选者。
+/// StS1 The City - Chosen (<c>com.megacrit.cardcrawl.monsters.city.Chosen</c>). 官方中文名：被拣选者。
 /// <para>
 /// Bytecode: HP 95-99, A7 98-103; ZAP_DMG 18 (A2 21), DEBILITATE_DMG 10 (A2 12),
 /// POKE_DMG 5 (A2 6), DEBILITATE_VULN 2, DRAIN_STR 3, DRAIN_WEAK 3, HEX_AMT 1.
-/// getMove (non-A17): first turn POKE×2; then HEX once; then when lastMove was neither DRAIN nor
-/// DEBILITATE → r&lt;50 ? DEBILITATE : DRAIN; else r&lt;40 ? ZAP : POKE×2.
-/// Vanilla A17 branch moves HEX to the very first turn and drops the POKE opening — unreachable in
+/// getMove (non-A17): first turn POKEx2; then HEX once; then when lastMove was neither DRAIN nor
+/// DEBILITATE -> r&lt;50 ? DEBILITATE : DRAIN; else r&lt;40 ? ZAP : POKEx2.
+/// Vanilla A17 branch moves HEX to the very first turn and drops the POKE opening - unreachable in
 /// StS2's ascension mapping (max A10), so only the non-A17 script is modelled.
 /// takeTurn: ZAP = 18 dmg (FIRE); DRAIN = Weak 3 on player + Strength 3 self;
-/// DEBILITATE = 10 dmg + Vulnerable 2; HEX = HexPower 1 ("add a Curse to your draw pile" — see FLAG);
+/// DEBILITATE = 10 dmg + Vulnerable 2; HEX = HexPower 1 ("add a Curse to your draw pile" - see FLAG);
 /// POKE = two hits of 5.
 /// </para>
 /// <para>
@@ -34,7 +34,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// curse-insertion call to copy.
 /// </para>
 /// <para>
-/// Donor: <c>damp_cultist</c> — robed humanoid cultist silhouette; closest visual match for a
+/// Donor: <c>damp_cultist</c> - robed humanoid cultist silhouette; closest visual match for a
 /// hooded zealot casting dark magic.
 /// </para>
 /// </summary>
@@ -95,12 +95,12 @@ public sealed class Chosen : Spire1Monster
         drain.FollowUpState = afterHex;
         debilitate.FollowUpState = afterHex;
 
-        // Opening: POKE × 2 (vanilla firstTurn latch), then exactly one HEX.
+        // Opening: POKE x 2 (vanilla firstTurn latch), then exactly one HEX.
         afterOpening.AddState(hex, () => !_usedHex);
         afterOpening.AddState(afterHex, () => true);
 
-        // Main loop: if last move was neither DRAIN nor DEBILITATE → r<50 ? DEBILITATE : DRAIN;
-        // otherwise r<40 ? ZAP : POKE×2.
+        // Main loop: if last move was neither DRAIN nor DEBILITATE -> r<50 ? DEBILITATE : DRAIN;
+        // otherwise r<40 ? ZAP : POKEx2.
         afterHex.AddState(debilitate, () => !LastWas(drain) && !LastWas(debilitate) && RollHundred() < 50);
         afterHex.AddState(drain, () => !LastWas(drain) && !LastWas(debilitate));
         afterHex.AddState(zap, () => RollHundred() < 40);

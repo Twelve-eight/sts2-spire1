@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Silent — Catalyst (Uncommon Skill). Double the enemy's Poison (Triple upgraded). Exhaust.
+/// StS1 Silent - Catalyst (Uncommon Skill). Double the enemy's Poison (Triple upgraded). Exhaust.
 /// The description text swaps Double/Triple through the SimpleLoc upgrade-swap syntax.
 /// </summary>
 [Pool(typeof(SilentCardPool))]

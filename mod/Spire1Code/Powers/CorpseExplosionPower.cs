@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Powers;
 
-/// <summary>StS1 Silent — Corpse Explosion. When the enemy dies, deal damage equal to its Max HP to ALL other enemies.</summary>
+/// <summary>StS1 Silent - Corpse Explosion. When the enemy dies, deal damage equal to its Max HP to ALL other enemies.</summary>
 public class CorpseExplosionPower : CustomPowerModel
 {
     public override PowerType Type => PowerType.Debuff;

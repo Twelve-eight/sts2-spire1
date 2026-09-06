@@ -9,17 +9,17 @@ namespace Spire1.Spire1Code.Patches;
 /// <summary>
 /// 联机容错补丁（Spire1Config.IgnoreMpModDifferences 门控，默认开）。
 /// <para>
-/// 引擎事实（dllsrc HandshakeManager.cs:110-137）：握手按顺序判三道闸——
-/// ① 游戏版本字符串不符 → VersionMismatch（保留，不绕过）；
-/// ② 玩法 mod 清单差异 → ModMismatch；③ ModelIdSerializationCache.Hash 不符 → VersionMismatch。
+/// 引擎事实（dllsrc HandshakeManager.cs:110-137）：握手按顺序判三道闸--
+/// 1) 游戏版本字符串不符 -> VersionMismatch（保留，不绕过）；
+/// 2) 玩法 mod 清单差异 -> ModMismatch；3) ModelIdSerializationCache.Hash 不符 -> VersionMismatch。
 /// 今晚实测（divergence zip #563/#249）：双方 BaseLib 来源不同（本地目录 vs 创意工坊）、
 /// 各自多装非玩法 mod、Spire1 分装包名不同，全部是"清单级假阳性"，玩家状态零差异。
 /// </para>
 /// <para>
-/// 本补丁把 ② 与"版本相同但哈希不符的 ③"改写为放行并记日志；
+/// 本补丁把 2) 与"版本相同但哈希不符的 3)"改写为放行并记日志；
 /// RitsuLib 的 StateDivergenceDiagnosticsPopup.ShowDeferred 前缀拦截弹窗
 /// （其诊断 bundle zip 仍由独立管线写入 logs 目录）。
-/// 双方都需安装本构建才完整生效——单侧放行会被对端拒绝。
+/// 双方都需安装本构建才完整生效--单侧放行会被对端拒绝。
 /// </para>
 /// </summary>
 [HarmonyPatch(typeof(HandshakeManager), "TryReadHandshakeMessage")]
@@ -51,7 +51,7 @@ internal static class MpIgnoreModDiffPatch
         }
 
         // VersionMismatch 有两种成因：真版本不同（保持拦截）或哈希不符（R14 2026-09-06
-        // 起需独立开关 IgnoreMpHashMismatch，默认关——哈希=玩法二进制指纹，不符时
+        // 起需独立开关 IgnoreMpHashMismatch，默认关--哈希=玩法二进制指纹，不符时
         // Serialization 安全无保证；清单级假阳性已由 IgnoreMpModDifferences 覆盖，
         // 哈希级放行必须是显式选择）。
         if (__result.status == HandshakeStatus.VersionMismatch

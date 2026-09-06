@@ -9,7 +9,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Dark Embrace (Uncommon Power). Whenever a card is Exhausted, draw 1 card (cost 1 upgraded).</summary>
+/// <summary>StS1 Ironclad - Dark Embrace (Uncommon Power). Whenever a card is Exhausted, draw 1 card (cost 1 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class DarkEmbrace() : Spire1Card(2, CardType.Power, CardRarity.Uncommon, TargetType.None)
 {

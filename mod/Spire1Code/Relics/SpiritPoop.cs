@@ -5,7 +5,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 namespace Spire1.Spire1Code.Relics;
 
 /// <summary>
-/// StS1 — Spirit Poop (Event). The joke consolation prize from shrine/offering event branches.
+/// StS1 - Spirit Poop (Event). The joke consolation prize from shrine/offering event branches.
 /// It has no gameplay effect, and that is vanilla-correct, not an omission: the StS1 class overrides
 /// only getUpdatedDescription() (returns DESCRIPTIONS[0]) and makeCopy(). It declares no constants, no
 /// counter, and no AbstractRelic gameplay hook whatsoever, which the bytecode confirms.

@@ -11,7 +11,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 namespace Spire1.Spire1Code.Powers;
 
 /// <summary>
-/// StS1 — Spore Cloud (FungiBeast death power, <c>com.megacrit.cardcrawl.powers.SporeCloudPower</c>).
+/// StS1 - Spore Cloud (FungiBeast death power, <c>com.megacrit.cardcrawl.powers.SporeCloudPower</c>).
 /// Bytecode: onDeath() returns early if <c>AbstractRoom.isBattleEnding()</c>, otherwise applies
 /// Vulnerable (amount) to the player. The engine ships no equivalent power, so this is our own
 /// CustomPowerModel.
@@ -19,7 +19,7 @@ namespace Spire1.Spire1Code.Powers;
 /// Death-trigger shape copied from the shipped <c>SteamEruptionPower</c>: <c>AfterDeath</c> hook
 /// plus <c>ShouldPowerBeRemovedAfterOwnerDeath => false</c> so the power survives its owner's
 /// death long enough to fire, and <c>ShouldStopCombatFromEnding => true</c> so the combat cannot
-/// finish before the spores resolve — together these are the engine-side equivalent of StS1's
+/// finish before the spores resolve - together these are the engine-side equivalent of StS1's
 /// isBattleEnding guard (spores never apply after the fight is already over).
 /// </para>
 /// </summary>

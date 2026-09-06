@@ -1,4 +1,4 @@
-# Silent COMMON cards (9) — StS1 vanilla
+# Silent COMMON cards (9) - StS1 vanilla
 
 Every number below was extracted from the shipped StS1 jar (`desktop-1.0.jar`) bytecode. Use these EXACT values. The `StS2 name collision` field decides the localization title prefix.
 

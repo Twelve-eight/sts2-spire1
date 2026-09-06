@@ -1,4 +1,4 @@
-# Silent UNCOMMON cards, part A (17) — StS1 vanilla
+# Silent UNCOMMON cards, part A (17) - StS1 vanilla
 
 Every number below was extracted from the shipped StS1 jar (`desktop-1.0.jar`) bytecode. Use these EXACT values. The `StS2 name collision` field decides the localization title prefix.
 
@@ -49,7 +49,7 @@ Every number below was extracted from the shipped StS1 jar (`desktop-1.0.jar`) b
 - official StS1 description: `Discard your hand, NL then draw that many cards. NL Exhaust.`
 - official upgraded description: `Discard your hand, NL then draw that many cards.`
 - StS2 name collision: YES -> localization title MUST be "StS1 - Calculated Gamble"
-- IMPL: Skill cost 0, Exhaust (upgrade REMOVES Exhaust: OnUpgrade must clear the keyword — verify how the mod removes a keyword; if keywords cannot be removed after construction, express Exhaust via an IsUpgraded-dependent CanonicalKeywords override). Effect: discard your whole hand, then draw that many cards. Whole-hand discard idiom: `await CardCmd.Discard(choiceContext, PileType.Hand.GetPile(Owner).Cards.ToList())` (materialise the list first), count the cards BEFORE discarding, then draw that many.
+- IMPL: Skill cost 0, Exhaust (upgrade REMOVES Exhaust: OnUpgrade must clear the keyword - verify how the mod removes a keyword; if keywords cannot be removed after construction, express Exhaust via an IsUpgraded-dependent CanonicalKeywords override). Effect: discard your whole hand, then draw that many cards. Whole-hand discard idiom: `await CardCmd.Discard(choiceContext, PileType.Hand.GetPile(Owner).Cards.ToList())` (materialise the list first), count the cards BEFORE discarding, then draw that many.
 
 ## Caltrops  (class name = `Caltrops`, loc key `SPIRE1-CALTROPS`)
 - StS1 id: `Caltrops`, official name: `Caltrops`
@@ -82,7 +82,7 @@ Every number below was extracted from the shipped StS1 jar (`desktop-1.0.jar`) b
 - upgrade deltas: upgradeMagicNumber=-1
 - official StS1 description: `Discard !M! cards. NL Gain [G] [G].`
 - StS2 name collision: no -> plain title "Concentrate"
-- IMPL: Skill cost 0. Discard 3 cards (2 upgraded — note the upgrade is MagicNumber -1), then gain 2 Energy. Use CardSelectorPrefs(CardSelectorPrefs.DiscardSelectionPrompt, count) + CardCmd.Discard, like the existing mod Cards/Prepared.cs. Vars: CardsVar(3) (upgrade -1) + EnergyVar(2).
+- IMPL: Skill cost 0. Discard 3 cards (2 upgraded - note the upgrade is MagicNumber -1), then gain 2 Energy. Use CardSelectorPrefs(CardSelectorPrefs.DiscardSelectionPrompt, count) + CardCmd.Discard, like the existing mod Cards/Prepared.cs. Vars: CardsVar(3) (upgrade -1) + EnergyVar(2).
 
 ## CripplingPoison  (class name = `CripplingPoison`, loc key `SPIRE1-CRIPPLING_POISON`)
 - StS1 id: `Crippling Poison`, official name: `Crippling Cloud`
@@ -122,7 +122,7 @@ Every number below was extracted from the shipped StS1 jar (`desktop-1.0.jar`) b
 - upgrade deltas: upgradeBlock=2
 - official StS1 description: `Draw 1 card. NL If you draw a Skill, gain !B! Block.`
 - StS2 name collision: YES -> localization title MUST be "StS1 - Escape Plan"
-- IMPL: Skill cost 0: draw 1 card; if the drawn card is a Skill, gain 3 Block (5 upgraded). CommonActions.Draw returns the drawn cards in the decompiled CardPileCmd.Draw — capture the result and inspect card.Type == CardType.Skill. Vars: BlockVar(3), CardsVar(1).
+- IMPL: Skill cost 0: draw 1 card; if the drawn card is a Skill, gain 3 Block (5 upgraded). CommonActions.Draw returns the drawn cards in the decompiled CardPileCmd.Draw - capture the result and inspect card.Type == CardType.Skill. Vars: BlockVar(3), CardsVar(1).
 
 ## Eviscerate  (class name = `Eviscerate`, loc key `SPIRE1-EVISCERATE`)
 - StS1 id: `Eviscerate`, official name: `Eviscerate`
@@ -130,7 +130,7 @@ Every number below was extracted from the shipped StS1 jar (`desktop-1.0.jar`) b
 - upgrade deltas: upgradeDamage=2
 - official StS1 description: `Costs 1 less [G] NL for each card discarded this turn. NL Deal !D! damage 3 times.`
 - StS2 name collision: no -> plain title "Eviscerate"
-- IMPL: Attack, base cost 3, deals 7 damage 3 TIMES (+2 per hit), and 'costs 1 less Energy for each card discarded this turn'. Multi-hit: CommonActions.CardAttack(this, play, hitCount: 3). Dynamic cost: the mod already does dynamic cost in Cards/BloodForBlood.cs via EnergyCost.AddThisCombat(-1, reduceOnly: true) — for Eviscerate the reduction must track discards THIS TURN, so hook the discard event (CardDiscardedEntry history or a discard hook) and reduce the cost by 1 per discard, resetting each turn. If a per-turn cost reset cannot be expressed, FLAG the deviation explicitly in your report.
+- IMPL: Attack, base cost 3, deals 7 damage 3 TIMES (+2 per hit), and 'costs 1 less Energy for each card discarded this turn'. Multi-hit: CommonActions.CardAttack(this, play, hitCount: 3). Dynamic cost: the mod already does dynamic cost in Cards/BloodForBlood.cs via EnergyCost.AddThisCombat(-1, reduceOnly: true) - for Eviscerate the reduction must track discards THIS TURN, so hook the discard event (CardDiscardedEntry history or a discard hook) and reduce the cost by 1 per discard, resetting each turn. If a per-turn cost reset cannot be expressed, FLAG the deviation explicitly in your report.
 
 ## Expertise  (class name = `Expertise`, loc key `SPIRE1-EXPERTISE`)
 - StS1 id: `Expertise`, official name: `Expertise`

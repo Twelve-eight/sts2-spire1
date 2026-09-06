@@ -4,7 +4,7 @@ using Spire1.Spire1Code.Monsters;
 namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
-/// StS1 Act-3 "Donu and Deca" boss encounter — <see cref="Donu"/> and <see cref="Deca"/>.
+/// StS1 Act-3 "Donu and Deca" boss encounter - <see cref="Donu"/> and <see cref="Deca"/>.
 /// </summary>
 public sealed class DonuDecaEncounter : Spire1Encounter
 {

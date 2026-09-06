@@ -14,22 +14,22 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The Beyond — Exploder (<c>com.megacrit.cardcrawl.monsters.beyond.Exploder</c>).
+/// StS1 The Beyond - Exploder (<c>com.megacrit.cardcrawl.monsters.beyond.Exploder</c>).
 /// 官方中文名：爆炸机。
 /// <para>
 /// Bytecode: HP 30/30, A7 30-35; attackDmg 9 (A2 11). usePreBattleAction applies
-/// <see cref="ExplosivePower"/> with 3 stacks — the countdown ticks at the start of each of its
+/// <see cref="ExplosivePower"/> with 3 stacks - the countdown ticks at the start of each of its
 /// turns and at 0 it deals 30 damage to every player and dies (<c>EXPLODE_BASE</c> 30, THORNS
 /// semantics; implemented by our existing <see cref="ExplosivePower"/> port).
 /// </para>
 /// <para>
 /// Vanilla counts <c>turnCount++</c> at the top of every takeTurn and getMove reads it:
 /// turns 1-2 are ATTACK (<c>turnCount &lt; 2</c> when rolled), afterwards BLOCK (byte 2, UNKNOWN
-/// intent — an empty turn while the fuse burns down). The state machine reproduces this with
+/// intent - an empty turn while the fuse burns down). The state machine reproduces this with
 /// the completed-move count: decisions happen after exactly that many performed moves.
 /// </para>
 /// <para>
-/// Donor: <c>gas_bomb</c> — the shipped round bomb creature that also explodes; closest
+/// Donor: <c>gas_bomb</c> - the shipped round bomb creature that also explodes; closest
 /// silhouette among all shipped scenes.
 /// </para>
 /// </summary>
@@ -80,7 +80,7 @@ public sealed class Exploder : Spire1Monster
 
     private Task BlockMove(IReadOnlyList<Creature> targets)
     {
-        // takeTurn BLOCK (byte 2): nothing — the turn is spent waiting out the fuse.
+        // takeTurn BLOCK (byte 2): nothing - the turn is spent waiting out the fuse.
         return Task.CompletedTask;
     }
 

@@ -17,7 +17,7 @@ using Normality = MegaCrit.Sts2.Core.Models.Cards.Normality;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 Beyond event — Mind Bloom (<c>com.megacrit.cardcrawl.events.beyond.MindBloom</c>).
+/// StS1 Beyond event - Mind Bloom (<c>com.megacrit.cardcrawl.events.beyond.MindBloom</c>).
 /// <para>
 /// Three of StS1's four options are ported, in StS1's own order. "[I am Awake]" upgrades every
 /// upgradable card in the deck and grants <see cref="MarkOfTheBloom"/>. The third slot is then split
@@ -26,7 +26,7 @@ namespace Spire1.Spire1Code.Events;
 /// Doubt curse.
 /// </para>
 /// <para>
-/// FLAG: "[I am War]" is omitted — see <see cref="GenerateInitialOptions"/> for the encounter it
+/// FLAG: "[I am War]" is omitted - see <see cref="GenerateInitialOptions"/> for the encounter it
 /// picks and why it is blocked.
 /// </para>
 /// </summary>
@@ -44,8 +44,8 @@ public class MindBloom : Spire1Event
 
     public override ActModel[] Acts => Act3;
 
-    // StS1 evaluates this test twice — once in the constructor to choose the third option's text and
-    // again in buttonEffect to choose its effect — but floorNum cannot change while the event is
+    // StS1 evaluates this test twice - once in the constructor to choose the third option's text and
+    // again in buttonEffect to choose its effect - but floorNum cannot change while the event is
     // open, so a single test at option-generation time is equivalent.
     private bool IsRichFloor => Owner.RunState.TotalFloor % _floorCycle <= _richFloorMax;
 
@@ -57,8 +57,8 @@ public class MindBloom : Spire1Event
         // which is what the hover tips below reproduce; "[I am Awake]" gets no preview in StS1.
         //
         // FLAG: "[I am War]" is omitted. StS1 builds the list ["The Guardian", "Hexaghost",
-        // "Slime Boss"], shuffles it with `new Random(miscRng.randomLong())` and fights element 0 —
-        // i.e. a uniformly random one of the three Act-1 bosses — after clearing the room rewards and
+        // "Slime Boss"], shuffles it with `new Random(miscRng.randomLong())` and fights element 0 -
+        // i.e. a uniformly random one of the three Act-1 bosses - after clearing the room rewards and
         // replacing them with 50 gold (25 at Ascension 13+) plus a RARE relic reward. This is blocked
         // on unported StS1 monster encounters, NOT on a missing StS2 API: MonsterHelper.getEncounter
         // has no counterpart here because no MonsterGroup/EncounterModel exists for The Guardian,
@@ -93,10 +93,10 @@ public class MindBloom : Spire1Event
         // StS1: gainGold(999), then two separately constructed `new Normality()` instances shown
         // simultaneously (two ShowCardAndObtainEffect at 0.6*WIDTH and 0.3*WIDTH). AddCursesToDeck
         // calls RunState.CreateCard once per element, so passing the model twice produces two distinct
-        // cards and one combined preview — the faithful match for StS1's pair of effects.
+        // cards and one combined preview - the faithful match for StS1's pair of effects.
         //
         // Normality is not reimplemented: StS2 ships an identical one
-        // (MegaCrit.Sts2.Core.Models.Cards.Normality — cost -1 Curse, Unplayable, MaxUpgradeLevel 0,
+        // (MegaCrit.Sts2.Core.Models.Cards.Normality - cost -1 Curse, Unplayable, MaxUpgradeLevel 0,
         // the "cannot play more than 3 cards per turn" lock enforced through ShouldPlay) and it is
         // already registered in CurseCardPool, so per the lean-code rule we grant the shipped card.
         await PlayerCmd.GainGold(_richGold, Owner);
@@ -107,8 +107,8 @@ public class MindBloom : Spire1Event
 
     private async Task IAmHealthy()
     {
-        // StS1: player.heal(player.maxHealth) — a heal whose amount is the full max HP, which
-        // SetCurrentHpInternal clamps, so it always ends at full HP — then obtain one Doubt curse.
+        // StS1: player.heal(player.maxHealth) - a heal whose amount is the full max HP, which
+        // SetCurrentHpInternal clamps, so it always ends at full HP - then obtain one Doubt curse.
         await CreatureCmd.Heal(Owner.Creature, Owner.Creature.MaxHp);
         await CardPileCmd.AddCurseToDeck<Doubt>(Owner);
         SetEventFinished(PageDescription("HEALTHY"));

@@ -5,7 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Injury (Curse). Unplayable. No effect. Mirror of the base-game Injury.</summary>
+/// <summary>StS1 Ironclad - Injury (Curse). Unplayable. No effect. Mirror of the base-game Injury.</summary>
 [Pool(typeof(CurseCardPool))]
 public class Injury() : Spire1Curse()
 {

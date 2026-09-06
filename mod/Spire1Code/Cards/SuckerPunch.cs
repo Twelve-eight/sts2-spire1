@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Sucker Punch (Common). Deal 7 damage, apply 1 Weak (9 / 2 upgraded).</summary>
+/// <summary>StS1 Silent - Sucker Punch (Common). Deal 7 damage, apply 1 Weak (9 / 2 upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class SuckerPunch() : Spire1Card(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {

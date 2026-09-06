@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Watcher — Deceive Reality (Uncommon Skill). Gain 4 Block (7 upgraded) and add a Safety into your hand.</summary>
+/// <summary>StS1 Watcher - Deceive Reality (Uncommon Skill). Gain 4 Block (7 upgraded) and add a Safety into your hand.</summary>
 [Pool(typeof(WatcherCardPool))]
 public class DeceiveReality() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {

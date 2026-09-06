@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Colorless — Good Instincts (Common Skill). Gain 6 Block (9 upgraded). 0 cost.</summary>
+/// <summary>StS1 Colorless - Good Instincts (Common Skill). Gain 6 Block (9 upgraded). 0 cost.</summary>
 [Pool(typeof(ColorlessCardPool))]
 public class GoodInstincts() : Spire1Card(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {

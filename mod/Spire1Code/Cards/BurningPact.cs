@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Burning Pact (Uncommon). Exhaust 1 card. Draw 2 cards (3 upgraded).</summary>
+/// <summary>StS1 Ironclad - Burning Pact (Uncommon). Exhaust 1 card. Draw 2 cards (3 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class BurningPact() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 {

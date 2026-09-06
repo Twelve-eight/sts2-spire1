@@ -1,4 +1,4 @@
-# StS2 宝珠与附魔（Orbs & Enchantments, EA build）— sts2-spire1 知识库
+# StS2 宝珠与附魔（Orbs & Enchantments, EA build）- sts2-spire1 知识库
 
 ## 本卷范围
 OrbCmd/OrbQueue/OrbModel 的宝珠管线（通道/激发/被动/回合触发/触发次数钩子）与 EnchantmentModel 附魔系统（附加/叠层/参与管线的位置）。
@@ -10,52 +10,52 @@ OrbCmd/OrbQueue/OrbModel 的宝珠管线（通道/激发/被动/回合触发/触
 
 ## 1. 宝珠管线
 
-**O01 OrbQueue 数据模型** — 出处 `Entities.Orbs/OrbQueue.cs`（行 50-100）。置信度：**高**
-`_orbs` 列表 + `Capacity`；`TryEnqueue`（容量 0 拒绝、满则抛异常——**满槽检查在 OrbCmd 侧先行**）；`Remove(orb)` 按对象移除；`Insert(idx, orb)`（索引插入，供特定效果插队）；回合触发器 `BeforeTurnEnd`（快照列表逐个 `BeforeTurnEndOrbTrigger`）/ `AfterTurnStart`（同构 `AfterTurnStartOrbTrigger`），循环中每项先复查 `CombatState != null`。
+**O01 OrbQueue 数据模型** - 出处 `Entities.Orbs/OrbQueue.cs`（行 50-100）。置信度：**高**
+`_orbs` 列表 + `Capacity`；`TryEnqueue`（容量 0 拒绝、满则抛异常--**满槽检查在 OrbCmd 侧先行**）；`Remove(orb)` 按对象移除；`Insert(idx, orb)`（索引插入，供特定效果插队）；回合触发器 `BeforeTurnEnd`（快照列表逐个 `BeforeTurnEndOrbTrigger`）/ `AfterTurnStart`（同构 `AfterTurnStartOrbTrigger`），循环中每项先复查 `CombatState != null`。
 
-**O02 Channel 全序** — 出处 `Commands/OrbCmd.cs#Channel`（行 68-92）。置信度：**高**
+**O02 Channel 全序** - 出处 `Commands/OrbCmd.cs#Channel`（行 68-92）。置信度：**高**
 ```
-战斗未结束 →
-① 角色基础槽位 0 且 Capacity==0 → 先 AddSlots(1)（无槽也能通道）
-② orb.Owner = player
-③ 若 Orbs.Count >= Capacity → await EvokeNext(player)   ← 满槽先激发最左（无 StS1 三连重排队，直接 await 串行）
-④ TryEnqueue 成功 → History.OrbChanneled → PlayChannelSfx → 动画 → Hook.AfterOrbChanneled
+战斗未结束 ->
+1) 角色基础槽位 0 且 Capacity==0 -> 先 AddSlots(1)（无槽也能通道）
+2) orb.Owner = player
+3) 若 Orbs.Count >= Capacity -> await EvokeNext(player)   <- 满槽先激发最左（无 StS1 三连重排队，直接 await 串行）
+4) TryEnqueue 成功 -> History.OrbChanneled -> PlayChannelSfx -> 动画 -> Hook.AfterOrbChanneled
 ```
-**StS1 对照**（orbs.md R04）：StS1 满槽通道 = `addToTop 三连`（Animate→Evoke→Channel）异步展开；StS2 是 `await EvokeNext()` 后再入队——**语义等价（先逐出最左再通道）、实现形态不同**。
+**StS1 对照**（orbs.md R04）：StS1 满槽通道 = `addToTop 三连`（Animate->Evoke->Channel）异步展开；StS2 是 `await EvokeNext()` 后再入队--**语义等价（先逐出最左再通道）、实现形态不同**。
 
-**O03 激发家族** — 出处 `OrbCmd.cs#EvokeNext/#EvokeLast/#Evoke`（行 94-153）。置信度：**高**
-- `EvokeNext` = `Orbs.First()`（最左/最早）——对应 StS1 `evokeOrb()`。
-- `EvokeLast` = `Orbs.Last()`（最新）——对应 StS1 `evokeNewestOrb()`。
-- `dequeue` 参数：**false = 不从队列移除只结算**——对应 StS1 `evokeWithoutLosingOrb`（Multi-Cast 基础，orbs.md R07）。
-- `Evoke` 私有体：先（可选）Remove+动画 → `await orb.Evoke(ctx)`（返回目标集）→ 结算；战斗结束守卫。
+**O03 激发家族** - 出处 `OrbCmd.cs#EvokeNext/#EvokeLast/#Evoke`（行 94-153）。置信度：**高**
+- `EvokeNext` = `Orbs.First()`（最左/最早）--对应 StS1 `evokeOrb()`。
+- `EvokeLast` = `Orbs.Last()`（最新）--对应 StS1 `evokeNewestOrb()`。
+- `dequeue` 参数：**false = 不从队列移除只结算**--对应 StS1 `evokeWithoutLosingOrb`（Multi-Cast 基础，orbs.md R07）。
+- `Evoke` 私有体：先（可选）Remove+动画 -> `await orb.Evoke(ctx)`（返回目标集）-> 结算；战斗结束守卫。
 
-**O04 被动：Passive vs TriggerPassive（Cables 泛化）** — 出处 `OrbCmd.cs#Passive`（行 155-171）+ `Models/OrbModel.cs#TriggerPassive`（行 243-262）。置信度：**高**
+**O04 被动：Passive vs TriggerPassive（Cables 泛化）** - 出处 `OrbCmd.cs#Passive`（行 155-171）+ `Models/OrbModel.cs#TriggerPassive`（行 243-262）。置信度：**高**
 ```
-OrbCmd.Passive(countAffectedByHooks=false) → orb.Passive(ctx, target)（原始一次）
-OrbCmd.Passive(countAffectedByHooks=true)  → orb.TriggerPassive(ctx, target)：
+OrbCmd.Passive(countAffectedByHooks=false) -> orb.Passive(ctx, target)（原始一次）
+OrbCmd.Passive(countAffectedByHooks=true)  -> orb.TriggerPassive(ctx, target)：
     triggerCount = Hook.ModifyOrbPassiveTriggerCount(state, orb, 1, out modifiers)
     Hook.AfterModifyingOrbPassiveTriggerCount(...)
-    for i < triggerCount: Passive + wait   ← ★ 触发次数可被钩子改成 N（Cables/类似物 = +1 的钩子实现）
+    for i < triggerCount: Passive + wait   <- * 触发次数可被钩子改成 N（Cables/类似物 = +1 的钩子实现）
 ```
-数值本体：`OrbModel.PassiveVal/EvokeVal`（abstract，decimal）经 `ModifyOrbValue` 钩子（行 294）——**StS1 Focus 的泛化等价物**（orbs.md R11/R12 的"焦点即值修正钩子"），加成对象是宝珠而非全局 power。
+数值本体：`OrbModel.PassiveVal/EvokeVal`（abstract，decimal）经 `ModifyOrbValue` 钩子（行 294）--**StS1 Focus 的泛化等价物**（orbs.md R11/R12 的"焦点即值修正钩子"），加成对象是宝珠而非全局 power。
 
-**O05 回合触发点** — 出处 `OrbQueue.cs#AfterTurnStart(92)/#BeforeTurnEnd(80)` + 调用方：玩家侧回合开始（sts2-monster-ai.md A05⑥ `OrbQueue.AfterTurnStart`）与 `DoTurnEnd` 第一步（sts2-combat-turn-machine.md T04，先于回合尾卡/Ethereal/Flush）。置信度：**高**
-基类 `BeforeTurnEndOrbTrigger/AfterTurnStartOrbTrigger` 为空（OrbModel.cs 行 233-242）——**具体宝珠自行选择挂哪一侧**（StS1 的 Plasma 挂回合开始、Frost 挂回合尾的分工，在 StS2 由子类覆写决定，无引擎级固定）。
+**O05 回合触发点** - 出处 `OrbQueue.cs#AfterTurnStart(92)/#BeforeTurnEnd(80)` + 调用方：玩家侧回合开始（sts2-monster-ai.md A056) `OrbQueue.AfterTurnStart`）与 `DoTurnEnd` 第一步（sts2-combat-turn-machine.md T04，先于回合尾卡/Ethereal/Flush）。置信度：**高**
+基类 `BeforeTurnEndOrbTrigger/AfterTurnStartOrbTrigger` 为空（OrbModel.cs 行 233-242）--**具体宝珠自行选择挂哪一侧**（StS1 的 Plasma 挂回合开始、Frost 挂回合尾的分工，在 StS2 由子类覆写决定，无引擎级固定）。
 
 ---
 
 ## 2. 附魔系统（Enchantment）
 
-**O06 附魔规则** — 出处 `Commands/CardCmd.cs#Enchant ×2 / #ClearEnchantment`（行 520-578）。置信度：**高**
+**O06 附魔规则** - 出处 `Commands/CardCmd.cs#Enchant x2 / #ClearEnchantment`（行 520-578）。置信度：**高**
 ```
-① CanEnchant(card) 门（不通过抛异常）
-② 卡无附魔 → EnchantInternal(enchantment, amount) + enchantment.ModifyCard()（改卡面/数值）
-③ 已有附魔：同类型 → Enchantment.Amount += amount（叠加）；不同类型 → 抛 InvalidOperationException
-   ⇒ ★ 一卡一附魔，异类型互斥、同类型数值叠
-④ FinalizeUpgradeInternal；在牌组堆时写 CardsEnchanted 历史
+1) CanEnchant(card) 门（不通过抛异常）
+2) 卡无附魔 -> EnchantInternal(enchantment, amount) + enchantment.ModifyCard()（改卡面/数值）
+3) 已有附魔：同类型 -> Enchantment.Amount += amount（叠加）；不同类型 -> 抛 InvalidOperationException
+   => * 一卡一附魔，异类型互斥、同类型数值叠
+4) FinalizeUpgradeInternal；在牌组堆时写 CardsEnchanted 历史
 ```
-**O07 附魔参与管线的位置** — 出处 `Models/EnchantmentModel.cs`（行 21-217）+ 管线交叉。置信度：**高**
-- 伤害计算：`ModifyDamage` 的**最外层**（附魔 Additive → Multiplicative 先于一切模型层，sts2-combat-semantics.md S04）。
+**O07 附魔参与管线的位置** - 出处 `Models/EnchantmentModel.cs`（行 21-217）+ 管线交叉。置信度：**高**
+- 伤害计算：`ModifyDamage` 的**最外层**（附魔 Additive -> Multiplicative 先于一切模型层，sts2-combat-semantics.md S04）。
 - 出牌：卡效果 OnPlay 之后、AfterCardPlayed 之前执行 `Enchantment.OnPlay(cardPlay)`（sts2-card-play.md C03 步骤 f），随后 `InvokeExecutionFinished`。
 - 钩子资格：`ShouldReceiveCombatHooks = Card?.ShouldReceiveCombatHooks`（跟随宿主卡）。
 - 显示/状态：`EnchantmentStatus`、`ShouldStartAtBottomOfDrawPile`（附魔卡的洗牌落底选项）、`ShouldGlowGold/Red`、`IsStackable`、`DisplayAmount`。
@@ -63,7 +63,7 @@ OrbCmd.Passive(countAffectedByHooks=true)  → orb.TriggerPassive(ctx, target)�
 
 ---
 
-## 3. StS1 → StS2 宝珠仲裁速查
+## 3. StS1 -> StS2 宝珠仲裁速查
 
 | 语义 | StS1（orbs.md） | StS2（本卷） | 仲裁建议 |
 |---|---|---|---|
@@ -72,23 +72,23 @@ OrbCmd.Passive(countAffectedByHooks=true)  → orb.TriggerPassive(ctx, target)�
 | 激发不移除 | evokeWithoutLosingOrb（R07） | Evoke(dequeue:false)（O03） | 直接映射 |
 | Focus | power + applyFocus 刷新（R11/R12 不对称） | ModifyOrbValue 钩子（O04） | StS2 无"冻结不回落"问题（每次数值即时钩子计算） |
 | Cables 双触发 | 写死 orbs[0] 二次调用（R10） | ModifyOrbPassiveTriggerCount 钩子（O04） | StS2 是泛化；移植 StS1 Cables = +1 触发钩子 |
-| 被动时点 | Plasma 回合开始/Frost·Dark 回合尾（引擎固定） | 子类覆写 AfterTurnStart/BeforeTurnEndOrbTrigger（O05） | 移植时逐珠选择挂点 |
+| 被动时点 | Plasma 回合开始/Frost-Dark 回合尾（引擎固定） | 子类覆写 AfterTurnStart/BeforeTurnEndOrbTrigger（O05） | 移植时逐珠选择挂点 |
 | 空槽占位 | EmptyOrbSlot 占位对象（R01） | OrbQueue.Count < Capacity（无占位对象） | 数据模型差异，遍历逻辑别照抄 |
 | 被动触发计数 | 固定 1 | triggerCount 循环（O04） | StS1"多段被动"类卡移植时用 countAffectedByHooks=true |
 
 ## 3b. EA 宝珠数值普查（2026-09-05 补充）
 
-**O08 五珠数值与触发侧** — 出处 `Models.Orbs/{Frost,Lightning,Dark,Plasma,Glass}Orb.cs`。置信度：**高**
+**O08 五珠数值与触发侧** - 出处 `Models.Orbs/{Frost,Lightning,Dark,Plasma,Glass}Orb.cs`。置信度：**高**
 
 | 珠 | PassiveVal | EvokeVal | 回合触发侧 | 备注 |
 |---|---|---|---|---|
 | Frost | 2（格挡） | 5 | BeforeTurnEnd | 与 StS1 基值一致（orbs.md R09） |
 | Lightning | 3（伤害） | 8 | BeforeTurnEnd | 与 StS1 一致 |
 | Dark | 6（累加增速） | `_evokeVal`（累积字段，不经 ModifyOrbValue） | BeforeTurnEnd | 累积语义与 StS1 同源；焦点不重置存量（对照 orbs.md R11） |
-| Plasma | 1（能量） | 2 | **AfterTurnStart**（唯一回合开始珠） | PassiveVal **不经 ModifyOrbValue**——能量珠豁免焦点类修正 |
-| Glass | `_passiveVal`（经 ModifyOrbValue） | PassiveVal × 2 | BeforeTurnEnd | EA 新珠；evoke=被动×2 |
+| Plasma | 1（能量） | 2 | **AfterTurnStart**（唯一回合开始珠） | PassiveVal **不经 ModifyOrbValue**--能量珠豁免焦点类修正 |
+| Glass | `_passiveVal`（经 ModifyOrbValue） | PassiveVal x 2 | BeforeTurnEnd | EA 新珠；evoke=被动x2 |
 
-跨代仲裁：四基础珠基值与 StS1 完全相同 ⇒ 数值层移植可直采；差异在**钩子挂点改为子类覆写**（O05）与 Glass 的衍生关系（evoke 依赖 PassiveVal 属性而非独立字段——焦点类修正会同步放大 evoke）。
+跨代仲裁：四基础珠基值与 StS1 完全相同 => 数值层移植可直采；差异在**钩子挂点改为子类覆写**（O05）与 Glass 的衍生关系（evoke 依赖 PassiveVal 属性而非独立字段--焦点类修正会同步放大 evoke）。
 
 ## 4. 开放问题 / 低置信项
 

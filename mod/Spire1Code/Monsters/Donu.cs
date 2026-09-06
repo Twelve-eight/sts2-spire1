@@ -16,33 +16,33 @@ namespace Spire1.Spire1Code.Monsters;
 /// StS1 Act-3 boss "Donu" (<c>com.megacrit.cardcrawl.monsters.beyond.Donu</c>). 官方中文名：甜圈。
 /// <para>
 /// Bytecode: HP 250, A9 265; BEAM_DMG 10 (A4 12), BEAM_AMT 1 (not used in block), CIRCLE_STR 3.
-/// Alternates between BEAM (2× beamDmg) and CIRCLE_OF_PROTECTION (all monsters +3 Strength).
-/// isAttacking latch flips each turn: BEAM → isAttacking=false → CIRCLE → isAttacking=true → BEAM.
+/// Alternates between BEAM (2x beamDmg) and CIRCLE_OF_PROTECTION (all monsters +3 Strength).
+/// isAttacking latch flips each turn: BEAM -> isAttacking=false -> CIRCLE -> isAttacking=true -> BEAM.
 /// </para>
 /// <para>
-/// Donor: <c>globe_head</c> — floating sphere with a central eye; closest visual match for Donu.
+/// Donor: <c>globe_head</c> - floating sphere with a central eye; closest visual match for Donu.
 /// </para>
 /// </summary>
 public sealed class Donu : Spire1Monster
 {
-    // HP 250, A9 → 265
+    // HP 250, A9 -> 265
     public override int MinInitialHp => AscensionHelper.GetValueIfAscension(AscensionLevel.ToughEnemies, 265, 250);
     public override int MaxInitialHp => MinInitialHp;
 
-    // BEAM_DMG = 10; ascension >= 4 → 12
+    // BEAM_DMG = 10; ascension >= 4 -> 12
     private int BeamDamage => AscensionHelper.GetValueIfAscension(AscensionLevel.DeadlyEnemies, 12, 10);
 
     // BEAM_AMT = 1 (not used for block in StS1; StS1 Donu's Beam doesn't block)
     // CIRCLE_STR_AMT = 3 (no ascension variant)
     private const int CircleStrength = 3;
 
-    // ARTIFACT_AMT = 2 (A19 → 3)
+    // ARTIFACT_AMT = 2 (A19 -> 3)
     private int ArtifactAmount => AscensionHelper.GetValueIfAscension(AscensionLevel.DoubleBoss, 3, 2);
 
     protected override string DonorId => "globe_head";
 
-    // Vanilla field: isAttacking (starts false — first turn is CIRCLE).
-    // But bytecode getMove: isAttacking ? BEAM : CIRCLE. Initial isAttacking = false → first turn CIRCLE.
+    // Vanilla field: isAttacking (starts false - first turn is CIRCLE).
+    // But bytecode getMove: isAttacking ? BEAM : CIRCLE. Initial isAttacking = false -> first turn CIRCLE.
     // However vanilla TESTS show Donu opens with CIRCLE? Let me re-check...
     // Bytecode Donu constructor: isAttacking = false. getMove: isAttacking? BEAM : CIRCLE.
     // So first move is CIRCLE (buff all monsters). Then BEAM. Then CIRCLE. etc.
@@ -57,7 +57,7 @@ public sealed class Donu : Spire1Monster
 
     protected override MonsterMoveStateMachine GenerateMoveStateMachine()
     {
-        // BEAM: 2 hits × beamDmg, FIRE effect
+        // BEAM: 2 hits x beamDmg, FIRE effect
         MoveState beam = new("BEAM_MOVE", BeamMove, new MultiAttackIntent(BeamDamage, 2));
         // CIRCLE_OF_PROTECTION: all monsters +3 Strength
         MoveState circle = new("CIRCLE_MOVE", CircleMove, new BuffIntent());
@@ -97,7 +97,7 @@ public sealed class Donu : Spire1Monster
 
     public override async Task BeforeCombatStart()
     {
-        // usePreBattleAction: ArtifactPower(2), A19→3
+        // usePreBattleAction: ArtifactPower(2), A19->3
         await PowerCmd.Apply<ArtifactPower>(
             new ThrowingPlayerChoiceContext(), base.Creature, ArtifactAmount, base.Creature, null);
     }

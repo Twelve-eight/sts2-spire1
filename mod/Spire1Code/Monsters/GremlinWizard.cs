@@ -19,17 +19,17 @@ namespace Spire1.Spire1Code.Monsters;
 /// constructor seeds <c>currentCharge = 1</c>. Exact <c>takeTurn</c> rule (CHARGE is move byte 2,
 /// DOPE_MAGIC is byte 1, and <c>getMove</c> always opens on CHARGE):
 /// <list type="bullet">
-/// <item>CHARGE: <c>currentCharge++</c>; if <c>escapeNext</c> → Escape; else if
-/// <c>currentCharge == 3</c> → DOPE_MAGIC; else CHARGE again.</item>
-/// <item>DOPE_MAGIC: deal damage and reset <c>currentCharge = 0</c>; if <c>escapeNext</c> → Escape;
+/// <item>CHARGE: <c>currentCharge++</c>; if <c>escapeNext</c> -> Escape; else if
+/// <c>currentCharge == 3</c> -> DOPE_MAGIC; else CHARGE again.</item>
+/// <item>DOPE_MAGIC: deal damage and reset <c>currentCharge = 0</c>; if <c>escapeNext</c> -> Escape;
 /// else at ascension 17+ cast again immediately, otherwise return to CHARGE.</item>
 /// </list>
 /// Because the counter starts at 1, the first blast lands after two charge turns and every later
 /// blast after three, exactly as in StS1.
 /// </para>
 /// <para>
-/// Ascension mapping: HP → <see cref="AscensionLevel.ToughEnemies"/> (A8); damage and the StS1 A17
-/// repeat-cast tier → <see cref="AscensionLevel.DeadlyEnemies"/> (A9), the highest enemy-difficulty
+/// Ascension mapping: HP -> <see cref="AscensionLevel.ToughEnemies"/> (A8); damage and the StS1 A17
+/// repeat-cast tier -> <see cref="AscensionLevel.DeadlyEnemies"/> (A9), the highest enemy-difficulty
 /// level StS2 exposes.
 /// </para>
 /// </summary>

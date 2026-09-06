@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Wild Strike (Common). Deal 12 damage; shuffle a Wound into your draw pile (17 upgraded).</summary>
+/// <summary>StS1 Ironclad - Wild Strike (Common). Deal 12 damage; shuffle a Wound into your draw pile (17 upgraded).</summary>
 public class WildStrike() : Spire1Card(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(12, ValueProp.Move)];

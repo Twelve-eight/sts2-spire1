@@ -12,7 +12,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Sneaky Strike (Common). Deal 12 damage; if you discarded a card this turn, gain 2 Energy (16 upgraded).</summary>
+/// <summary>StS1 Silent - Sneaky Strike (Common). Deal 12 damage; if you discarded a card this turn, gain 2 Energy (16 upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class SneakyStrike() : Spire1Card(2, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {

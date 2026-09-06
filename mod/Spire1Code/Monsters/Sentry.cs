@@ -15,23 +15,23 @@ using Spire1.Spire1Code.Cards;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 Exordium — Sentry (<c>com.megacrit.cardcrawl.monsters.exordium.Sentry</c>).
+/// StS1 Exordium - Sentry (<c>com.megacrit.cardcrawl.monsters.exordium.Sentry</c>).
 /// <para>
-/// Bytecode: HP 38-42, A8 39-45; beamDmg 9 (A3 10), dazedAmt 2 (A18 3 — dropped, see remarks).
-/// usePreBattleAction: ArtifactPower(1). getMove: first move — even slot index BOLT, odd BEAM
+/// Bytecode: HP 38-42, A8 39-45; beamDmg 9 (A3 10), dazedAmt 2 (A18 3 - dropped, see remarks).
+/// usePreBattleAction: ArtifactPower(1). getMove: first move - even slot index BOLT, odd BEAM
 /// (the two Sentries alternate so one opens with each); afterwards strict BEAM/BOLT alternation
 /// (lastMove(BEAM) ? BOLT : BEAM). takeTurn BOLT = MakeTempCardInDiscard(Dazed, dazedAmt);
 /// BEAM = attack(beamDmg).
 /// </para>
 /// <para>
-/// Ascension mapping follows the shipped StS2 monster convention (HP → ToughEnemies,
-/// damage → DeadlyEnemies); the vanilla A18 dazedAmt=3 tier is unreachable below the mapping
-/// threshold and is intentionally not modelled — base value 2 always applies.
+/// Ascension mapping follows the shipped StS2 monster convention (HP -> ToughEnemies,
+/// damage -> DeadlyEnemies); the vanilla A18 dazedAmt=3 tier is unreachable below the mapping
+/// threshold and is intentionally not modelled - base value 2 always applies.
 /// </para>
 /// <para>
 /// Artifact is the engine's shipped <see cref="ArtifactPower"/>; Dazed is our ported status card
 /// (<see cref="Dazed"/>), shuffled into the discard pile via
-/// <c>CardPileCmd.AddToCombatAndPreview</c> — the same call shipped monsters (Chomper,
+/// <c>CardPileCmd.AddToCombatAndPreview</c> - the same call shipped monsters (Chomper,
 /// EyeWithTeeth) use to put Dazed into the discard.
 /// </para>
 /// </summary>
@@ -45,7 +45,7 @@ public sealed class Sentry : Spire1Monster
     // beamDmg = 9; ascension >= 3 -> 10
     private int BeamDamage => AscensionHelper.GetValueIfAscension(AscensionLevel.DeadlyEnemies, 10, 9);
 
-    // dazedAmt = 2 (vanilla A18 tier of 3 is not modelled — see type remarks)
+    // dazedAmt = 2 (vanilla A18 tier of 3 is not modelled - see type remarks)
     private const int DazedAmount = 2;
 
     // Vanilla first move: slot parity decides which Sentry opens with Bolt.
@@ -79,7 +79,7 @@ public sealed class Sentry : Spire1Monster
         bolt.FollowUpState = branch;
         beam.FollowUpState = branch;
         // ConditionalBranchState picks the FIRST satisfied predicate, so order matters:
-        // opening turn honours slot parity; afterwards strict alternation — last was BEAM
+        // opening turn honours slot parity; afterwards strict alternation - last was BEAM
         // means play BOLT next, otherwise BEAM.
         branch.AddState(bolt, () =>
             !_firstMoveDecided ? _opensWithBolt : _lastWasBeam);

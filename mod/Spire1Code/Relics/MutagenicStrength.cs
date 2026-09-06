@@ -10,7 +10,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 namespace Spire1.Spire1Code.Relics;
 
 /// <summary>
-/// StS1 — Mutagenic Strength (event relic, from The Augmenter). Start each combat with 3 Strength, then lose
+/// StS1 - Mutagenic Strength (event relic, from The Augmenter). Start each combat with 3 Strength, then lose
 /// 3 Strength at the end of your first turn.
 ///
 /// StS1 (relics.json "MutagenicStrength", STR_AMT = 3): atBattleStart() adds an ApplyPowerAction of
@@ -36,7 +36,7 @@ public class MutagenicStrength : Spire1Relic
     /// True between "this combat's +3 Strength was granted" and "it was taken back".
     /// Deliberately a plain per-combat field and NOT a [SavedProperty]: it is re-armed by BeforeCombatStart at the
     /// top of every combat, and it exists only so a relic obtained mid-combat (RelicModel grants can land during
-    /// combat, cf. BeltBuckle.cs:41-45) never subtracts Strength it never granted — matching StS1, where a relic
+    /// combat, cf. BeltBuckle.cs:41-45) never subtracts Strength it never granted - matching StS1, where a relic
     /// picked up after atBattleStart applies no LoseStrengthPower either.
     /// </summary>
     private bool _strengthGranted;
@@ -45,7 +45,7 @@ public class MutagenicStrength : Spire1Relic
     /// Writes go through AssertMutable() so that a stray write on the CANONICAL model throws
     /// CanonicalModelException instead of silently corrupting state shared by every player's clone
     /// (AbstractModel.MutableClone is MemberwiseClone, AbstractModel.cs:159-187). Shipped relics with
-    /// per-combat latches do exactly this — see ThrowingAxe.cs:11-21.
+    /// per-combat latches do exactly this - see ThrowingAxe.cs:11-21.
     /// </summary>
     private bool StrengthGranted
     {

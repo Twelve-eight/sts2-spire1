@@ -37,9 +37,9 @@ public class Armaments() : Spire1Card(1, CardType.Skill, CardRarity.Common, Targ
 
     protected override void OnUpgrade()
     {
-        // (2026-08-26 reverify fix) StS1's upgrade ONLY changes "a card" → "all cards";
+        // (2026-08-26 reverify fix) StS1's upgrade ONLY changes "a card" -> "all cards";
         // Block stays 5 (cards-red.json upgraded_description_diff has no !B! delta, and the
-        // shipped StS2 Armaments also keeps BlockVar(5)). The 5→8 added in 3a0de3d was a
+        // shipped StS2 Armaments also keeps BlockVar(5)). The 5->8 added in 3a0de3d was a
         // misremembered "fix" and is reverted.
         _all = true;
     }

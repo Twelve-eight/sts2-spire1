@@ -1,6 +1,6 @@
-# Keys & the Final Act（钥匙与第四层）— StS1 原版机制
+# Keys & the Final Act（钥匙与第四层）- StS1 原版机制
 
-> 权威来源：`desktop-1.0.jar` 反编译（javap）——`AbstractChest.open`、`AbstractRoom.addSapphireKey`、`AbstractDungeon`（finalize 前置检查）、`Settings.hasRubyKey/hasEmeraldKey/hasSapphireKey`。字节码锚点见 `research/sts1-javap/AbstractRoom.txt:1459-1469`、`AbstractDungeon.txt:1150-1158`。
+> 权威来源：`desktop-1.0.jar` 反编译（javap）--`AbstractChest.open`、`AbstractRoom.addSapphireKey`、`AbstractDungeon`（finalize 前置检查）、`Settings.hasRubyKey/hasEmeraldKey/hasSapphireKey`。字节码锚点见 `research/sts1-javap/AbstractRoom.txt:1459-1469`、`AbstractDungeon.txt:1150-1158`。
 
 ## 三钥匙与第四层入口
 
@@ -13,16 +13,16 @@
 
 ```
 261: getstatic  Settings.isFinalActAvailable
-264: ifeq  302                      // 未解锁终局 → 不加钥匙
+264: ifeq  302                      // 未解锁终局 -> 不加钥匙
 267: getstatic  Settings.hasSapphireKey
-270: ifne  302                      // 已有钥匙 → 不加
+270: ifne  302                      // 已有钥匙 -> 不加
 273-293: currRoom.rewards.get(size-1)   // 取最后一个奖励项
 299: addSapphireKey(rewardItem)         // 以它为模板构造 SAPPHIRE_KEY 奖励并追加
 ```
 
 **规则**（打开**非 Boss**宝箱时，若终局可用且尚无蓝宝石钥匙）：
 - 奖励列表会**同时显示**宝箱遗物与蓝宝石钥匙两个选项；
-- 两者**互斥**：选择其中一个会移除另一个——拿钥匙 = 放弃该宝箱的遗物，反之亦然；
+- 两者**互斥**：选择其中一个会移除另一个--拿钥匙 = 放弃该宝箱的遗物，反之亦然；
 - `isFinalActAvailable` 为假（未满足解锁条件）或已持有时不再出现。
 
 ## 其余两把
@@ -32,7 +32,7 @@
 
 ## 测试基建含义（autoslay）
 
-autoslay 的奖励拾取策略总是选宝箱**遗物**，因此它永远不会获得蓝宝石钥匙 → 三幕打完无法进入第四层 → "Act transition did not complete (VisitedMapCoords not cleared)" 超时。这是测试器策略局限，不是游戏 bug（历史 244 局中 4 局同款）。要打通第四层需让 autoslay 在"终局可用且无蓝宝石钥匙"的宝箱奖励里优先选钥匙项。
+autoslay 的奖励拾取策略总是选宝箱**遗物**，因此它永远不会获得蓝宝石钥匙 -> 三幕打完无法进入第四层 -> "Act transition did not complete (VisitedMapCoords not cleared)" 超时。这是测试器策略局限，不是游戏 bug（历史 244 局中 4 局同款）。要打通第四层需让 autoslay 在"终局可用且无蓝宝石钥匙"的宝箱奖励里优先选钥匙项。
 
 ## StS2 现状（对照）
 

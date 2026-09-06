@@ -13,8 +13,8 @@ using MegaCrit.Sts2.Core.Models;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 shrine — We Meet Again! Give Ranwid a potion, gold or a card and receive a random relic,
-/// or attack him (he just runs away — no damage). Potion / gold / card offers are locked when the
+/// StS1 shrine - We Meet Again! Give Ranwid a potion, gold or a card and receive a random relic,
+/// or attack him (he just runs away - no damage). Potion / gold / card offers are locked when the
 /// player cannot pay them.
 /// </summary>
 public class WeMeetAgain : Spire1Event

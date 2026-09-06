@@ -12,7 +12,7 @@ using Spire1.Spire1Code.Cards;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 The City — Pleading Vagrant (Addict).
+/// StS1 The City - Pleading Vagrant (Addict).
 /// Offer 85 gold for a random relic, rob him (Shame curse + random relic), or leave.
 /// StS1 constants: GOLD_COST = 85.
 /// </summary>

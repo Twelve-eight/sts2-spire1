@@ -10,7 +10,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Powers;
 
-/// <summary>StS1 Silent — Envenom. Whenever an Attack deals unblocked damage, apply 1 Poison (per stack).</summary>
+/// <summary>StS1 Silent - Envenom. Whenever an Attack deals unblocked damage, apply 1 Poison (per stack).</summary>
 public class EnvenomPower : CustomPowerModel
 {
     public override PowerType Type => PowerType.Buff;

@@ -11,10 +11,10 @@ namespace Spire1.Spire1Code.Acts;
 /// StS1 Act 1, "Exordium" (<c>com.megacrit.cardcrawl.dungeons.Exordium</c>).
 /// <para>
 /// The act ships no art of its own. Every asset path below is a real shipped StS2 path, verified
-/// present in <c>SlayTheSpire2.pck</c>, and all of them belong to <c>Overgrowth</c> — the shipped
-/// StS2 act 1 — because that is the act whose position in the run Exordium takes. The base
+/// present in <c>SlayTheSpire2.pck</c>, and all of them belong to <c>Overgrowth</c> - the shipped
+/// StS2 act 1 - because that is the act whose position in the run Exordium takes. The base
 /// <see cref="ActModel"/> builds these four paths from <c>Id.Entry.ToLowerInvariant()</c>, which
-/// would resolve to a non-existent <c>exordium</c> folder, so BaseLib's four <c>Custom…Path</c>
+/// would resolve to a non-existent <c>exordium</c> folder, so BaseLib's four <c>Custom...Path</c>
 /// hooks redirect them.
 /// </para>
 /// <para>
@@ -28,7 +28,7 @@ namespace Spire1.Spire1Code.Acts;
 /// The encounter list is deliberately empty: BaseLib's <c>AddActContent</c> postfixes
 /// <see cref="GenerateAllEncounters"/> and appends every <c>CustomEncounterModel</c> whose
 /// <c>IsValidForAct</c> accepts this act, which is exactly what <c>Spire1Encounter</c> does.
-/// The method must still be *declared* here — <c>AddActContent</c> patches
+/// The method must still be *declared* here - <c>AddActContent</c> patches
 /// <c>AccessTools.DeclaredMethod(type, "GenerateAllEncounters")</c> and skips types that only
 /// inherit it.
 /// </para>
@@ -102,7 +102,7 @@ public sealed class Exordium : Spire1Act, ILocalizationProvider
 
     /// <summary>
     /// StS1's <c>Exordium.initializeBoss()</c> shows the three act-1 bosses in a fixed order until
-    /// each has been seen — <c>isBossSeen("GUARDIAN")</c>, then <c>"GHOST"</c>, then <c>"SLIME"</c>,
+    /// each has been seen - <c>isBossSeen("GUARDIAN")</c>, then <c>"GHOST"</c>, then <c>"SLIME"</c>,
     /// and only once all three are seen does it shuffle. That is precisely what StS2's
     /// <c>BossDiscoveryOrder</c> + <c>ApplyDiscoveryOrderModifications</c> do.
     /// </summary>

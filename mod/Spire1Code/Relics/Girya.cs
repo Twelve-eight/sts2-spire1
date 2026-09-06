@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 
 namespace Spire1.Spire1Code.Relics;
 
-/// <summary>StS1 Ironclad — Girya (Rare). At the start of each combat, gain !StrengthPower!.</summary>
+/// <summary>StS1 Ironclad - Girya (Rare). At the start of each combat, gain !StrengthPower!.</summary>
 public class Girya : Spire1Relic
 {
     public int StrengthBonus { get; set; } = 0;
@@ -19,12 +19,12 @@ public class Girya : Spire1Relic
     public override List<(string, string)>? Localization =>
         new RelicLoc(
             "StS1 - Girya",
-            "#At the start of each combat, gain !StrengthPower!. (Lift at rest sites to increase — rest-site option not yet wired.)",
+            "#At the start of each combat, gain !StrengthPower!. (Lift at rest sites to increase - rest-site option not yet wired.)",
             "A heavy dumbbell etched with ancient script.");
 
     public override async Task BeforeCombatStart()
     {
-        // FLAG: rest-site lift option not wired (passive only — StrengthBonus has no in-game way to increase yet).
+        // FLAG: rest-site lift option not wired (passive only - StrengthBonus has no in-game way to increase yet).
         if (StrengthBonus > 0)
         {
             Flash();

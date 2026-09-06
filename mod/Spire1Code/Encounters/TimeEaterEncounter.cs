@@ -4,7 +4,7 @@ using Spire1.Spire1Code.Monsters;
 namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
-/// StS1 Act-3 "Time Eater" boss encounter — single <see cref="TimeEater"/>.
+/// StS1 Act-3 "Time Eater" boss encounter - single <see cref="TimeEater"/>.
 /// </summary>
 public sealed class TimeEaterEncounter : Spire1Encounter
 {

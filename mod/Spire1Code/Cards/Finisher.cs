@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Finisher (Uncommon Attack). Deal 6 damage for each Attack played this turn (8 upgraded).</summary>
+/// <summary>StS1 Silent - Finisher (Uncommon Attack). Deal 6 damage for each Attack played this turn (8 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class Finisher() : Spire1Card(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {

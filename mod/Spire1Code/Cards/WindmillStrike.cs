@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Windmill Strike (Uncommon Attack). Retain; deal 7 damage (10 upgraded). Every time it is retained
+/// StS1 Watcher - Windmill Strike (Uncommon Attack). Retain; deal 7 damage (10 upgraded). Every time it is retained
 /// at end of turn its damage grows by 4 (5 upgraded) for the rest of the combat.
 /// Retention is observed through the card's own AfterFlush hook: CombatManager.FlushPlayerHand collects the retained
 /// cards (.tmp/dllsrc/MegaCrit.Sts2.Core.Combat/CombatManager.cs:1797-1811) and Hook.AfterFlush

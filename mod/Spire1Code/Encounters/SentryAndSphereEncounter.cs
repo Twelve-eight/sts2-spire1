@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Sentry and Sphere" strong encounter (<c>MonsterHelper.getEncounter("Sentry and Sphere")</c>,
-/// bytecode <c>new MonsterGroup(new Sentry(-305f, 30f), new SphericGuardian())</c> — the Act-1
+/// bytecode <c>new MonsterGroup(new Sentry(-305f, 30f), new SphericGuardian())</c> - the Act-1
 /// <see cref="Sentry"/> paired with the Act-2 <see cref="SphericGuardian"/>.
 /// </summary>
 public sealed class SentryAndSphereEncounter : Spire1Encounter

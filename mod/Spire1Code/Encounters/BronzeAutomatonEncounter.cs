@@ -5,10 +5,10 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Automaton" boss encounter (<c>MonsterHelper.getEncounter("Automaton")</c>, bytecode
-/// <c>new MonsterGroup(new BronzeAutomaton())</c> — the boss ALONE).
+/// <c>new MonsterGroup(new BronzeAutomaton())</c> - the boss ALONE).
 /// <para>
 /// The boss spawns its two <see cref="BronzeOrb"/>s itself on turn 1 (move <c>SPAWN_ORBS</c>:
-/// <c>SpawnMonsterAction(new BronzeOrb(-300f, 200f, 0))</c> + <c>(200f, 130f, 1)</c>) — that move
+/// <c>SpawnMonsterAction(new BronzeOrb(-300f, 200f, 0))</c> + <c>(200f, 130f, 1)</c>) - that move
 /// is the single source of truth. Pre-seeding the orbs here too would duplicate them (4 total).
 /// </para>
 /// </summary>

@@ -13,7 +13,7 @@ namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
 /// StS1 "Spike Slime (S)" (10-14 HP, A7: 11-15). Single move: Tackle (5/6 dmg).
-/// Donor: twig_slime_s — the only shipped small brown/spiky slime rig.
+/// Donor: twig_slime_s - the only shipped small brown/spiky slime rig.
 /// </summary>
 public sealed class SpikeSlimeS : Spire1Monster, ISlimeSplitSpawn
 {

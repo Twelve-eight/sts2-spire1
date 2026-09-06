@@ -21,10 +21,10 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The City — Mugger (<c>com.megacrit.cardcrawl.monsters.city.Mugger</c>;
+/// StS1 The City - Mugger (<c>com.megacrit.cardcrawl.monsters.city.Mugger</c>;
 /// 官方中文名「打劫的」). City thief; pairs with the Act-1 Looter in the vanilla
 /// "2 Thieves" weak encounter (bytecode: <c>new MonsterGroup(new Looter, new Mugger)</c>
-/// — NOT the Bandit trio; Main-agent bytecode audit 2026-08).
+/// - NOT the Bandit trio; Main-agent bytecode audit 2026-08).
 /// <para>
 /// Bytecode: HP 48-52, A7 50-54; swipeDmg 10 (A2 11), bigSwipeDmg 16 (A2 18),
 /// goldAmt 15 (A17 20), escapeDef 11 (A17 smoke bomb blocks escapeDef+6=17).
@@ -38,13 +38,13 @@ namespace Spire1.Spire1Code.Monsters;
 /// Gold theft reuses the engine's shipped <see cref="ThieveryPower"/> exactly like our
 /// Looter/GremlinMerc: applied in AfterAddedToRoom with Target set to each player, then
 /// Steal() invoked after every attack. On death the accumulated total is returned via
-/// CombatRoom.AddExtraReward(new GoldReward(..., wasGoldStolenBack: true)) — the same call
+/// CombatRoom.AddExtraReward(new GoldReward(..., wasGoldStolenBack: true)) - the same call
 /// HeistPower.BeforeDeath uses. The A17 gold tier (20) is unreachable below StS2's max
 /// ascension mapping and is dropped (Looter precedent); the A17 +6 smoke-bomb block maps
 /// onto DeadlyEnemies like GremlinShield's A17 block bump.
 /// </para>
 /// <para>
-/// Art: donor rig <c>thieving_hopper</c> — the shipped mugger/thief counterpart (same rig
+/// Art: donor rig <c>thieving_hopper</c> - the shipped mugger/thief counterpart (same rig
 /// our Looter borrows; Mugger is vanilla's looterAlt reskin). Attack/Steal triggers exist;
 /// no animator remap needed beyond what Looter already proved works.
 /// </para>
@@ -142,7 +142,7 @@ public sealed class Mugger : Spire1Monster
 
     /// <summary>
     /// StS1 die(): if stolenGold &gt; 0, addStolenGoldToRewards(stolenGold). Engine equivalent:
-    /// HeistPower.BeforeDeath — extra GoldReward flagged as stolen-back plus MarkLootReturned.
+    /// HeistPower.BeforeDeath - extra GoldReward flagged as stolen-back plus MarkLootReturned.
     /// </summary>
     public override Task BeforeDeath(Creature creature)
     {

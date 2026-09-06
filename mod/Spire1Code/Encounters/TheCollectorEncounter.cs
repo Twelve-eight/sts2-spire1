@@ -5,10 +5,10 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Collector" boss encounter (<c>MonsterHelper.getEncounter("Collector")</c>, bytecode
-/// <c>new MonsterGroup(new TheCollector())</c> — the boss alone).
+/// <c>new MonsterGroup(new TheCollector())</c> - the boss alone).
 /// <para>
 /// Vanilla's <see cref="TheCollector"/> spawns its minions itself on turn 1
-/// (<c>TorchHead</c>s at <c>spawnX + i * -185</c>, plus later respawns) — the boss's own summon
+/// (<c>TorchHead</c>s at <c>spawnX + i * -185</c>, plus later respawns) - the boss's own summon
 /// move is the single source of truth. Pre-seeding adds here would duplicate them.
 /// </para>
 /// </summary>

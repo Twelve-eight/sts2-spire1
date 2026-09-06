@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Footwork (Uncommon Power). Gain 2 Dexterity (3 upgraded).</summary>
+/// <summary>StS1 Silent - Footwork (Uncommon Power). Gain 2 Dexterity (3 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class Footwork() : Spire1Card(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
 {

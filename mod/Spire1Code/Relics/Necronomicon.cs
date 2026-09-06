@@ -13,7 +13,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Relics;
 
 /// <summary>
-/// StS1 — Necronomicon (Event; one of the three mutually exclusive Cursed Tome rewards).
+/// StS1 - Necronomicon (Event; one of the three mutually exclusive Cursed Tome rewards).
 /// The first Attack played each turn that costs 2 or more is played twice.
 /// </summary>
 /// <remarks>
@@ -46,7 +46,7 @@ public class Necronomicon : Spire1Relic
     // (RelicModel.AfterObtained() at RelicModel.cs:546, RelicModel.AfterRemoved() at RelicModel.cs:551),
     // and the curse itself now exists as mod/Spire1Code/Cards/Necronomicurse.cs, so the clause is
     // implemented rather than flagged. The curse's own two return paths are gated on still holding this
-    // relic, exactly as StS1 gates them on hasRelic("Necronomicon") — which is what makes removing the
+    // relic, exactly as StS1 gates them on hasRelic("Necronomicon") - which is what makes removing the
     // relic the intended escape.
     public override async Task AfterObtained()
     {
@@ -97,15 +97,15 @@ public class Necronomicon : Spire1Relic
 
         // EnergyCost.GetResolved() (CardEnergyCost.cs:155-162) collapses BOTH of StS1's cost branches into
         // one test, which is why there is no X-cost special case here:
-        //  * For a normal card it returns Max(0, GetWithModifiers(CostModifiers.All)) — the current cost
-        //    including every modifier — matching StS1's `costForTurn`, so cost reductions count.
+        //  * For a normal card it returns Max(0, GetWithModifiers(CostModifiers.All)) - the current cost
+        //    including every modifier - matching StS1's `costForTurn`, so cost reductions count.
         //  * For an X-cost card it returns CapturedXValue, the energy actually spent, which is exactly
         //    StS1's `energyOnUse >= 2` branch for `cost == -1`.
         // GetWithModifiers(CostModifiers.All) must NOT be used on its own: it returns the raw _base early
         // when CostsX (CardEnergyCost.cs:105-108), i.e. 0 for every X-cost card (Canonical is forced to 0
         // for those, CardEnergyCost.cs:86), so X-cost Attacks would never qualify.
-        // The value is live at this point. Manual play: PlayCardAction.cs:92 awaits SpendResources() — which
-        // sets CapturedXValue in SpendEnergy (CardModel.cs:1824-1827) — before PlayCardAction.cs:103 calls
+        // The value is live at this point. Manual play: PlayCardAction.cs:92 awaits SpendResources() - which
+        // sets CapturedXValue in SpendEnergy (CardModel.cs:1824-1827) - before PlayCardAction.cs:103 calls
         // OnPlayWrapper, and OnPlayWrapper only reaches GeneratePlayCount at CardModel.cs:1887. Auto play:
         // CardCmd.cs:99-102 captures X before CardCmd.cs:130 calls OnPlayWrapper. In both paths the
         // when-played cost modifiers are not cleared until CardModel.cs:2007, well after the hook.
@@ -114,11 +114,11 @@ public class Necronomicon : Spire1Relic
         if (card.EnergyCost.GetResolved() < DynamicVars.Energy.IntValue)
             return playCount;
 
-        // FLAG: KNOWN INEXACT — StS1 additionally requires !freeToPlayOnce, and this port cannot test it.
+        // FLAG: KNOWN INEXACT - StS1 additionally requires !freeToPlayOnce, and this port cannot test it.
         // FLAG: ModifyCardPlayCount receives only (card, target, playCount) (AbstractModel.cs:1495); it gets
         // FLAG: no CardPlay and no ResourceInfo. The value that would answer the question,
         // FLAG: CardPlay.Resources.EnergySpent, only exists from BeforeCardPlayed onward, and that runs at
-        // FLAG: CardModel.cs:1926 — AFTER GeneratePlayCount at CardModel.cs:1887 — so it is not reachable
+        // FLAG: CardModel.cs:1926 - AFTER GeneratePlayCount at CardModel.cs:1887 - so it is not reachable
         // FLAG: from here even indirectly.
         // FLAG: StS2's analogue of freeToPlayOnce is auto-play, which spends nothing yet leaves the cost
         // FLAG: untouched: CardCmd.AutoPlay never calls SpendResources and hardcodes EnergySpent = 0
@@ -143,7 +143,7 @@ public class Necronomicon : Spire1Relic
         return Task.CompletedTask;
     }
 
-    // StS1 re-arms `activated` in atTurnStart(). This is the per-turn reset — the one place Necronomicon
+    // StS1 re-arms `activated` in atTurnStart(). This is the per-turn reset - the one place Necronomicon
     // differs from ThrowingAxe, which latches for a whole combat instead (ThrowingAxe.cs:27-36).
     // Kunai.cs:71-78 is this repo's per-turn relic using the same hook and the same participant guard.
     public override Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)

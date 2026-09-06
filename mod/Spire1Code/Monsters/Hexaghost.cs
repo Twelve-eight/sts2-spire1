@@ -35,8 +35,8 @@ namespace Spire1.Spire1Code.Monsters;
 /// </para>
 /// <para>
 /// Two vanilla details are intentionally absent. The six orbiting flames
-/// (<c>HexaghostOrb</c>/<c>HexaghostBody</c>) are pure decoration drawn by the boss itself in StS1 —
-/// they carry no HP and no mechanics, only the visual orb counter — so nothing is lost by omitting
+/// (<c>HexaghostOrb</c>/<c>HexaghostBody</c>) are pure decoration drawn by the boss itself in StS1 -
+/// they carry no HP and no mechanics, only the visual orb counter - so nothing is lost by omitting
 /// them; the move order they encode is reproduced exactly by the state chain. Inferno's
 /// <c>BurnIncreaseAction</c> (upgrade every Burn in play to Burn+, 4 damage) cannot be reproduced:
 /// both our <see cref="Burn"/> and the shipped StS2 <c>Burn</c> declare
@@ -148,7 +148,7 @@ public sealed class Hexaghost : Spire1Monster
     }
 
     /// <summary>
-    /// <c>takeTurn</c>'s ACTIVATE branch: no damage, no block — it only lights the orbs and locks in
+    /// <c>takeTurn</c>'s ACTIVATE branch: no damage, no block - it only lights the orbs and locks in
     /// Divider's damage from the player's CURRENT HP at this instant,
     /// <c>currentHealth / 12 + 1</c> (integer division). Vanilla reads the single
     /// <c>AbstractDungeon.player</c>; the first player creature in the target list is that player in

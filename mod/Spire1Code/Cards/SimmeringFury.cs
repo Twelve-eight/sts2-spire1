@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Simmering Fury (Uncommon Skill, StS1 id "Vengeance"). At the start of your next turn, enter Wrath
+/// StS1 Watcher - Simmering Fury (Uncommon Skill, StS1 id "Vengeance"). At the start of your next turn, enter Wrath
 /// and draw 2 cards (3 upgraded).
 /// </summary>
 [Pool(typeof(WatcherCardPool))]

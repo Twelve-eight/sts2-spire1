@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Eruption (Basic). Deal 9 damage and enter Wrath; Eruption+ costs 1.
+/// StS1 Watcher - Eruption (Basic). Deal 9 damage and enter Wrath; Eruption+ costs 1.
 ///
 /// The stance half is real, not approximated: the mod ships its own stance subsystem
 /// (Powers/StancePower.cs + CalmPower/WrathPower/DivinityPower, driven by Extensions/StanceCmd.cs),

@@ -21,7 +21,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// Three-move loop, no randomness at all: <c>getMove</c> opens on <c>STICKY</c> (Goop Spray) via the
 /// <c>firstTurn</c> latch, Goop Spray queues <c>PREP_SLAM</c> (Preparing, Unknown intent), Preparing
 /// queues <c>SLAM</c>, and Slam queues <c>STICKY</c> again. <c>tackleDmg</c> exists in the class but
-/// no branch of <c>takeTurn</c> ever reads it — only the split children tackle — so it is not
+/// no branch of <c>takeTurn</c> ever reads it - only the split children tackle - so it is not
 /// modelled here.
 /// </para>
 /// <para>
@@ -140,8 +140,8 @@ public sealed class SlimeBoss : Spire1Monster
     }
 
     /// <summary>
-    /// <c>PREP_SLAM</c> is pure telegraphing in vanilla too — a shout and a screen shake, no game
-    /// effect — so the move body only spends the beat that the shout occupied.
+    /// <c>PREP_SLAM</c> is pure telegraphing in vanilla too - a shout and a screen shake, no game
+    /// effect - so the move body only spends the beat that the shout occupied.
     /// </summary>
     private async Task PreparingMove(IReadOnlyList<Creature> targets)
     {

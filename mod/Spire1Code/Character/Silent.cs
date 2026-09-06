@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Relics;
 namespace Spire1.Spire1Code.Character;
 
 /// <summary>
-/// "StS1 - Silent" — the vanilla Slay the Spire 1 Silent as an additive StS2 character.
+/// "StS1 - Silent" - the vanilla Slay the Spire 1 Silent as an additive StS2 character.
 /// Uses base-game Silent visuals via <see cref="PlaceholderCharacterModel"/> (PlaceholderID = "silent"),
 /// so no custom art is required. ID = SPIRE1-SILENT.
 /// </summary>
@@ -31,7 +31,7 @@ public class Silent : PlaceholderCharacterModel
 
     // Vanilla starter deck: 5 Strike, 5 Defend, 1 Neutralize, 1 Survivor. StS2 already ships
     // identical versions of all four (see .tmp/duplicate-cards-report.md), so the deck uses the
-    // base-game models directly — fully qualified, because Spire1.Spire1Code.Cards (imported
+    // base-game models directly - fully qualified, because Spire1.Spire1Code.Cards (imported
     // below) defines retired same-named mod copies that now live in Spire1LegacyPool.
     public override IEnumerable<CardModel> StartingDeck =>
     [
@@ -41,7 +41,7 @@ public class Silent : PlaceholderCharacterModel
         ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.Survivor>(),
     ];
 
-    // Starting relic: Ring of the Snake (draw 2 at start of each combat) — mod class, ID SPIRE1-RING_OF_THE_SNAKE.
+    // Starting relic: Ring of the Snake (draw 2 at start of each combat) - mod class, ID SPIRE1-RING_OF_THE_SNAKE.
     public override IReadOnlyList<RelicModel> StartingRelics => [ModelDb.Relic<RingOfTheSnake>()];
 
     public override CardPoolModel CardPool => ModelDb.CardPool<SilentCardPool>();

@@ -17,7 +17,7 @@ namespace Spire1.Spire1Code.Patches;
 /// 夜间工具（仅 AutoSlayer 激活时生效）：消费 inject-queue.txt 中 "relic:<ID>" 行，
 /// 在地图屏 Initialize（战斗外安全点）通过 RelicCmd.Obtain 发放给玩家。
 ///
-/// 教训：此前在 CombatManager.SetUpCombat postfix 里 fire-and-forget Obtain——
+/// 教训：此前在 CombatManager.SetUpCombat postfix 里 fire-and-forget Obtain--
 /// 战斗建立期模型变动断言拒绝，任务静默失败（discarded task），遗物从未入包且零日志。
 /// 此处改在房间之间发放，并对任务故障记录日志。行无论成败都从队列移除，避免死循环。
 /// </summary>

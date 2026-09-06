@@ -15,20 +15,20 @@ using Spire1.Spire1Code.Cards;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 Act-3 "Shape" — Repulsor (<c>com.megacrit.cardcrawl.monsters.beyond.Repulsor</c>).
+/// StS1 Act-3 "Shape" - Repulsor (<c>com.megacrit.cardcrawl.monsters.beyond.Repulsor</c>).
 /// <para>
 /// Bytecode: HP 29-35, A7 31-38; attackDmg 11 (A2 13); dazeAmt 2 (no ascension tier).
-/// getMove: <c>roll &lt; 20 &amp;&amp; !lastMove(ATTACK)</c> -&gt; ATTACK, else DAZE — i.e. a 20%
+/// getMove: <c>roll &lt; 20 &amp;&amp; !lastMove(ATTACK)</c> -&gt; ATTACK, else DAZE - i.e. a 20%
 /// attack roll that is suppressed right after an attack (so attacks can never repeat), and
 /// Daze takes every remaining outcome.
 /// takeTurn ATTACK: AnimateSlowAttack + DamageAction(SLASH_HORIZONTAL). takeTurn DAZE:
-/// <c>MakeTempCardInDrawPileAction(new Dazed(), 2, sameUUID: true, randomPosition: true)</c> —
+/// <c>MakeTempCardInDrawPileAction(new Dazed(), 2, sameUUID: true, randomPosition: true)</c> -
 /// two Dazed shuffled into the player's draw pile.
 /// </para>
 /// <para>
-/// Ascension mapping follows the shipped StS2 monster convention (HP → ToughEnemies,
-/// damage → DeadlyEnemies). Dazed is our ported status card (<see cref="Dazed"/>), added to the
-/// draw pile via <c>CardPileCmd.AddToCombatAndPreview</c> — the same call shipped monsters use,
+/// Ascension mapping follows the shipped StS2 monster convention (HP -> ToughEnemies,
+/// damage -> DeadlyEnemies). Dazed is our ported status card (<see cref="Dazed"/>), added to the
+/// draw pile via <c>CardPileCmd.AddToCombatAndPreview</c> - the same call shipped monsters use,
 /// and the same one our Sentry port uses for its discard-pile Dazed.
 /// </para>
 /// </summary>

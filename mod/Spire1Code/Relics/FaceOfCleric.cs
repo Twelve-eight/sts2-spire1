@@ -9,7 +9,7 @@ using MegaCrit.Sts2.Core.Rooms;
 namespace Spire1.Spire1Code.Relics;
 
 /// <summary>
-/// StS1 — Face Of Cleric (event relic, from FaceTrader). At the end of every combat won, +1 Max HP — which
+/// StS1 - Face Of Cleric (event relic, from FaceTrader). At the end of every combat won, +1 Max HP - which
 /// also heals 1, because StS1's increaseMaxHp never reads its boolean and heals unconditionally.
 ///
 /// StS1 (face-relics-and-madness.json "FaceOfCleric"): onVictory() -> flash + player.increaseMaxHp(1, true).
@@ -17,10 +17,10 @@ namespace Spire1.Spire1Code.Relics;
 /// +1 current HP per combat won. The hook is driven by AbstractPlayer.onVictory(), which is guarded by
 /// !isDying, so it fires for normal, elite and boss wins but never on death.
 ///
-/// StS2 port: AfterCombatVictory (AbstractModel.cs:556) is the exact analogue of onVictory() — deliberately
+/// StS2 port: AfterCombatVictory (AbstractModel.cs:556) is the exact analogue of onVictory() - deliberately
 /// NOT AfterCombatEnd (AbstractModel.cs:520), which also fires when the combat was lost. CreatureCmd.GainMaxHp
 /// (CreatureCmd.cs:841) calls SetMaxHp and then `await Heal(creature, num)` at CreatureCmd.cs:853, so the one
-/// call reproduces StS1's increaseMaxHp exactly — no separate heal is added.
+/// call reproduces StS1's increaseMaxHp exactly - no separate heal is added.
 /// </summary>
 public class FaceOfCleric : Spire1Relic
 {
@@ -36,7 +36,7 @@ public class FaceOfCleric : Spire1Relic
 
     // StS1's onVictory() only runs when the player is not dying; in multiplayer a combat can be won while
     // another player's creature is already down, so the dead-owner guard is the faithful translation of the
-    // StS1 guard. (CreatureCmd.Heal would otherwise play a revive animation on a dead creature —
+    // StS1 guard. (CreatureCmd.Heal would otherwise play a revive animation on a dead creature -
     // CreatureCmd.cs:744,772-775.)
     public override async Task AfterCombatVictory(CombatRoom room)
     {

@@ -8,9 +8,9 @@ using MegaCrit.Sts2.Core.Models.Acts;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 The City — The Joust.
+/// StS1 The City - The Joust.
 /// Bet 50 gold on the murderer (70%: win 100 gold) or on the knight (30%: win 250 gold).
-/// The joust itself is flavor — no combat is started.
+/// The joust itself is flavor - no combat is started.
 /// StS1 constants: WIN_OWNER = 250, WIN_MURDERER = 100, BET_AMT = 50, ownerWins = randomBoolean(0.3f).
 /// </summary>
 public class TheJoust : Spire1Event

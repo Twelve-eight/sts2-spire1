@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Champ" boss encounter (<c>MonsterHelper.getEncounter("Champ")</c>, bytecode
-/// <c>new MonsterGroup(new Champ())</c> — single monster).
+/// <c>new MonsterGroup(new Champ())</c> - single monster).
 /// </summary>
 public sealed class ChampEncounter : Spire1Encounter
 {

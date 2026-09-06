@@ -28,7 +28,7 @@ internal static class AutoSlayGatePatch
             return true; // normal release behavior
         }
         __result = false;
-        return false; // skip original — report "not a release game" for this launch
+        return false; // skip original - report "not a release game" for this launch
     }
 }
 
@@ -36,7 +36,7 @@ internal static class AutoSlayGatePatch
 /// <c>--autoslay</c>-only immortality, SCOPED TO COMBAT ROOMS: HP loss on a player creature is
 /// zeroed only while the current room is Monster/Elite/Boss, so the auto-player survives every
 /// fight yet out-of-combat real damage stays lethal. That scoping matters: the vanilla victory
-/// sequence executes the player for real (<c>CreatureCmd.cs:533</c> —
+/// sequence executes the player for real (<c>CreatureCmd.cs:533</c> -
 /// <c>LoseHpInternal(currentHp, Unblockable|Unpowered)</c> during TheArchitect dialogue), and an
 /// unscoped patch blocked that execution, so no game-over screen ever appeared and AutoSlayer
 /// stalled at the very end of a won run (seed P1SMOKE1, Act 4 Floor 5).
@@ -44,7 +44,7 @@ internal static class AutoSlayGatePatch
 /// <para>
 /// Entry points covered: <c>Creature.LoseHpInternal(decimal, ValueProp)</c> (the HP-mutation
 /// choke point) and direct sets via <c>SetCurrentHpInternal</c> (floored at 1). Enemy creatures
-/// are untouched — they must still die for runs to progress.
+/// are untouched - they must still die for runs to progress.
 /// </para>
 /// </summary>
 [HarmonyPatch(typeof(MegaCrit.Sts2.Core.Entities.Creatures.Creature))]

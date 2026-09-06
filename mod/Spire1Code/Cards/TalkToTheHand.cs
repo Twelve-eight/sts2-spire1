@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Talk to the Hand (Uncommon Attack). Deal 5 damage (7 upgraded) and mark that enemy so every
+/// StS1 Watcher - Talk to the Hand (Uncommon Attack). Deal 5 damage (7 upgraded) and mark that enemy so every
 /// attack you land on it gives you 2 Block (3 upgraded). Exhaust.
 /// </summary>
 [Pool(typeof(WatcherCardPool))]

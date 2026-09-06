@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Centurion and Healer" strong encounter (<c>MonsterHelper.getEncounter("Centurion and Healer")</c>,
-/// bytecode <c>new MonsterGroup(new Centurion(-200f, 15f), new Healer(120f, 0f))</c> — one
+/// bytecode <c>new MonsterGroup(new Centurion(-200f, 15f), new Healer(120f, 0f))</c> - one
 /// <see cref="Centurion"/> plus one <see cref="Healer"/> (vanilla display name "Mystic").
 /// </summary>
 public sealed class CenturionAndMysticEncounter : Spire1Encounter

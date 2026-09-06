@@ -65,7 +65,7 @@ public sealed class LouseNormal : Spire1Monster
     public override async Task AfterAddedToRoom()
     {
         await base.AfterAddedToRoom();
-        // StS1 monsterHpRng ≈ StS2 run-level Niche stream (one-off per-monster rolls).
+        // StS1 monsterHpRng ~ StS2 run-level Niche stream (one-off per-monster rolls).
         Rng spawnRng = base.RunRng.Niche;
         _biteDamage = spawnRng.NextInt(BiteMin, BiteMax + 1);
         await PowerCmd.Apply<CurlUpPower>(new ThrowingPlayerChoiceContext(), base.Creature,
@@ -83,8 +83,8 @@ public sealed class LouseNormal : Spire1Monster
         //   base (<17):  <25: lastTwo(GROW) ? BITE : GROW
         //                >=25: lastTwo(BITE) ? GROW : BITE
         //   A17+:        <25: lastMove(GROW) ? BITE : GROW   (rest identical)
-        // Long-run BITE ≈ 58.4% at base / 63.6% at A17+ (Markov chain + Monte Carlo,
-        // reverify 2026-08-26 — the old "~80%" figure was wrong).
+        // Long-run BITE ~ 58.4% at base / 63.6% at A17+ (Markov chain + Monte Carlo,
+        // reverify 2026-08-26 - the old "~80%" figure was wrong).
         _growState = grow;
         ConditionalBranchState root = new("RED_LOUSE_ROOT");
         ConditionalBranchState lowRoll = new("LOW_ROLL");
@@ -138,7 +138,7 @@ public sealed class LouseNormal : Spire1Monster
 
     private async Task BiteMove(IReadOnlyList<Creature> targets)
     {
-        // Vanilla: AnimateSlowAttackAction + DamageAction(BLUNT_LIGHT) → blunt hit vfx.
+        // Vanilla: AnimateSlowAttackAction + DamageAction(BLUNT_LIGHT) -> blunt hit vfx.
         await DamageCmd.Attack(_biteDamage).FromMonster(this).WithAttackerAnim("Attack", 0.2f)
             .WithHitFx("vfx/vfx_attack_blunt")
             .Execute(null);

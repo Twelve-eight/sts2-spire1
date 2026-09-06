@@ -18,7 +18,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// <summary>
 /// StS1 "Acid Slime (M)" (28-32 HP, A7: 29-34). Does NOT split in vanilla.
 /// Moves: Corrosive Spit (7/8 dmg + 1 Slimed to discard), Slime Tackle (10/12), Lick (1 Weak).
-/// Donor: leaf_slime_m — the only shipped green slime rig; no L-size slime ships in StS2.
+/// Donor: leaf_slime_m - the only shipped green slime rig; no L-size slime ships in StS2.
 /// </summary>
 public sealed class AcidSlimeM : Spire1Monster, ISlimeSplitSpawn
 {

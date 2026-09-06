@@ -10,12 +10,12 @@ namespace Spire1.Spire1Code.Patches;
 
 /// <summary>
 /// Autoslayer 竞态保险（v2）：当事件以"浮层+奖励"路径收尾时，EventRoomHandler 可能在
-/// 点击"继续"（NEventRoom.Proceed→SetTravelEnabled(true)）之前就宣布事件完成，
+/// 点击"继续"（NEventRoom.Proceed->SetTravelEnabled(true)）之前就宣布事件完成，
 /// 导致地图 IsTravelEnabled 永远 false，Watchdog 以 "Map point never became travelable"
 /// 退出（P1SMOKE4 Act3:F12 与 P1SMOKE6 Act3:F12(0,11) 两次实测；Open() 钩子版本因
 /// 触发时子浮层仍在栈上而漏救）。
 ///
-/// v2：挂在 autoslayer 高频轮询的 IsEnabled getter 上——只要某点已 Travelable、
+/// v2：挂在 autoslayer 高频轮询的 IsEnabled getter 上--只要某点已 Travelable、
 /// 地图打开、无战斗、无浮层而旅行开关仍是 false，就地恢复开关并令本帧可点击。
 /// 注意：IsEnabled 声明于基类 NClickableControl（NMapPoint 无自有声明），Harmony
 /// 不下探基类，因此挂声明类型并以 `is NMapPoint` 过滤。仅在 AutoSlayer.IsActive 时

@@ -4,7 +4,7 @@ using Spire1.Spire1Code.Monsters;
 namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
-/// StS1 Act-3 "Jaw Worm Horde" strong encounter — three <see cref="JawWorm"/>s.
+/// StS1 Act-3 "Jaw Worm Horde" strong encounter - three <see cref="JawWorm"/>s.
 /// </summary>
 public sealed class JawWormHordeEncounter : Spire1Encounter
 {

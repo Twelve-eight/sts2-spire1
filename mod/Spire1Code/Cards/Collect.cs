@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Collect (Uncommon Skill, X-cost, Exhaust). At the start of each of your next X turns, put an
+/// StS1 Watcher - Collect (Uncommon Skill, X-cost, Exhaust). At the start of each of your next X turns, put an
 /// upgraded Miracle into your hand (X+1 turns when upgraded).
 /// </summary>
 [Pool(typeof(WatcherCardPool))]

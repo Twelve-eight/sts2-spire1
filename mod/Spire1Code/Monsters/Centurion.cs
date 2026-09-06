@@ -15,20 +15,20 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The City — Centurion (<c>com.megacrit.cardcrawl.monsters.city.Centurion</c>). 官方中文名：百夫长。
+/// StS1 The City - Centurion (<c>com.megacrit.cardcrawl.monsters.city.Centurion</c>). 官方中文名：百夫长。
 /// <para>
 /// Bytecode: HP 76-80, A7 78-83; SLASH_DMG 12 (A2 14), FURY_DMG 6 (A2 7), FURY_HITS 3,
 /// BLOCK_AMOUNT 15, A_17_BLOCK_AMOUNT 20.
-/// getMove: r≥65 &amp;&amp; !lastTwoMoves(FURY) &amp;&amp; !lastTwoMoves(PROTECT) →
-/// livingMonsters()&gt;1 ? PROTECT : FURY; else !lastTwoMoves(SLASH) → SLASH; else
+/// getMove: r>=65 &amp;&amp; !lastTwoMoves(FURY) &amp;&amp; !lastTwoMoves(PROTECT) ->
+/// livingMonsters()&gt;1 ? PROTECT : FURY; else !lastTwoMoves(SLASH) -> SLASH; else
 /// livingMonsters()&gt;1 ? PROTECT : FURY. takeTurn PROTECT = GainBlockRandomMonsterAction(15/20).
 /// </para>
 /// <para>
-/// The vanilla A17 block tier (20) is unreachable in StS2's ascension mapping (max A10 → the two
-/// shipped levels), so the base 15 always applies — same convention as SlaverRed's dropped A17 tier.
+/// The vanilla A17 block tier (20) is unreachable in StS2's ascension mapping (max A10 -> the two
+/// shipped levels), so the base 15 always applies - same convention as SlaverRed's dropped A17 tier.
 /// </para>
 /// <para>
-/// Donor: <c>guardbot</c> — the shipped shield-carrying defender robot; closest visual match for a
+/// Donor: <c>guardbot</c> - the shipped shield-carrying defender robot; closest visual match for a
 /// sword-and-shield bodyguard stance (GremlinShield already borrows it for the same role).
 /// </para>
 /// </summary>

@@ -6,7 +6,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Ghostly Armor (Uncommon). Ethereal. Gain 10 Block (13 upgraded).</summary>
+/// <summary>StS1 Ironclad - Ghostly Armor (Uncommon). Ethereal. Gain 10 Block (13 upgraded).</summary>
 public class GhostlyArmor() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Ethereal];

@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Storm of Steel (Rare Skill). Discard your hand; add 1 Shiv into your hand for each card discarded (Shiv+ upgraded).</summary>
+/// <summary>StS1 Silent - Storm of Steel (Rare Skill). Discard your hand; add 1 Shiv into your hand for each card discarded (Shiv+ upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class StormOfSteel() : Spire1Card(1, CardType.Skill, CardRarity.Rare, TargetType.None)
 {

@@ -10,7 +10,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Ironclad — Shame (Curse). Unplayable. At the end of your turn, gain 1 Frail.
+/// StS1 Ironclad - Shame (Curse). Unplayable. At the end of your turn, gain 1 Frail.
 /// Mirror of the base-game Shame: applies at turn end and sets SkipNextDurationTick so the
 /// Frail is not ticked down immediately and lasts through the enemy's turn.
 /// </summary>

@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Heavy Blade (Common Attack). Deal 14 damage; Strength affects this card 3 times (5 upgraded).</summary>
+/// <summary>StS1 Ironclad - Heavy Blade (Common Attack). Deal 14 damage; Strength affects this card 3 times (5 upgraded).</summary>
 public class HeavyBlade() : Spire1Card(2, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
     // Strength multiplier stored as a card DynamicVar so the calc lambda stays STATIC

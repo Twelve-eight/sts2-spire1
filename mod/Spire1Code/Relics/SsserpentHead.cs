@@ -10,11 +10,11 @@ using MegaCrit.Sts2.Core.Rooms;
 namespace Spire1.Spire1Code.Relics;
 
 /// <summary>
-/// StS1 — Ssserpent Head (event relic, from FaceTrader). Whenever you enter a "?" room, gain 50 Gold.
+/// StS1 - Ssserpent Head (event relic, from FaceTrader). Whenever you enter a "?" room, gain 50 Gold.
 ///
 /// StS1 (face-relics-and-madness.json "SsserpentHead"): GOLD_AMT = 50; onEnterRoom(room) pays 50 gold when
 /// `room instanceof EventRoom`. That test is only true because the relic loop in
-/// AbstractDungeon.nextRoomTransition runs BEFORE EventRoom.onPlayerEntry rolls the event — every "?" node IS
+/// AbstractDungeon.nextRoomTransition runs BEFORE EventRoom.onPlayerEntry rolls the event - every "?" node IS
 /// an EventRoom at that moment, so the gold pays on EVERY "?" node regardless of what it later resolves into
 /// (event, fight, shop or treasure).
 ///

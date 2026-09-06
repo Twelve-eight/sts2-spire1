@@ -12,7 +12,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Relics;
 
-/// <summary>StS1 — Pen Nib (Uncommon). Every 10th Attack you play deals double damage. Counter persists between turns and combats.</summary>
+/// <summary>StS1 - Pen Nib (Uncommon). Every 10th Attack you play deals double damage. Counter persists between turns and combats.</summary>
 public class PenNib : Spire1Relic
 {
     private const int _attacksThreshold = 10;

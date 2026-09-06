@@ -14,9 +14,9 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The City — BanditBear (<c>com.megacrit.cardcrawl.monsters.city.BanditBear</c>;
+/// StS1 The City - BanditBear (<c>com.megacrit.cardcrawl.monsters.city.BanditBear</c>;
 /// 官方中文名「熊」). Part of the Masked Bandits trio (Leader + Pointy + Bear) referenced by
-/// the StS1 event — NOT a regular encounter spawn (Main-agent bytecode audit 2026-08).
+/// the StS1 event - NOT a regular encounter spawn (Main-agent bytecode audit 2026-08).
 /// <para>
 /// Bytecode: HP 38-42, A7 40-44; MAUL 18 (A2 20, BLUNT_HEAVY); LUNGE 9 + GainBlock(9)
 /// (no ascension variants); BEAR_HUG Dexterity <c>con_reduction</c> -2 (A17 -4).
@@ -32,7 +32,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// drives its own Hit reactions).
 /// </para>
 /// <para>
-/// Art: donor rig <c>brute_ruby_raider</c> — the biggest shipped brawler humanoid
+/// Art: donor rig <c>brute_ruby_raider</c> - the biggest shipped brawler humanoid
 /// (BruteRubyRaider, HP tier 30-34, club swings), visually the closest stand-in for a
 /// hulking bandit muscleman. Its rig keeps the default idle_loop/cast/attack/hurt/die
 /// tracks, so no animator remap is needed.

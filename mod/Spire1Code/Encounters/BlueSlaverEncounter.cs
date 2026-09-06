@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Blue Slaver" strong encounter (<c>MonsterHelper.getEncounter("Blue Slaver")</c>,
-/// bytecode <c>new MonsterGroup(new SlaverBlue(0f, 0f))</c> — single monster).
+/// bytecode <c>new MonsterGroup(new SlaverBlue(0f, 0f))</c> - single monster).
 /// </summary>
 public sealed class BlueSlaverEncounter : Spire1Encounter
 {

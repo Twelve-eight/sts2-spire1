@@ -15,9 +15,9 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The City — TorchHead (<c>com.megacrit.cardcrawl.monsters.city.TorchHead</c>;
+/// StS1 The City - TorchHead (<c>com.megacrit.cardcrawl.monsters.city.TorchHead</c>;
 /// 官方中文名「火炬头」). City weak-encounter single (vanilla pool "Torch Head" =
-/// <c>new MonsterGroup(new TorchHead)</c>; the Act-1 encounter worker owns that file —
+/// <c>new MonsterGroup(new TorchHead)</c>; the Act-1 encounter worker owns that file -
 /// this class is the monster itself).
 /// <para>
 /// Bytecode: HP 38-40, A9 40-45; ATTACK_DMG 7 flat, TACKLE only move
@@ -30,7 +30,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// damage bump to map).
 /// </para>
 /// <para>
-/// Art: donor rig <c>torch_head_amalgam</c> — literally the shipped StS2 fire-headed
+/// Art: donor rig <c>torch_head_amalgam</c> - literally the shipped StS2 fire-headed
 /// creature (idle_loop/attack/hurt/die tracks; Hexaghost already borrows it at boss scale,
 /// proving the rig works with default triggers).
 /// </para>
@@ -49,7 +49,7 @@ public sealed class TorchHead : Spire1Monster
 
     /// <summary>
     /// The torch_head_amalgam rig ships idle_loop/attack/hurt/die plus a debuff track but no
-    /// cast track (Hexaghost.GenerateAnimator precedent) — remap so missing triggers fold onto
+    /// cast track (Hexaghost.GenerateAnimator precedent) - remap so missing triggers fold onto
     /// existing tracks instead of warning-spamming.
     /// </summary>
     public override CreatureAnimator GenerateAnimator(MegaSprite controller) =>

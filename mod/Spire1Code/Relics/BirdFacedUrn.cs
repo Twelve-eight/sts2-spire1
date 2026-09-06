@@ -9,7 +9,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 
 namespace Spire1.Spire1Code.Relics;
 
-/// <summary>StS1 — Bird-Faced Urn (Rare). Whenever you play a Power card, heal 2 HP.</summary>
+/// <summary>StS1 - Bird-Faced Urn (Rare). Whenever you play a Power card, heal 2 HP.</summary>
 public class BirdFacedUrn : Spire1Relic
 {
     public override RelicRarity Rarity => RelicRarity.Rare;

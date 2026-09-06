@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Bane (Common). Deal 7 damage; if the enemy has Poison, deal 7 damage again (10 upgraded).</summary>
+/// <summary>StS1 Silent - Bane (Common). Deal 7 damage; if the enemy has Poison, deal 7 damage again (10 upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class Bane() : Spire1Card(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {

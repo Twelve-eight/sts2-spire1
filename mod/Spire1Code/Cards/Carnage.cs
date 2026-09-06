@@ -6,7 +6,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Carnage (Uncommon). Ethereal. Deal 20 damage (28 upgraded).</summary>
+/// <summary>StS1 Ironclad - Carnage (Uncommon). Ethereal. Deal 20 damage (28 upgraded).</summary>
 public class Carnage() : Spire1Card(2, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Ethereal];

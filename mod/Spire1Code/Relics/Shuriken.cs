@@ -12,7 +12,7 @@ using MegaCrit.Sts2.Core.Rooms;
 
 namespace Spire1.Spire1Code.Relics;
 
-/// <summary>StS1 — Shuriken (Uncommon). Every time you play 3 Attacks in a single turn, gain 1 Strength.</summary>
+/// <summary>StS1 - Shuriken (Uncommon). Every time you play 3 Attacks in a single turn, gain 1 Strength.</summary>
 public class Shuriken : Spire1Relic
 {
     private bool _isActivating;

@@ -15,24 +15,24 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The Beyond — Transient (<c>com.megacrit.cardcrawl.monsters.beyond.Transient</c>).
+/// StS1 The Beyond - Transient (<c>com.megacrit.cardcrawl.monsters.beyond.Transient</c>).
 /// 官方中文名：倏忽魔。
 /// <para>
 /// Bytecode: HP 999, gold 1; startingDeathDmg 30 (A2 40); count starts 0 and increments after
 /// every attack; damage[count] = startingDeathDmg + count*10, so the attack ramps
 /// 30/40/50/60/70 (A2: 40/50/60/70/80). usePreBattleAction applies FadingPower(5) (A17: 6) and
-/// ShiftingPower — see those types. getMove/takeTurn both set the same single ATTACK move;
+/// ShiftingPower - see those types. getMove/takeTurn both set the same single ATTACK move;
 /// the monster never does anything else.
 /// </para>
 /// <para>
 /// The escape is driven by <see cref="FadingPower"/>: at the end of each enemy-side turn it
-/// loses one stack, and at zero the Transient flees — matching vanilla's five attacks before
+/// loses one stack, and at zero the Transient flees - matching vanilla's five attacks before
 /// the vanish (6 on the DeadlyEnemies tier). <see cref="ShiftingPower"/> is Transient's
 /// second pre-battle buff (lose Strength equal to HP lost until end of turn); Transient never
 /// gains Strength in this port, so it is behaviourally inert, exactly like vanilla.
 /// </para>
 /// <para>
-/// Donor: <c>phantasmal_gardener</c> — a tall spectral figure; closest visual match for the
+/// Donor: <c>phantasmal_gardener</c> - a tall spectral figure; closest visual match for the
 /// wispy transient.
 /// </para>
 /// </summary>

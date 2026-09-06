@@ -15,7 +15,7 @@ using Madness = Spire1.Spire1Code.Cards.Madness;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 Beyond event — Winding Halls. "Embrace Madness" loses 12.5% max HP and grants 2 Madness cards;
+/// StS1 Beyond event - Winding Halls. "Embrace Madness" loses 12.5% max HP and grants 2 Madness cards;
 /// "Focus" heals 25% max HP and adds a Writhe curse (Writhe is the card StS2 already ships, reused);
 /// "Retrace Your Steps" loses 5% max HP. The Ascension 15+ variants (18% HP loss,
 /// 20% heal) are not applied because StS2's ascension levels do not map 1:1 onto StS1's ladder.
@@ -64,7 +64,7 @@ public class WindingHalls : Spire1Event
     {
         await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(), Owner.Creature, DynamicVars["HpLoss"].BaseValue, ValueProp.Unblockable | ValueProp.Unpowered, null, null);
 
-        // StS1 queues two independent `new ShowCardAndObtainEffect(new Madness(), x, y)` calls — the ±350*xScale
+        // StS1 queues two independent `new ShowCardAndObtainEffect(new Madness(), x, y)` calls - the +/-350*xScale
         // offsets are only the two on-screen card positions, so the mechanical effect is exactly 2 Madness into
         // the master deck. Madness is a Skill, so CardPileCmd.AddCursesToDeck cannot be used: it throws
         // ArgumentException for any non-Curse (CardPileCmd.cs:1262-1265). The deck-add primitive it wraps is used

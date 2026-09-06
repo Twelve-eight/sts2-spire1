@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// audit-monster-hp.mjs — compare monster HP ranges: Spire1 mod vs StS1 jar bytecode.
+// audit-monster-hp.mjs - compare monster HP ranges: Spire1 mod vs StS1 jar bytecode.
 // Mod side: MinInitialHp/MaxInitialHp expression literals (incl. AscensionHelperGetValueIfAscension(base, alt)).
 // Jar side: setHp(X, Y) constants in <init> + ascension branch (A7 pattern setHp(50,56)).
 // Package guess: exordium/city/beyond/ending by StS1 act membership (trial).
@@ -42,7 +42,7 @@ function num(tok) {
   return small[k] !== undefined ? small[k] : undefined;
 }
 
-// jar: find setHp calls in ctor → two consts preceding each invoke
+// jar: find setHp calls in ctor -> two consts preceding each invoke
 function jarHp(text) {
   if (!text) return null;
   const lines = text.split("\n");

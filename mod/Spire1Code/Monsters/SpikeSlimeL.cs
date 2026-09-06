@@ -19,7 +19,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// <summary>
 /// StS1 "Spike Slime (L)" (64-70 HP, A7: 67-73).
 /// Moves: Flame Tackle (16/18 dmg + 2 Slimed to discard), Split, Lick (2 Frail).
-/// Donor: twig_slime_m — the only shipped brown/spiky slime rig; no L-size slime ships in StS2.
+/// Donor: twig_slime_m - the only shipped brown/spiky slime rig; no L-size slime ships in StS2.
 /// </summary>
 public sealed class SpikeSlimeL : Spire1Monster, ISlimeSplitSpawn
 {

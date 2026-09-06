@@ -20,7 +20,7 @@ using Spire1.Spire1Code.Cards;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The Beyond — Writhing Mass (<c>com.megacrit.cardcrawl.monsters.beyond.WrithingMass</c>).
+/// StS1 The Beyond - Writhing Mass (<c>com.megacrit.cardcrawl.monsters.beyond.WrithingMass</c>).
 /// 官方中文名：扭曲团块。
 /// <para>
 /// Bytecode: HP 160, A7 175; BIG_HIT 32 (A2 38), MULTI_HIT 7 x3 (A2 9), ATTACK_BLOCK 15 dmg +
@@ -29,7 +29,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// </para>
 /// <para>
 /// FLAGGED: vanilla MalleablePower (gain block when attacked, growing per proc, resetting at
-/// turn start) has no shipped StS2 equivalent — same gap SnakePlant.cs documents; the closest
+/// turn start) has no shipped StS2 equivalent - same gap SnakePlant.cs documents; the closest
 /// shipped defensive-on-hit behaviour in this mod's scope is <see cref="MetallicizePower"/>,
 /// applied at the vanilla stack count (3). Vanilla ReactivePower (change intent when attacked)
 /// is likewise unmodelled: the shipped engine keeps intent and performed move in one state
@@ -50,13 +50,13 @@ namespace Spire1.Spire1Code.Monsters;
 /// MEGA_DEBUFF = add a Parasite curse to the player's deck (AddCardToDeckAction).
 /// </para>
 /// <para>
-/// Donor: <c>slithering_strangler</c> — a coiled tentacle-like creature; closest visual
+/// Donor: <c>slithering_strangler</c> - a coiled tentacle-like creature; closest visual
 /// match for a mass of writhing appendages.
 /// </para>
 /// </summary>
 public sealed class WrithingMass : Spire1Monster
 {
-    // setHp(160); ascension >= 7 -> setHp(175) — fixed single value per tier.
+    // setHp(160); ascension >= 7 -> setHp(175) - fixed single value per tier.
     public override int MinInitialHp => AscensionHelper.GetValueIfAscension(AscensionLevel.ToughEnemies, 175, 160);
 
     public override int MaxInitialHp => AscensionHelper.GetValueIfAscension(AscensionLevel.ToughEnemies, 175, 160);
@@ -87,7 +87,7 @@ public sealed class WrithingMass : Spire1Monster
     public override async Task AfterAddedToRoom()
     {
         await base.AfterAddedToRoom();
-        // usePreBattleAction: ReactivePower + MalleablePower — see FLAG note in class remarks.
+        // usePreBattleAction: ReactivePower + MalleablePower - see FLAG note in class remarks.
         await PowerCmd.Apply<MetallicizePower>(new ThrowingPlayerChoiceContext(), Creature, 3, Creature, null);
     }
 
@@ -103,7 +103,7 @@ public sealed class WrithingMass : Spire1Monster
         // (restricted re-rolls re-enter the band ladder with a fresh roll). Modelling that
         // re-entry as graph edges yields intent-less conditional cycles (e.g.
         // WRITHING_REROLL_0_39 <-> WRITHING_REROLL_40_99) that native graph consumers
-        // traverse without cycle protection — observed as a deterministic fatal native
+        // traverse without cycle protection - observed as a deterministic fatal native
         // crash (exit 0x7FFFFFFF) right after "[IntentGraph] Generating intent graph".
         // Fix: resolve eagerly in code (identical RNG draw order, see ResolveBands) so the
         // static machine is root -> 5 moves -> root; every cycle passes through a real
@@ -167,7 +167,7 @@ public sealed class WrithingMass : Spire1Monster
         Player? player = targets.FirstOrDefault()?.Player;
         if (player != null)
         {
-            // AddCardToDeckAction(CardLibrary.getCard("Parasite")) — permanent curse.
+            // AddCardToDeckAction(CardLibrary.getCard("Parasite")) - permanent curse.
             await CardPileCmd.AddCurseToDeck<Parasite>(player);
         }
     }
@@ -188,7 +188,7 @@ public sealed class WrithingMass : Spire1Monster
 
     private int _resolvedRound = -1;
 
-    /// <summary>One resolution per round, cached — the root band's predicates consult it repeatedly.</summary>
+    /// <summary>One resolution per round, cached - the root band's predicates consult it repeatedly.</summary>
     private MonsterState ResolveNext()
     {
         int round = base.Creature?.CombatState?.RoundNumber ?? 0;
@@ -201,7 +201,7 @@ public sealed class WrithingMass : Spire1Monster
     }
 
     // Opening (vanilla firstMove latch): r<33 MULTI_HIT x3, r<66 ATTACK_BLOCK, else
-    // ATTACK_DEBUFF — MEGA_DEBUFF can never open. Any first resolution consumes the latch.
+    // ATTACK_DEBUFF - MEGA_DEBUFF can never open. Any first resolution consumes the latch.
     private MonsterState ResolveFirst(int roll)
     {
         _firstMove = false;

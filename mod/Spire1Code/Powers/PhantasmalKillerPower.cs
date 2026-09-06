@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Powers;
 
-/// <summary>StS1 Silent — Phantasmal Killer. Next turn, your Attacks deal double damage.</summary>
+/// <summary>StS1 Silent - Phantasmal Killer. Next turn, your Attacks deal double damage.</summary>
 public class PhantasmalKillerPower : CustomPowerModel
 {
     public override PowerType Type => PowerType.Buff;

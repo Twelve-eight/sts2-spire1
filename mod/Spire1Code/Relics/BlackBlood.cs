@@ -6,7 +6,7 @@ using MegaCrit.Sts2.Core.Rooms;
 
 namespace Spire1.Spire1Code.Relics;
 
-/// <summary>StS1 Ironclad — Black Blood (Boss). At the end of combat, heal 12 HP.</summary>
+/// <summary>StS1 Ironclad - Black Blood (Boss). At the end of combat, heal 12 HP.</summary>
 public class BlackBlood : Spire1Relic
 {
     public override RelicRarity Rarity => RelicRarity.Ancient;

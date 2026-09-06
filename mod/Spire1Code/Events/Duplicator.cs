@@ -11,7 +11,7 @@ using MegaCrit.Sts2.Core.Models;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 shrine — Duplicator. Pray to duplicate a card (any card, curse included, upgrades preserved),
+/// StS1 shrine - Duplicator. Pray to duplicate a card (any card, curse included, upgrades preserved),
 /// or leave.
 /// </summary>
 public class Duplicator : Spire1Event

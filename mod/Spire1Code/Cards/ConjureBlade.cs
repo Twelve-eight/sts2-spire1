@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Conjure Blade (Rare Skill, X-cost). Shuffle an Expunger into your draw pile whose attack repeats
+/// StS1 Watcher - Conjure Blade (Rare Skill, X-cost). Shuffle an Expunger into your draw pile whose attack repeats
 /// X times (X+1 upgraded). Exhaust.
 /// </summary>
 [Pool(typeof(WatcherCardPool))]

@@ -12,7 +12,7 @@ using Spire1.Spire1Code.Cards;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 — Big Fish. Three floating treats on strings: the Banana heals 1/3 of Max HP, the Donut
+/// StS1 - Big Fish. Three floating treats on strings: the Banana heals 1/3 of Max HP, the Donut
 /// grants +5 Max HP, and the Box grants a random relic but adds a Regret curse.
 /// </summary>
 public class BigFish : Spire1Event
@@ -56,7 +56,7 @@ public class BigFish : Spire1Event
     private async Task OpenBox()
     {
         await CardPileCmd.AddCurseToDeck<Regret>(Owner);
-        // StS1: returnRandomRelicTier() + returnRandomScreenlessRelic(tier) — a random relic of a random tier.
+        // StS1: returnRandomRelicTier() + returnRandomScreenlessRelic(tier) - a random relic of a random tier.
         var relic = RelicFactory.PullNextRelicFromFront(Owner).ToMutable();
         await RelicCmd.Obtain(relic, Owner);
         SetEventFinished(PageDescription("BOX"));

@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Chosen" weak encounter (<c>MonsterHelper.getEncounter("Chosen")</c>, bytecode
-/// <c>new MonsterGroup(new Chosen())</c> — single monster).
+/// <c>new MonsterGroup(new Chosen())</c> - single monster).
 /// </summary>
 public sealed class ChosenEncounter : Spire1Encounter
 {

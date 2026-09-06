@@ -19,7 +19,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// Charge Up (block 9) -> Fierce Bash (32) -> Vent Steam (Weak 2 + Vulnerable 2) -> Whirlwind
 /// (5 x 4) -> Charge Up ...; the boss opens on Charge Up because <c>getMove</c> sets
 /// <c>CHARGE_UP</c> whenever <c>isOpen</c> is true. Accumulated HP loss (<c>dmgTaken</c>, block
-/// excluded — vanilla measures <c>currentHealth</c> before/after) trips Defensive Mode at
+/// excluded - vanilla measures <c>currentHealth</c> before/after) trips Defensive Mode at
 /// <c>dmgThreshold</c>, which starts at 30 and rises by <c>dmgThresholdIncrease = 10</c> on every
 /// flip. Defensive Mode runs Close Up (Sharp Hide 3) -> Roll Attack (9) -> Twin Slam (8 x 2), and
 /// Twin Slam flips back to Offensive Mode before it swings, then continues into Whirlwind.
@@ -29,7 +29,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// thorns). StS2's levels are cumulative, so all three tiers survive:
 /// <see cref="AscensionLevel.DeadlyEnemies"/> (deadlier enemies) carries the A4 damage bump,
 /// <see cref="AscensionLevel.ToughEnemies"/> (tougher enemies) carries A9's HP and threshold, and
-/// <see cref="AscensionLevel.DoubleBoss"/> — the topmost level, and the only boss-scoped one —
+/// <see cref="AscensionLevel.DoubleBoss"/> - the topmost level, and the only boss-scoped one -
 /// carries the A19 boss tier. DoubleBoss implies the other two, matching A19 &gt; A9 &gt; A4.
 /// </para>
 /// </summary>

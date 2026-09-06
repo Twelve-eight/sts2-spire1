@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Relics;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 Beyond event — The Moai Head. Jumping inside heals you to full HP at the cost of max HP
+/// StS1 Beyond event - The Moai Head. Jumping inside heals you to full HP at the cost of max HP
 /// (12.5% of max HP; the Ascension 15+ variant of 18% is not applied because StS2's ascension levels
 /// do not map 1:1 onto StS1's numbered ladder). Feeding the statue the Golden Idol smashes it for
 /// 333 Gold; StS1 shows that slot as "[Locked] Requires: Golden Idol." while the relic is not held.
@@ -37,8 +37,8 @@ public class MoaiHead : Spire1Event
     {
         // StS1 INTRO: "[Jump Inside]", the idol slot, "[Leave]". The idol slot is always shown; only its
         // text and clickability change. Holding the relic gives
-        // setDialogOption(OPTIONS[2], !hasRelic("Golden Idol")) — the second argument is `disabled`, so a
-        // held idol makes the option live — and otherwise setDialogOption(OPTIONS[3], true), OPTIONS[3]
+        // setDialogOption(OPTIONS[2], !hasRelic("Golden Idol")) - the second argument is `disabled`, so a
+        // held idol makes the option live - and otherwise setDialogOption(OPTIONS[3], true), OPTIONS[3]
         // being "[Locked] Requires: Golden Idol.".
         return
         [

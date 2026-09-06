@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Cards;
 namespace Spire1.Spire1Code.Powers;
 
 /// <summary>
-/// StS1 Watcher — Battle Hymn. At the start of each turn, add a Smite into your hand (one per stack).
+/// StS1 Watcher - Battle Hymn. At the start of each turn, add a Smite into your hand (one per stack).
 /// Uses AfterPlayerTurnStart (not AfterSideTurnStart) because adding cards to hand can hand off to a
 /// player-choice-driven pile add, and AfterPlayerTurnStart is the hook that carries a PlayerChoiceContext.
 /// </summary>

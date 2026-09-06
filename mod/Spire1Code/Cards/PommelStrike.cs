@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Pommel Strike (Common). Deal 9, draw 1 (10 / 2 upgraded).</summary>
+/// <summary>StS1 Ironclad - Pommel Strike (Common). Deal 9, draw 1 (10 / 2 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class PommelStrike() : Spire1Card(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {

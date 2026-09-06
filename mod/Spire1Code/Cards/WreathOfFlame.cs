@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Wreath of Flame (Uncommon Skill). Your next Attack deals 5 additional damage (8 upgraded).
+/// StS1 Watcher - Wreath of Flame (Uncommon Skill). Your next Attack deals 5 additional damage (8 upgraded).
 /// REUSE_SHIPPED_POWER: StS1's Wreath of Flame applies VigorPower and StS2 ships an identical one
 /// (.tmp/dllsrc/MegaCrit.Sts2.Core.Models.Powers/VigorPower.cs:58 adds its amount to the next powered attack via
 /// ModifyDamageAdditive and clears itself in AfterAttack), so no mod power is defined for it.

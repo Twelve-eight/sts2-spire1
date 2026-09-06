@@ -10,7 +10,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Ironclad — Decay (Curse). Unplayable. At the end of your turn, take 2 damage.
+/// StS1 Ironclad - Decay (Curse). Unplayable. At the end of your turn, take 2 damage.
 /// Mirror of the base-game Decay (DamageVar + OnTurnEndInHand).
 /// </summary>
 [Pool(typeof(CurseCardPool))]

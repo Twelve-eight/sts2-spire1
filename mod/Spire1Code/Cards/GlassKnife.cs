@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Glass Knife (Rare Attack). Deal 8 damage twice (12 upgraded); decrease this card's damage by 2 this combat each time it is played.</summary>
+/// <summary>StS1 Silent - Glass Knife (Rare Attack). Deal 8 damage twice (12 upgraded); decrease this card's damage by 2 this combat each time it is played.</summary>
 [Pool(typeof(SilentCardPool))]
 public class GlassKnife() : Spire1Card(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
 {

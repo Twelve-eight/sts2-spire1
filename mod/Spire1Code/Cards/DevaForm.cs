@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Deva Form (Rare Power). Ethereal (removed on upgrade). At the start of your turn, gain Energy and
+/// StS1 Watcher - Deva Form (Rare Power). Ethereal (removed on upgrade). At the start of your turn, gain Energy and
 /// increase that gain by 1 every turn.
 /// </summary>
 [Pool(typeof(WatcherCardPool))]

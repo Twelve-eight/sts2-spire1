@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Reckless Charge (Uncommon). Deal 7 damage; shuffle a Dazed into your draw pile (10 upgraded).</summary>
+/// <summary>StS1 Ironclad - Reckless Charge (Uncommon). Deal 7 damage; shuffle a Dazed into your draw pile (10 upgraded).</summary>
 public class RecklessCharge() : Spire1Card(0, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(7, ValueProp.Move)];

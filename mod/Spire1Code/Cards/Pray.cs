@@ -12,7 +12,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Pray (Uncommon Skill). Gain 3 Mantra (4 upgraded) and shuffle an Insight into your draw pile.
+/// StS1 Watcher - Pray (Uncommon Skill). Gain 3 Mantra (4 upgraded) and shuffle an Insight into your draw pile.
 /// </summary>
 [Pool(typeof(WatcherCardPool))]
 public class Pray() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)

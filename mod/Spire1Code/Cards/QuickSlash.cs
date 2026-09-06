@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Quick Slash (Common). Deal 8 damage, draw 1 card (12 upgraded).</summary>
+/// <summary>StS1 Silent - Quick Slash (Common). Deal 8 damage, draw 1 card (12 upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class QuickSlash() : Spire1Card(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {

@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Body Slam (Common Attack). Deal damage equal to your Block.</summary>
+/// <summary>StS1 Ironclad - Body Slam (Common Attack). Deal damage equal to your Block.</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class BodySlam() : Spire1Card(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {

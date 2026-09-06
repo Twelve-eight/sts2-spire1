@@ -9,7 +9,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Uppercut (Uncommon). Deal 13, apply 1 Weak + 1 Vulnerable (2 / 2 upgraded).</summary>
+/// <summary>StS1 Ironclad - Uppercut (Uncommon). Deal 13, apply 1 Weak + 1 Vulnerable (2 / 2 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class Uppercut() : Spire1Card(2, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {

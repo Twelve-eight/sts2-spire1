@@ -6,7 +6,7 @@ namespace Spire1.Spire1Code.Encounters;
 /// <summary>
 /// StS1 The Ending "Shield and Spear" elite encounter
 /// (<c>MonsterHelper.getEncounter("Shield and Spear")</c>, bytecode
-/// <c>new MonsterGroup(new SpireShield(-250.0f, 30.0f), new SpireSpear(250.0f, 30.0f))</c>) —
+/// <c>new MonsterGroup(new SpireShield(-250.0f, 30.0f), new SpireSpear(250.0f, 30.0f))</c>) -
 /// the two flanking elites, with the player Surrounded between them
 /// (see <see cref="SpireShield"/> / <see cref="SpireSpear"/>).
 /// </summary>

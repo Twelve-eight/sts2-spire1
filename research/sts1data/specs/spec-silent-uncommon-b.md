@@ -1,4 +1,4 @@
-# Silent UNCOMMON cards, part B (16) — StS1 vanilla
+# Silent UNCOMMON cards, part B (16) - StS1 vanilla
 
 Every number below was extracted from the shipped StS1 jar (`desktop-1.0.jar`) bytecode. Use these EXACT values. The `StS2 name collision` field decides the localization title prefix.
 
@@ -8,7 +8,7 @@ Every number below was extracted from the shipped StS1 jar (`desktop-1.0.jar`) b
 - upgrade deltas: upgradeDamage=2
 - official StS1 description: `Deal !D! damage for each Attack played this turn.`
 - StS2 name collision: YES -> localization title MUST be "StS1 - Finisher"
-- IMPL: Attack cost 1: deal 6 damage (+2) for EACH Attack played this turn (the card hits that many times). Attack-count query (exact pattern found in the game's own Finisher.cs): CombatManager.Instance.History.CardPlaysFinished.Count(e => e.HappenedThisTurn(CombatState) && e.CardPlay.Card.Type == CardType.Attack && e.CardPlay.Player == Owner). Use hitCount: count (minimum 1 hit only if vanilla does so — vanilla deals damage once per Attack played, so if count is 0 the card deals no damage).
+- IMPL: Attack cost 1: deal 6 damage (+2) for EACH Attack played this turn (the card hits that many times). Attack-count query (exact pattern found in the game's own Finisher.cs): CombatManager.Instance.History.CardPlaysFinished.Count(e => e.HappenedThisTurn(CombatState) && e.CardPlay.Card.Type == CardType.Attack && e.CardPlay.Player == Owner). Use hitCount: count (minimum 1 hit only if vanilla does so - vanilla deals damage once per Attack played, so if count is 0 the card deals no damage).
 
 ## Flechettes  (class name = `Flechettes`, loc key `SPIRE1-FLECHETTES`)
 - StS1 id: `Flechettes`, official name: `Flechettes`
@@ -73,7 +73,7 @@ Every number below was extracted from the shipped StS1 jar (`desktop-1.0.jar`) b
 - upgrade deltas: upgradeDamage=5
 - official StS1 description: `Deal !D! damage. NL Next turn, draw 2 additional cards.`
 - StS2 name collision: YES -> localization title MUST be "StS1 - Predator"
-- IMPL: Attack cost 2, 15 damage (+5): next turn draw 2 ADDITIONAL cards via the game power DrawCardsNextTurnPower — `await PowerCmd.Apply<DrawCardsNextTurnPower>(choiceContext, Owner.Creature, DynamicVars.Cards.BaseValue, Owner.Creature, this);`. Vars: DamageVar(15), CardsVar(2) (Cards NOT upgraded).
+- IMPL: Attack cost 2, 15 damage (+5): next turn draw 2 ADDITIONAL cards via the game power DrawCardsNextTurnPower - `await PowerCmd.Apply<DrawCardsNextTurnPower>(choiceContext, Owner.Creature, DynamicVars.Cards.BaseValue, Owner.Creature, this);`. Vars: DamageVar(15), CardsVar(2) (Cards NOT upgraded).
 
 ## Reflex  (class name = `Reflex`, loc key `SPIRE1-REFLEX`)
 - StS1 id: `Reflex`, official name: `Reflex`
@@ -90,7 +90,7 @@ Every number below was extracted from the shipped StS1 jar (`desktop-1.0.jar`) b
 - upgrade deltas: upgradeDamage=1
 - official StS1 description: `Deal !D! damage 5 times.`
 - StS2 name collision: no -> plain title "Riddle with Holes"
-- IMPL: Attack cost 2: deal 3 damage (+1) 5 TIMES — hitCount: 5.
+- IMPL: Attack cost 2: deal 3 damage (+1) 5 TIMES - hitCount: 5.
 
 ## Setup  (class name = `Setup`, loc key `SPIRE1-SETUP`)
 - StS1 id: `Setup`, official name: `Setup`
@@ -115,7 +115,7 @@ Every number below was extracted from the shipped StS1 jar (`desktop-1.0.jar`) b
 - official StS1 description: `Unplayable. NL If this card is discarded from your hand, gain [G].`
 - official upgraded description: `Unplayable. NL If this card is discarded from your hand, gain [G] [G].`
 - StS2 name collision: YES -> localization title MUST be "StS1 - Tactician"
-- IMPL: Skill, UNPLAYABLE: 'If this card is discarded from your hand, gain 1 Energy' (2 upgraded). Same discard-hook requirement as Reflex — reuse whatever hook Reflex uses; FLAG if none exists.
+- IMPL: Skill, UNPLAYABLE: 'If this card is discarded from your hand, gain 1 Energy' (2 upgraded). Same discard-hook requirement as Reflex - reuse whatever hook Reflex uses; FLAG if none exists.
 
 ## Terror  (class name = `Terror`, loc key `SPIRE1-TERROR`)
 - StS1 id: `Terror`, official name: `Terror`

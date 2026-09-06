@@ -10,7 +10,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Foreign Influence (Uncommon Skill, Exhaust). Choose 1 of 3 Attacks of any color to add into
+/// StS1 Watcher - Foreign Influence (Uncommon Skill, Exhaust). Choose 1 of 3 Attacks of any color to add into
 /// your hand; when upgraded the chosen card costs 0 this turn.
 /// "Any color" is every character card pool (ModelDb.AllCharacterCardPools), matching StS1's getAnyColorCard,
 /// which draws from the character pools and not from the colorless pool. Generation and the 3-option screen are

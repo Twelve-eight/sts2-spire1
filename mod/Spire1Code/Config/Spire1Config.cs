@@ -62,7 +62,7 @@ internal class Spire1Config : SimpleModConfig
     /// 联机容错（哈希级，R14 2026-09-06）：游戏版本相同但 ModelID 哈希不符时
     /// 放行。哈希 = 玩法内容二进制指纹，清单一致但哈希不符意味着至少一侧的
     /// 玩法 mod 二进制漂移（版本更新不同步/本地补丁），Serialization 安全无保证。
-    /// 因此与清单级放行分离、默认关——确有跨版本联机需求时手动开。
+    /// 因此与清单级放行分离、默认关--确有跨版本联机需求时手动开。
     /// </summary>
     public static bool IgnoreMpHashMismatch { get; set; } = false;
 

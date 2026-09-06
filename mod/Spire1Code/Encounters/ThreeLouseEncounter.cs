@@ -7,7 +7,7 @@ namespace Spire1.Spire1Code.Encounters;
 /// StS1 "3 Louse" strong encounter (<c>MonsterHelper.getEncounter("3 Louse")</c>).
 /// Bytecode spawns three independent lice, each a 50/50
 /// <c>LouseNormal</c>/<c>LouseDefensive</c> roll (<c>getLouse()</c>: one
-/// <c>miscRng.randomBoolean()</c> per louse) — reproduced here with three independent
+/// <c>miscRng.randomBoolean()</c> per louse) - reproduced here with three independent
 /// <see cref="Rng.NextBool"/> draws.
 /// </summary>
 public sealed class ThreeLouseEncounter : Spire1Encounter

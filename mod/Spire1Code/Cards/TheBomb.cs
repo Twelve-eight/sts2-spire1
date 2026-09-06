@@ -10,14 +10,14 @@ using MegaCrit.Sts2.Core.Models.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Colorless — The Bomb (Rare Skill). 2 cost. At the end of 3 turns, deal 40 damage
+/// StS1 Colorless - The Bomb (Rare Skill). 2 cost. At the end of 3 turns, deal 40 damage
 /// to ALL enemies (50 upgraded: upgradeMagicNumber(10), javap-colorless/TheBomb.txt L57-67).
-/// R6 (2026-09-06): own class required — RARITY DRIFT: the shipped StS2 TheBomb is
+/// R6 (2026-09-06): own class required - RARITY DRIFT: the shipped StS2 TheBomb is
 /// CardRarity.Uncommon (dllsrc TheBomb.cs L24) while StS1 is RARE (jar ctor CardRarity.RARE,
 /// TheBomb.txt L19). Injecting the shipped card would leak StS2 rarity odds into the StS1
 /// colorless pool. All numeric fields match (Turns 3, BombDamage 40, +10 upgrade; engine
 /// OnUpgrade L33-36 upgrades BombDamage by 10), so this class reuses the shipped
-/// TheBombPower unchanged — only the card wrapper is ours.
+/// TheBombPower unchanged - only the card wrapper is ours.
 /// </summary>
 [Pool(typeof(ColorlessCardPool))]
 public class TheBomb() : Spire1Card(2, CardType.Skill, CardRarity.Rare, TargetType.Self)

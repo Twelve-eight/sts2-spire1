@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Cultist" weak encounter (<c>MonsterHelper.getEncounter("Cultist")</c>, bytecode
-/// <c>new MonsterGroup(new Cultist(0f, -10f))</c> — single monster).
+/// <c>new MonsterGroup(new Cultist(0f, -10f))</c> - single monster).
 /// </summary>
 public sealed class CultistEncounter : Spire1Encounter
 {

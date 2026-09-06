@@ -8,7 +8,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Silent — Calculated Gamble (Uncommon Skill). Discard your hand, then draw that many cards.
+/// StS1 Silent - Calculated Gamble (Uncommon Skill). Discard your hand, then draw that many cards.
 /// Exhaust (the upgrade removes Exhaust).
 /// </summary>
 [Pool(typeof(Spire1LegacyPool))]

@@ -13,9 +13,9 @@ using Spire1.Spire1Code.Relics;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 shrine — Face Trader (<c>com.megacrit.cardcrawl.events.shrines.FaceTrader</c>).
+/// StS1 shrine - Face Trader (<c>com.megacrit.cardcrawl.events.shrines.FaceTrader</c>).
 /// "[Touch]" loses max(1, MaxHp / 10) HP and gains 75 Gold (50 at Ascension 15+).
-/// "[Trade]" costs NOTHING and grants one random face relic — verified from the bytecode, where the
+/// "[Trade]" costs NOTHING and grants one random face relic - verified from the bytecode, where the
 /// Trade branch calls only getRandomFace() then spawnRelicAndObtain, with no damage() and no gainGold()
 /// (those appear solely in the Touch branch).
 /// </summary>
@@ -61,7 +61,7 @@ public class FaceTrader : Spire1Event
     /// (CultistMask, FaceOfCleric, GremlinMask, NlothsMask, SsserpentHead); append Circlet ONLY when that
     /// list comes out empty; shuffle with <c>new Random(miscRng.randomLong())</c> and return element 0.
     /// A shuffle-then-take-first over the candidate list is a uniform draw, so <c>Rng.NextInt(count)</c>
-    /// reproduces the distribution exactly — the same mapping <see cref="CursedTome.GrantRandomBook"/>
+    /// reproduces the distribution exactly - the same mapping <see cref="CursedTome.GrantRandomBook"/>
     /// already uses for the tome roll, with the event's Rng standing in for AbstractDungeon.miscRng.
     /// The advertised "50%: Good Face. 50%: Bad Face." is flavour text: the real roll is uniform over
     /// whichever faces remain unowned (two are upsides, two are downsides, and Cultist Headpiece has no

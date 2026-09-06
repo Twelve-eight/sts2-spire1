@@ -13,14 +13,14 @@ namespace Spire1.Spire1Code.AutoSlay;
 /// Upstream ShopRoomHandler.HandleAsync buys any stocked slot whose Entry.EnoughGold is
 /// true. Two refusal reasons are invisible to that filter and made it spin until
 /// maxAttempts (50), stalling ~1 minute per shop:
-///   1. potion-ban relics (e.g. Sozu "添水": Hook.ShouldProcurePotion == false) — the
+///   1. potion-ban relics (e.g. Sozu "添水": Hook.ShouldProcurePotion == false) - the
 ///      merchant refuses with FailureForbidden while the slot still reports EnoughGold;
-///   2. a full potion bar — FailureSpace, same loop stall (vanilla-reachable).
+///   2. a full potion bar - FailureSpace, same loop stall (vanilla-reachable).
 ///
 /// Fix: teach EnoughGold itself about these cases. When the entry is a shop POTION the
 /// player could not actually receive right now, EnoughGold reports false, so the vanilla
 /// loop's existing filter skips the slot and proceeds ("No more affordable items").
-/// No async code, no main-thread blocking — safe on the Godot main thread.
+/// No async code, no main-thread blocking - safe on the Godot main thread.
 ///
 /// NOTE on the earlier attempt: replacing HandleAsync with a Prefix that blocked on
 /// .Wait() deadlocked the game at "Entering Shop room" (main thread must pump the

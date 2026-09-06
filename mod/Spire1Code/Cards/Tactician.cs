@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Tactician (Uncommon Skill). Unplayable. If this card is discarded from your hand, gain 1 Energy (2 upgraded).</summary>
+/// <summary>StS1 Silent - Tactician (Uncommon Skill). Unplayable. If this card is discarded from your hand, gain 1 Energy (2 upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class Tactician() : Spire1Card(-2, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 {

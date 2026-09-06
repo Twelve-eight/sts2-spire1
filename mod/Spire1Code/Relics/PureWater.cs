@@ -11,7 +11,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Relics;
 
 /// <summary>
-/// StS1 Watcher — Pure Water (Starter). At the start of each combat, gain [E] [E].
+/// StS1 Watcher - Pure Water (Starter). At the start of each combat, gain [E] [E].
 /// ID = SPIRE1-PURE_WATER. Sits in the Watcher relic pool (overrides the base Spire1Relic pool).
 /// The start-of-combat energy effect IS supported: it reuses the exact hook proven by Lantern
 /// (AfterSideTurnStart on turn 1 + PlayerCmd.GainEnergy), so no invented effect was needed.

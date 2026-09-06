@@ -6,7 +6,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Ironclad — Pain (Curse). Unplayable. While in hand, lose 1 HP whenever you play a card.
+/// StS1 Ironclad - Pain (Curse). Unplayable. While in hand, lose 1 HP whenever you play a card.
 /// Not present in StS2 (no base-game mirror); implemented via the AbstractModel.AfterCardPlayed
 /// combat hook (fires for every card play; cards receive it while in a combat pile).
 /// </summary>

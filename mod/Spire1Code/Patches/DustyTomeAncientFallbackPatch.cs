@@ -12,15 +12,15 @@ namespace Spire1.Spire1Code.Patches;
 /// <summary>
 /// DustyTome (the Darv ancient's card reward) draws a random Ancient-rarity card from
 /// <c>player.Character.CardPool</c>. Our placeholder characters use custom pools whose only
-/// members are SPIRE1-* cards — none Ancient — so the vanilla method rolls
+/// members are SPIRE1-* cards - none Ancient - so the vanilla method rolls
 /// <c>NextItem(empty)</c>, gets null, and dereferences <c>.Id</c>: NRE, event never opens.
-/// (Log: NRE at DustyTome.SetupForPlayer ← Darv.GenerateInitialOptions.)
+/// (Log: NRE at DustyTome.SetupForPlayer <- Darv.GenerateInitialOptions.)
 /// StS1 has no "Ancient" rarity; until legacy ancients are ported as real cards, fall back to
 /// the base-game pool of the character we are standing in for (PlaceholderID), which always
 /// has Ancient cards. Prefix must REPLACE the vanilla body when falling back: the NRE happens
 /// inside the original method, so a postfix would never run.
 /// BaseLib's own DustyTomePatch prefix runs first for ITomeCard characters and returns false;
-/// our patch then sees the call too — guard by checking the pool ourselves either way.
+/// our patch then sees the call too - guard by checking the pool ourselves either way.
 /// </summary>
 [HarmonyPatch(typeof(DustyTome), nameof(DustyTome.SetupForPlayer))]
 internal static class DustyTomeAncientFallbackPatch
@@ -33,7 +33,7 @@ internal static class DustyTomeAncientFallbackPatch
         if (ancient.Count == 0 && placeholder == null) return true;
         if (ancient.Count > 0)
         {
-            return true; // pool has Ancients — let the vanilla roll run
+            return true; // pool has Ancients - let the vanilla roll run
         }
 
         CardPoolModel? native = placeholder == null ? null : NativePoolFor(placeholder.PlaceholderID);
@@ -47,14 +47,14 @@ internal static class DustyTomeAncientFallbackPatch
         {
             // (2026-08-27 fix) The self-twin filter can empty the native pool entirely
             // (e.g. official Ironclad Ancients all re-implemented by us). Falling through to
-            // vanilla would NRE on NextItem(empty).Id — the very crash this patch exists to
+            // vanilla would NRE on NextItem(empty).Id - the very crash this patch exists to
             // prevent. Retry WITHOUT the self-twin filter instead: a shipped Ancient card is
             // still a valid tome reward even if we also ship a StS1 twin of it.
             fallback = pool2_NoSelfTwinFilter(native, player);
         }
         if (fallback.Count == 0)
         {
-            return true; // native pool genuinely has no Ancients — keep vanilla behavior
+            return true; // native pool genuinely has no Ancients - keep vanilla behavior
         }
 
         __instance.AncientCard = player.PlayerRng.Rewards.NextItem(fallback.Select(c => c.Id));
@@ -72,7 +72,7 @@ internal static class DustyTomeAncientFallbackPatch
                 .GetType("Spire1.Spire1Code.Cards." + c.GetType().Name, throwOnError: false) == null)
             .ToList();
 
-    /// <summary>FilterAncient 去掉"自研同名排除"的变体——回退池被掏空时的最后手段：
+    /// <summary>FilterAncient 去掉"自研同名排除"的变体--回退池被掏空时的最后手段：
     /// 官方先古卡即便与我方卡同名，也胜过让原版在空池上 NRE。</summary>
     private static List<CardModel> pool2_NoSelfTwinFilter(CardPoolModel pool, Player player) =>
         pool.GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint)

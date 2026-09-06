@@ -18,7 +18,7 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 Exordium — Looter (<c>com.megacrit.cardcrawl.monsters.exordium.Looter</c>).
+/// StS1 Exordium - Looter (<c>com.megacrit.cardcrawl.monsters.exordium.Looter</c>).
 /// <para>
 /// Bytecode: HP 44-48, A2 46-50; swipeDmg 10 (A2 11), lungeDmg 12 (A2 14), escapeDef 6,
 /// goldAmt 15 (A17 20). usePreBattleAction applies ThieveryPower(goldAmt).
@@ -60,7 +60,7 @@ public sealed class Looter : Spire1Monster
     public override async Task AfterAddedToRoom()
     {
         await base.AfterAddedToRoom();
-        // usePreBattleAction: ThieveryPower(this, goldAmt) — Target must point at the player's
+        // usePreBattleAction: ThieveryPower(this, goldAmt) - Target must point at the player's
         // creature for Steal() to know whose purse to pick (GremlinMerc.AfterAddedToRoom pattern).
         foreach (Player player in base.CombatState.Players)
         {
@@ -126,7 +126,7 @@ public sealed class Looter : Spire1Monster
 
     /// <summary>
     /// StS1 die(): if stolenGold &gt; 0, addStolenGoldToRewards(stolenGold). The engine equivalent is
-    /// HeistPower.BeforeDeath — an extra GoldReward flagged as stolen-back on the combat room.
+    /// HeistPower.BeforeDeath - an extra GoldReward flagged as stolen-back on the combat room.
     /// </summary>
     public override Task BeforeDeath(Creature creature)
     {

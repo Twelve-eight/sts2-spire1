@@ -12,7 +12,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Relics;
 
 /// <summary>
-/// StS1 Defect — Cracked Core (Starter). At the start of combat, Channel 1 Lightning.
+/// StS1 Defect - Cracked Core (Starter). At the start of combat, Channel 1 Lightning.
 /// ID = SPIRE1-CRACKED_CORE. Sits in the Defect relic pool (overrides the base Spire1Relic pool).
 /// Logic mirrors the native StS2 CrackedCore exactly.
 /// </summary>

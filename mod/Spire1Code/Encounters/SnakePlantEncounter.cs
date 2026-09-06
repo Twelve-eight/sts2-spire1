@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Snake Plant" strong encounter (<c>MonsterHelper.getEncounter("Snake Plant")</c>,
-/// bytecode <c>new MonsterGroup(new SnakePlant(-30f, -30f))</c> — single monster).
+/// bytecode <c>new MonsterGroup(new SnakePlant(-30f, -30f))</c> - single monster).
 /// </summary>
 public sealed class SnakePlantEncounter : Spire1Encounter
 {

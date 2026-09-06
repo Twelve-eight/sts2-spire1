@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher token — Live Forever. The Plated Armor option of Wish's choose-one screen (vanilla StS1 ships the same
+/// StS1 Watcher token - Live Forever. The Plated Armor option of Wish's choose-one screen (vanilla StS1 ships the same
 /// three option cards). Never enters a pile and never reaches reward generation (CardRarity.Token, no pool).
 /// </summary>
 [Pool(typeof(Spire1LegacyPool))]

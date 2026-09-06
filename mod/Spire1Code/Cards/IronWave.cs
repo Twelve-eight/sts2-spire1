@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Iron Wave (Common). Gain 5 Block, deal 5 damage (7 / 7 upgraded).</summary>
+/// <summary>StS1 Ironclad - Iron Wave (Common). Gain 5 Block, deal 5 damage (7 / 7 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class IronWave() : Spire1Card(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {

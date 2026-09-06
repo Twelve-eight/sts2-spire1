@@ -13,7 +13,7 @@ using Spire1.Spire1Code.Relics;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 shrine — Bonfire Spirits. Offer a card to the bonfire; the reward scales with the card's
+/// StS1 shrine - Bonfire Spirits. Offer a card to the bonfire; the reward scales with the card's
 /// rarity (from the StS1 bytecode rarity switch):
 ///   Basic   -> nothing
 ///   Special -> heal 5

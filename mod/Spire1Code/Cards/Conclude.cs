@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Watcher — Conclude (Uncommon Attack). Deal 12 damage (16 upgraded) to ALL enemies, then end your turn.</summary>
+/// <summary>StS1 Watcher - Conclude (Uncommon Attack). Deal 12 damage (16 upgraded) to ALL enemies, then end your turn.</summary>
 [Pool(typeof(WatcherCardPool))]
 public class Conclude() : Spire1Card(1, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies)
 {

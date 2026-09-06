@@ -10,18 +10,18 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Colorless — Ritual Dagger (SPECIAL Attack). Deal 15 damage; if Fatal, permanently increase this card's
+/// StS1 Colorless - Ritual Dagger (SPECIAL Attack). Deal 15 damage; if Fatal, permanently increase this card's
 /// damage by 3 (5 upgraded) for the rest of the run. Exhaust. 1 cost.
 /// Granted only by The Nest event (mod/Spire1Code/Events/Nest.cs).
 ///
 /// Numbers verified against the jar bytecode (com.megacrit.cardcrawl.cards.colorless.RitualDagger): the
-/// constructor sets misc = 15, baseMagicNumber = 3 and baseDamage = misc, i.e. the base damage is 15 — NOT the
+/// constructor sets misc = 15, baseMagicNumber = 3 and baseDamage = misc, i.e. the base damage is 15 - NOT the
 /// 3 that research/sts1data/cards-colorless.json reports (that extraction mistook the magic number for the
 /// damage). upgrade() only calls upgradeMagicNumber(2); the damage never changes on upgrade.
 ///
 /// The growth is StS1's RitualDaggerAction: on a kill (target dying / at 0 HP, not halfDead, and without the
 /// "Minion" power) it adds magicNumber to `misc` on the master-deck copy AND on every in-battle instance
-/// sharing the card's uuid, then re-derives baseDamage from misc — so the buff survives the combat and the
+/// sharing the card's uuid, then re-derives baseDamage from misc - so the buff survives the combat and the
 /// rest of the run.
 ///
 /// StS2 equivalent, verified against the shipped card that does exactly this
@@ -35,7 +35,7 @@ namespace Spire1.Spire1Code.Cards;
 /// returns false). The predicate below matches the shipped Feed
 /// (.tmp/dllsrc/MegaCrit.Sts2.Core.Models.Cards/Feed.cs:38): the default return value is true, so a Fatal
 /// effect fires when EVERY power on the target allows it. (2026-08-26) Feed.cs and LessonLearned.cs
-/// now both use the correct non-negated predicate — LessonLearned was fixed in 3cfbcf1, Feed in the
+/// now both use the correct non-negated predicate - LessonLearned was fixed in 3cfbcf1, Feed in the
 /// reverify fix batch.
 ///
 /// SPECIAL rarity maps to CardRarity.Ancient + EventCardPool, matching the shipped Apparition
@@ -111,7 +111,7 @@ public class RitualDagger : Spire1Card
 
     /// <summary>
     /// Applies the permanent buff to the played card, to the run-deck card it came from, and to every other
-    /// in-combat clone of that same deck card — StS1's master-deck plus GetAllInBattleInstances behaviour.
+    /// in-combat clone of that same deck card - StS1's master-deck plus GetAllInBattleInstances behaviour.
     /// </summary>
     private void BuffEveryInstance(int increase)
     {

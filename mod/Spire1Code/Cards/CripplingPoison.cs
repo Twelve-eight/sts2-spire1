@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Crippling Cloud (Uncommon Skill). Apply 4 Poison (7 upgraded) and 2 Weak to ALL enemies. Exhaust.</summary>
+/// <summary>StS1 Silent - Crippling Cloud (Uncommon Skill). Apply 4 Poison (7 upgraded) and 2 Weak to ALL enemies. Exhaust.</summary>
 [Pool(typeof(SilentCardPool))]
 public class CripplingPoison() : Spire1Card(2, CardType.Skill, CardRarity.Uncommon, TargetType.AllEnemies)
 {

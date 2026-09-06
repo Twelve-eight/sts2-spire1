@@ -18,21 +18,21 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The City — BronzeOrb (<c>com.megacrit.cardcrawl.monsters.city.BronzeOrb</c>).
+/// StS1 The City - BronzeOrb (<c>com.megacrit.cardcrawl.monsters.city.BronzeOrb</c>).
 /// 官方中文名：铜球（<c>.tmp/m25-zhs-names.json</c>）。
 /// <para>
 /// Bytecode (<c>city_BronzeOrb.txt</c>): HP 52-58, A9 54-60; BEAM_DMG 8 flat; SUPPORT_BEAM
 /// grants the BronzeAutomaton GainBlock(12); STASIS (once per combat, roll &gt;= 25) is
-/// ApplyStasisAction — seal one random card from the player's hand until this orb dies.
-/// getMove: <c>!usedStasis &amp;&amp; r&gt;=25</c> → STASIS (STRONG_DEBUFF);
-/// <c>r&gt;=70 &amp;&amp; !lastTwo(SUPPORT)</c> → SUPPORT (DEFEND);
-/// <c>!lastTwo(BEAM)</c> → BEAM (ATTACK 8); else SUPPORT. The first move is rolled normally,
+/// ApplyStasisAction - seal one random card from the player's hand until this orb dies.
+/// getMove: <c>!usedStasis &amp;&amp; r&gt;=25</c> -> STASIS (STRONG_DEBUFF);
+/// <c>r&gt;=70 &amp;&amp; !lastTwo(SUPPORT)</c> -> SUPPORT (DEFEND);
+/// <c>!lastTwo(BEAM)</c> -> BEAM (ATTACK 8); else SUPPORT. The first move is rolled normally,
 /// so the machine's initial state is the branch itself (SlaverBlue precedent). takeTurn BEAM:
 /// DamageAction(damage[0]); SUPPORT: GainBlockAction(getMonster("BronzeAutomaton"), 12);
 /// STASIS: ApplyStasisAction(this).
 /// </para>
 /// <para>
-/// Ticket note (bytecode audit): this m25 dump contains NO orb-death boss buff — BronzeOrb has
+/// Ticket note (bytecode audit): this m25 dump contains NO orb-death boss buff - BronzeOrb has
 /// no <c>die()</c> override at all and <c>BronzeAutomaton.die()</c> only suicides the survivors,
 /// so "killing an orb strengthens the boss" is not a mechanic in this build; the orb supports
 /// the boss with SUPPORT_BEAM block instead. Stasis is modelled in-code without a power file:
@@ -42,8 +42,8 @@ namespace Spire1.Spire1Code.Monsters;
 /// the orb dies. The floating sealed-card display around the orb is cosmetic and is not ported.
 /// </para>
 /// <para>
-/// Ascension mapping: vanilla A9 HP tier → <see cref="AscensionLevel.ToughEnemies"/>; there is
-/// no damage/block bump to map. Donor: <c>zapbot</c> — the shipped small floating robot; closest
+/// Ascension mapping: vanilla A9 HP tier -> <see cref="AscensionLevel.ToughEnemies"/>; there is
+/// no damage/block bump to map. Donor: <c>zapbot</c> - the shipped small floating robot; closest
  /// spherical drone among the shipped scenes, and its scene ships the engine-default track set
 /// (idle_loop/cast/attack/hurt/die) so the default animator works untouched (byrdpip precedent).
 /// </para>
@@ -99,7 +99,7 @@ public sealed class BronzeOrb : Spire1Monster
 
     private async Task SupportBeamMove(IReadOnlyList<Creature> targets)
     {
-        // takeTurn SUPPORT_BEAM: GainBlockAction(monsters.getMonster("BronzeAutomaton"), 12) —
+        // takeTurn SUPPORT_BEAM: GainBlockAction(monsters.getMonster("BronzeAutomaton"), 12) -
         // the block goes to the boss, not to the orb itself. Vanilla passes a null target when
         // the automaton is gone; GainBlock on a dead creature is a no-op in StS2 as well.
         _ = targets;

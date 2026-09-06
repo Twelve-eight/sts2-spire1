@@ -12,8 +12,8 @@ namespace Spire1.Spire1Code.Cards;
 /// StS1 Defect Uncommon Skill 遗传算法（jar 权威：cards/blue/GeneticAlgorithm.class；
 /// 官方原文 eng "Gain !B! Block. Permanently increase this card's Block by !M!. NL Exhaust."
 /// / zhs 获得 !B! 点格挡。每打出一次格挡永久 +!M!。消耗。）
-/// 跨战斗成长链路：战斗实例 OnPlay → 同步到 DeckVersion(牌库母本,[SavedProperty] 随存档序列化)
-/// → 下场战斗 PopulateCombatState 从母本 Clone(MemberwiseClone 含私有字段)。
+/// 跨战斗成长链路：战斗实例 OnPlay -> 同步到 DeckVersion(牌库母本,[SavedProperty] 随存档序列化)
+/// -> 下场战斗 PopulateCombatState 从母本 Clone(MemberwiseClone 含私有字段)。
 /// </summary>
 [Pool(typeof(DefectCardPool))]
 public class GeneticAlgorithm : Spire1Card
@@ -63,7 +63,7 @@ public class GeneticAlgorithm : Spire1Card
         }
         else
         {
-            MainFile.Logger.Error("[Spire1] GA: DeckVersion missing/typed wrong — growth won't persist");
+            MainFile.Logger.Error("[Spire1] GA: DeckVersion missing/typed wrong - growth won't persist");
         }
     }
 

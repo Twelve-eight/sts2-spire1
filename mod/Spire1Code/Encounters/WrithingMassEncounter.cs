@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 Act-3 "Writhing Mass" elite encounter (<c>MonsterHelper.getEncounter("Writhing Mass")</c>,
-/// bytecode 3614-3625: <c>new MonsterGroup(new WrithingMass())</c> — single monster; registered
+/// bytecode 3614-3625: <c>new MonsterGroup(new WrithingMass())</c> - single monster; registered
 /// STRONG in act 3 (<c>EnemyData("Writhing Mass", 3, MonsterType.STRONG)</c>)).
 /// </summary>
 public sealed class WrithingMassEncounter : Spire1Encounter

@@ -20,7 +20,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// Bytecode values: HP 13-17 (A7+: 14-18), Blunt 4 (A2+: 5), Weak 1, and at ascension 17+ the
 /// attack additionally applies Frail 1 (gate inside <c>takeTurn</c>, case BLUNT). AI:
 /// <c>getMove</c> always rolls Blunt; after each Blunt the next move is Escape if
-/// <c>escapeNext</c> was set by <c>deathReact</c> (ally died), otherwise RollMove re-rolls — but
+/// <c>escapeNext</c> was set by <c>deathReact</c> (ally died), otherwise RollMove re-rolls - but
 /// <c>getMove</c> has no randomness, so Blunt repeats forever. Reproduced with a conditional
 /// branch exactly like the other gremlins.
 /// </para>
@@ -35,15 +35,15 @@ public sealed class GremlinFat : Spire1Monster
 
     private int BluntDamage => AscensionHelper.GetValueIfAscension(AscensionLevel.DeadlyEnemies, 5, 4);
 
-    /// <summary>Borrows the shipped FatGremlin scene — exact StS1 counterpart rig.</summary>
+    /// <summary>Borrows the shipped FatGremlin scene - exact StS1 counterpart rig.</summary>
     protected override string DonorId => "fat_gremlin";
 
     /// <summary>
     /// The fat_gremlin rig ships <c>awake_loop</c>, <c>spawn</c>, <c>flee</c>, <c>stunned_loop</c>,
     /// <c>wake_up</c>, <c>hurt_stunned</c>, <c>hurt_awake</c> and <c>die</c> (shipped
     /// <c>FatGremlin.GenerateAnimator</c>; each also exists under a <c>_no_bag/</c> prefix). There
-    /// is no <c>idle_loop</c>, <c>hurt</c> or attack animation at all — the shipped fat gremlin
-    /// only ever flees — so idle/hit are remapped onto the awake variants and the attack trigger is
+    /// is no <c>idle_loop</c>, <c>hurt</c> or attack animation at all - the shipped fat gremlin
+    /// only ever flees - so idle/hit are remapped onto the awake variants and the attack trigger is
     /// left unmapped (it would only log a missing-animation warning).
     /// </summary>
     public override CreatureAnimator? SetupCustomAnimationStates(MegaSprite controller) =>

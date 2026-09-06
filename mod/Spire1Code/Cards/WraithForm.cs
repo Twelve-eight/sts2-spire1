@@ -9,7 +9,7 @@ using WraithFormPower = Spire1.Spire1Code.Powers.WraithFormPower;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Wraith Form (Rare Power). Gain 2 Intangible (3 upgraded); at the end of your turn, lose 1 Dexterity.</summary>
+/// <summary>StS1 Silent - Wraith Form (Rare Power). Gain 2 Intangible (3 upgraded); at the end of your turn, lose 1 Dexterity.</summary>
 [Pool(typeof(SilentCardPool))]
 public class WraithForm() : Spire1Card(3, CardType.Power, CardRarity.Rare, TargetType.Self)
 {

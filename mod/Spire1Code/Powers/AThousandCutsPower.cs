@@ -8,7 +8,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Powers;
 
-/// <summary>StS1 Silent — A Thousand Cuts. Whenever you play a card, deal 1 damage (per stack) to ALL enemies.</summary>
+/// <summary>StS1 Silent - A Thousand Cuts. Whenever you play a card, deal 1 damage (per stack) to ALL enemies.</summary>
 public class AThousandCutsPower : CustomPowerModel
 {
     private sealed class Data

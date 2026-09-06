@@ -9,7 +9,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Potions;
 
-/// <summary>StS1 Ironclad — Explosive Potion (Common). Deal 10 damage to ALL enemies.</summary>
+/// <summary>StS1 Ironclad - Explosive Potion (Common). Deal 10 damage to ALL enemies.</summary>
 public class ExplosivePotion : Spire1Potion
 {
     public override PotionRarity Rarity => PotionRarity.Common;

@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.Models.CardPools;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Colorless — Bandage Up (Common Skill). Heal 4 HP, Exhaust (6 HP upgraded). 0 cost.</summary>
+/// <summary>StS1 Colorless - Bandage Up (Common Skill). Heal 4 HP, Exhaust (6 HP upgraded). 0 cost.</summary>
 [Pool(typeof(ColorlessCardPool))]
 public class BandageUp() : Spire1Card(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {

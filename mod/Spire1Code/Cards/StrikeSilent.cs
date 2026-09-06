@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Strike (Basic). Deal 6 damage (9 upgraded).</summary>
+/// <summary>StS1 Silent - Strike (Basic). Deal 6 damage (9 upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class StrikeSilent() : Spire1Card(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
 {

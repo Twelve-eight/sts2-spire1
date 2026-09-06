@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Slice (Common). Deal 6 damage (9 upgraded).</summary>
+/// <summary>StS1 Silent - Slice (Common). Deal 6 damage (9 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class Slice() : Spire1Card(0, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {

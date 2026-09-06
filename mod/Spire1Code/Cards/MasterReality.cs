@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Master Reality (Rare Power, cost 1 / 0 upgraded). Whenever a card is created during combat,
+/// StS1 Watcher - Master Reality (Rare Power, cost 1 / 0 upgraded). Whenever a card is created during combat,
 /// Upgrade it.
 /// </summary>
 [Pool(typeof(WatcherCardPool))]

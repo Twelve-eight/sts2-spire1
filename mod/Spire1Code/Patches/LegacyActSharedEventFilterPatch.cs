@@ -11,8 +11,8 @@ namespace Spire1.Spire1Code.Patches;
 /// 一代楼层事件纯净性过滤（2026-08-27，用户点名的"AFTP 二代事件乱入一代楼层"修复）。
 /// <para>
 /// 引擎事实（dllsrc ActModel.cs:334）：<c>GenerateRooms</c> 无条件
-/// <c>AllEvents.Concat(ModelDb.AllSharedEvents)</c>——官方 18 个二代 shared 事件
-/// （BrainLeech / WelcomeToWongos / ThisOrThat …）会进入每一个幕的事件池，
+/// <c>AllEvents.Concat(ModelDb.AllSharedEvents)</c>--官方 18 个二代 shared 事件
+/// （BrainLeech / WelcomeToWongos / ThisOrThat ...）会进入每一个幕的事件池，
 /// 包括 AFTP 的一代幕与我们的 StS1 幕。这就是玩家在一代楼层撞见二代专属事件的根因。
 /// shared 事件不挂在任何幕上（静态集合），ActToggler2 的勾选/注册池移除都影响不到它，
 /// 唯一有效落点是这条 concat 的结果。
@@ -25,7 +25,7 @@ namespace Spire1.Spire1Code.Patches;
 /// </para>
 /// <para>
 /// 保留范围（StS1 忠实）：BaseLib postfix 追加的 ActCustomEvents（一代事件，按幕声明）
-/// 与幕自身 AllEvents 一律不动——只删官方 shared 拼接。AFTP 的 SharedEvents（Duplicator
+/// 与幕自身 AllEvents 一律不动--只删官方 shared 拼接。AFTP 的 SharedEvents（Duplicator
 /// 等 IShrineEvent）以 CustomEventModel 身份经 ActCustomEvents 通道追加，不经 shared
 /// concat，天然不受影响。
 /// </para>
@@ -37,13 +37,13 @@ internal static class LegacyActSharedEventFilterPatch
         AccessTools.Field(typeof(ActModel), "_rooms");
 
     /// <summary>引擎官方 shared 事件清单（dllsrc ModelDb.cs:157-175，18 个）。
-    /// 在一代幕中全部移除——StS1 的对应事件（我们与 AFTP 均有移植）走
+    /// 在一代幕中全部移除--StS1 的对应事件（我们与 AFTP 均有移植）走
     /// ActCustomEvents 通道，不在此列。</summary>
     private static readonly HashSet<string> OfficialSharedEventIds = BuildSharedIds();
 
     private static HashSet<string> BuildSharedIds()
     {
-        // ModelDb.AllSharedEvents 是引擎静态属性——运行时读取以保证与版本同步，
+        // ModelDb.AllSharedEvents 是引擎静态属性--运行时读取以保证与版本同步，
         // 不在编译期硬编码 18 个类名。
         try
         {
@@ -61,7 +61,7 @@ internal static class LegacyActSharedEventFilterPatch
         }
         catch
         {
-            // fall through to reflection failure → empty set → patch no-ops safely
+            // fall through to reflection failure -> empty set -> patch no-ops safely
         }
         return [];
     }

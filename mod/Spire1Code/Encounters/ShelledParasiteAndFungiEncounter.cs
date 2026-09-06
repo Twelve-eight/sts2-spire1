@@ -9,7 +9,7 @@ namespace Spire1.Spire1Code.Encounters;
 /// StS1 "Shelled Parasite and Fungi" strong encounter
 /// (<c>MonsterHelper.getEncounter("Shelled Parasite and Fungi")</c>).
 /// Bytecode (<c>.tmp/r9-tmp/MonsterHelper.txt</c>, getEncounter case 13):
-/// <c>new MonsterGroup(new ShelledParasite(-260f, 15f), new FungiBeast(120f, 0f))</c> —
+/// <c>new MonsterGroup(new ShelledParasite(-260f, 15f), new FungiBeast(120f, 0f))</c> -
 /// one <see cref="ShelledParasite"/> (Act-2) plus one <see cref="FungiBeast"/> (Act-1).
 /// <para>
 /// Official run-history display name (<c>localization/eng/ui.json</c>
@@ -19,7 +19,7 @@ namespace Spire1.Spire1Code.Encounters;
 /// <para>
 /// Gold: StS1 normal monster rooms pay <c>treasureRng.random(10, 20)</c>
 /// (<c>AbstractRoom.applyEvents</c> bytecode :1004-1015), matching the shipped StS2
-/// <c>RoomType.Monster</c> default of 10..20 — no override needed.
+/// <c>RoomType.Monster</c> default of 10..20 - no override needed.
 /// </para>
 /// </summary>
 public sealed class ShelledParasiteAndFungiEncounter : Spire1Encounter

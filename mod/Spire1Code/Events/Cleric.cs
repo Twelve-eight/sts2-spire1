@@ -11,7 +11,7 @@ using MegaCrit.Sts2.Core.Models.Acts;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 — The Cleric. Paid services: 35 Gold heals 25% of Max HP, 50 Gold removes a card.
+/// StS1 - The Cleric. Paid services: 35 Gold heals 25% of Max HP, 50 Gold removes a card.
 /// Both options are locked when the player cannot afford them.
 /// </summary>
 public class Cleric : Spire1Event

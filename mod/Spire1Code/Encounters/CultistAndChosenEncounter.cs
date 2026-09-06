@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Cultist and Chosen" strong encounter (<c>MonsterHelper.getEncounter("Cultist and Chosen")</c>,
-/// bytecode <c>new MonsterGroup(new Cultist(-230f, 15f, false), new Chosen(100f, 25f))</c> — the
+/// bytecode <c>new MonsterGroup(new Cultist(-230f, 15f, false), new Chosen(100f, 25f))</c> - the
 /// Act-1 <see cref="Cultist"/> paired with the Act-2 <see cref="Chosen"/>.
 /// </summary>
 public sealed class CultistAndChosenEncounter : Spire1Encounter

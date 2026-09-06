@@ -1,4 +1,4 @@
-// build_kb.mjs — SlayTheSpire v2.x (desktop-1.0.jar) knowledge-base extractor
+// build_kb.mjs - SlayTheSpire v2.x (desktop-1.0.jar) knowledge-base extractor
 // Reads ONLY the jar (never modified); writes JSON KB files next to this script.
 // Usage: node build_kb.mjs [path-to-desktop-1.0.jar]
 import fs from "fs";

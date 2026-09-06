@@ -12,7 +12,7 @@ using MegaCrit.Sts2.Core.Models.Acts;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 The City — Old Beggar (Beggar).
+/// StS1 The City - Old Beggar (Beggar).
 /// Give 75 gold to remove a card from your deck (he is secretly a Cleric), or walk away.
 /// StS1 constant: GOLD_COST = 75.
 /// </summary>

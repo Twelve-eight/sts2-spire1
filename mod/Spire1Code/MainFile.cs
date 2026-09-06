@@ -35,7 +35,7 @@ public partial class MainFile : Node
         // game generates any pool, because ModHelper freezes modded pool content on first use.
         SharedCardReuse.Register();
 
-        // Apply Harmony patches declared in this assembly — one try/catch PER TYPE so a single
+        // Apply Harmony patches declared in this assembly - one try/catch PER TYPE so a single
         // bad patch can never abort the whole set (PatchAll aborts on first failure, which
         // silently stripped every other patch for an entire night run on 2026-08-24).
         Harmony harmony = new(ModId);
@@ -62,18 +62,18 @@ public partial class MainFile : Node
         }
 
         // AutoAnthony 桥接：必须在 ModManager 已加载 AutoAnthony 之后应用（本 initializer
-        // 的调用时机——ModManager.Initialize 逐 mod 依拓扑序调 initializer——取决于加载
+        // 的调用时机--ModManager.Initialize 逐 mod 依拓扑序调 initializer--取决于加载
         // 顺序；AutoAnthony 无依赖、按用户 mod 列表序可能在本 mod 之前或之后。若此刻
         // 尚未加载，由 AutoAnthonyLoadHook 的 AssemblyLoad 事件兜底重试）。
         AutoAnthonyLoadHook.TryApplyBridge(harmony);
 
-        // 第三方（RitsuLib）弹窗抑制不能进上面的属性扫描——目标类型缺失时 AccessTools
+        // 第三方（RitsuLib）弹窗抑制不能进上面的属性扫描--目标类型缺失时 AccessTools
         // 解析会抛异常，会让注册循环每次启动都记一条失败。显式调用、内部自兜底。
         if (Spire1Config.IgnoreMpModDifferences)
         {
             Logger.Info(RitsuLibPopupSuppressionPatch.Apply(harmony)
                 ? "[Spire1] MP ignore-mod-diff: RitsuLib divergence popup suppressed"
-                : "[Spire1] MP ignore-mod-diff: RitsuLib popup type not found (mod absent?) — skipped");
+                : "[Spire1] MP ignore-mod-diff: RitsuLib popup type not found (mod absent?) - skipped");
         }
 
         // 归档角色门控的启动期预热：触发静态扫描并让"隐藏 N 张卡"计数进启动日志

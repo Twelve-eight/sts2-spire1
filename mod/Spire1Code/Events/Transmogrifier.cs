@@ -11,7 +11,7 @@ using MegaCrit.Sts2.Core.Nodes.CommonUi;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 shrine — Transmogrifier. Pray to transform a card into a random card, or leave.
+/// StS1 shrine - Transmogrifier. Pray to transform a card into a random card, or leave.
 /// </summary>
 public class Transmogrifier : Spire1Event
 {

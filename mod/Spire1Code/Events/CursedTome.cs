@@ -13,13 +13,13 @@ using Spire1.Spire1Code.Relics;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 The City — Cursed Tome.
+/// StS1 The City - Cursed Tome.
 /// Reading the tome costs escalating HP (1, 2, 3, then 3 more to stop, or 10/15 to take the book).
 /// StS1 constants: DMG_BOOK_OPEN=1, DMG_SECOND_PAGE=2, DMG_THIRD_PAGE=3, DMG_STOP_READING=3,
 /// DMG_OBTAIN_BOOK=10 (15 at Ascension 15+).
 ///
-/// Taking the book grants one of StS1's three tome relics — Necronomicon, Enchiridion or
-/// Nilry's Codex — drawn from the ones the player does not already hold, with Circlet as the
+/// Taking the book grants one of StS1's three tome relics - Necronomicon, Enchiridion or
+/// Nilry's Codex - drawn from the ones the player does not already hold, with Circlet as the
 /// fallback once all three are held. See <see cref="GrantRandomBook"/>.
 /// </summary>
 public class CursedTome : Spire1Event
@@ -121,12 +121,12 @@ public class CursedTome : Spire1Event
         if (books.Count == 0)
         {
             // StS1's "you already own every reward relic" filler. Not reimplemented: StS2 ships it
-            // (MegaCrit.Sts2.Core.Models.Relics/Circlet.cs — RelicRarity.None, IsStackable), which is
+            // (MegaCrit.Sts2.Core.Models.Relics/Circlet.cs - RelicRarity.None, IsStackable), which is
             // exactly StS1's Circlet, so per the lean-code rule the shipped relic is granted.
             books.Add(ModelDb.Relic<Circlet>());
         }
 
-        // StS1's Random.random(int i) is nextInt(i + 1) — an inclusive bound — so random(size - 1) is a
+        // StS1's Random.random(int i) is nextInt(i + 1) - an inclusive bound - so random(size - 1) is a
         // uniform index over the whole list: one random pick, never a shuffle. The event's own Rng stands
         // in for AbstractDungeon.miscRng, the RNG randomBook() draws from. The non-generic Obtain is used
         // because the pick is only known at runtime; RelicCmd.Obtain<T>(player) expands to exactly this

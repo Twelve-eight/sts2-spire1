@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Powers;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Watcher — Foresight (Uncommon Power, StS1 id Wireheading). At the start of your turn, Scry 3 (4 upgraded).</summary>
+/// <summary>StS1 Watcher - Foresight (Uncommon Power, StS1 id Wireheading). At the start of your turn, Scry 3 (4 upgraded).</summary>
 [Pool(typeof(WatcherCardPool))]
 public class Foresight() : Spire1Card(1, CardType.Power, CardRarity.Uncommon, TargetType.None)
 {

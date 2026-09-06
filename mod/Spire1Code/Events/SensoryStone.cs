@@ -9,11 +9,11 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 Beyond event — Sensory Stone. Touching the tesseract recalls a random memory (one of four) and
+/// StS1 Beyond event - Sensory Stone. Touching the tesseract recalls a random memory (one of four) and
 /// offers up to three colorless card rewards at an HP cost (5 / 10 HP as HP_LOSS damage).
 /// The colorless card rewards are FLAGGED: StS1 grants random COLORLESS card rewards
 /// (RewardItem(CardColor.COLORLESS), one per option tier); no StS1 colorless cards exist in the mod, so
-/// the rewards are not granted — only the memory text and the HP loss are implemented.
+/// the rewards are not granted - only the memory text and the HP loss are implemented.
 /// </summary>
 public class SensoryStone : Spire1Event
 {

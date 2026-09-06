@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Twin Strike (Common). Deal 5 damage twice (7 upgraded).</summary>
+/// <summary>StS1 Ironclad - Twin Strike (Common). Deal 5 damage twice (7 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class TwinStrike() : Spire1Card(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {

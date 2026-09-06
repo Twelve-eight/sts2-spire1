@@ -10,7 +10,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 
 namespace Spire1.Spire1Code.Potions;
 
-/// <summary>StS1 Ironclad — Fear Potion (Common). Apply 3 Vulnerable to the target enemy.</summary>
+/// <summary>StS1 Ironclad - Fear Potion (Common). Apply 3 Vulnerable to the target enemy.</summary>
 public class FearPotion : Spire1Potion
 {
     public override PotionRarity Rarity => PotionRarity.Common;

@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Alchemize (Rare Skill). Obtain a random potion (0 cost upgraded). Exhaust.</summary>
+/// <summary>StS1 Silent - Alchemize (Rare Skill). Obtain a random potion (0 cost upgraded). Exhaust.</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class Alchemize() : Spire1Card(1, CardType.Skill, CardRarity.Rare, TargetType.Self)
 {

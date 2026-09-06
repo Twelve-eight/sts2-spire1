@@ -6,7 +6,7 @@ namespace Spire1.Spire1Code.Encounters;
 /// <summary>
 /// StS1 "Slavers" elite encounter (<c>MonsterHelper.getEncounter("Slavers")</c>, bytecode
 /// <c>new MonsterGroup(new SlaverBlue(-385f, -15f), new Taskmaster(-133f, 0f),
-/// new SlaverRed(125f, -30f))</c>) — the Act-1 slaver pair with an Act-2 <see cref="Taskmaster"/>
+/// new SlaverRed(125f, -30f))</c>) - the Act-1 slaver pair with an Act-2 <see cref="Taskmaster"/>
 /// between them.
 /// </summary>
 public sealed class SlaversEncounter : Spire1Encounter

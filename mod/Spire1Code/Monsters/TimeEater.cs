@@ -28,12 +28,12 @@ namespace Spire1.Spire1Code.Monsters;
 /// Bytecode: HP 456, A9 480; REVERB_DMG 7 (A4 8), RIPPLE_BLOCK 20, HEAD_SLAM_DMG 26 (A4 32),
 /// plus the A19 tier (Frail on Ripple, 2 Slimed on Head Slam, block on Haste) mapped onto
 /// <see cref="AscensionLevel.DoubleBoss"/>. usePreBattleAction applies the custom
-/// <see cref="TimeWarpPower"/> (12) — the player's turn is forcibly ended after 12 played cards.
+/// <see cref="TimeWarpPower"/> (12) - the player's turn is forcibly ended after 12 played cards.
 /// </para>
 /// <para>
-/// getMove: below half HP (integer <c>maxHealth / 2</c>) and Haste unused → HASTE (once);
-/// r&lt;45 → REVERBERATE unless last two, else re-roll; 45≤r&lt;80 → HEAD SLAM unless last, else
-/// 66% REVERBERATE / 34% RIPPLE; r≥80 → RIPPLE unless last, else re-roll. The two recursive
+/// getMove: below half HP (integer <c>maxHealth / 2</c>) and Haste unused -> HASTE (once);
+/// r&lt;45 -> REVERBERATE unless last two, else re-roll; 45<=r&lt;80 -> HEAD SLAM unless last, else
+/// 66% REVERBERATE / 34% RIPPLE; r>=80 -> RIPPLE unless last, else re-roll. The two recursive
 /// re-rolls fold into weighted branches with identical distributions:
 /// random(50,99) = 60/40 band2/band3; random(74) = 60/40 band1/band2.
 /// </para>
@@ -44,23 +44,23 @@ namespace Spire1.Spire1Code.Monsters;
 /// <see cref="TalkCmd"/> with the vanilla English lines localized in code.
 /// </para>
 /// <para>
-/// Donor: <c>waterfall_giant</c> — a colossal boss-scale creature; closest visual match for the
+/// Donor: <c>waterfall_giant</c> - a colossal boss-scale creature; closest visual match for the
 /// Time Eater's bulk.
 /// </para>
 /// </summary>
 public sealed class TimeEater : Spire1Monster
 {
-    // HP 456, A9 → 480
+    // HP 456, A9 -> 480
     public override int MinInitialHp => AscensionHelper.GetValueIfAscension(AscensionLevel.ToughEnemies, 480, 456);
     public override int MaxInitialHp => MinInitialHp;
 
-    // REVERB_DMG = 7; ascension >= 4 → 8
+    // REVERB_DMG = 7; ascension >= 4 -> 8
     private int ReverbDamage => AscensionHelper.GetValueIfAscension(AscensionLevel.DeadlyEnemies, 8, 7);
 
     // RIPPLE_BLOCK = 20 (no ascension variant)
     private const int RippleBlock = 20;
 
-    // HEAD_SLAM_DMG = 26; ascension >= 4 → 32
+    // HEAD_SLAM_DMG = 26; ascension >= 4 -> 32
     private int HeadSlamDamage => AscensionHelper.GetValueIfAscension(AscensionLevel.DeadlyEnemies, 32, 26);
 
     // HEAD_SLAM_STICKY = 1 (Draw Reduction, no ascension variant)
@@ -105,9 +105,9 @@ public sealed class TimeEater : Spire1Monster
         slam.FollowUpState = main;
         haste.FollowUpState = main;
 
-        // Band A (r < 45): REVERBERATE unless last two; else re-roll random(50,99) → band2/band3.
+        // Band A (r < 45): REVERBERATE unless last two; else re-roll random(50,99) -> band2/band3.
         // Band B (45 <= r < 80): HEAD SLAM unless last; else 66% REVERBERATE / 34% RIPPLE.
-        // Band C (r >= 80): RIPPLE unless last; else re-roll random(74) → band1/band2.
+        // Band C (r >= 80): RIPPLE unless last; else re-roll random(74) -> band1/band2.
         RandomBranchState bandA = new("TIME_EATER_BAND_A");
         RandomBranchState bandAReroll = new("TIME_EATER_BAND_A_REROLL");
         RandomBranchState bandB = new("TIME_EATER_BAND_B");

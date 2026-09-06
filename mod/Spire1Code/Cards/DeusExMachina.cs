@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Deus Ex Machina (Rare Skill). Unplayable. When you draw this card, add 2 Miracles (3 upgraded)
+/// StS1 Watcher - Deus Ex Machina (Rare Skill). Unplayable. When you draw this card, add 2 Miracles (3 upgraded)
 /// to your hand and Exhaust it. Mirrors the base-game Void pattern (AfterCardDrawn on the card itself).
 /// </summary>
 [Pool(typeof(WatcherCardPool))]

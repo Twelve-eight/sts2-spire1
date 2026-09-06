@@ -11,7 +11,7 @@ using Spire1.Spire1Code.Cards;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 — The Ssssserpent (Liars Game). Agreeing with the serpent first shows its approval, then a
+/// StS1 - The Ssssserpent (Liars Game). Agreeing with the serpent first shows its approval, then a
 /// Continue button pays 175 Gold and adds a Doubt curse. Disagreeing simply ends the event.
 /// </summary>
 public class Sssserpent : Spire1Event

@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Powers;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — A Thousand Cuts (Rare Power). Whenever you play a card, deal 1 damage to ALL enemies (2 upgraded).</summary>
+/// <summary>StS1 Silent - A Thousand Cuts (Rare Power). Whenever you play a card, deal 1 damage to ALL enemies (2 upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class AThousandCuts() : Spire1Card(2, CardType.Power, CardRarity.Rare, TargetType.Self)
 {

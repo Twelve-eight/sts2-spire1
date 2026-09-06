@@ -11,7 +11,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Colorless — Dark Shackles (Common Skill). Enemy loses 9 Strength this turn, Exhaust (15 upgraded). 0 cost.
+/// StS1 Colorless - Dark Shackles (Common Skill). Enemy loses 9 Strength this turn, Exhaust (15 upgraded). 0 cost.
 /// Uses the base game's DarkShacklesPower (a TemporaryStrengthPower with IsPositive=false): PowerCmd.Apply receives
 /// the positive PowerVar amount and the power internally applies -X Strength, exactly like the base-game Dark Shackles card.
 /// </summary>

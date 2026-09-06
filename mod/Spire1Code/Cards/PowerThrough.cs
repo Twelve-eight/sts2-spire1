@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Power Through (Uncommon). Add 2 Wounds into your hand; gain 15 Block (20 upgraded).</summary>
+/// <summary>StS1 Ironclad - Power Through (Uncommon). Add 2 Wounds into your hand; gain 15 Block (20 upgraded).</summary>
 public class PowerThrough() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(15, ValueProp.Move)];

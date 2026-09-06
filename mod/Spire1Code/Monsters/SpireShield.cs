@@ -18,14 +18,14 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The Ending — Spire Shield (<c>com.megacrit.cardcrawl.monsters.ending.SpireShield</c>).
+/// StS1 The Ending - Spire Shield (<c>com.megacrit.cardcrawl.monsters.ending.SpireShield</c>).
 /// 官方中文名：高塔之盾（<c>.tmp/m25-zhs-names.json</c>）。
 /// <para>
 /// Bytecode (<c>ending_SpireShield.txt</c>): HP 110, A8 125; BASH_DMG 12 (A3 14) + debuff,
 /// FORTIFY_BLOCK 30 (all monsters), SMASH_DMG 34 (A3 38) + self-block equal to damage (A18 99).
 /// usePreBattleAction: SurroundedPower on the player + ArtifactPower(1, A18 2).
-/// getMove: moveCount%3 0→50/50 FORTIFY/BASH; 1→last BASH ? FORTIFY : BASH; 2→SMASH.
-/// takeTurn BASH: attack + if player has orbs &amp;&amp; random → FocusPower(-1) else StrengthPower(-1).
+/// getMove: moveCount%3 0->50/50 FORTIFY/BASH; 1->last BASH ? FORTIFY : BASH; 2->SMASH.
+/// takeTurn BASH: attack + if player has orbs &amp;&amp; random -> FocusPower(-1) else StrengthPower(-1).
 /// FORTIFY: all monsters GainBlock 30. SMASH: attack + GainBlock = damage[1].output (A18 99).
 /// die(): remove Surrounded from player and BackAttack from survivors.
 /// </para>
@@ -35,11 +35,11 @@ namespace Spire1.Spire1Code.Monsters;
 /// works (the Spear receives BackAttackRightPower). AfterDeath removes both when either dies.
 /// </para>
 /// <para>
-/// The vanilla HP 38-42 range cited in the design ticket is incorrect — the bytecode calls
+/// The vanilla HP 38-42 range cited in the design ticket is incorrect - the bytecode calls
 /// setHp(110) / setHp(125 at A8), not the 38-42 range of the Act-1 Sentry.
 /// </para>
 /// <para>
-/// Donor: <c>guardbot</c> — the shipped shield-bearing construct (Centurion, GremlinShield);
+/// Donor: <c>guardbot</c> - the shipped shield-bearing construct (Centurion, GremlinShield);
 /// its idle_loop/attack/hurt/die tracks match the vanilla animator defaults.
 /// </para>
 /// </summary>
@@ -98,7 +98,7 @@ public sealed class SpireShield : Spire1Monster
         {
             await PowerCmd.Apply<SurroundedPower>(new ThrowingPlayerChoiceContext(), player.Creature, 1, base.Creature, null);
         }
-        // BackAttackLeftPower on self — the engine SurroundedPower's flanking check needs the marker.
+        // BackAttackLeftPower on self - the engine SurroundedPower's flanking check needs the marker.
         await PowerCmd.Apply<BackAttackLeftPower>(new ThrowingPlayerChoiceContext(), base.Creature, 1, base.Creature, null);
         // ArtifactPower(1, A18 2).
         await PowerCmd.Apply<ArtifactPower>(new ThrowingPlayerChoiceContext(), base.Creature,
@@ -116,7 +116,7 @@ public sealed class SpireShield : Spire1Monster
         fortify.FollowUpState = branch;
         smash.FollowUpState = branch;
 
-        // getMove: moveCount%3 0→50/50; 1→last BASH ? FORTIFY : BASH; 2→SMASH.
+        // getMove: moveCount%3 0->50/50; 1->last BASH ? FORTIFY : BASH; 2->SMASH.
         branch.AddState(fortify, () => MoveNum % 3 == 0 ? RollFifty() : (MoveNum % 3 == 1 ? LastWas(bash) : false));
         branch.AddState(bash, () => MoveNum % 3 == 0 ? !RollFifty() : (MoveNum % 3 == 1 ? !LastWas(bash) : false));
         branch.AddState(smash, () => true);
@@ -130,7 +130,7 @@ public sealed class SpireShield : Spire1Monster
             .WithAttackerAnim("Attack", 0.35f)
             .WithHitFx("vfx/vfx_attack_blunt")
             .Execute(null);
-        // BASH tail: if player has orbs && random → FocusPower(-1) else StrengthPower(-1).
+        // BASH tail: if player has orbs && random -> FocusPower(-1) else StrengthPower(-1).
         bool anyPlayerHasOrbs = targets.Any(t =>
             t.Player is { } p && p.PlayerCombatState is { } cs && cs.OrbQueue.Orbs.Count > 0);
         if (anyPlayerHasOrbs && base.Rng.NextFloat() < 0.5f)
@@ -159,7 +159,7 @@ public sealed class SpireShield : Spire1Monster
     private async Task SmashMove(IReadOnlyList<Creature> targets)
     {
         // takeTurn SMASH: ChangeState(OLD_ATTACK) + Wait(0.5) + DamageAction(damage[1], BLUNT_HEAVY)
-        // + GainBlockAction(this, this, damage[1].output) — A18: 99 flat.
+        // + GainBlockAction(this, this, damage[1].output) - A18: 99 flat.
         await DamageCmd.Attack(SmashDamage).FromMonster(this)
             .WithAttackerAnim("Attack", 0.5f)
             .WithHitFx("vfx/vfx_attack_blunt")

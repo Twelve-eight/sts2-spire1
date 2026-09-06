@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "2 Fungi Beasts" strong encounter (<c>MonsterHelper.getEncounter("2 Fungi Beasts")</c>,
-/// bytecode <c>new MonsterGroup(new FungiBeast(-400f, 30f), new FungiBeast(-40f, 20f))</c> —
+/// bytecode <c>new MonsterGroup(new FungiBeast(-400f, 30f), new FungiBeast(-40f, 20f))</c> -
 /// two fixed <c>FungiBeast</c>).
 /// </summary>
 public sealed class TwoFungiBeastsEncounter : Spire1Encounter

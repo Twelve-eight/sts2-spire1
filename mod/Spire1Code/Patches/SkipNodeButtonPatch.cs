@@ -10,7 +10,7 @@ namespace Spire1.Spire1Code.Patches;
 /// <para>
 /// 用途：火堆等房间进入即黑屏死锁时，打开地图（顶栏地图键本地可用，
 /// 见 NTopBarMapButton.Open(isOpenedFromTopBar:true) 先例）后点此按钮解锁选点，
-/// 再直接点目标节点——走引擎原生 VoteForMapCoordAction 投票管线，全端一致移动。
+/// 再直接点目标节点--走引擎原生 VoteForMapCoordAction 投票管线，全端一致移动。
 /// </para>
 /// <para>
 /// 引擎事实（SkipApiScout 取证）：RunState 无"房间完成"字段；放行完全由各端
@@ -51,7 +51,7 @@ internal static class SkipNodeButtonPatch
 
         button.Text = TrFallback("SPIRE1_UI_SKIP_NODE", "跳过当前节点");
 
-        // 每次打开地图都复位可用性——上次按下后的禁用不能延续到下一次救援（Critic P2）。
+        // 每次打开地图都复位可用性--上次按下后的禁用不能延续到下一次救援（Critic P2）。
         button.Disabled = false;
     }
 

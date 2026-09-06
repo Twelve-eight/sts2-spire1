@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Acrobatics (Common). Draw 3 cards, discard 1 card (4 upgraded).</summary>
+/// <summary>StS1 Silent - Acrobatics (Common). Draw 3 cards, discard 1 card (4 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class Acrobatics() : Spire1Card(1, CardType.Skill, CardRarity.Common, TargetType.None)
 {

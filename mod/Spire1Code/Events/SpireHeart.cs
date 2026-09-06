@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 Beyond event — Spire Heart. The final encounter with the heart: an attack cinematic, then
+/// StS1 Beyond event - Spire Heart. The final encounter with the heart: an attack cinematic, then
 /// either death ("[Sleep]") or the door to the final act ("[Approach Door]").
 /// FLAGGED: "[Approach Door]" needs the StS1 key/ending system (ruby/emerald/sapphire keys and the
 /// DoorUnlockScreen); StS2 has no key system and no door API, so the door branch is omitted and the
@@ -19,7 +19,7 @@ namespace Spire1.Spire1Code.Events;
 /// this port shows the run's actual damage-dealt stat (<see cref="ExtraPlayerFields.DamageDealt"/>),
 /// the only in-run aggregate available. The "total dealt by all who have challenged it" sentences need
 /// cross-run / global stats that StS2 does not expose, so they are omitted.
-/// NOTE: this jar's SpireHeart has no blessing (max HP / upgrade / relic) choices — the bytecode only
+/// NOTE: this jar's SpireHeart has no blessing (max HP / upgrade / relic) choices - the bytecode only
 /// contains the Continue / Attack / Continue / (Sleep | Approach Door) cinematic flow.
 /// </summary>
 public class SpireHeart : Spire1Event
@@ -43,7 +43,7 @@ public class SpireHeart : Spire1Event
 
     private async Task Continue()
     {
-        // StS1: body = player.getSpireHeartText() — character-specific weapon line, then "[Attack] ???".
+        // StS1: body = player.getSpireHeartText() - character-specific weapon line, then "[Attack] ???".
         string page = Owner.Character switch
         {
             Silent => "MIDDLE_DAGGERS",

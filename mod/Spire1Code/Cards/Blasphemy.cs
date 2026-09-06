@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Blasphemy (Rare Skill). Enter Divinity, then die at the start of your next turn. Exhaust.
+/// StS1 Watcher - Blasphemy (Rare Skill). Enter Divinity, then die at the start of your next turn. Exhaust.
 /// Upgrade adds Retain. The death is carried by BlasphemyPower through CreatureCmd.Kill (never a direct HP write).
 /// </summary>
 [Pool(typeof(WatcherCardPool))]

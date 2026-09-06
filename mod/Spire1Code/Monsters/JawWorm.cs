@@ -15,7 +15,7 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 Exordium — JawWorm (<c>com.megacrit.cardcrawl.monsters.exordium.JawWorm</c>).
+/// StS1 Exordium - JawWorm (<c>com.megacrit.cardcrawl.monsters.exordium.JawWorm</c>).
 /// <para>
 /// Bytecode: HP 40-44, A2 42-46; CHOMP_DMG 11 (A2 12), THRASH_DMG 7 + THRASH_BLOCK 5,
 /// BELLOW_STR 3 (A2 4) + BELLOW_BLOCK 6. First move always Chomp.

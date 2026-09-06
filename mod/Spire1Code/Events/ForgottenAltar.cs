@@ -15,7 +15,7 @@ using Spire1.Spire1Code.Relics;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 The City — Forgotten Altar.
+/// StS1 The City - Forgotten Altar.
 /// Offer: Golden Idol: give up the Golden Idol for the Bloody Idol, which takes over the Golden
 /// Idol's inventory slot. Offered only while the Golden Idol is owned.
 /// Sacrifice: lose round(25% of Max HP) (35% at Ascension 15+) to gain 5 Max HP.
@@ -35,7 +35,7 @@ public class ForgottenAltar : Spire1Event
 
     public override void CalculateVars()
     {
-        // StS1: MathUtils.round(maxHealth * (Ascension >= 15 ? 0.35f : 0.25f)) — round half up.
+        // StS1: MathUtils.round(maxHealth * (Ascension >= 15 ? 0.35f : 0.25f)) - round half up.
         decimal loss = Owner.Creature.MaxHp * (Owner.RunState.AscensionLevel >= 15 ? 0.35m : 0.25m);
         DynamicVars[_hpLossKey].BaseValue = (int)System.Math.Round(loss, System.MidpointRounding.AwayFromZero);
     }
@@ -70,7 +70,7 @@ public class ForgottenAltar : Spire1Event
         //     never calls onUnequip and never touches player.relics, so the Golden Idol is KEPT.
         //     (Its logMetricRelicSwap call is misleading: no swap actually happens.)
         //   * otherwise -> golden.onUnequip(), then bloody.instantObtain(player, idx, false), whose
-        //     bytecode is `player.relics.set(idx, bloody)` — the Bloody Idol takes over the Golden
+        //     bytecode is `player.relics.set(idx, bloody)` - the Bloody Idol takes over the Golden
         //     Idol's inventory slot. RelicCmd.Replace is precisely that: Remove(original) then
         //     Obtain(replace, player, indexOfOriginal) (RelicCmd.cs:74-82).
         // Neither path touches HP or gold: buttonEffect only plays HEAL_1 and shows DIALOG_2.

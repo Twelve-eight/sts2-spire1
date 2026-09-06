@@ -1,4 +1,4 @@
-# Watcher COMMON cards that use stances (8) — StS1 vanilla
+# Watcher COMMON cards that use stances (8) - StS1 vanilla
 
 All numbers extracted from the shipped StS1 jar (`desktop-1.0.jar`) bytecode. Use these EXACT values. Pool attribute for every card: `[Pool(typeof(WatcherCardPool))]`.
 

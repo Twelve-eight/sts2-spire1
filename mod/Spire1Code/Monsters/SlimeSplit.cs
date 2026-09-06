@@ -12,7 +12,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// Shared implementation of the StS1 slime split. Bytecode rule (AcidSlime_L.takeTurn /
 /// SpikeSlime_L.takeTurn): the parent removes itself and two children of the next smaller
 /// size spawn at its position, each constructed with the parent's <c>currentHealth</c>.
-/// Only the L slimes split in vanilla — M and S never do.
+/// Only the L slimes split in vanilla - M and S never do.
 /// </summary>
 public static class SlimeSplit
 {
@@ -36,7 +36,7 @@ public static class SlimeSplit
         {
             // ModelDb.Monster<T>() returns the canonical instance (IsMutable == false);
             // CreatureCmd.Add asserts mutability. ToMutable() MemberwiseClones a mutable
-            // copy — set SpawnHp AFTER cloning so the preset survives on the copy.
+            // copy - set SpawnHp AFTER cloning so the preset survives on the copy.
             var child = (T)ModelDb.Monster<T>().ToMutable();
             child.SpawnHp = hp;
             spawned.Add(await CreatureCmd.Add(child, state, parent.Creature.Side));

@@ -14,7 +14,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 shrine — The Woman in Blue. Buy 1/2/3 random potions for 20/30/40 gold, offered as rewards.
+/// StS1 shrine - The Woman in Blue. Buy 1/2/3 random potions for 20/30/40 gold, offered as rewards.
 /// Leaving costs 5% of Max HP (rounded up) at Ascension 15+; below that, leaving is free.
 /// </summary>
 public class WomanInBlue : Spire1Event

@@ -11,7 +11,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Ironclad — Regret (Curse). Unplayable. At the end of your turn, lose 1 HP for each card in your hand.
+/// StS1 Ironclad - Regret (Curse). Unplayable. At the end of your turn, lose 1 HP for each card in your hand.
 /// Mirror of the base-game Regret (BeforeSideTurnEnd hand snapshot + OnTurnEndInHand).
 /// </summary>
 [Pool(typeof(CurseCardPool))]

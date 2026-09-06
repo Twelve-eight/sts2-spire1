@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Worship (Uncommon Skill). Gain 5 Mantra. The upgrade only adds Retain; the amount is unchanged.
+/// StS1 Watcher - Worship (Uncommon Skill). Gain 5 Mantra. The upgrade only adds Retain; the amount is unchanged.
 /// </summary>
 [Pool(typeof(WatcherCardPool))]
 public class Worship() : Spire1Card(2, CardType.Skill, CardRarity.Uncommon, TargetType.Self)

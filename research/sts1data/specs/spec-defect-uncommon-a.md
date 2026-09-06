@@ -1,4 +1,4 @@
-# Defect UNCOMMON cards, part A (13) — StS1 vanilla
+# Defect UNCOMMON cards, part A (13) - StS1 vanilla
 
 All numbers were extracted from the shipped StS1 jar (`desktop-1.0.jar`) bytecode. Use these EXACT values. Pool attribute for every card: `[Pool(typeof(DefectCardPool))]`.
 
@@ -8,7 +8,7 @@ All numbers were extracted from the shipped StS1 jar (`desktop-1.0.jar`) bytecod
 - upgrade deltas: upgradeMagicNumber=-1
 - official description: `Gain [B] for every !M! cards in your draw pile.`
 - StS2 name collision: no -> plain title "Aggregate"
-- IMPL: Skill: gain 1 Energy for every 4 cards in your DRAW pile (every 3 when upgraded — StS1 magicNumber 4 with upgrade -1). Compute floor(drawPileCount / magic) and PlayerCmd.GainEnergy that much. The divisor must be a DynamicVar so the upgraded text is correct.
+- IMPL: Skill: gain 1 Energy for every 4 cards in your DRAW pile (every 3 when upgraded - StS1 magicNumber 4 with upgrade -1). Compute floor(drawPileCount / magic) and PlayerCmd.GainEnergy that much. The divisor must be a DynamicVar so the upgraded text is correct.
 
 ## AutoShields  (class name = `AutoShields`, loc key `SPIRE1-AUTO_SHIELDS`)
 - StS1 id `Auto Shields`, official name `Auto-Shields`
@@ -84,7 +84,7 @@ All numbers were extracted from the shipped StS1 jar (`desktop-1.0.jar`) bytecod
 - upgrade deltas: upgradeMagicNumber=1
 - official description: `Gain !M! Focus.`
 - StS2 name collision: YES -> localization title MUST be "StS1 - Defragment"
-- IMPL: Power cost 1: gain 1 Focus (2 upgraded) — PowerVar<FocusPower>(1) + ApplySelf.
+- IMPL: Power cost 1: gain 1 Focus (2 upgraded) - PowerVar<FocusPower>(1) + ApplySelf.
 
 ## DoomAndGloom  (class name = `DoomAndGloom`, loc key `SPIRE1-DOOM_AND_GLOOM`)
 - StS1 id `Doom and Gloom`, official name `Doom and Gloom`

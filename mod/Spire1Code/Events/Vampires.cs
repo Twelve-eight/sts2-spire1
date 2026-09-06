@@ -19,7 +19,7 @@ using Spire1.Spire1Code.Relics;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 The City — Vampires(?).
+/// StS1 The City - Vampires(?).
 /// Accept: lose ceil(30% of Max HP) Max HP (capped at Max HP - 1), remove all Strikes and
 /// receive 5 Bites. If you own the Blood Vial, you may offer it instead (no HP loss).
 ///

@@ -9,7 +9,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Unraveling (Rare Skill, cost 2 / 1 upgraded). Play all of your cards from left to right with random
+/// StS1 Watcher - Unraveling (Rare Skill, cost 2 / 1 upgraded). Play all of your cards from left to right with random
 /// targets. Exhaust.
 /// The hand is snapshotted first (auto-playing a card can add or remove cards), then each card is auto-played in hand
 /// order. CardCmd.AutoPlay with a null target picks the target from Rng.CombatTargets, which is the game's own random

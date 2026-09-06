@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Book of Stabbing" elite encounter (<c>MonsterHelper.getEncounter("Book of Stabbing")</c>,
-/// bytecode <c>new MonsterGroup(new BookOfStabbing())</c> — single monster).
+/// bytecode <c>new MonsterGroup(new BookOfStabbing())</c> - single monster).
 /// </summary>
 public sealed class BookOfStabbingEncounter : Spire1Encounter
 {

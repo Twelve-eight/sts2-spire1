@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Defend (Basic). Gain 5 Block (8 upgraded).</summary>
+/// <summary>StS1 Silent - Defend (Basic). Gain 5 Block (8 upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class DefendSilent() : Spire1Card(1, CardType.Skill, CardRarity.Basic, TargetType.None)
 {

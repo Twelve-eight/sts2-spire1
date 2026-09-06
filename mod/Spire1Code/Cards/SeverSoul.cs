@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Sever Soul (Uncommon). Exhaust all non-Attack cards in hand; deal 16 damage (22 upgraded).</summary>
+/// <summary>StS1 Ironclad - Sever Soul (Uncommon). Exhaust all non-Attack cards in hand; deal 16 damage (22 upgraded).</summary>
 public class SeverSoul() : Spire1Card(2, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(16, ValueProp.Move)];

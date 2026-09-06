@@ -10,7 +10,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Powers;
 
 /// <summary>
-/// StS1 Watcher — Nirvana. Whenever you Scry, gain Amount Block.
+/// StS1 Watcher - Nirvana. Whenever you Scry, gain Amount Block.
 /// Hooked through BaseLib's IAfterScryed, which only fires for scries that actually resolved (amount &gt; 0 and a
 /// non-empty draw pile), matching StS1 where an empty Scry grants nothing.
 /// </summary>

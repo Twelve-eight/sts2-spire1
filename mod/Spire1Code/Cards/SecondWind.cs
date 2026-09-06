@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Second Wind (Uncommon). Exhaust all non-Attack cards in hand; gain 5 Block each (7 upgraded).</summary>
+/// <summary>StS1 Ironclad - Second Wind (Uncommon). Exhaust all non-Attack cards in hand; gain 5 Block each (7 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class SecondWind() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 {

@@ -5,8 +5,8 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Gremlin Gang" strong encounter (<c>MonsterHelper.spawnGremlins()</c>).
-/// Bytecode: a pool of 8 entries — 2x GremlinWarrior, 2x GremlinThief, 2x GremlinFat,
-/// 1x GremlinTsundere (Sneaky), 1x GremlinWizard — and four successive draws of
+/// Bytecode: a pool of 8 entries - 2x GremlinWarrior, 2x GremlinThief, 2x GremlinFat,
+/// 1x GremlinTsundere (Sneaky), 1x GremlinWizard - and four successive draws of
 /// <c>miscRng.random(pool.size - 1)</c> with removal, i.e. a shuffle-without-replacement
 /// over that multiset. Per-type caps therefore follow from the multiset itself:
 /// at most 2 Warrior/Thief/Fat, at most 1 Sneaky/Wizard. Reproduced by shuffling the

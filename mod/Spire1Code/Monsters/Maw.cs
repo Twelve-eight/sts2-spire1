@@ -16,18 +16,18 @@ using MegaCrit.Sts2.Core.Nodes.Vfx;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The Beyond — Maw (<c>com.megacrit.cardcrawl.monsters.beyond.Maw</c>). 官方中文名：巨口。
+/// StS1 The Beyond - Maw (<c>com.megacrit.cardcrawl.monsters.beyond.Maw</c>). 官方中文名：巨口。
 /// <para>
 /// Bytecode: HP fixed 300 (no ascension tier); slamDmg 25 (A2 30), nomDmg 5, strUp 3 (A17 +2),
 /// terrifyDur 3 (A17 +2). turnCount starts at 1 and increments on every getMove.
-/// First move is always ROAR. getMove: roll&lt;50 → NOMNOMNOM (turnCount/2 hits, min 1) unless
-/// last was NOMNOMNOM; otherwise last==SLAM or last==NOMNOMNOM → DROOL else SLAM.
+/// First move is always ROAR. getMove: roll&lt;50 -> NOMNOMNOM (turnCount/2 hits, min 1) unless
+/// last was NOMNOMNOM; otherwise last==SLAM or last==NOMNOMNOM -> DROOL else SLAM.
 /// takeTurn: ROAR = SFX + shout + Weak(terrifyDur) + Frail(terrifyDur) on the player;
 /// SLAM = one slamDmg hit; DROOL = Strength strUp on self; NOMNOMNOM = turnCount/2 hits of 5.
-/// die() plays MAW_DEATH (audio only — skipped, see Spire1Monster.HasDeathSfx).
+/// die() plays MAW_DEATH (audio only - skipped, see Spire1Monster.HasDeathSfx).
 /// </para>
 /// <para>
-/// Donor: <c>mawler</c> — the shipped gaping-mouth creature; closest visual match.
+/// Donor: <c>mawler</c> - the shipped gaping-mouth creature; closest visual match.
 /// </para>
 /// </summary>
 public sealed class Maw : Spire1Monster
@@ -56,7 +56,7 @@ public sealed class Maw : Spire1Monster
 
     private int _bumpedRound = -1;
 
-    /// <summary>Borrows the shipped mawler scene — a huge mouth creature.</summary>
+    /// <summary>Borrows the shipped mawler scene - a huge mouth creature.</summary>
     protected override string DonorId => "mawler";
 
     protected override MonsterMoveStateMachine GenerateMoveStateMachine()
@@ -84,7 +84,7 @@ public sealed class Maw : Spire1Monster
         opening.AddState(bands, () => true);
 
         // roll < 50 -> NOMNOMNOM unless it just nommed; else DROOL when the last move was
-        // SLAM or NOMNOMNOM, otherwise SLAM. turnCount++ at the top of every getMove —
+        // SLAM or NOMNOMNOM, otherwise SLAM. turnCount++ at the top of every getMove -
         // evaluated here because opening is only visited once. NOM hits = turnCount/2.
         bands.AddState(nom, () => BumpTurnCount() && RollHundred() < 50 && !LastWas(nom));
         bands.AddState(drool, () => LastWas(slam) || LastWas(nom));
@@ -96,7 +96,7 @@ public sealed class Maw : Spire1Monster
     private async Task RoarMove(IReadOnlyList<Creature> targets)
     {
         _roared = true;
-        // SFXAction(MAW_DEATH) + ShoutAction(DIALOG[0]) — audio skipped; bubble via ExtraLoc.
+        // SFXAction(MAW_DEATH) + ShoutAction(DIALOG[0]) - audio skipped; bubble via ExtraLoc.
         TalkCmd.Play(MonsterModel.L10NMonsterLookup("SPIRE1-MAW.moves.ROAR_MOVE.shout"),
             base.Creature, VfxColor.Red, VfxDuration.Long);
         await CreatureCmd.TriggerAnim(base.Creature, "Cast", 0.6f);

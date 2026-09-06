@@ -18,19 +18,19 @@ using Spire1.Spire1Code.Cards;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The Ending — Corrupt Heart (<c>com.megacrit.cardcrawl.monsters.ending.CorruptHeart</c>).
+/// StS1 The Ending - Corrupt Heart (<c>com.megacrit.cardcrawl.monsters.ending.CorruptHeart</c>).
 /// 官方中文名：腐化之心（<c>.tmp/m25-zhs-names.json</c>）。
 /// <para>
-/// Bytecode (<c>ending_CorruptHeart.txt</c>): HP 750, A9 800; BLOOD_SHOT_DMG 2 × bloodHitCount
+/// Bytecode (<c>ending_CorruptHeart.txt</c>): HP 750, A9 800; BLOOD_SHOT_DMG 2 x bloodHitCount
 /// (12, A4 15); ECHO_ATTACK_DMG 40 (A4 45); DEBILITATE: Vulnerable 2 + Weak 2 + Frail 2 + 5
 /// status cards to draw pile (Dazed, Slimed, Wound, Burn, Void); BUFF: recover strength debuff
-/// + Strength 2, then cycle through Artifact 2 / BeatOfDeath 1 (MISSING — see FLAG) /
+/// + Strength 2, then cycle through Artifact 2 / BeatOfDeath 1 (MISSING - see FLAG) /
 /// PainfulStabs / Strength 10 / Strength 50+.
-/// usePreBattleAction: InvinciblePower(300, A19 200) + BeatOfDeathPower(1, A19 2) — BOTH MISSING
+/// usePreBattleAction: InvinciblePower(300, A19 200) + BeatOfDeathPower(1, A19 2) - BOTH MISSING
 /// from the StS2 engine, so the Heart is a plain boss in this port.
-/// getMove: firstTurn → DEBILITATE; then moveCount%3 0→50/50 BLOOD_SHOTS/ECHO;
-/// 1→last ECHO ? BLOOD_SHOTS : ECHO; 2→BUFF.
-/// die(): onBossVictoryLogic + onFinalBossVictoryLogic + stopClock — the engine handles boss
+/// getMove: firstTurn -> DEBILITATE; then moveCount%3 0->50/50 BLOOD_SHOTS/ECHO;
+/// 1->last ECHO ? BLOOD_SHOTS : ECHO; 2->BUFF.
+/// die(): onBossVictoryLogic + onFinalBossVictoryLogic + stopClock - the engine handles boss
 /// victory; no StS1-specific hooks are ported.
 /// </para>
 /// <para>
@@ -39,12 +39,12 @@ namespace Spire1.Spire1Code.Monsters;
 /// with neither available, the Heart has no per-turn damage cap or on-play damage in this port.
 /// The BUFF cycle's BeatOfDeath slot (buffCount % 4 == 1) is also skipped.
 /// The "phase mechanism + Shield/Spear summons" noted in the design ticket does not exist in
-/// the bytecode — the Heart is a solo boss in vanilla StS1; the Shield/Spear fight is a
+/// the bytecode - the Heart is a solo boss in vanilla StS1; the Shield/Spear fight is a
 /// separate elite encounter.
 /// Vanilla HP 300 (design ticket) is incorrect: bytecode calls setHp(750) / setHp(800 at A9).
 /// </para>
 /// <para>
-/// Donor: <c>mawler</c> — the shipped huge maw creature (Maw); largest silhouette available
+/// Donor: <c>mawler</c> - the shipped huge maw creature (Maw); largest silhouette available
 /// for a final-boss-scale monster; idle_loop/attack/hurt/die tracks fit the default animator.
 /// </para>
 /// </summary>
@@ -114,7 +114,7 @@ public sealed class CorruptHeart : Spire1Monster
         debilitate.FollowUpState = branch;
         buff.FollowUpState = branch;
 
-        // getMove: isFirstMove → DEBILITATE; then moveCount%3 0→50/50; 1→last ECHO ? BLOOD_SHOTS : ECHO; 2→BUFF.
+        // getMove: isFirstMove -> DEBILITATE; then moveCount%3 0->50/50; 1->last ECHO ? BLOOD_SHOTS : ECHO; 2->BUFF.
         branch.AddState(debilitate, () => _firstMove);
         branch.AddState(bloodShots, () => MoveNum % 3 == 0 ? RollFifty() : (MoveNum % 3 == 1 ? LastWas(echo) : false));
         branch.AddState(echo, () => MoveNum % 3 == 0 ? !RollFifty() : (MoveNum % 3 == 1 ? !LastWas(echo) : false));
@@ -124,7 +124,7 @@ public sealed class CorruptHeart : Spire1Monster
 
     private async Task BloodShotsMove(IReadOnlyList<Creature> targets)
     {
-        // takeTurn BLOOD_SHOTS: VFX (cosmetic, skipped) + bloodHitCount × DamageAction(damage[1], BLUNT_HEAVY).
+        // takeTurn BLOOD_SHOTS: VFX (cosmetic, skipped) + bloodHitCount x DamageAction(damage[1], BLUNT_HEAVY).
         await DamageCmd.Attack(BloodShotDamage).WithHitCount(BloodHitCount).FromMonster(this)
             .WithAttackerAnim("Attack", 0.25f)
             .WithHitFx("vfx/vfx_attack_blunt")
@@ -146,7 +146,7 @@ public sealed class CorruptHeart : Spire1Monster
     {
         _firstMove = false;
         // takeTurn DEBILITATE: VFX (cosmetic, skipped) + Vulnerable 2 + Weak 2 + Frail 2 +
-        // 5 status cards (Dazed, Slimed, Wound, Burn, Void) ×1 each into the draw pile.
+        // 5 status cards (Dazed, Slimed, Wound, Burn, Void) x1 each into the draw pile.
         await CreatureCmd.TriggerAnim(base.Creature, "Cast", 0.6f);
         await PowerCmd.Apply<VulnerablePower>(new ThrowingPlayerChoiceContext(), targets, DebuffAmount, base.Creature, null);
         await PowerCmd.Apply<WeakPower>(new ThrowingPlayerChoiceContext(), targets, DebuffAmount, base.Creature, null);
@@ -156,7 +156,7 @@ public sealed class CorruptHeart : Spire1Monster
         await CardPileCmd.AddToCombatAndPreview<Wound>(targets, PileType.Draw, StatusCount, null);
         await CardPileCmd.AddToCombatAndPreview<Burn>(targets, PileType.Draw, StatusCount, null);
         await CardPileCmd.AddToCombatAndPreview<Spire1.Spire1Code.Cards.Void>(targets, PileType.Draw, StatusCount, null);
-        // Vanilla getMove returns early on the first move WITHOUT incrementing moveCount —
+        // Vanilla getMove returns early on the first move WITHOUT incrementing moveCount -
         // DEBILITATE sits outside the %3 cycle.
     }
 

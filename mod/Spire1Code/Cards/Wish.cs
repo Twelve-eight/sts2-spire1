@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Wish (Rare Skill). Choose one: gain 6 Plated Armor (8 upgraded), 3 Strength (4 upgraded) or 25 Gold
+/// StS1 Watcher - Wish (Rare Skill). Choose one: gain 6 Plated Armor (8 upgraded), 3 Strength (4 upgraded) or 25 Gold
 /// (30 upgraded). Exhaust.
 /// The three-way choice is the game's choose-a-card screen (CardSelectCmd.FromChooseACardScreen, which accepts up to
 /// three cards and cannot be skipped here), driven by the same three option cards vanilla StS1 uses. The options are

@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Tantrum (Uncommon Attack). Deal 3 damage 3 times (4 times upgraded), enter Wrath, then shuffle
+/// StS1 Watcher - Tantrum (Uncommon Attack). Deal 3 damage 3 times (4 times upgraded), enter Wrath, then shuffle
 /// this card back into your draw pile instead of discarding it (StS1 flag shuffleBackIntoDrawPile).
 /// The post-play destination is redirected exactly like the shipped ReboundPower does it, keeping the base result
 /// (dupes / exhaust) untouched.

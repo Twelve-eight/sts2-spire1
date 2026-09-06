@@ -1,4 +1,4 @@
-# mechanics-v3 — StS2 多人机制卷（per-player-view 系列）
+# mechanics-v3 - StS2 多人机制卷（per-player-view 系列）
 
 > 本目录承载从 sts2.dll v0.111.0 反编译源拆解出的**多人同步机制**知识。
 > 与 mechanics/（一代机制，编号 R 规则）区分：这里只放二代引擎多人行为的拆解。
@@ -14,6 +14,6 @@
 
 ## 使用方式
 
-- 写任何触碰事件/奖励/RNG 的 mod 代码前：过一遍卷内 §7 checklist。
-- 联机出现黑屏/断线：先查 §4 卡死语义与 §6 模式表对号入座。
+- 写任何触碰事件/奖励/RNG 的 mod 代码前：过一遍卷内 Sec 7 checklist。
+- 联机出现黑屏/断线：先查 Sec 4 卡死语义与 Sec 6 模式表对号入座。
 - 证据锚点在文末索引，全部指向 research/engine-dllsrc/ 可复核。

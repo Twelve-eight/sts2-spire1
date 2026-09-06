@@ -15,11 +15,11 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The City — Snake Plant (<c>com.megacrit.cardcrawl.monsters.city.SnakePlant</c>). 官方中文名：蛇花。
+/// StS1 The City - Snake Plant (<c>com.megacrit.cardcrawl.monsters.city.SnakePlant</c>). 官方中文名：蛇花。
 /// <para>
-/// Bytecode: HP 75-79, A7 78-82; CHOMPY_DMG 7 (A2 8) × 3 hits; SPORES = Frail 2 + Weak 2.
+/// Bytecode: HP 75-79, A7 78-82; CHOMPY_DMG 7 (A2 8) x 3 hits; SPORES = Frail 2 + Weak 2.
 /// usePreBattleAction: MalleablePower(3). getMove: A17 branch unreachable in StS2 (max A10);
-/// base script — r&lt;65 → lastTwoMoves(CHOMPY) ? SPORES : CHOMPY;
+/// base script - r&lt;65 -> lastTwoMoves(CHOMPY) ? SPORES : CHOMPY;
 /// else lastMove(SPORES) || lastMoveBefore(SPORES) ? CHOMPY : SPORES
 /// (vanilla intent label MOVES[0] "Chomp" is reused for the debuff turn).
 /// </para>
@@ -30,7 +30,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// count. If a shipped Malleable-style power ships later, swap the Apply call.
 /// </para>
 /// <para>
-/// Donor: <c>fogmog</c> — a rooted, plant-like creature with snapping maw tracks; closest visual
+/// Donor: <c>fogmog</c> - a rooted, plant-like creature with snapping maw tracks; closest visual
 /// match among shipped scenes for a stationary carnivorous plant.
 /// </para>
 /// </summary>
@@ -65,7 +65,7 @@ public sealed class SnakePlant : Spire1Monster
     public override async Task AfterAddedToRoom()
     {
         await base.AfterAddedToRoom();
-        // usePreBattleAction: ApplyPowerAction(new MalleablePower(this)) — see FLAG note.
+        // usePreBattleAction: ApplyPowerAction(new MalleablePower(this)) - see FLAG note.
         await PowerCmd.Apply<MetallicizePower>(new ThrowingPlayerChoiceContext(), base.Creature, MalleableAmount, base.Creature, null);
     }
 
@@ -78,7 +78,7 @@ public sealed class SnakePlant : Spire1Monster
         chompy.FollowUpState = branch;
         spores.FollowUpState = branch;
 
-        // r<65 → two Chompy turns in a row force Spores; otherwise Spores never repeats within the
+        // r<65 -> two Chompy turns in a row force Spores; otherwise Spores never repeats within the
         // previous two turns (lastMove || lastMoveBefore guard), so it alternates into Chompy.
         branch.AddState(spores, () => RollHundred() < 65 && LastTwoWere(chompy));
         branch.AddState(chompy, () => RollHundred() < 65);

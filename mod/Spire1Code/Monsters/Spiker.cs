@@ -20,9 +20,9 @@ namespace Spire1.Spire1Code.Monsters;
 /// <para>
 /// Bytecode: HP 42-56, A7 44-60; attackDmg 7 (A2 9), startingThorns 3 (A2 4), BUFF_AMT 2.
 /// thornsCount starts at 0 and increments on every BUFF_THORNS use.
-/// getMove: thornsCount &gt; 5 → ATTACK; else roll &lt; 50 &amp;&amp; !lastMove(ATTACK) → ATTACK;
-/// else → BUFF_THORNS. usePreBattleAction applies ThornsPower(startingThorns); the A17 tier
-/// (startingThorns + 3) is not modelled — StS2 has no AscensionLevel mapping for A17.
+/// getMove: thornsCount &gt; 5 -> ATTACK; else roll &lt; 50 &amp;&amp; !lastMove(ATTACK) -> ATTACK;
+/// else -> BUFF_THORNS. usePreBattleAction applies ThornsPower(startingThorns); the A17 tier
+/// (startingThorns + 3) is not modelled - StS2 has no AscensionLevel mapping for A17.
 /// takeTurn ATTACK = AnimateSlowAttack + SLASH_HORIZONTAL; BUFF_THORNS = thornsCount++ +
 /// ApplyPower(ThornsPower, 2).
 /// </para>
@@ -56,7 +56,7 @@ public sealed class Spiker : Spire1Monster
     protected override string DonorId => "spiny_toad";
 
     /// <summary>
-    /// usePreBattleAction: ApplyPowerAction(new ThornsPower(this, startingThorns)) — the
+    /// usePreBattleAction: ApplyPowerAction(new ThornsPower(this, startingThorns)) - the
     /// shipped <see cref="ThornsPower"/> is applied verbatim.
     /// </summary>
     public override async Task AfterAddedToRoom()
@@ -105,7 +105,7 @@ public sealed class Spiker : Spire1Monster
         return _subRoll.Value;
     }
 
-    // takeTurn ATTACK: AnimateSlowAttackAction + DamageAction(SLASH_HORIZONTAL) → slower
+    // takeTurn ATTACK: AnimateSlowAttackAction + DamageAction(SLASH_HORIZONTAL) -> slower
     // attack anim + slash hit vfx.
     private async Task AttackMove(IReadOnlyList<Creature> targets)
     {

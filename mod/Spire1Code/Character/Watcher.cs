@@ -8,9 +8,9 @@ using Spire1.Spire1Code.Relics;
 namespace Spire1.Spire1Code.Character;
 
 /// <summary>
-/// "StS1 - Watcher" — the vanilla Slay the Spire 1 Watcher as an additive StS2 character.
+/// "StS1 - Watcher" - the vanilla Slay the Spire 1 Watcher as an additive StS2 character.
 /// FLAG: StS2 has no Watcher visual, so <see cref="PlaceholderCharacterModel"/> uses
-/// PlaceholderID = "regent" (the StS2 Regent) as a DOCUMENTED SUBSTITUTE visual —
+/// PlaceholderID = "regent" (the StS2 Regent) as a DOCUMENTED SUBSTITUTE visual -
 /// the Watcher herself does not exist in the StS2 roster.
 /// FLAG: no Calm/Wrath/Divinity/Mantra stance API exists in StS2 v0.111.0; stance
 /// cards (Eruption, Vigilance) implement only their damage/Block and never fake stances.
@@ -45,7 +45,7 @@ public class Watcher : PlaceholderCharacterModel
         ModelDb.Card<Vigilance>(),
     ];
 
-    // Starting relic: Pure Water (2 Energy at the start of each combat) — mod class, ID SPIRE1-PURE_WATER.
+    // Starting relic: Pure Water (2 Energy at the start of each combat) - mod class, ID SPIRE1-PURE_WATER.
     public override IReadOnlyList<RelicModel> StartingRelics => [ModelDb.Relic<PureWater>()];
 
     public override CardPoolModel CardPool => ModelDb.CardPool<WatcherCardPool>();

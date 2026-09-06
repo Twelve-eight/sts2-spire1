@@ -7,7 +7,7 @@ using BaseLib.Utils;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Ironclad — Ascender's Bane (Curse). Unplayable. Ethereal. Cannot be removed (Eternal).
+/// StS1 Ironclad - Ascender's Bane (Curse). Unplayable. Ethereal. Cannot be removed (Eternal).
 /// Mirror of the base-game AscendersBane: Eternal/Unplayable/Ethereal and excluded from all
 /// random generation (only added by the Ascension modifier).
 /// </summary>

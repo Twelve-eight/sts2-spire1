@@ -6,7 +6,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 
 namespace Spire1.Spire1Code.Relics;
 
-/// <summary>StS1 — Magic Flower (Rare). Healing is 50% more effective.</summary>
+/// <summary>StS1 - Magic Flower (Rare). Healing is 50% more effective.</summary>
 public class MagicFlower : Spire1Relic, IHealAmountModifier
 {
     public override RelicRarity Rarity => RelicRarity.Rare;

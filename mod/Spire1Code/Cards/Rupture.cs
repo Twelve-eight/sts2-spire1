@@ -8,7 +8,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Rupture (Uncommon Power). Whenever you lose HP from a card, gain 1 Strength (2 upgraded).</summary>
+/// <summary>StS1 Ironclad - Rupture (Uncommon Power). Whenever you lose HP from a card, gain 1 Strength (2 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class Rupture() : Spire1Card(1, CardType.Power, CardRarity.Uncommon, TargetType.None)
 {

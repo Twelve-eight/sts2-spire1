@@ -10,7 +10,7 @@ using MegaCrit.Sts2.Core.Models;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Ironclad — Void (Status). Unplayable. Ethereal. When drawn, lose 1 Energy.
+/// StS1 Ironclad - Void (Status). Unplayable. Ethereal. When drawn, lose 1 Energy.
 /// Mirror of the base-game Void (AfterCardDrawn + PlayerCmd.LoseEnergy).
 /// </summary>
 [Pool(typeof(StatusCardPool))]

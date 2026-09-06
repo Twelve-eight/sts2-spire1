@@ -12,7 +12,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 — Scrap Ooze. A repeatable dig: each attempt costs HP (3, +1 per failed attempt) and has a
+/// StS1 - Scrap Ooze. A repeatable dig: each attempt costs HP (3, +1 per failed attempt) and has a
 /// chance to find a random relic (starting at 25%, +10% per failed attempt). Leaving ends the event.
 /// </summary>
 public class ScrapOoze : Spire1Event
@@ -62,7 +62,7 @@ public class ScrapOoze : Spire1Event
         await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(), Owner.Creature, _damage,
             ValueProp.Unblockable | ValueProp.Unpowered, null, null, null);
 
-        // StS1: success when miscRng.random(0, 99) >= 99 - relicObtainChance — i.e. probability
+        // StS1: success when miscRng.random(0, 99) >= 99 - relicObtainChance - i.e. probability
         // relicObtainChance/100. The port rolls Rng.NextInt(0, 100) < chance for the exact same odds.
         if (Rng.NextInt(0, 100) < _relicObtainChance)
         {

@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.Saves.Runs;
 namespace Spire1.Spire1Code.Relics;
 
 /// <summary>
-/// StS1 — N'loth's Hungry Face (event relic, from FaceTrader). The next non-Boss chest you open is "empty":
+/// StS1 - N'loth's Hungry Face (event relic, from FaceTrader). The next non-Boss chest you open is "empty":
 /// the first RELIC reward is removed from the chest (plus its Sapphire Key link), but the chest still pays
 /// its gold.
 ///
@@ -27,7 +27,7 @@ namespace Spire1.Spire1Code.Relics;
 /// (TreasureRoom.cs:47), which calls ShouldGenerateTreasure FIRST (TreasureRoomRelicSynchronizer.cs:105) and
 /// consumes the charge there, returning false so no relic is generated. The chest is opened later by the
 /// player (NTreasureRoom.cs:283-298); its DoTreasureRoomRewards (OneOffSynchronizer.cs:129) then sees the
-/// spent charge, returns true and pays the gold (PlayerCmd.GainGold at OneOffSynchronizer.cs:138) — exactly
+/// spent charge, returns true and pays the gold (PlayerCmd.GainGold at OneOffSynchronizer.cs:138) - exactly
 /// StS1's "gold yes, relic no". The charge is spent inside ShouldGenerateTreasure itself because
 /// AfterRoomEntered fires BEFORE BeginRelicPicking (TreasureRoom.cs:44 then :47) and AbstractModel has no
 /// room-exit hook to spend after the chest opens.
@@ -74,7 +74,7 @@ public class NlothsMask : Spire1Relic
     }
 
     // Veto-style gate (Hook.cs:2325-2334: any listener returning false wins). The charge is spent on the
-    // FIRST invocation for the owner — the room-entry relic pick (TreasureRoomRelicSynchronizer.cs:105,
+    // FIRST invocation for the owner - the room-entry relic pick (TreasureRoomRelicSynchronizer.cs:105,
     // driven by TreasureRoom.cs:47); the later chest-open gold call (OneOffSynchronizer.cs:129) then passes,
     // so the chest still pays gold and only the relic is suppressed.
     public override bool ShouldGenerateTreasure(Player player)

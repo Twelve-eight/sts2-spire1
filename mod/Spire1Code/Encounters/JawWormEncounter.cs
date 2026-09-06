@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Jaw Worm" weak encounter (<c>MonsterHelper.getEncounter("Jaw Worm")</c>, bytecode
-/// <c>new MonsterGroup(new JawWorm(0f, 25f))</c> — single monster).
+/// <c>new MonsterGroup(new JawWorm(0f, 25f))</c> - single monster).
 /// </summary>
 public sealed class JawWormEncounter : Spire1Encounter
 {

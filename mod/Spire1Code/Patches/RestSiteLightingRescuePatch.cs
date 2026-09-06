@@ -8,12 +8,12 @@ namespace Spire1.Spire1Code.Patches;
 /// 火堆黑屏通用救援（对所有幕生效，含原版/AFTP/自研）。
 /// <para>
 /// 引擎事实（dllsrc）：NRestSiteRoom._Ready 调 ActModel.CreateRestSiteBackground() 后立刻
-/// <c>control.GetNode&lt;Control&gt;("%RestSiteLighting")</c> —— 非 OrNull，场景实例化抛异常或缺
+/// <c>control.GetNode&lt;Control&gt;("%RestSiteLighting")</c> -- 非 OrNull，场景实例化抛异常或缺
 /// "%RestSiteLighting" 节点都会让整个火堆房间初始化失败 = 进入黑屏。AFTP 三幕使用自定义
 /// tscn（overgrowth/hive/glory_rest_site.tscn），在多人资产同步竞态下正是触发面。
 /// </para>
 /// <para>
-/// 双保险：Finalizer 捕获创建异常→用纯色暗底替代并记日志；Postfix 保证灯光节点必然存在。
+/// 双保险：Finalizer 捕获创建异常->用纯色暗底替代并记日志；Postfix 保证灯光节点必然存在。
 /// 全部为确定性视觉节点操作，无状态改动、无双端分歧风险。
 /// </para>
 /// </summary>
@@ -30,7 +30,7 @@ internal static class RestSiteLightingRescuePatch
 
         MainFile.Logger.Error(
             "[Spire1] rest-site background creation threw on "
-            + __instance.GetType().Name + " → substituting flat fallback. Cause: " + __exception.Message);
+            + __instance.GetType().Name + " -> substituting flat fallback. Cause: " + __exception.Message);
 
         __result = BuildFallback();
         return null; // 吞掉异常，房间继续初始化
@@ -44,7 +44,7 @@ internal static class RestSiteLightingRescuePatch
             return;
         }
 
-        MainFile.Logger.Warn("[Spire1] rest-site background missing %RestSiteLighting → injecting");
+        MainFile.Logger.Warn("[Spire1] rest-site background missing %RestSiteLighting -> injecting");
         // (2026-08-26 reverify fix) Owner + UniqueNameInOwner are REQUIRED for the %-path to
         // resolve (same recipe as RestSiteBackgroundPatch.cs:57-58): without them the injected
         // node is invisible to GetNode("%RestSiteLighting") and the rescue is a no-op.
@@ -64,7 +64,7 @@ internal static class RestSiteLightingRescuePatch
         dim.SetAnchorsPreset(Control.LayoutPreset.FullRect);
         root.AddChild(dim);
 
-        // Same % registration as EnsureLighting — BuildFallback is the Finalizer path and the
+        // Same % registration as EnsureLighting - BuildFallback is the Finalizer path and the
         // engine's very next line does GetNode("%RestSiteLighting") on this exact control.
         var lighting = new Control { Name = "RestSiteLighting" };
         root.AddChild(lighting);

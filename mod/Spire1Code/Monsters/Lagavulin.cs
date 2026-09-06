@@ -18,14 +18,14 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 Exordium — Lagavulin (<c>com.megacrit.cardcrawl.monsters.exordium.Lagavulin</c>).
+/// StS1 Exordium - Lagavulin (<c>com.megacrit.cardcrawl.monsters.exordium.Lagavulin</c>).
 /// <para>
 /// Bytecode (asleep elite variant): HP 109-111, A8 112-115; attackDmg 18 (A3 20);
-/// debuff -1 (A18 -2, dropped — see remarks); pre-battle GainBlock(8) + Metallicize(8).
+/// debuff -1 (A18 -2, dropped - see remarks); pre-battle GainBlock(8) + Metallicize(8).
 /// getMove: <c>!isOut</c> -&gt; SLEEP(5); <c>isOut</c> -&gt; <c>debuffTurnCount &gt;= 2</c> ? DEBUFF
 /// : (<c>lastTwoMoves(ATTACK)</c> ? DEBUFF : ATTACK).
 /// takeTurn SLEEP(5): <c>idleCount++</c>; when <c>idleCount &gt;= 3</c> set <c>isOutTriggered</c>,
-/// changeState("OPEN") and <c>SetMoveAction(ATTACK)</c> — so the first waking action is ATTACK,
+/// changeState("OPEN") and <c>SetMoveAction(ATTACK)</c> - so the first waking action is ATTACK,
 /// not DEBUFF. takeTurn ATTACK(3): <c>debuffTurnCount++</c> then 18 damage (BLUNT_HEAVY).
 /// takeTurn DEBUFF(1): <c>debuffTurnCount = 0</c> then Dexterity(-1) + Strength(-1) on the player.
 /// takeTurn STUN(4): nothing but the "Stunned!" text. changeState("OPEN"): <c>isOut = true</c> and
@@ -38,7 +38,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// The shell armour is our ported <see cref="MetallicizePower"/> (8), stripped in
 /// <see cref="OpenShell"/> exactly like vanilla's ReducePower. Damage waking uses the engine's
 /// <c>AfterDamageReceived</c> hook plus <c>SetMoveImmediate</c> (the engine's own SetMoveAction
-/// equivalent — it refreshes the shown intent), giving the vanilla wasted "Stunned!" turn.
+/// equivalent - it refreshes the shown intent), giving the vanilla wasted "Stunned!" turn.
 /// </para>
 /// <para>
 /// Ascension mapping: vanilla A8 HP tier -&gt; <c>ToughEnemies</c>, A3 damage tier -&gt;
@@ -57,7 +57,7 @@ public sealed class Lagavulin : Spire1Monster
     // attackDmg = 18; ascension >= 3 -> 20
     private int AttackDamage => AscensionHelper.GetValueIfAscension(AscensionLevel.DeadlyEnemies, 20, 18);
 
-    // debuff = -1 (vanilla A18 tier of -2 is not modelled — see type remarks)
+    // debuff = -1 (vanilla A18 tier of -2 is not modelled - see type remarks)
     private const int DebuffAmount = -1;
 
     // GainBlockAction(this, this, 8) + MetallicizePower(this, 8)
@@ -109,7 +109,7 @@ public sealed class Lagavulin : Spire1Monster
     }
 
     /// <summary>
-    /// Vanilla changeState("OPEN"): isOut = true and ReducePowerAction(Metallicize, 8) — the shell
+    /// Vanilla changeState("OPEN"): isOut = true and ReducePowerAction(Metallicize, 8) - the shell
     /// armour it gained pre-battle goes away the moment it comes out.
     /// </summary>
     private async Task OpenShell()
@@ -183,7 +183,7 @@ public sealed class Lagavulin : Spire1Monster
 
     private Task StunMove(IReadOnlyList<Creature> targets)
     {
-        // takeTurn STUN: TextAboveCreatureAction(STUNNED) only — the turn is wasted.
+        // takeTurn STUN: TextAboveCreatureAction(STUNNED) only - the turn is wasted.
         RecordMove(wasAttack: false);
         return Task.CompletedTask;
     }

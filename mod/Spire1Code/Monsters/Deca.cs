@@ -19,21 +19,21 @@ namespace Spire1.Spire1Code.Monsters;
 /// StS1 Act-3 boss "Deca" (<c>com.megacrit.cardcrawl.monsters.beyond.Deca</c>). 官方中文名：八体。
 /// <para>
 /// Bytecode: HP 250, A9 265; BEAM_DMG 10 (A4 12), BEAM_DAZE 2, PROTECT_BLOCK 16.
-/// Alternates between BEAM (2× beamDmg + 2 Dazed into discard) and SQUARE_OF_PROTECTION
-/// (all monsters +16 Block; A19 also +3 Plated Armor). isAttacking starts true — first turn BEAM.
+/// Alternates between BEAM (2x beamDmg + 2 Dazed into discard) and SQUARE_OF_PROTECTION
+/// (all monsters +16 Block; A19 also +3 Plated Armor). isAttacking starts true - first turn BEAM.
 /// </para>
 /// <para>
-/// Donor: <c>cubex_construct</c> — a cubic construct with a central eye; closest visual match for
+/// Donor: <c>cubex_construct</c> - a cubic construct with a central eye; closest visual match for
 /// Deca's box shape.
 /// </para>
 /// </summary>
 public sealed class Deca : Spire1Monster
 {
-    // HP 250, A9 → 265
+    // HP 250, A9 -> 265
     public override int MinInitialHp => AscensionHelper.GetValueIfAscension(AscensionLevel.ToughEnemies, 265, 250);
     public override int MaxInitialHp => MinInitialHp;
 
-    // BEAM_DMG = 10; ascension >= 4 → 12
+    // BEAM_DMG = 10; ascension >= 4 -> 12
     private int BeamDamage => AscensionHelper.GetValueIfAscension(AscensionLevel.DeadlyEnemies, 12, 10);
 
     // BEAM_DAZE_AMT = 2 (no ascension variant)
@@ -42,15 +42,15 @@ public sealed class Deca : Spire1Monster
     // PROTECT_BLOCK = 16 (no ascension variant)
     private const int ProtectBlock = 16;
 
-    // A19 → Plated Armor 3 on all monsters
+    // A19 -> Plated Armor 3 on all monsters
     private const int ProtectPlatedArmor = 3;
 
-    // ARTIFACT_AMT = 2 (A19 → 3)
+    // ARTIFACT_AMT = 2 (A19 -> 3)
     private int ArtifactAmount => AscensionHelper.GetValueIfAscension(AscensionLevel.DoubleBoss, 3, 2);
 
     protected override string DonorId => "cubex_construct";
 
-    // Vanilla field: isAttacking (starts true — first turn is BEAM).
+    // Vanilla field: isAttacking (starts true - first turn is BEAM).
     private bool _isAttacking;
 
     public override List<(string, string)>? Localization =>
@@ -62,7 +62,7 @@ public sealed class Deca : Spire1Monster
 
     protected override MonsterMoveStateMachine GenerateMoveStateMachine()
     {
-        // BEAM: 2 hits × beamDmg + 2 Dazed. Intent is ATTACK_DEBUFF in vanilla.
+        // BEAM: 2 hits x beamDmg + 2 Dazed. Intent is ATTACK_DEBUFF in vanilla.
         MoveState beam = new("BEAM_MOVE", BeamMove,
             new MultiAttackIntent(BeamDamage, 2), new StatusIntent(BeamDazeCount));
         // SQUARE_OF_PROTECTION: all monsters +16 Block (A19 +3 Plated Armor). Intent DEFEND / DEFEND_BUFF.
@@ -108,7 +108,7 @@ public sealed class Deca : Spire1Monster
     public override async Task BeforeCombatStart()
     {
         // usePreBattleAction: unsilence BGM + fadeOutAmbiance (skipped, audio paths are StS1-only)
-        // + ArtifactPower(2), A19→3. MarkBossAsSeen("DONUT") is an unlock-tracking call, skipped.
+        // + ArtifactPower(2), A19->3. MarkBossAsSeen("DONUT") is an unlock-tracking call, skipped.
         await PowerCmd.Apply<ArtifactPower>(
             new ThrowingPlayerChoiceContext(), base.Creature, ArtifactAmount, base.Creature, null);
     }

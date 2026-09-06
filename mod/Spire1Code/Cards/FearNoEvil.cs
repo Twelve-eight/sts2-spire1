@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Fear No Evil (Uncommon Attack). Deal 8 damage (11 upgraded); if the enemy intends to Attack,
+/// StS1 Watcher - Fear No Evil (Uncommon Attack). Deal 8 damage (11 upgraded); if the enemy intends to Attack,
 /// enter Calm. Intent is checked after the attack, matching the shipped GoForTheEyes, which implements the same
 /// "if the enemy intends to attack" clause.
 /// </summary>

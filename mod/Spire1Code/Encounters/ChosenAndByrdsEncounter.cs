@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Chosen and Byrds" strong encounter (<c>MonsterHelper.getEncounter("Chosen and Byrds")</c>,
-/// bytecode <c>new MonsterGroup(new Byrd(-170f, random(25,70)), new Chosen(80f, 0f))</c> —
+/// bytecode <c>new MonsterGroup(new Byrd(-170f, random(25,70)), new Chosen(80f, 0f))</c> -
 /// one <see cref="Byrd"/> plus one <see cref="Chosen"/>).
 /// </summary>
 public sealed class ChosenAndByrdsEncounter : Spire1Encounter

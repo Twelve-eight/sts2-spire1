@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Vault (Rare Skill, cost 3 / 2 upgraded). Take an extra turn after this one, then end your turn.
+/// StS1 Watcher - Vault (Rare Skill, cost 3 / 2 upgraded). Take an extra turn after this one, then end your turn.
 /// Exhaust.
 /// The extra turn uses the shipped AmbergrisPower: it is the game's extra-turn power (ShouldTakeExtraTurn while its
 /// counter is above 0, decrementing in AfterTakingExtraTurn), which CombatManager consults in its side-switch.

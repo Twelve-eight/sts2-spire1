@@ -20,15 +20,15 @@ namespace Spire1.Spire1Code.Monsters;
 /// Bytecode values: HP 20-24 (A7+: 21-25), Scratch 4 (A2+: 5), Angry 1 (A17+: 2) applied in
 /// <c>usePreBattleAction</c>. AI: <c>getMove</c> always rolls Scratch; <c>deathReact</c> switches
 /// the next move to Escape (byte 99) when an ally dies, unless already escaping. Reproduced here
-/// with a <see cref="ConditionalBranchState"/> flipped by the <see cref="BeforeDeath"/> hook —
+/// with a <see cref="ConditionalBranchState"/> flipped by the <see cref="BeforeDeath"/> hook -
 /// the branch is evaluated at the next roll, matching StS1's "next move becomes Escape" timing.
 /// </para>
 /// <para>
 /// Ascension mapping (StS2 exposes exactly two enemy-difficulty levels, ToughEnemies = A8 and
 /// DeadlyEnemies = A9, and <c>HasLevel</c> is <c>runLevel &gt;= (int)level</c>): StS1's low-tier
-/// bumps (A2 damage, A7 HP) map to those two shipped levels by kind — HP to
+/// bumps (A2 damage, A7 HP) map to those two shipped levels by kind - HP to
 /// <see cref="AscensionLevel.ToughEnemies"/>, damage to <see cref="AscensionLevel.DeadlyEnemies"/>,
-/// matching shipped monster convention — and StS1's A17 tier (Angry 2) maps to
+/// matching shipped monster convention - and StS1's A17 tier (Angry 2) maps to
 /// <see cref="AscensionLevel.DeadlyEnemies"/>, the highest enemy-difficulty level that exists.
 /// </para>
 /// </summary>
@@ -42,12 +42,12 @@ public sealed class GremlinWarrior : Spire1Monster
 
     private int ScratchDamage => AscensionHelper.GetValueIfAscension(AscensionLevel.DeadlyEnemies, 5, 4);
 
-    /// <summary>Borrows the shipped GremlinMerc scene — the largest of the three gremlin rigs.</summary>
+    /// <summary>Borrows the shipped GremlinMerc scene - the largest of the three gremlin rigs.</summary>
     protected override string DonorId => "gremlin_merc";
 
     /// <summary>
     /// The gremlin_merc rig ships <c>idle_loop</c>, <c>attack_single</c>, <c>attack_double</c>,
-    /// <c>hurt</c> and <c>die</c> (see shipped <c>GremlinMerc.GenerateAnimator</c>) — it has no
+    /// <c>hurt</c> and <c>die</c> (see shipped <c>GremlinMerc.GenerateAnimator</c>) - it has no
     /// plain <c>attack</c> animation, which is what <see cref="MonsterModel.GenerateAnimator"/>
     /// would ask for by default, so the "Attack" trigger is remapped onto <c>attack_single</c>.
     /// Without this the attack animation silently degrades to a logged warning.

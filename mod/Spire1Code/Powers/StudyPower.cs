@@ -11,7 +11,7 @@ using Spire1.Spire1Code.Cards;
 namespace Spire1.Spire1Code.Powers;
 
 /// <summary>
-/// StS1 Watcher — Study. At the end of the owner's turn, shuffle Insight cards (one per stack) into the draw pile.
+/// StS1 Watcher - Study. At the end of the owner's turn, shuffle Insight cards (one per stack) into the draw pile.
 /// </summary>
 public class StudyPower : CustomPowerModel
 {

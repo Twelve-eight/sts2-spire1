@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Immolate (Rare). Deal 21 damage to ALL enemies; add a Burn into your discard pile (28 upgraded).</summary>
+/// <summary>StS1 Ironclad - Immolate (Rare). Deal 21 damage to ALL enemies; add a Burn into your discard pile (28 upgraded).</summary>
 public class Immolate() : Spire1Card(2, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(21, ValueProp.Move)];

@@ -12,7 +12,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Powers;
 
 /// <summary>
-/// StS1 — Plated Armor (<c>com.megacrit.cardcrawl.powers.PlatedArmorPower</c>):
+/// StS1 - Plated Armor (<c>com.megacrit.cardcrawl.powers.PlatedArmorPower</c>):
 /// at the end of your turn gain Block equal to this power's amount; lose 1 stack whenever you
 /// take unblocked damage. Applied with 14 stacks by <see cref="Monsters.ShelledParasite"/>,
 /// whose shell-break stun triggers once the stacks run out.

@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Powers;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Choke (Uncommon Attack). Deal 12 damage. Whenever you play a card this turn, the enemy loses 3 HP (5 upgraded).</summary>
+/// <summary>StS1 Silent - Choke (Uncommon Attack). Deal 12 damage. Whenever you play a card this turn, the enemy loses 3 HP (5 upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class Choke() : Spire1Card(2, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {

@@ -76,8 +76,8 @@ internal static class SharedCardReuse
         typeof(Sts2Cards.Headbutt),       // 1E, 9 dmg (+2), place discard card on draw top
         typeof(Sts2Cards.IronWave),       // 1E, 5 dmg & 5 block (+3 each)
         typeof(Sts2Cards.PommelStrike),   // 1E, 9 dmg (+2), draw 1 (+1)
-        // R6 (2026-09-06, CODE-REVIEW §R6): three engine twins verified field-by-field vs the
-        // jar (cost/base/upgrade delta/keywords/target/rarity ALL match — evidence in
+        // R6 (2026-09-06, CODE-REVIEW Sec R6): three engine twins verified field-by-field vs the
+        // jar (cost/base/upgrade delta/keywords/target/rarity ALL match - evidence in
         // mod/_staging/R6-nine-twins-verdict.md).
         typeof(Sts2Cards.Hemokinesis),    // 1E, 15 dmg (+5), lose 2 HP
         typeof(Sts2Cards.Offering),       // 0E, lose 6 HP, 2 Energy, draw 3 (+2), Exhaust
@@ -87,7 +87,7 @@ internal static class SharedCardReuse
         typeof(Sts2Cards.Barricade),
         typeof(Sts2Cards.BattleTrance),
         typeof(Sts2Cards.Bloodletting),
-        typeof(Sts2Cards.Bludgeon),         // StS1=RARE vs StS2=Uncommon → RARITY-DRIFT TWIN (inject own, see Register)
+        typeof(Sts2Cards.Bludgeon),         // StS1=RARE vs StS2=Uncommon -> RARITY-DRIFT TWIN (inject own, see Register)
         typeof(Sts2Cards.BurningPact),
         typeof(Sts2Cards.DarkEmbrace),
         typeof(Sts2Cards.Feed),
@@ -108,25 +108,25 @@ internal static class SharedCardReuse
     ];
 
     /// <summary>Shipped StS2 cards identical to their StS1 Silent counterparts (same A-group;
-    /// same 8-Common contract — our own Silent commons also number only 6).</summary>
+    /// same 8-Common contract - our own Silent commons also number only 6).</summary>
     private static readonly System.Type[] SilentReuse =
     [
         // Commons
         typeof(Sts2Cards.Backflip),       // 1E, 5 block (+3), draw 2
         // BladeDance EXCLUDED (re-verify 2026-08-24): shipped version self-exhausts
-        // (CanonicalKeywords => [Exhaust]) while StS1's does not (jar: zero exhaust) —
+        // (CanonicalKeywords => [Exhaust]) while StS1's does not (jar: zero exhaust) -
         // B-group drift; our own Cards/BladeDance.cs serves in SilentCardPool instead.
         typeof(Sts2Cards.CloakAndDagger), // 1E, 6 block, add 1 Shiv (+1)
         typeof(Sts2Cards.DaggerSpray),    // 1E, 4 dmg to ALL, twice
         typeof(Sts2Cards.DaggerThrow),    // 1E, 9 dmg, draw 1, discard 1
-        typeof(Sts2Cards.DeadlyPoison),   // 1E, apply 5 Poison (+2) — NO exhaust either side
-        typeof(Sts2Cards.Deflect),        // 0E, 4 block (+3) — jar-arbitrated
+        typeof(Sts2Cards.DeadlyPoison),   // 1E, apply 5 Poison (+2) - NO exhaust either side
+        typeof(Sts2Cards.Deflect),        // 0E, 4 block (+3) - jar-arbitrated
         typeof(Sts2Cards.DodgeAndRoll),   // 1E, 4 block (+2), gain equal block next turn
         typeof(Sts2Cards.PiercingWail),   // 1E, enemies lose 6 Str this turn (+2), Exhaust
         typeof(Sts2Cards.Prepared),       // 0E, draw 1 discard 1 (+2/+2)
         typeof(Sts2Cards.Slice),
         typeof(Sts2Cards.Accuracy),
-        typeof(Sts2Cards.Acrobatics),       // StS1=COMMON vs StS2=Uncommon → RARITY-DRIFT TWIN (inject own, see Register)
+        typeof(Sts2Cards.Acrobatics),       // StS1=COMMON vs StS2=Uncommon -> RARITY-DRIFT TWIN (inject own, see Register)
         typeof(Sts2Cards.Adrenaline),
         typeof(Sts2Cards.Afterimage),
         typeof(Sts2Cards.Alchemize),
@@ -147,7 +147,7 @@ internal static class SharedCardReuse
         typeof(Sts2Cards.Malaise),
         typeof(Sts2Cards.Nightmare),
         typeof(Sts2Cards.NoxiousFumes),
-        typeof(Sts2Cards.Predator),         // StS1=UNCOMMON vs StS2=Common → RARITY-DRIFT TWIN (inject own, see Register)
+        typeof(Sts2Cards.Predator),         // StS1=UNCOMMON vs StS2=Common -> RARITY-DRIFT TWIN (inject own, see Register)
         typeof(Sts2Cards.StormOfSteel),
         typeof(Sts2Cards.ToolsOfTheTrade),          // 0E, 6 dmg (+3)
     ];
@@ -170,7 +170,7 @@ internal static class SharedCardReuse
         {
             // 纯一代池：角色池 = 自研实现类（一代卡面），覆盖全部稀有度。
             // 同名实现类以 [Pool(Spire1LegacyPool)] 退役，这里动态加入角色池；
-            // 官方二代卡（无自研孪生的）在 pure 模式下不注入——缺失由 RewardClampPatch 钳制兜底。
+            // 官方二代卡（无自研孪生的）在 pure 模式下不注入--缺失由 RewardClampPatch 钳制兜底。
             // 历史教训（2026-08-25）：此前 pure 分支只注入 Common（10 张），稀有度带宽=0，
             // 摇中 Uncommon/Rare 时候选为空，DingyRug 把无色池并入后奖励全部无色。
             AddOwnImplementations(typeof(Spire1CardPool), IroncladReuse);
@@ -179,7 +179,7 @@ internal static class SharedCardReuse
             return;
         }
         // (2026-08-27 fix) Rarity-drift twins: StS2 rebalanced these cards' rarity vs StS1
-        // (Bludgeon RARE→Uncommon, Acrobatics COMMON→Uncommon, Predator UNCOMMON→Common).
+        // (Bludgeon RARE->Uncommon, Acrobatics COMMON->Uncommon, Predator UNCOMMON->Common).
         // Injecting the shipped version would leak StS2 balance into the StS1 layer (user
         // obtained an Uncommon Bludgeon on SPIRE1-IRONCLAD). For these three, resolve to our
         // own StS1-faithful implementation instead; all other twins inject the shipped card.
@@ -232,27 +232,27 @@ internal static class SharedCardReuse
                 ModHelper.AddModelToPool(pool, own);
                 return;
             }
-            // 漂移条目解析不到我方实现类 = 静默注入漂移版，不可接受——显式报错。
-            MainFile.Logger.Error($"[Spire1] SharedCardReuse: drift twin {twin.Name} has no own implementation — injecting shipped (drifted) version. THIS IS A BUG.");
+            // 漂移条目解析不到我方实现类 = 静默注入漂移版，不可接受--显式报错。
+            MainFile.Logger.Error($"[Spire1] SharedCardReuse: drift twin {twin.Name} has no own implementation - injecting shipped (drifted) version. THIS IS A BUG.");
         }
         ModHelper.AddModelToPool(pool, twin);
     }
 
-    /// <summary>官方二代改过稀有度（vs StS1）的孪生条目——注入我方忠实版。</summary>
+    /// <summary>官方二代改过稀有度（vs StS1）的孪生条目--注入我方忠实版。</summary>
     private static readonly HashSet<string> RarityDriftTwins =
     [
-        "Bludgeon",    // StS1 RARE → StS2 Uncommon
-        "Acrobatics",  // StS1 COMMON → StS2 Uncommon
-        "Predator",    // StS1 UNCOMMON → StS2 Common
+        "Bludgeon",    // StS1 RARE -> StS2 Uncommon
+        "Acrobatics",  // StS1 COMMON -> StS2 Uncommon
+        "Predator",    // StS1 UNCOMMON -> StS2 Common
     ];
 
-    /// <summary>R5（2026-09-06 审阅，docs/CODE-REVIEW-20260904.md §R5）：经 jar↔引擎
-    /// 三方审计证伪的"逐字段一致"孪生——升级通道或基伤与 StS1 不同，注入 shipped
+    /// <summary>R5（2026-09-06 审阅，docs/CODE-REVIEW-20260904.md Sec R5）：经 jar<->引擎
+    /// 三方审计证伪的"逐字段一致"孪生--升级通道或基伤与 StS1 不同，注入 shipped
     /// 版会漏二代平衡进一代层。我方忠实类已在 Spire1LegacyPool（见 Cards/ 同名文件），
     /// 此处改注入我方版（ResolveOwnImplementation）。</summary>
     private static readonly HashSet<string> FieldDriftTwins =
     [
-        // Claw：StS1 升级 +2 伤（3→5）；StS2 升级 Damage+1/Increase+1（4/+3）
+        // Claw：StS1 升级 +2 伤（3->5）；StS2 升级 Damage+1/Increase+1（4/+3）
         "Claw",
         // Barrage：StS1 基伤 4；StS2 基伤 5
         "Barrage",
@@ -278,7 +278,7 @@ internal static class SharedCardReuse
 
     private static System.Type? ResolveOwnImplementation(System.Type twin)
     {
-        // 官方类 Sts2Cards.X → 自研类 Spire1.Spire1Code.Cards.X
+        // 官方类 Sts2Cards.X -> 自研类 Spire1.Spire1Code.Cards.X
         var name = twin.Name;
         var own = typeof(SharedCardReuse).Assembly.GetType("Spire1.Spire1Code.Cards." + name);
         return own != null && own.BaseType?.Name == "Spire1Card" ? own : null;

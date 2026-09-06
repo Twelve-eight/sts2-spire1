@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Extensions;
 namespace Spire1.Spire1Code.Powers;
 
 /// <summary>
-/// StS1 Watcher — Simmering Fury (the card is named Simmering Fury, the StS1 power is "Wrath Next Turn").
+/// StS1 Watcher - Simmering Fury (the card is named Simmering Fury, the StS1 power is "Wrath Next Turn").
 /// At the start of the owner's next turn, enter Wrath and draw cards equal to this power's amount, then expire.
 /// </summary>
 public class SimmeringFuryPower : CustomPowerModel

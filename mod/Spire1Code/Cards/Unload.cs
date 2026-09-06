@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Unload (Rare Attack). Deal 14 damage (18 upgraded); discard all non-Attack cards in your hand.</summary>
+/// <summary>StS1 Silent - Unload (Rare Attack). Deal 14 damage (18 upgraded); discard all non-Attack cards in your hand.</summary>
 [Pool(typeof(SilentCardPool))]
 public class Unload() : Spire1Card(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
 {

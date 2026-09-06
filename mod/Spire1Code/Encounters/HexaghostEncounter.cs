@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Hexaghost" boss (<c>MonsterHelper.getEncounter("Hexaghost")</c>, bytecode
-/// <c>new MonsterGroup(new Hexaghost())</c> — single monster). StS1 pays a fixed 100 gold
+/// <c>new MonsterGroup(new Hexaghost())</c> - single monster). StS1 pays a fixed 100 gold
 /// (<c>AbstractRoom</c>: <c>100 + miscRng.random(-5, 5)</c>), so the range is pinned to
 /// 95..105 instead of the shipped RoomType.Boss default of 100..100.
 /// </summary>

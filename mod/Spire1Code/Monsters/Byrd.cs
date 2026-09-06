@@ -15,15 +15,15 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The City — Byrd (<c>com.megacrit.cardcrawl.monsters.city.Byrd</c>). 官方中文名：异鸟。
+/// StS1 The City - Byrd (<c>com.megacrit.cardcrawl.monsters.city.Byrd</c>). 官方中文名：异鸟。
 /// <para>
 /// Bytecode: HP 25-31, A7 26-33; PECK_DMG 1, PECK_COUNT 5 (A2 6), SWOOP_DMG 12 (A2 14),
-/// HEADBUTT_DMG 3 (damage[2], only referenced by the intent — the stunned turn deals no damage),
-/// CAW_STR 1, flightAmt 3 (vanilla A17 tier 4 unreachable in StS2 — dropped).
-/// usePreBattleAction: FlightPower(flightAmt). getMove: first move — 37.5% CAW else PECK.
-/// While flying: r&lt;50 → lastTwoMoves(SWOOP) ? (40% SWOOP : CAW) : PECK;
-/// 50≤r&lt;70 → lastMove(SWOOP) ? (37.5% CAW : PECK) : SWOOP;
-/// r≥70 → lastMove(CAW) ? (28.57% SWOOP : PECK) : CAW.
+/// HEADBUTT_DMG 3 (damage[2], only referenced by the intent - the stunned turn deals no damage),
+/// CAW_STR 1, flightAmt 3 (vanilla A17 tier 4 unreachable in StS2 - dropped).
+/// usePreBattleAction: FlightPower(flightAmt). getMove: first move - 37.5% CAW else PECK.
+/// While flying: r&lt;50 -> lastTwoMoves(SWOOP) ? (40% SWOOP : CAW) : PECK;
+/// 50<=r&lt;70 -> lastMove(SWOOP) ? (37.5% CAW : PECK) : SWOOP;
+/// r>=70 -> lastMove(CAW) ? (28.57% SWOOP : PECK) : CAW.
 /// When Flight depletes (mid player turn), changeState("GROUNDED") forces the STUNNED move;
 /// after the wasted stunned turn the grounded bird SWOOPs every turn.
 /// </para>
@@ -36,7 +36,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// <see cref="Spire1Monster.SetMoveImmediate"/> (Lagavulin wake idiom).
 /// </para>
 /// <para>
-/// Donor: <c>byrdpip</c> — the shipped small bird creature; closest visual match among the 121
+/// Donor: <c>byrdpip</c> - the shipped small bird creature; closest visual match among the 121
 /// shipped scenes for a flapping nuisance bird.
 /// </para>
 /// </summary>
@@ -79,12 +79,12 @@ public sealed class Byrd : Spire1Monster
     public override async Task AfterAddedToRoom()
     {
         await base.AfterAddedToRoom();
-        // usePreBattleAction: ApplyPowerAction(new FlightPower(this, flightAmt)) — see FLAG note.
+        // usePreBattleAction: ApplyPowerAction(new FlightPower(this, flightAmt)) - see FLAG note.
         await PowerCmd.Apply<IntangiblePower>(new ThrowingPlayerChoiceContext(), base.Creature, FlightAmount, base.Creature, null);
     }
 
     /// <summary>
-    /// Vanilla FlightPower depletion → changeState("GROUNDED"): setMove(STUNNED) + createIntent,
+    /// Vanilla FlightPower depletion -> changeState("GROUNDED"): setMove(STUNNED) + createIntent,
     /// i.e. the landing is telegraphed immediately and the next monster turn is wasted.
     /// </summary>
     public override async Task AfterDamageReceived(PlayerChoiceContext choiceContext, Creature target,
@@ -128,21 +128,21 @@ public sealed class Byrd : Spire1Monster
         caw.FollowUpState = branch;
         landStun.FollowUpState = branch;
 
-        // Predicate order reproduces vanilla priority: landed → forced stun, then permanent ground
+        // Predicate order reproduces vanilla priority: landed -> forced stun, then permanent ground
         // swooping, then the opening roll, then the three flying roll bands.
         branch.AddState(landStun, () => _grounded && !_landStunPerformed);
         branch.AddState(swoop, () => _grounded);
         branch.AddState(caw, () => !_everMoved && TurnDraw(0.375f));
         branch.AddState(peck, () => !_everMoved);
-        // Band A (roll < 50): last two were SWOOP → 40% SWOOP else CAW; otherwise PECK.
+        // Band A (roll < 50): last two were SWOOP -> 40% SWOOP else CAW; otherwise PECK.
         branch.AddState(swoop, () => RollHundred() < 50 && LastTwoWere(swoop) && TurnDraw(0.4f));
         branch.AddState(caw, () => RollHundred() < 50 && LastTwoWere(swoop));
         branch.AddState(peck, () => RollHundred() < 50);
-        // Band B (50 ≤ roll < 70): last was SWOOP → 37.5% CAW else PECK; otherwise SWOOP.
+        // Band B (50 <= roll < 70): last was SWOOP -> 37.5% CAW else PECK; otherwise SWOOP.
         branch.AddState(caw, () => RollHundred() < 70 && LastWas(swoop) && TurnDraw(0.375f));
         branch.AddState(peck, () => RollHundred() < 70 && LastWas(swoop));
         branch.AddState(swoop, () => RollHundred() < 70);
-        // Band C (roll ≥ 70): last was CAW → 28.57% SWOOP else PECK; otherwise CAW.
+        // Band C (roll >= 70): last was CAW -> 28.57% SWOOP else PECK; otherwise CAW.
         branch.AddState(swoop, () => LastWas(caw) && TurnDraw(0.2857f));
         branch.AddState(peck, () => LastWas(caw));
         branch.AddState(caw, () => true);
@@ -176,7 +176,7 @@ public sealed class Byrd : Spire1Monster
 
     private Task LandStunMove(IReadOnlyList<Creature> targets)
     {
-        // takeTurn HEADBUTT/STUNNED: head_lift animation + "Stunned!" text only — the turn is wasted.
+        // takeTurn HEADBUTT/STUNNED: head_lift animation + "Stunned!" text only - the turn is wasted.
         _everMoved = true;
         _landStunPerformed = true;
         return Task.CompletedTask;

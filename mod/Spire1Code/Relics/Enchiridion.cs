@@ -8,7 +8,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 namespace Spire1.Spire1Code.Relics;
 
 /// <summary>
-/// StS1 — Enchiridion (Event; one of the three mutually exclusive Cursed Tome rewards).
+/// StS1 - Enchiridion (Event; one of the three mutually exclusive Cursed Tome rewards).
 /// At the start of each combat, add a random Power card into your hand. It costs 0 for that turn.
 /// </summary>
 public class Enchiridion : Spire1Relic
@@ -52,7 +52,7 @@ public class Enchiridion : Spire1Relic
         // CardFactory.GetDistinctForCombat (CardFactory.cs:119-129) is the shipped entry point for
         // in-combat card generation, used by both Crossbow.cs:31 and Discovery.cs:27. It routes through
         // CardFactory.FilterForCombat (CardFactory.cs:159-162), which drops cards whose
-        // CanBeGeneratedInCombat is false and drops the Basic, Ancient and Event rarities — the StS2
+        // CanBeGeneratedInCombat is false and drops the Basic, Ancient and Event rarities - the StS2
         // spelling of the same exclusions StS1 applies inside returnTrulyRandomCardInCombat. Asking for one
         // card is the direct analogue of StS1's single returnTrulyRandomCardInCombat call.
         // The deck-reward path (CardCreationOptions / CreateForReward) is deliberately NOT used: it rolls
@@ -69,11 +69,11 @@ public class Enchiridion : Spire1Relic
         foreach (CardModel card in generated)
         {
             // SetToFreeThisTurn (CardModel.cs:1267-1271) is the correct member, NOT SetToFreeThisCombat
-            // (CardModel.cs:1273-1277): StS1 calls setCostForTurn(0) — per TURN — and the official English
+            // (CardModel.cs:1273-1277): StS1 calls setCostForTurn(0) - per TURN - and the official English
             // description says "It costs 0 for that turn." It resolves to
             // EnergyCost.SetThisTurnOrUntilPlayed(0), whose modifier is dropped by EndOfTurnCleanup
             // (CardEnergyCost.cs:331-335). Applying it here, before turn 1 exists, therefore keeps the card
-            // free for the whole of turn 1 and expires at that turn's end — exactly vanilla.
+            // free for the whole of turn 1 and expires at that turn's end - exactly vanilla.
             // StS1's explicit `if (c.cost != -1)` guard needs no counterpart: GetWithModifiers returns _base
             // early when CostsX (CardEnergyCost.cs:105-108), so the modifier is inert on X-cost Powers and
             // they keep their cost by construction, just as in StS1.

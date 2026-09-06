@@ -11,7 +11,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Powers;
 
 /// <summary>
-/// StS1 Watcher — Wave of the Hand. Whenever the owner gains Block this turn, apply Weak (this power's amount) to
+/// StS1 Watcher - Wave of the Hand. Whenever the owner gains Block this turn, apply Weak (this power's amount) to
 /// ALL enemies. Expires at the end of the owner's turn.
 /// Block-gain hook verified at .tmp/dllsrc/MegaCrit.Sts2.Core.Models/AbstractModel.cs:330
 /// (dispatched from MegaCrit.Sts2.Core.Commands/CreatureCmd.cs:699 via Hooks/Hook.cs:143); shipped user

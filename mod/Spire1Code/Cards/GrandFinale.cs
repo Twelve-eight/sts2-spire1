@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Grand Finale (Rare Attack). Can only be played if your draw pile is empty; deal 50 damage to ALL enemies (60 upgraded).</summary>
+/// <summary>StS1 Silent - Grand Finale (Rare Attack). Can only be played if your draw pile is empty; deal 50 damage to ALL enemies (60 upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class GrandFinale() : Spire1Card(0, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies)
 {

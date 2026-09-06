@@ -24,10 +24,10 @@ namespace Spire1.Spire1Code.Monsters;
 /// Exact <c>getMove</c>, reproduced state-for-state:
 /// <list type="number">
 /// <item>First turn (<c>!usedBellow</c>) is always BELLOW.</item>
-/// <item>A18+: if neither of the last two moves was SKULL_BASH → SKULL_BASH; otherwise fall into
+/// <item>A18+: if neither of the last two moves was SKULL_BASH -> SKULL_BASH; otherwise fall into
 /// the shared tail.</item>
-/// <item>Below A18: <c>roll &lt; 33</c> → SKULL_BASH; otherwise fall into the shared tail.</item>
-/// <item>Shared tail: if the last two moves were both BULL_RUSH → SKULL_BASH, else BULL_RUSH.</item>
+/// <item>Below A18: <c>roll &lt; 33</c> -> SKULL_BASH; otherwise fall into the shared tail.</item>
+/// <item>Shared tail: if the last two moves were both BULL_RUSH -> SKULL_BASH, else BULL_RUSH.</item>
 /// </list>
 /// The 33% roll is a <see cref="RandomBranchState"/> with weights 33/67 and no repeat limit - StS1
 /// imposes none, the anti-repeat behaviour comes solely from the shared tail.
@@ -35,8 +35,8 @@ namespace Spire1.Spire1Code.Monsters;
 /// <see cref="EnragePower"/>, so that power is reused rather than recreated.
 /// </para>
 /// <para>
-/// Ascension mapping: HP → <see cref="AscensionLevel.ToughEnemies"/> (A8); damage plus the StS1 A18
-/// tier (Bellow 3 and the deterministic Skull Bash branch) → <see cref="AscensionLevel.DeadlyEnemies"/>
+/// Ascension mapping: HP -> <see cref="AscensionLevel.ToughEnemies"/> (A8); damage plus the StS1 A18
+/// tier (Bellow 3 and the deterministic Skull Bash branch) -> <see cref="AscensionLevel.DeadlyEnemies"/>
 /// (A9), the highest enemy-difficulty level StS2 exposes.
 /// </para>
 /// </summary>

@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Reflex (Uncommon Skill). Unplayable. If this card is discarded from your hand, draw 2 cards (3 upgraded).</summary>
+/// <summary>StS1 Silent - Reflex (Uncommon Skill). Unplayable. If this card is discarded from your hand, draw 2 cards (3 upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class Reflex() : Spire1Card(-2, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 {

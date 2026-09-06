@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — All-Out Attack (Uncommon Attack). Deal 10 damage to ALL enemies (14 upgraded), then discard 1 card at random.</summary>
+/// <summary>StS1 Silent - All-Out Attack (Uncommon Attack). Deal 10 damage to ALL enemies (14 upgraded), then discard 1 card at random.</summary>
 [Pool(typeof(SilentCardPool))]
 public class AllOutAttack() : Spire1Card(1, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies)
 {

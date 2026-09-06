@@ -11,12 +11,12 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 namespace Spire1.Spire1Code.Powers;
 
 /// <summary>
-/// StS1 <c>com.megacrit.cardcrawl.powers.FadingPower</c> — Transient's countdown. 官方中文名：消逝。
+/// StS1 <c>com.megacrit.cardcrawl.powers.FadingPower</c> - Transient's countdown. 官方中文名：消逝。
 /// <para>
 /// Vanilla duringTurn fires at the START of the owner's turn: at 1 stack it detonates and dies
 /// without acting; otherwise it decrements. A Fading 5 Transient therefore attacks four times
 /// and dies as its fifth turn begins. The escape uses the engine's <see cref="CreatureCmd.Escape"/>
-/// (same removal the mod's gremlins use) — no rewards, matching vanilla.
+/// (same removal the mod's gremlins use) - no rewards, matching vanilla.
 /// </para>
 /// </summary>
 public sealed class FadingPower : CustomPowerModel

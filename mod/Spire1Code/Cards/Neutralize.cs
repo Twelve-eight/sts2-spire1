@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Neutralize (Basic). Deal 3 damage, apply 1 Weak (4 / 2 upgraded).</summary>
+/// <summary>StS1 Silent - Neutralize (Basic). Deal 3 damage, apply 1 Weak (4 / 2 upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class Neutralize() : Spire1Card(0, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
 {

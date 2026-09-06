@@ -1,4 +1,4 @@
-# Watcher COMMON cards without stance dependency (11) — StS1 vanilla
+# Watcher COMMON cards without stance dependency (11) - StS1 vanilla
 
 All numbers extracted from the shipped StS1 jar (`desktop-1.0.jar`) bytecode. Use these EXACT values. Pool attribute for every card: `[Pool(typeof(WatcherCardPool))]`.
 
@@ -57,7 +57,7 @@ All numbers extracted from the shipped StS1 jar (`desktop-1.0.jar`) bytecode. Us
 - upgrade deltas: upgradeDamage=1, upgradeBlock=1, upgradeMagicNumber=1
 - official description: `Scry !M!. NL Gain !B! Block. NL Deal !D! damage.`
 - StS2 name collision: no -> plain title "Just Lucky"
-- IMPL: Skill-like Attack cost 0: Scry 1 (+1), then gain 2 Block (+1), then deal 3 damage (+1) — in that order. Scry via BaseLib: `await ScryCmd.Execute(choiceContext, Owner, DynamicVars.Scry().IntValue);` and declare the displayed value with BaseLib's `ScryVar` (see research/BaseLib-StS2/Cards/Variables/ScryVar.cs and Commands/ScryCmd.cs).
+- IMPL: Skill-like Attack cost 0: Scry 1 (+1), then gain 2 Block (+1), then deal 3 damage (+1) - in that order. Scry via BaseLib: `await ScryCmd.Execute(choiceContext, Owner, DynamicVars.Scry().IntValue);` and declare the displayed value with BaseLib's `ScryVar` (see research/BaseLib-StS2/Cards/Variables/ScryVar.cs and Commands/ScryCmd.cs).
 
 ## PressurePoints  (class `PressurePoints`, loc key `SPIRE1-PRESSURE_POINTS`)
 - StS1 id `PathToVictory`, official name `Pressure Points`
@@ -65,7 +65,7 @@ All numbers extracted from the shipped StS1 jar (`desktop-1.0.jar`) bytecode. Us
 - upgrade deltas: upgradeMagicNumber=3
 - official description: `Apply !M! *Mark. NL ALL enemies lose HP equal to their *Mark.`
 - StS2 name collision: no -> plain title "Pressure Points"
-- IMPL: Skill cost 1, target enemy: apply 8 Mark (+3), then ALL enemies lose HP equal to their own Mark. StS2 has NO Mark power, so write `mod/Spire1Code/Powers/MarkPower.cs` (Debuff, Counter) as a plain counter; the card applies it to the target and then, for every hittable enemy with MarkPower, deals HP loss equal to that enemy's Mark amount via CreatureCmd.Damage(..., ValueProp.Unblockable | ValueProp.Unpowered, ...). Mark persists across turns in StS1 — do not expire it.
+- IMPL: Skill cost 1, target enemy: apply 8 Mark (+3), then ALL enemies lose HP equal to their own Mark. StS2 has NO Mark power, so write `mod/Spire1Code/Powers/MarkPower.cs` (Debuff, Counter) as a plain counter; the card applies it to the target and then, for every hittable enemy with MarkPower, deals HP loss equal to that enemy's Mark amount via CreatureCmd.Damage(..., ValueProp.Unblockable | ValueProp.Unpowered, ...). Mark persists across turns in StS1 - do not expire it.
 
 ## Protect  (class `Protect`, loc key `SPIRE1-PROTECT`)
 - StS1 id `Protect`, official name `Protect`

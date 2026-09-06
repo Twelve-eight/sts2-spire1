@@ -27,7 +27,7 @@ public sealed class ThreeShapesEncounter : Spire1Encounter
 
     protected override IReadOnlyList<(MonsterModel, string?)> GenerateMonsters()
     {
-        // spawnShapes: miscRng.random(0, size-1) per draw, then remove — no replacement.
+        // spawnShapes: miscRng.random(0, size-1) per draw, then remove - no replacement.
         List<MonsterModel> pool =
         [
             ModelDb.Monster<Repulsor>(),

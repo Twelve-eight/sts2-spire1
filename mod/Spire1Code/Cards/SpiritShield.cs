@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Spirit Shield (Rare Skill). Gain 3 Block (4 upgraded) for each card in your hand.
+/// StS1 Watcher - Spirit Shield (Rare Skill). Gain 3 Block (4 upgraded) for each card in your hand.
 /// The per-card value is the card's BlockVar so the printed number tracks the upgrade; the total is computed at play
 /// time (this card is already in the play pile, so it does not count itself, as in vanilla).
 /// </summary>

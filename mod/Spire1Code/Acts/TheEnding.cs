@@ -10,18 +10,18 @@ namespace Spire1.Spire1Code.Acts;
 /// <summary>
 /// StS1 Act 4, "The Ending" (<c>com.megacrit.cardcrawl.dungeons.TheEnding</c>).
 /// <para>
-/// Bytecode: <c>generateMonsters()</c> is EMPTY — vanilla The Ending has no normal monster,
+/// Bytecode: <c>generateMonsters()</c> is EMPTY - vanilla The Ending has no normal monster,
 /// elite or chest rooms; its fights are the two Spire Heart phases plus forced encounters.
 /// The StS2 map generator (<c>StandardActMap</c>) always assigns Monster points and
 /// <c>GenerateRooms</c> fills them from the encounter pools, so a faithful empty pool would
 /// produce empty combat rooms. Until the Death/Obeloth/Face encounters are ported, this act
 /// therefore reuses the standard act-3 room mix as a placeholder shell for the normal monster
-/// rooms — explicitly NOT vanilla-faithful, flagged here and in DEVLOG.
+/// rooms - explicitly NOT vanilla-faithful, flagged here and in DEVLOG.
 /// </para>
 /// <para>
 /// The two Ending fights land via <see cref="Spire1Encounter.IsValidForAct"/>:
 /// <see cref="ShieldAndSpearEncounter"/> (elite, act 4) and <see cref="CorruptHeartEncounter"/>
-/// (boss, act 4 — registered in <see cref="BossDiscoveryOrder"/> below). Normal monster rooms
+/// (boss, act 4 - registered in <see cref="BossDiscoveryOrder"/> below). Normal monster rooms
 /// still have no pool (vanilla The Ending has none), and the Death/Obeloth/Face events are not
 /// ported.
 /// </para>

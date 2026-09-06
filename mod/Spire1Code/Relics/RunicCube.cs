@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 
 namespace Spire1.Spire1Code.Relics;
 
-/// <summary>StS1 Ironclad — Runic Cube (Boss). Whenever you lose HP, draw 1 card.</summary>
+/// <summary>StS1 Ironclad - Runic Cube (Boss). Whenever you lose HP, draw 1 card.</summary>
 public class RunicCube : Spire1Relic
 {
     public override RelicRarity Rarity => RelicRarity.Ancient;

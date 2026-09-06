@@ -18,7 +18,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// Bytecode values: HP 10-14 (A7+: 11-15), Puncture 9 (A2+: 10). AI: <c>getMove</c> always rolls
 /// Puncture; after each Puncture, if <c>escapeNext</c> was set the next move becomes Escape
 /// (byte 99), otherwise Puncture repeats forever. <c>escapeNext</c> is only ever set by
-/// <c>deathReact</c> when an ally dies — same rule as Mad Gremlin.
+/// <c>deathReact</c> when an ally dies - same rule as Mad Gremlin.
 /// </para>
 /// </summary>
 public sealed class GremlinThief : Spire1Monster
@@ -31,13 +31,13 @@ public sealed class GremlinThief : Spire1Monster
 
     private int PunctureDamage => AscensionHelper.GetValueIfAscension(AscensionLevel.DeadlyEnemies, 10, 9);
 
-    /// <summary>Borrows the shipped SneakyGremlin scene — exact StS1 counterpart rig.</summary>
+    /// <summary>Borrows the shipped SneakyGremlin scene - exact StS1 counterpart rig.</summary>
     protected override string DonorId => "sneaky_gremlin";
 
     /// <summary>
     /// The sneaky_gremlin rig ships <c>awake_loop</c>, <c>spawn</c>, <c>attack</c>,
     /// <c>stunned_loop</c>, <c>wake_up</c>, <c>hurt_stunned</c>, <c>hurt_awake</c> and <c>die</c>
-    /// (shipped <c>SneakyGremlin.GenerateAnimator</c>) — it has no <c>idle_loop</c> or <c>hurt</c>,
+    /// (shipped <c>SneakyGremlin.GenerateAnimator</c>) - it has no <c>idle_loop</c> or <c>hurt</c>,
     /// which is what <see cref="MonsterModel.GenerateAnimator"/> asks for by default, so the idle
     /// and hit states are remapped onto the awake variants. This gremlin is never asleep in StS1.
     /// </summary>

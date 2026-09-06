@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Battle Hymn (Uncommon Power). At the start of each turn, add a Smite into your hand.
+/// StS1 Watcher - Battle Hymn (Uncommon Power). At the start of each turn, add a Smite into your hand.
 /// The upgrade only adds Innate; the Smite count stays 1.
 /// </summary>
 [Pool(typeof(WatcherCardPool))]

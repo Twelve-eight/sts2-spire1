@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Powers;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Corpse Explosion (Rare Skill). Apply 6 Poison (9 upgraded); when the enemy dies, deal damage equal to its Max HP to ALL enemies.</summary>
+/// <summary>StS1 Silent - Corpse Explosion (Rare Skill). Apply 6 Poison (9 upgraded); when the enemy dies, deal damage equal to its Max HP to ALL enemies.</summary>
 [Pool(typeof(SilentCardPool))]
 public class CorpseExplosion() : Spire1Card(2, CardType.Skill, CardRarity.Rare, TargetType.AnyEnemy)
 {

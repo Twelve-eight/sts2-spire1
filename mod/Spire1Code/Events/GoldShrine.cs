@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Cards;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 shrine — Golden Shrine. Pray for gold (100 gold, 50 at Ascension 15+), desecrate for 275 gold
+/// StS1 shrine - Golden Shrine. Pray for gold (100 gold, 50 at Ascension 15+), desecrate for 275 gold
 /// plus the Regret curse, or leave.
 /// </summary>
 public class GoldShrine : Spire1Event

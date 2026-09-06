@@ -462,7 +462,7 @@ StS1 color codes (`#r`, `#g`, `#b`, `#y`, `#p`) are StS1 markup - DELETE them to
 
 ### Official description strings (StS1 order; index 0 is the INITIAL page)
 0. `An odd creature with a hunched back sprouting several tentacles is scrounging through a pile of trash and debris in front of you. As you approach, he shuffles towards you in a non-threatening manner. NL "N'loth hungry. Feed N'loth."`
-1. `Holding the #yrelic out towards him, N’loth snatches it out of your hand with his tentacles, dislocates his jaw, and slurps down your offer in one quick gulp. NL He gives you a large, toothy grin as more tentacles appear from behind his cloak, these ones brandishing an impossibly neat looking box. He pushes it towards you until you take it.`
+1. `Holding the #yrelic out towards him, N'loth snatches it out of your hand with his tentacles, dislocates his jaw, and slurps down your offer in one quick gulp. NL He gives you a large, toothy grin as more tentacles appear from behind his cloak, these ones brandishing an impossibly neat looking box. He pushes it towards you until you take it.`
 2. `You shake your head. N'loth hunches even further and sighs, then scuttles away.`
 
 ---

@@ -14,7 +14,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 Exordium — FungiBeast (<c>com.megacrit.cardcrawl.monsters.exordium.FungiBeast</c>).
+/// StS1 Exordium - FungiBeast (<c>com.megacrit.cardcrawl.monsters.exordium.FungiBeast</c>).
 /// <para>
 /// Bytecode: HP 22-28, A2 24-28; BITE_DMG 6 (no ascension variant), GROW_STR 3 (A2 4).
 /// getMove roll r: r&lt;60: lastTwo==Bite ? Grow : Bite; else last==Grow ? Bite : Grow.
@@ -22,11 +22,11 @@ namespace Spire1.Spire1Code.Monsters;
 /// apply Vulnerable 2 to the player.
 /// </para>
 /// <para>
-/// Spore Cloud is ported as <see cref="SporeCloudPower"/> (our own CustomPowerModel — the engine
+/// Spore Cloud is ported as <see cref="SporeCloudPower"/> (our own CustomPowerModel - the engine
 /// ships no equivalent) hooked through the engine's <c>AfterDeath</c> power hook, the same
 /// mechanism shipped powers like SteamEruptionPower use for death triggers. The "battle not
 /// ending" guard is expressed with <c>ShouldStopCombatFromEnding => true</c>, which keeps the
-/// combat alive until the spores resolve — the engine-side equivalent of StS1's
+/// combat alive until the spores resolve - the engine-side equivalent of StS1's
 /// <c>isBattleEnding</c> check.
 /// </para>
 /// </summary>

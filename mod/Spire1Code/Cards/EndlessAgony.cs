@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Silent — Endless Agony (Uncommon Attack). Deal 4 damage (6 upgraded).
+/// StS1 Silent - Endless Agony (Uncommon Attack). Deal 4 damage (6 upgraded).
 /// Whenever you draw this card, add a copy of it into your hand. Exhaust.
 /// </summary>
 [Pool(typeof(SilentCardPool))]

@@ -7,7 +7,7 @@ namespace Spire1.Spire1Code.Encounters;
 /// StS1 "2 Louse" weak encounter (<c>MonsterHelper.getEncounter("2 Louse")</c>).
 /// Bytecode spawns two independent lice, each a 50/50
 /// <c>LouseNormal</c>/<c>LouseDefensive</c> roll (<c>getLouse()</c>: one
-/// <c>miscRng.randomBoolean()</c> per louse) — reproduced here with two independent
+/// <c>miscRng.randomBoolean()</c> per louse) - reproduced here with two independent
 /// <see cref="Rng.NextBool"/> draws.
 /// </summary>
 public sealed class TwoLouseEncounter : Spire1Encounter

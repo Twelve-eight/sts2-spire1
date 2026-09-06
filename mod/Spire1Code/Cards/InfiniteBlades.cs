@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Infinite Blades (Uncommon Power). At the start of your turn, add a Shiv into your hand (Innate upgraded).</summary>
+/// <summary>StS1 Silent - Infinite Blades (Uncommon Power). At the start of your turn, add a Shiv into your hand (Innate upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class InfiniteBlades() : Spire1Card(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
 {

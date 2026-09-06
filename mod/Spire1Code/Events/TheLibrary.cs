@@ -14,7 +14,7 @@ using MegaCrit.Sts2.Core.Runs;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 The City — The Library.
+/// StS1 The City - The Library.
 /// Read: choose 1 of 20 generated cards (character pool, normal rarity odds) to add to your deck.
 /// Sleep: heal round(33% of Max HP) (20% at Ascension 15+).
 /// StS1 constants: 20 cards, HP_HEAL_PERCENT = 0.33f (A_2: 0.2f).
@@ -33,7 +33,7 @@ public class TheLibrary : Spire1Event
 
     public override void CalculateVars()
     {
-        // StS1: MathUtils.round(maxHealth * (Ascension >= 15 ? 0.2f : 0.33f)) — round half up.
+        // StS1: MathUtils.round(maxHealth * (Ascension >= 15 ? 0.2f : 0.33f)) - round half up.
         decimal heal = Owner.Creature.MaxHp * (Owner.RunState.AscensionLevel >= 15 ? 0.2m : 0.33m);
         DynamicVars[_healKey].BaseValue = (int)System.Math.Round(heal, System.MidpointRounding.AwayFromZero);
     }

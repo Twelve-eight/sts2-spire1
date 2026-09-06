@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Small Slimes" weak encounter (<c>MonsterHelper.spawnSmallSlimes()</c>).
-/// Bytecode: one <c>miscRng.randomBoolean()</c> picks between two fixed pairs —
+/// Bytecode: one <c>miscRng.randomBoolean()</c> picks between two fixed pairs -
 /// true: <c>SpikeSlime_S + AcidSlime_M</c>; false: <c>AcidSlime_S + SpikeSlime_M</c>.
 /// </summary>
 public sealed class SmallSlimesEncounter : Spire1Encounter

@@ -13,11 +13,11 @@ using MegaCrit.Sts2.Core.Models.CardPools;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 shrine — Match and Keep! The gremlin's memory minigame: 12 face-down cards (6 identical
+/// StS1 shrine - Match and Keep! The gremlin's memory minigame: 12 face-down cards (6 identical
 /// pairs) and 5 attempts; every pair you match is added to your deck. The card set is exactly the
-/// StS1 one — a random Rare, Uncommon and Common from your card pool, a random curse (two curses at
+/// StS1 one - a random Rare, Uncommon and Common from your card pool, a random curse (two curses at
 /// Ascension 15+ instead of the colorless card), a random colorless Uncommon (below A15 only) and a
-/// card from your starting deck, each duplicated — and the outcome (matched pairs kept, 5 attempts,
+/// card from your starting deck, each duplicated - and the outcome (matched pairs kept, 5 attempts,
 /// non-matches waste an attempt) is reproduced.
 ///
 /// PRESENTATION DEVIATION (FLAGGED): StS2 has no face-down memory-minigame UI, so the game is played

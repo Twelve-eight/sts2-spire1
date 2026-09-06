@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Judgment (Rare Skill). If the enemy has 30 or less HP (40 upgraded), set their HP to 0.
+/// StS1 Watcher - Judgment (Rare Skill). If the enemy has 30 or less HP (40 upgraded), set their HP to 0.
 /// The kill goes through CreatureCmd.Kill (the game's normal death path, which still honours death-prevention and
 /// on-death triggers); no HP field is written directly.
 /// </summary>

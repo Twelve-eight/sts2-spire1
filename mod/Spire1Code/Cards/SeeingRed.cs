@@ -6,7 +6,7 @@ using MegaCrit.Sts2.Core.Commands;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Seeing Red (Uncommon). Gain 2 Energy. Exhaust.</summary>
+/// <summary>StS1 Ironclad - Seeing Red (Uncommon). Gain 2 Energy. Exhaust.</summary>
 public class SeeingRed() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];

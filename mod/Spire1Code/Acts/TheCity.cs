@@ -12,7 +12,7 @@ namespace Spire1.Spire1Code.Acts;
 /// Monster/elite/boss pools are empty until the Act-2 monsters are ported (M2.5); encounters
 /// attach via <see cref="Spire1Encounter.IsValidForAct"/> once they exist. The engine requires a
 /// non-empty ancient list (CustomActModel throws otherwise), so this act borrows the shipped
-/// act-2 ancients — StS1 has no ancients mechanic, and Neow only belongs to act 1.
+/// act-2 ancients - StS1 has no ancients mechanic, and Neow only belongs to act 1.
 /// </para>
 /// <para>
 /// Bytecode: <c>generateMonsters()</c> = <c>generateWeakEnemies(2)</c> +

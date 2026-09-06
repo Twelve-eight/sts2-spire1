@@ -16,7 +16,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 The City — Knowing Skull.
+/// StS1 The City - Knowing Skull.
 /// Repeatable trades: pay HP for a random potion, 90 gold, or a random colorless Uncommon card.
 /// Every cost starts at 6 and increases by 1 each time that same trade is used; asking how to
 /// leave costs HP too.

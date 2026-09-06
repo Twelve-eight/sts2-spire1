@@ -15,25 +15,25 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The City — Mystic (<c>com.megacrit.cardcrawl.monsters.city.Healer</c>; the vanilla class
+/// StS1 The City - Mystic (<c>com.megacrit.cardcrawl.monsters.city.Healer</c>; the vanilla class
 /// id is <c>Healer</c>, the display name "Mystic"). 官方中文名：神秘术士。
 /// <para>
 /// Bytecode: HP 48-56, A7 50-58; magicDmg 8 (A2/A17 9), strAmt 2 (A2 3, A17 4), healAmt 16
-/// (A17 20). getMove: healPotential = Σ(maxHealth − currentHealth) over monsters neither dying
-/// nor escaping; healPotential &gt; (A17 ? 20 : 15) &amp;&amp; !lastTwoMoves(HEAL) → HEAL;
-/// else roll &gt; 40 &amp;&amp; !(A17 ? lastMove(ATTACK) : lastTwoMoves(ATTACK)) → ATTACK;
-/// else !lastTwoMoves(BUFF) → BUFF; else ATTACK. takeTurn: ATTACK = slow hit + Frail 2;
+/// (A17 20). getMove: healPotential = ?(maxHealth - currentHealth) over monsters neither dying
+/// nor escaping; healPotential &gt; (A17 ? 20 : 15) &amp;&amp; !lastTwoMoves(HEAL) -> HEAL;
+/// else roll &gt; 40 &amp;&amp; !(A17 ? lastMove(ATTACK) : lastTwoMoves(ATTACK)) -> ATTACK;
+/// else !lastTwoMoves(BUFF) -> BUFF; else ATTACK. takeTurn: ATTACK = slow hit + Frail 2;
 /// HEAL = HealAction(healAmt) on every living non-escaping monster (self included);
 /// BUFF = StrengthPower(strAmt) on the same pool.
 /// </para>
 /// <para>
-/// Ascension mapping: HP A7 tier → <see cref="AscensionLevel.ToughEnemies"/>; damage A2 tier and
+/// Ascension mapping: HP A7 tier -> <see cref="AscensionLevel.ToughEnemies"/>; damage A2 tier and
 /// the A17 tiers (strAmt 4 / healAmt 20 / the single-attack guard) map onto
 /// <see cref="AscensionLevel.DeadlyEnemies"/> like GremlinNob's A18 branch; the intermediate
 /// strAmt 3 tier rides ToughEnemies so all three vanilla values stay reachable.
 /// </para>
 /// <para>
-/// Donor: <c>kin_priest</c> — the shipped robed staff-casting priest; closest healer archetype
+/// Donor: <c>kin_priest</c> - the shipped robed staff-casting priest; closest healer archetype
 /// among the shipped scenes.
 /// </para>
 /// </summary>
@@ -83,7 +83,7 @@ public sealed class Healer : Spire1Monster
         return new MonsterMoveStateMachine([attack, heal, buff, branch], attack);
     }
 
-    /// <summary>Vanilla sums maxHealth − currentHealth over monsters not dying and not escaping.</summary>
+    /// <summary>Vanilla sums maxHealth - currentHealth over monsters not dying and not escaping.</summary>
     private int MissingAllyHp() => CombatState.Enemies
         .Where(c => c.IsAlive && !IntendsToEscape(c))
         .Sum(c => (int)(c.MaxHp - c.CurrentHp));

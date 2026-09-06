@@ -19,7 +19,7 @@ using MegaCrit.Sts2.Core.Nodes.Vfx;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The Beyond — Darkling (<c>com.megacrit.cardcrawl.monsters.beyond.Darkling</c>).
+/// StS1 The Beyond - Darkling (<c>com.megacrit.cardcrawl.monsters.beyond.Darkling</c>).
 /// 官方中文名：小黑。
 /// <para>
 /// Bytecode: HP 48-56, A7 50-59; chompDmg 8 (A2 9), nipDmg monsterHpRng.random(7,11) per
@@ -31,16 +31,16 @@ namespace Spire1.Spire1Code.Monsters;
 /// </para>
 /// <para>
 /// Half-death (the "split" the wiki describes): dropping to 0 HP does NOT kill a Darkling
-/// while any other Darkling is still alive — it enters the half-dead cycle instead. Its next
+/// while any other Darkling is still alive - it enters the half-dead cycle instead. Its next
 /// move becomes COUNT (shows "..." dialog, unknown intent), then REINCARNATE heals it to 50%
 /// max HP. Only when every Darkling is half-dead at once do they all die for real
 /// (vanilla cannotLose=false + die() on each).
 /// </para>
 /// <para>
-/// getMove: halfDead → REINCARNATE; firstMove → r&lt;50 HARDEN else NIP; then roll&lt;40 →
-/// CHOMP×2 only when last move wasn't CHOMP and the pack slot is even (else vanilla rerolls
-/// 40-99, modelled by falling through to the next band); roll&lt;70 → HARDEN unless last was
-/// HARDEN (else NIP); roll≥70 → NIP unless the last two were NIP (vanilla rerolls 0-99 —
+/// getMove: halfDead -> REINCARNATE; firstMove -> r&lt;50 HARDEN else NIP; then roll&lt;40 ->
+/// CHOMPx2 only when last move wasn't CHOMP and the pack slot is even (else vanilla rerolls
+/// 40-99, modelled by falling through to the next band); roll&lt;70 -> HARDEN unless last was
+/// HARDEN (else NIP); roll>=70 -> NIP unless the last two were NIP (vanilla rerolls 0-99 -
 /// approximated by preferring CHOMP when legal, NIP otherwise).
 /// </para>
 /// <para>
@@ -52,7 +52,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// the damage/ShouldDie path and the REINCARNATE move, per bytecode).
 /// </para>
 /// <para>
-/// Donor: <c>inklet</c> — a small dark inky creature; closest visual match for a compact
+/// Donor: <c>inklet</c> - a small dark inky creature; closest visual match for a compact
 /// quadruped.
 /// </para>
 /// </summary>
@@ -86,7 +86,7 @@ public sealed class Darkling : Spire1Monster
     // The COUNT move state, forced when a Darkling drops to 0 HP mid-round (vanilla SetMoveAction).
     private MoveState? _countState;
 
-    /// <summary>Borrows the shipped inklet scene — a small dark creature.</summary>
+    /// <summary>Borrows the shipped inklet scene - a small dark creature.</summary>
     protected override string DonorId => "inklet";
 
     public override async Task AfterAddedToRoom()
@@ -132,7 +132,7 @@ public sealed class Darkling : Spire1Monster
 
         // Half-dead latch: REINCARNATE (heals to 50% max HP) until revived.
         bands.AddState(reincarnate, () => _halfDead);
-        // roll < 40: CHOMP x2 unless last was CHOMP or the slot is odd — vanilla rerolls
+        // roll < 40: CHOMP x2 unless last was CHOMP or the slot is odd - vanilla rerolls
         // 40-99, which falls through to the bands below (see class remarks).
         bands.AddState(chomp, () => RollHundred() < 40 && !LastWas(chomp) && _slotEven);
         bands.AddState(harden, () => RollHundred() < 70 && !LastWas(harden));
@@ -182,7 +182,7 @@ public sealed class Darkling : Spire1Monster
     private async Task ReincarnateMove(IReadOnlyList<Creature> targets)
     {
         // takeTurn REINCARNATE: heal maxHealth/2, ChangeState REVIVE (halfDead=false),
-        // re-apply RegrowPower(1), relics.onSpawnMonster (no StS2 equivalent — skipped).
+        // re-apply RegrowPower(1), relics.onSpawnMonster (no StS2 equivalent - skipped).
         await CreatureCmd.Heal(base.Creature, base.Creature.MaxHp / 2);
         _halfDead = false;
         await PowerCmd.Apply<RegrowPower>(new ThrowingPlayerChoiceContext(), base.Creature, 1, base.Creature, null);
@@ -324,5 +324,5 @@ public sealed class Darkling : Spire1Monster
             ("COUNT_MOVE", Tr("Count", "计数")),
             ("REINCARNATE_MOVE", Tr("Reincarnate", "重生")),
         ],
-        ("moves.COUNT_MOVE.dialog", Tr("...", "重生中……")));
+        ("moves.COUNT_MOVE.dialog", Tr("...", "重生中......")));
 }

@@ -1,7 +1,7 @@
 {
   "SPIRE1-IRONCLAD.title": "StS1 - 铁甲战士",
   "SPIRE1-IRONCLAD.titleObject": "铁甲战士",
-  "SPIRE1-IRONCLAD.description": "来自《杀戮尖塔》一代的铁甲战士。一名饱经风霜的老兵,陨落教团的最后一人,以生命换取原始力量——沉重的打击、残酷的消耗,以及不断堆叠的力量。",
+  "SPIRE1-IRONCLAD.description": "来自《杀戮尖塔》一代的铁甲战士。一名饱经风霜的老兵,陨落教团的最后一人,以生命换取原始力量--沉重的打击、残酷的消耗,以及不断堆叠的力量。",
   "SPIRE1-IRONCLAD.pronounSubject": "他",
   "SPIRE1-IRONCLAD.pronounObject": "他",
   "SPIRE1-IRONCLAD.pronounPossessive": "他的",
@@ -43,7 +43,7 @@
   "SPIRE1-DEFECT.banter.dead.endTurnPing": "...",
   "SPIRE1-WATCHER.title": "StS1 - 观者",
   "SPIRE1-WATCHER.titleObject": "观者",
-  "SPIRE1-WATCHER.description": "来自《杀戮尖塔》一代的观者。深居简出的苦修者,洞悉战斗的流转,并将其扭转为自己所用。(她的姿态机制——平静、愤怒、神性——在此移植版本中尚未实装。)",
+  "SPIRE1-WATCHER.description": "来自《杀戮尖塔》一代的观者。深居简出的苦修者,洞悉战斗的流转,并将其扭转为自己所用。(她的姿态机制--平静、愤怒、神性--在此移植版本中尚未实装。)",
   "SPIRE1-WATCHER.pronounSubject": "她",
   "SPIRE1-WATCHER.pronounObject": "她",
   "SPIRE1-WATCHER.pronounPossessive": "她的",

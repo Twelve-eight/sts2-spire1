@@ -6,7 +6,7 @@ using MegaCrit.Sts2.Core.Rooms;
 
 namespace Spire1.Spire1Code.Relics;
 
-/// <summary>StS1 Ironclad — Burning Blood (Starter). At the end of combat, heal 6 HP.</summary>
+/// <summary>StS1 Ironclad - Burning Blood (Starter). At the end of combat, heal 6 HP.</summary>
 public class BurningBlood : Spire1Relic
 {
     public override RelicRarity Rarity => RelicRarity.Starter;

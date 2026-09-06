@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Setup (Uncommon Skill). Put a card from your hand on top of your draw pile. It costs 0 until played (cost 0 upgraded).</summary>
+/// <summary>StS1 Silent - Setup (Uncommon Skill). Put a card from your hand on top of your draw pile. It costs 0 until played (cost 0 upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class Setup() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 {
@@ -20,7 +20,7 @@ public class Setup() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, Target
         if (picked != null)
         {
             await CardPileCmd.Add(picked, PileType.Draw, CardPilePosition.Top);
-            // "It costs 0 until played" — the local cost modifier expires when the card is played.
+            // "It costs 0 until played" - the local cost modifier expires when the card is played.
             picked.EnergyCost.SetUntilPlayed(0);
         }
     }

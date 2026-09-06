@@ -11,7 +11,7 @@ using MegaCrit.Sts2.Core.Models;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 Beyond event — Falling. Lose one card of a chosen type (Skill / Power / Attack) to survive the fall.
+/// StS1 Beyond event - Falling. Lose one card of a chosen type (Skill / Power / Attack) to survive the fall.
 /// Deck queries mirror StS1's <c>CardHelper.hasCardWithType</c> / <c>returnCardOfType</c>:
 /// the deck is scanned for cards whose <see cref="CardType"/> matches, and the random pick uses the event RNG.
 /// </summary>

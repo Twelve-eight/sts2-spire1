@@ -4,7 +4,7 @@ using Spire1.Spire1Code.Monsters;
 namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
-/// StS1 Act-3 "Nemesis" elite encounter — single <see cref="Nemesis"/>.
+/// StS1 Act-3 "Nemesis" elite encounter - single <see cref="Nemesis"/>.
 /// </summary>
 public sealed class NemesisEncounter : Spire1Encounter
 {

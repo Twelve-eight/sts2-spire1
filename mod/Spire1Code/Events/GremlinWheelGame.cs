@@ -15,7 +15,7 @@ using Spire1.Spire1Code.Cards;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 shrine — Wheel of Change. The wheel has SIX equally weighted segments (StS1 rolls
+/// StS1 shrine - Wheel of Change. The wheel has SIX equally weighted segments (StS1 rolls
 /// miscRng.random(0, 5), i.e. uniform 1/6 each): gold (100/200/300 by act), a random relic,
 /// full heal, the Decay curse, card removal, or 10% Max HP loss (15% at Ascension 15+).
 /// </summary>
@@ -59,7 +59,7 @@ public class GremlinWheelGame : Spire1Event
             _ => _beyondGold
         };
         decimal percent = Owner.RunState.AscensionLevel >= 15 ? _a15HpLossPercent : _hpLossPercent;
-        // StS1: (int)(maxHealth * percent) — truncating conversion.
+        // StS1: (int)(maxHealth * percent) - truncating conversion.
         DynamicVars["HpLoss"].BaseValue = (int)(Owner.Creature.MaxHp * percent);
     }
 
@@ -73,7 +73,7 @@ public class GremlinWheelGame : Spire1Event
 
     private Task Play()
     {
-        // StS1: result = miscRng.random(0, 5) — six uniform segments.
+        // StS1: result = miscRng.random(0, 5) - six uniform segments.
         _result = (WheelResult)Rng.NextInt(0, 6);
         string page = _result switch
         {

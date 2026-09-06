@@ -12,12 +12,12 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Colorless — J.A.X. (SPECIAL Skill). Lose 3 HP, gain 2 Strength (3 upgraded). 0 cost.
+/// StS1 Colorless - J.A.X. (SPECIAL Skill). Lose 3 HP, gain 2 Strength (3 upgraded). 0 cost.
 /// Granted only by the Augmenter event (mod/Spire1Code/Events/DrugDealer.cs).
 ///
 /// Verified against the jar bytecode (com.megacrit.cardcrawl.cards.colorless.JAX): cost 0, baseMagicNumber 2,
-/// upgradeMagicNumber(1), no flags; use() queues LoseHPAction(player, player, 3) — a hard-coded 3, unrelated
-/// to the magic number — followed by ApplyPowerAction(StrengthPower, magicNumber).
+/// upgradeMagicNumber(1), no flags; use() queues LoseHPAction(player, player, 3) - a hard-coded 3, unrelated
+/// to the magic number - followed by ApplyPowerAction(StrengthPower, magicNumber).
 ///
 /// StS1's LoseHPAction is unblockable, unbuffable self damage; the mod already models that as
 /// CreatureCmd.Damage with Unblockable|Unpowered|Move (see Cards/Bloodletting.cs, the other "Lose 3 HP" card).

@@ -8,7 +8,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Rage (Uncommon). Whenever you play an Attack this turn, gain 3 Block (5 upgraded).</summary>
+/// <summary>StS1 Ironclad - Rage (Uncommon). Whenever you play an Attack this turn, gain 3 Block (5 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class Rage() : Spire1Card(0, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 {

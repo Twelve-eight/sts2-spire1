@@ -13,7 +13,7 @@ using Spire1.Spire1Code.Cards;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 shrine — A Note For Yourself. Receive a card (in StS1, the card stored in a previous run via
+/// StS1 shrine - A Note For Yourself. Receive a card (in StS1, the card stored in a previous run via
 /// the NOTE_CARD / NOTE_UPGRADE prefs; this mod has no cross-run save system, so the in-run half is
 /// implemented with the vanilla defaults: Iron Wave, unupgraded) and store a card of your choice,
 /// which is removed from your deck. Cross-run persistence is FLAGGED as not implemented.

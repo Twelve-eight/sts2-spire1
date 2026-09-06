@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Powers;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Phantasmal Killer (Rare Skill). Next turn, your Attacks deal double damage (0 cost upgraded).</summary>
+/// <summary>StS1 Silent - Phantasmal Killer (Rare Skill). Next turn, your Attacks deal double damage (0 cost upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class PhantasmalKiller() : Spire1Card(1, CardType.Skill, CardRarity.Rare, TargetType.Self)
 {

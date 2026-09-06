@@ -14,25 +14,25 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The City — Book of Stabbing (<c>com.megacrit.cardcrawl.monsters.city.BookOfStabbing</c>).
+/// StS1 The City - Book of Stabbing (<c>com.megacrit.cardcrawl.monsters.city.BookOfStabbing</c>).
 /// 官方中文名：扎人的书。
 /// <para>
 /// Bytecode: HP 160-164, A8 168-172; STAB_DMG 6 (A3 7), BIG_STAB_DMG 21 (A3 24); stabCount
-/// starts at 1. usePreBattleAction: ApplyPowerAction(PainfulStabsPower) — the shipped
+/// starts at 1. usePreBattleAction: ApplyPowerAction(PainfulStabsPower) - the shipped
 /// <see cref="PainfulStabsPower"/> carries the same keyword and Wound-per-unblocked-hit effect,
-/// so it is applied verbatim. getMove(num): num&lt;15 → lastMove(BIG_STAB) ? stabCount++ +
-/// STAB×stabCount : BIG_STAB (+A18 stabCount++); else → lastTwoMoves(STAB) ? BIG_STAB :
-/// stabCount++ + STAB×stabCount. takeTurn STAB: one DamageAction per hit
+/// so it is applied verbatim. getMove(num): num&lt;15 -> lastMove(BIG_STAB) ? stabCount++ +
+/// STABxstabCount : BIG_STAB (+A18 stabCount++); else -> lastTwoMoves(STAB) ? BIG_STAB :
+/// stabCount++ + STABxstabCount. takeTurn STAB: one DamageAction per hit
 /// (SLASH_VERTICAL); BIG_STAB: single hit. Consecutive limits: STAB at most twice in a row
 /// (lastTwoMoves guard), BIG_STAB never twice in a row (lastMove guard).
 /// </para>
 /// <para>
-/// Ascension mapping: HP A8 tier → <see cref="AscensionLevel.ToughEnemies"/>; damage A3 tiers →
+/// Ascension mapping: HP A8 tier -> <see cref="AscensionLevel.ToughEnemies"/>; damage A3 tiers ->
 /// <see cref="AscensionLevel.DeadlyEnemies"/>; the A18 "Big Stab grows the next Stab" behavioural
 /// tier maps onto DeadlyEnemies like GremlinNob's deterministic branch.
 /// </para>
 /// <para>
-/// Donor: <c>scroll_of_biting</c> — the shipped animated biting scroll; closest visual match for
+/// Donor: <c>scroll_of_biting</c> - the shipped animated biting scroll; closest visual match for
 /// a floating, attacking tome among the shipped scenes.
 /// </para>
 /// </summary>
@@ -80,7 +80,7 @@ public sealed class BookOfStabbing : Spire1Monster
     public override async Task AfterAddedToRoom()
     {
         await base.AfterAddedToRoom();
-        // usePreBattleAction: ApplyPowerAction(new PainfulStabsPower(this)) — shipped power, stack 1.
+        // usePreBattleAction: ApplyPowerAction(new PainfulStabsPower(this)) - shipped power, stack 1.
         await PowerCmd.Apply<PainfulStabsPower>(new ThrowingPlayerChoiceContext(), Creature, 1, Creature, null);
     }
 

@@ -27,35 +27,35 @@ namespace Spire1.Spire1Code.Monsters;
 /// StS1 Act-3 boss "Awakened One" (<c>com.megacrit.cardcrawl.monsters.beyond.AwakenedOne</c>).
 /// 官方中文名：觉醒者。
 /// <para>
-/// Bytecode: HP 300, A9 320; SLASH_DMG 20, SS_DMG 6 ×4, ECHO_DMG 40, SLUDGE_DMG 18 + 1 MegaCrit.Sts2.Core.Models.Cards.Void
-/// (draw pile), TACKLE_DMG 10 ×3. usePreBattleAction: Regen 10 (A19 15), custom
+/// Bytecode: HP 300, A9 320; SLASH_DMG 20, SS_DMG 6 x4, ECHO_DMG 40, SLUDGE_DMG 18 + 1 MegaCrit.Sts2.Core.Models.Cards.Void
+/// (draw pile), TACKLE_DMG 10 x3. usePreBattleAction: Regen 10 (A19 15), custom
 /// <see cref="CuriosityPower"/> 1 (A19 2), Unawakened (display-only, omitted), Strength 2 from
 /// <see cref="AscensionLevel.DeadlyEnemies"/> (vanilla A4).
 /// </para>
 /// <para>
-/// Two-phase boss. Form 1 (firstTurn → SLASH, then last-move guards over SLASH/Soul Strike);
+/// Two-phase boss. Form 1 (firstTurn -> SLASH, then last-move guards over SLASH/Soul Strike);
 /// at 0 HP <c>damage()</c> flips <c>halfDead</c>, strips its debuffs, forces the REBIRTH intent
 /// and switches <c>form1 = false</c>; the REBIRTH turn then heals to full and form 2 opens with
-/// DARK_ECHO, alternating Sludge (18 + MegaCrit.Sts2.Core.Models.Cards.Void) and Tackle (3×10) under the same last-move guards.
-/// The whole handoff is driven from <see cref="AfterDamageReceived"/> — with the engine's
-/// <c>SetMoveImmediate</c> (same idiom as SlimeBoss' split) — and the boss is healed to 1 HP
+/// DARK_ECHO, alternating Sludge (18 + MegaCrit.Sts2.Core.Models.Cards.Void) and Tackle (3x10) under the same last-move guards.
+/// The whole handoff is driven from <see cref="AfterDamageReceived"/> - with the engine's
+/// <c>SetMoveImmediate</c> (same idiom as SlimeBoss' split) - and the boss is healed to 1 HP
 /// on the killing blow so the engine never sees it dead before REBIRTH resolves.
 /// </para>
 /// <para>
-/// Donor: <c>owl_magistrate</c> — a large winged boss-scale creature; closest visual match for
+/// Donor: <c>owl_magistrate</c> - a large winged boss-scale creature; closest visual match for
 /// the crow-like Awakened One.
 /// </para>
 /// </summary>
 public sealed class AwakenedOne : Spire1Monster
 {
-    // HP 300, A9 → 320
+    // HP 300, A9 -> 320
     public override int MinInitialHp => AscensionHelper.GetValueIfAscension(AscensionLevel.ToughEnemies, 320, 300);
     public override int MaxInitialHp => MinInitialHp;
 
     // SLASH_DMG = 20 (no ascension variant)
     private const int SlashDamage = 20;
 
-    // SS_DMG = 6 ×4 (no ascension variant)
+    // SS_DMG = 6 x4 (no ascension variant)
     private const int SoulStrikeDamage = 6;
     private const int SoulStrikeHits = 4;
 
@@ -66,7 +66,7 @@ public sealed class AwakenedOne : Spire1Monster
     private const int SludgeDamage = 18;
     private const int SludgeVoidCount = 1;
 
-    // TACKLE_DMG = 10 ×3 (no ascension variant)
+    // TACKLE_DMG = 10 x3 (no ascension variant)
     private const int TackleDamage = 10;
     private const int TackleHits = 3;
 
@@ -102,7 +102,7 @@ public sealed class AwakenedOne : Spire1Monster
         MoveState soulStrike = new("SOUL_STRIKE_MOVE", SoulStrikeMove,
             new MultiAttackIntent(SoulStrikeDamage, SoulStrikeHits));
         // REBIRTH: vanilla intent is UNKNOWN; forced from the damage hook, so it must survive the
-        // next roll — same MustPerformOnceBeforeTransitioning idiom as SlimeBoss' split state.
+        // next roll - same MustPerformOnceBeforeTransitioning idiom as SlimeBoss' split state.
         MoveState rebirth = new("REBIRTH_MOVE", RebirthMove, new UnknownIntent())
         {
             MustPerformOnceBeforeTransitioning = true
@@ -112,10 +112,10 @@ public sealed class AwakenedOne : Spire1Monster
             new SingleAttackIntent(SludgeDamage), new StatusIntent(SludgeVoidCount));
         MoveState tackle = new("TACKLE_MOVE", TackleMove, new MultiAttackIntent(TackleDamage, TackleHits));
 
-        // Form 1 picker: firstTurn → SLASH; turn < 25 → last Soul Strike ? SLASH : Soul Strike;
+        // Form 1 picker: firstTurn -> SLASH; turn < 25 -> last Soul Strike ? SLASH : Soul Strike;
         // else last two SLASH ? Soul Strike : SLASH.
         ConditionalBranchState form1 = new("AWAKENED_FORM_1");
-        // Form 2 picker: firstTurn → DARK_ECHO; turn < 50 → last two Sludge ? Tackle : Sludge;
+        // Form 2 picker: firstTurn -> DARK_ECHO; turn < 50 -> last two Sludge ? Tackle : Sludge;
         // else last two Tackle ? Sludge : Tackle.
         ConditionalBranchState form2 = new("AWAKENED_FORM_2");
         ConditionalBranchState main = new("AWAKENED_MAIN");
@@ -127,12 +127,12 @@ public sealed class AwakenedOne : Spire1Monster
         sludge.FollowUpState = main;
         tackle.FollowUpState = main;
 
-        // Form 1: firstTurn → SLASH; roll<25 → last Soul Strike ? SLASH : Soul Strike;
-        // else → last two SLASH ? Soul Strike : SLASH.
+        // Form 1: firstTurn -> SLASH; roll<25 -> last Soul Strike ? SLASH : Soul Strike;
+        // else -> last two SLASH ? Soul Strike : SLASH.
         form1.AddState(slash, () => _firstTurn || (RollHundred() < 25 ? LastWas(soulStrike) : !LastTwoWere(slash)));
         form1.AddState(soulStrike, () => true);
-        // Form 2: firstTurn → DARK_ECHO; roll<50 → last two Sludge ? Tackle : Sludge;
-        // else → last two Tackle ? Sludge : Tackle.
+        // Form 2: firstTurn -> DARK_ECHO; roll<50 -> last two Sludge ? Tackle : Sludge;
+        // else -> last two Tackle ? Sludge : Tackle.
         form2.AddState(darkEcho, () => _firstTurn);
         form2.AddState(tackle, () => RollHundred() < 50 ? LastTwoWere(sludge) : !LastTwoWere(tackle));
         form2.AddState(sludge, () => true);
@@ -151,7 +151,7 @@ public sealed class AwakenedOne : Spire1Monster
     private int? _roll;
     private int _rollTurn = -1;
 
-    // One cached 0-99 roll per round — vanilla getMove takes a single random(100) per call.
+    // One cached 0-99 roll per round - vanilla getMove takes a single random(100) per call.
     private int RollHundred()
     {
         int turn = base.Creature?.CombatState?.RoundNumber ?? 0;
@@ -194,7 +194,7 @@ public sealed class AwakenedOne : Spire1Monster
 
     /// <summary>
     /// <c>changeState("REBIRTH")</c>: re-assert the max HP (A9 tier), heal to full, and re-enable
-    /// losing the fight. Vanilla also restarts the flame particles — cosmetic, omitted.
+    /// losing the fight. Vanilla also restarts the flame particles - cosmetic, omitted.
     /// </summary>
     private async Task RebirthMove(IReadOnlyList<Creature> targets)
     {
@@ -231,7 +231,7 @@ public sealed class AwakenedOne : Spire1Monster
 
     /// <summary>
     /// <c>AwakenedOne.damage()</c>: the killing blow flips to the REBIRTH sequence instead of
-    /// dying — vanilla gates this on the room's <c>cannotLose</c> flag, i.e. the Awakened One
+    /// dying - vanilla gates this on the room's <c>cannotLose</c> flag, i.e. the Awakened One
     /// encounter. Heal to 1 HP here so the engine never observes the creature dead, strip every
     /// debuff (vanilla also removes Curiosity/Unawakened/Shackled; Unawakened is not ported),
     /// switch to form 2, and force the REBIRTH intent for the next turn. The rebirth turn itself

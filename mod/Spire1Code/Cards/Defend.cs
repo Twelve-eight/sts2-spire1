@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Defend (Basic). Gain 5 Block (8 upgraded).</summary>
+/// <summary>StS1 Ironclad - Defend (Basic). Gain 5 Block (8 upgraded).</summary>
 [Pool(typeof(Spire1CardPool))]
 public class Defend() : Spire1Card(1, CardType.Skill, CardRarity.Basic, TargetType.None)
 {

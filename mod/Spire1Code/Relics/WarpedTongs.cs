@@ -9,7 +9,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 namespace Spire1.Spire1Code.Relics;
 
 /// <summary>
-/// StS1 — Warped Tongs (event relic, from the Accursed Blacksmith / Ominous Forge "Rummage" branch).
+/// StS1 - Warped Tongs (event relic, from the Accursed Blacksmith / Ominous Forge "Rummage" branch).
 /// At the start of your turn, Upgrade a random card in your hand for the rest of combat.
 ///
 /// StS1 (relics.json "WarpedTongs", no numeric constants): atTurnStartPostDraw() flashes and queues an
@@ -17,18 +17,18 @@ namespace Spire1.Spire1Code.Relics;
 /// upgrades the in-combat card instance, the upgrade lasts only for the rest of that combat.
 ///
 /// StS2 port:
-/// * Hook — AfterPlayerTurnStart (AbstractModel.cs:1320) is literally atTurnStartPostDraw: CombatManager runs
+/// * Hook - AfterPlayerTurnStart (AbstractModel.cs:1320) is literally atTurnStartPostDraw: CombatManager runs
 ///   CardPileCmd.Draw at CombatManager.cs:924 and only then fires Hook.AfterPlayerTurnStart at CombatManager.cs:926.
-/// * Eligibility — CardModel.IsUpgradable (CardModel.cs:786-796, "CurrentUpgradeLevel < MaxUpgradeLevel") is the
+/// * Eligibility - CardModel.IsUpgradable (CardModel.cs:786-796, "CurrentUpgradeLevel < MaxUpgradeLevel") is the
 ///   engine's own version of StS1's `!upgraded && canUpgrade()`; curses/statuses opt out via MaxUpgradeLevel.
-///   CardCmd.Upgrade re-checks it anyway (CardCmd.cs:275-278), so an ineligible pick would silently do nothing —
+///   CardCmd.Upgrade re-checks it anyway (CardCmd.cs:275-278), so an ineligible pick would silently do nothing -
 ///   hence the filter before the roll, so the roll only ever picks a card that will really upgrade.
-/// * Randomness — Rng.CombatCardSelection, the stream every shipped in-combat card pick uses
+/// * Randomness - Rng.CombatCardSelection, the stream every shipped in-combat card pick uses
 ///   (Bookmark.cs:30, JeweledMask.cs:32, MummifiedHand.cs:30, StoneCracker.cs:25).
 /// * "For the rest of combat" is automatic, not a deviation: Player.PopulateCombatState (Player.cs:806-815) clones
 ///   every deck card into the draw pile and only points the clone's DeckVersion back at the deck card, so the hand
 ///   holds combat-scoped clones. CardCmd.Upgrade also skips its deck bookkeeping and deck VFX for any pile that is
-///   not PileType.Deck (CardCmd.cs:279-283, 290-314). Upgrading a hand card therefore cannot touch the run deck —
+///   not PileType.Deck (CardCmd.cs:279-283, 290-314). Upgrading a hand card therefore cannot touch the run deck -
 ///   the same guarantee shipped Armaments relies on (Armaments.cs:27-38).
 /// </summary>
 public class WarpedTongs : Spire1Relic

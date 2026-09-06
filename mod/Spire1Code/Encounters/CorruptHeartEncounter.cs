@@ -4,11 +4,11 @@ using Spire1.Spire1Code.Monsters;
 namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
-/// StS1 The Ending "Corrupt Heart" boss encounter — single <see cref="CorruptHeart"/>.
+/// StS1 The Ending "Corrupt Heart" boss encounter - single <see cref="CorruptHeart"/>.
 /// <para>
 /// The vanilla fight is a solo boss (the Shield/Spear are a separate elite encounter); the
 /// Heart's "invincible phase" powers (Invincible, Beat of Death) are not in the StS2 engine,
-/// so the Heart is a plain act-4 boss in this port — see <see cref="CorruptHeart"/> remarks.
+/// so the Heart is a plain act-4 boss in this port - see <see cref="CorruptHeart"/> remarks.
 /// </para>
 /// </summary>
 public sealed class CorruptHeartEncounter : Spire1Encounter

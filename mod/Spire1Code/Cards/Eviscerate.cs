@@ -12,7 +12,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Silent — Eviscerate (Uncommon Attack). Deal 7 damage 3 times (9 upgraded).
+/// StS1 Silent - Eviscerate (Uncommon Attack). Deal 7 damage 3 times (9 upgraded).
 /// Costs 1 less for each card discarded this turn.
 /// </summary>
 [Pool(typeof(SilentCardPool))]

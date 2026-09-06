@@ -16,24 +16,24 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The City — Taskmaster (<c>com.megacrit.cardcrawl.monsters.city.Taskmaster</c>; vanilla
+/// StS1 The City - Taskmaster (<c>com.megacrit.cardcrawl.monsters.city.Taskmaster</c>; vanilla
 /// reuses the <c>SlaverBoss</c> localization id). 官方中文名：监工。
 /// <para>
 /// Bytecode: ELITE; HP monsterHpRng 54-60, A8 57-64; woundCount 1 (A3 2, A18 3); damage list
 /// [4, 7] with only [1] referenced. Single move SCOURING_WHIP (byte 2, ATTACK_DEBUFF, 7):
-/// takeTurn = slow SLASH_HEAVY hit + MakeTempCardInDiscardAction(Wound ×woundCount), then on
-/// A18+ ApplyPowerAction(StrengthPower +1) — the whip both litters the discard pile and hardens
+/// takeTurn = slow SLASH_HEAVY hit + MakeTempCardInDiscardAction(Wound xwoundCount), then on
+/// A18+ ApplyPowerAction(StrengthPower +1) - the whip both litters the discard pile and hardens
 /// the Taskmaster itself at the top tier.
 /// </para>
 /// <para>
-/// Ascension mapping: HP A8 tier → <see cref="AscensionLevel.ToughEnemies"/>; the wound tiers
-/// split across the two shipped levers (A3 → ToughEnemies, A18 → DeadlyEnemies) and the A18
+/// Ascension mapping: HP A8 tier -> <see cref="AscensionLevel.ToughEnemies"/>; the wound tiers
+/// split across the two shipped levers (A3 -> ToughEnemies, A18 -> DeadlyEnemies) and the A18
 /// self-strength maps onto <see cref="AscensionLevel.DeadlyEnemies"/> via
 /// <see cref="AscensionHelper.HasAscension"/>, matching GremlinNob's deterministic-branch idiom.
 /// The whip damage is tier-free in the bytecode (7 in every band) so no damage lever is used.
 /// </para>
 /// <para>
-/// Donor: <c>flail_knight</c> — the shipped armored humanoid wielding a long-reach weapon;
+/// Donor: <c>flail_knight</c> - the shipped armored humanoid wielding a long-reach weapon;
 /// closest silhouette among the shipped scenes for a slaver master cracking a scourge.
 /// </para>
 /// </summary>
@@ -66,7 +66,7 @@ public sealed class Taskmaster : Spire1Monster
         return new MonsterMoveStateMachine([whip], whip);
     }
 
-    // takeTurn SCOURING_WHIP: slow hit, Wound ×woundCount into the player's discard pile, then
+    // takeTurn SCOURING_WHIP: slow hit, Wound xwoundCount into the player's discard pile, then
     // Strength +1 on the A18 tier.
     private async Task ScouringWhipMove(IReadOnlyList<Creature> targets)
     {

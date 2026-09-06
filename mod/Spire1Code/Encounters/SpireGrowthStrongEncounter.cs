@@ -4,7 +4,7 @@ using Spire1.Spire1Code.Monsters;
 namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
-/// StS1 Act-3 "Spire Growth" strong encounter — single <see cref="SpireGrowth"/>.
+/// StS1 Act-3 "Spire Growth" strong encounter - single <see cref="SpireGrowth"/>.
 /// </summary>
 public sealed class SpireGrowthStrongEncounter : Spire1Encounter
 {

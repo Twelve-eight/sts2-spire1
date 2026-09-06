@@ -6,7 +6,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Defect — Dualcast (Basic). Evoke your next Orb twice. (0 cost upgraded).</summary>
+/// <summary>StS1 Defect - Dualcast (Basic). Evoke your next Orb twice. (0 cost upgraded).</summary>
 [Pool(typeof(DefectCardPool))]
 public class Dualcast() : Spire1Card(1, CardType.Skill, CardRarity.Basic, TargetType.Self)
 {

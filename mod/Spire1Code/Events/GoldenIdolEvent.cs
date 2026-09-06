@@ -16,7 +16,7 @@ using Spire1.Spire1Code.Relics;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 — Golden Idol. Taking the idol from the pedestal grants the Golden Idol relic and springs a
+/// StS1 - Golden Idol. Taking the idol from the pedestal grants the Golden Idol relic and springs a
 /// boulder trap; the player then escapes by taking an Injury curse, taking damage, or losing Max HP.
 /// </summary>
 public class GoldenIdolEvent : Spire1Event
@@ -43,15 +43,15 @@ public class GoldenIdolEvent : Spire1Event
     {
         int maxHp = Owner.Creature.MaxHp;
         bool ascension15 = Owner.RunState.AscensionLevel >= 15;
-        // StS1: damage = (int)(maxHealth * 0.25f) — 0.35f at Ascension 15+.
-        // maxHpLoss = max(1, (int)(maxHealth * 0.08f)) — 0.1f at Ascension 15+.
+        // StS1: damage = (int)(maxHealth * 0.25f) - 0.35f at Ascension 15+.
+        // maxHpLoss = max(1, (int)(maxHealth * 0.08f)) - 0.1f at Ascension 15+.
         DynamicVars["Damage"].BaseValue = (int)(maxHp * (ascension15 ? _a15HpLossPercent : _hpLossPercent));
         DynamicVars["MaxHpLoss"].BaseValue = Math.Max(1, (int)(maxHp * (ascension15 ? _a15MaxHpLossPercent : _maxHpLossPercent)));
     }
 
     protected override IReadOnlyList<EventOption> GenerateInitialOptions()
     {
-        // StS1 GoldenIdolEvent.<init>: setDialogOption(OPTIONS[0], new GoldenIdol()) — the [Take]
+        // StS1 GoldenIdolEvent.<init>: setDialogOption(OPTIONS[0], new GoldenIdol()) - the [Take]
         // option previews the relic it awards. The preview is unconditionally the Golden Idol; the
         // Circlet substitution happens only at grant time, inside buttonEffect.
         return
@@ -65,7 +65,7 @@ public class GoldenIdolEvent : Spire1Event
     {
         // StS1 GoldenIdolEvent.buttonEffect, screenNum 0 / option 0: the relic lands the instant the
         // idol is taken. spawnRelicAndObtain runs in THIS branch, before the three boulder escapes are
-        // ever offered, so the reward is already banked whichever escape the player then picks — it is
+        // ever offered, so the reward is already banked whichever escape the player then picks - it is
         // not a payout for surviving the trap.
         // The relic is `hasRelic("Golden Idol") ? Circlet : Golden Idol`; StS2 ships Circlet as the
         // stackable RelicRarity.None consolation relic, so it is reused rather than reimplemented.

@@ -1,4 +1,4 @@
-# sts1-kb — SlayTheSpire 一代权威知识库
+# sts1-kb - SlayTheSpire 一代权威知识库
 
 StS2 BaseLib 移植项目的 StS1 数据基线。**所有数值来自游戏字节码，所有文本来自官方本地化原文**（双语 en+zh），未做任何人工翻译或臆造。
 
@@ -13,7 +13,7 @@ StS2 BaseLib 移植项目的 StS1 数据基线。**所有数值来自游戏字�
 | 名称 / 描述 / 风味文本 | jar 内 `localization/{eng,zhs}/*.json`（官方简中=zhs） | 最高（原文照录） |
 | 关键词标注 | `localization/{eng,zhs}/keywords.json` 官方 Game Dictionary 词表扫描 | 中（启发式匹配，见下） |
 
-注意：本地化 JSON **不在** `localizations/`（复数）路径——本版本 jar 内实际路径为单数 `localization/<lang>/`，共 17 个文件/语言。磁盘上的 `SlayTheSpire/localization/eng/events.json` 是残留的用户文件，未采用。
+注意：本地化 JSON **不在** `localizations/`（复数）路径--本版本 jar 内实际路径为单数 `localization/<lang>/`，共 17 个文件/语言。磁盘上的 `SlayTheSpire/localization/eng/events.json` 是残留的用户文件，未采用。
 
 ## 重新生成 / 对账
 
@@ -77,8 +77,8 @@ javap -p -c .tmp/jcls/com/megacrit/cardcrawl/cards/red/Barricade.class   # 看 <
 
 ## 已知边界情况
 
-1. **Impulse**（blue 包）：类存在但本版本无任何本地化条目，不可获得 → 移入 cards-deprecated.json 并加 `note`。
-2. **Blood for Blood**：upgrade() 为分支逻辑（cost<4 时 cost-1，否则设 3）；基础费 4 → 取 else 支 3。
+1. **Impulse**（blue 包）：类存在但本版本无任何本地化条目，不可获得 -> 移入 cards-deprecated.json 并加 `note`。
+2. **Blood for Blood**：upgrade() 为分支逻辑（cost<4 时 cost-1，否则设 3）；基础费 4 -> 取 else 支 3。
 3. **Searing Blow**：无限升级卡，费用恒为 2。
 4. **Beta 测试遗物 Test 1/3/4/5/6**：eng NAME 为空字符串系官方数据原样。
 5. **Proceed Screen**：events.json 中的伪事件键（无 NAME），保留原样。

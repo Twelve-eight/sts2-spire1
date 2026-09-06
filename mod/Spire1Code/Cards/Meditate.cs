@@ -13,7 +13,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Meditate (Uncommon Skill). Put 1 card (2 upgraded) from your discard pile into your hand and
+/// StS1 Watcher - Meditate (Uncommon Skill). Put 1 card (2 upgraded) from your discard pile into your hand and
 /// Retain it, enter Calm, then end your turn.
 /// The retain is a single-turn retain (CardCmd.ApplySingleTurnRetain), which is what CombatManager.FlushPlayerHand
 /// reads through CardModel.ShouldRetainThisTurn when it discards the hand.

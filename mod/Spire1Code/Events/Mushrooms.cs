@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Cards;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 — Mushrooms. Eating the hypnotic mushrooms heals 25% of Max HP. The alternative (Stomp)
+/// StS1 - Mushrooms. Eating the hypnotic mushrooms heals 25% of Max HP. The alternative (Stomp)
 /// starts a fight against "The Mushroom Lair", which is not implemented yet (FLAGGED).
 /// </summary>
 public class Mushrooms : Spire1Event

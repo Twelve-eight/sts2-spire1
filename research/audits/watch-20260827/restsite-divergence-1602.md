@@ -7,7 +7,7 @@
 1. 16:01:58 两人进入 EVENT.ACTSFROMTHEPAST-DUPLICATOR
 2. 朋友(76561199466878739)选 option 0 = Pray：手动选 STARDUST 复制 1 张（走 PlayerChoiceSynchronizer 网络同步选择）
 3. Host 选 option index 1 = Kneel（RebalancedMode）：受 5 伤 + StableShuffle(Rng.Niche) 取 2 张已升级牌自动复制
-4. 16:02:24 Exiting event room → checksum #55 分歧 → 断线
+4. 16:02:24 Exiting event room -> checksum #55 分歧 -> 断线
 
 ## 真实差异（divergence zip dump diff，仅 2 行）
 - RELIC.BOOK_OF_FIVE_RINGS CardsAdded: local=4 vs remote=2（Host 的五环书"获得卡计数"差 2）
@@ -18,7 +18,7 @@ AFTP Duplicator 的 Kneel 分支联机双端不对称：
 - Host 端执行 Kneel：StableShuffle 消耗本地 Niche RNG + CloneCard 2 张入组（触发五环书 +2）
 - 客户端不执行该逻辑：它的 Niche 计数与五环书计数停留在 Pray/ALIGNMENT 的 2
 - Pray 能同步是因为卡选择走 PlayerChoiceSynchronizer；Kneel 的自动复制不走任何网络同步原语
-- RNG 错位后，后续所有 Niche 消耗永久错拍 → checksum 永久分歧 → 断线
+- RNG 错位后，后续所有 Niche 消耗永久错拍 -> checksum 永久分歧 -> 断线
 
 ## 归属
 AFTP fork 的 MP 缺陷（SharedEvents/Duplicator.cs Kneel）。与 Spire1 无关。

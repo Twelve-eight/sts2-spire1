@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.Runs;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 The City — The Colosseum.
+/// StS1 The City - The Colosseum.
 /// You are thrown into a gladiator arena. The only branch leads to two consecutive fights:
 /// 1. "Colosseum Slavers" (no rewards), then
 /// 2. "Colosseum Nobs" (rewards: Rare relic + Uncommon relic + 100 gold).

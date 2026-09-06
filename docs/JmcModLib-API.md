@@ -1,23 +1,23 @@
-# JmcModLib API Reference — Slay the Spire 2
+# JmcModLib API Reference - Slay the Spire 2
 
 Interface reference for **JmcModLib 1.9.0** (`JMC-Mods/SlayTheSpire2_JmcModLib`), a third-party utility library for Slay the Spire 2. Target game: **StS2 v0.111.0** (Godot 4.5 / C# / .NET 9). JmcModLib ships **no content abstractions** (no card / relic / monster / encounter / character / act models). It provides: settings UI, reflection helpers, logging, secrets, persistence, version-compatibility shims, and a multi-version dispatch build toolchain.
 
 ## Sources of authority (per entry)
 
-- **XML** — installed `JmcModLib.Runtime.xml` (workshop 3747526103; 602 `<member>` entries, the shipped IntelliSense surface). All `<summary>`/`<remarks>` prose is quoted verbatim from here; members **not** present in the XML are marked `no XML doc`.
-- **BIN** — reflection metadata dump of the installed `JmcModLib.Runtime.dll` (assembly name `JmcModLib`, 90 exported types). Every signature is verified against this dump.
-- **SRC** — upstream repo at `.tmp/jmc/` (v1.9.0 matches installed). Signatures are cited as `file:line`.
+- **XML** - installed `JmcModLib.Runtime.xml` (workshop 3747526103; 602 `<member>` entries, the shipped IntelliSense surface). All `<summary>`/`<remarks>` prose is quoted verbatim from here; members **not** present in the XML are marked `no XML doc`.
+- **BIN** - reflection metadata dump of the installed `JmcModLib.Runtime.dll` (assembly name `JmcModLib`, 90 exported types). Every signature is verified against this dump.
+- **SRC** - upstream repo at `.tmp/jmc/` (v1.9.0 matches installed). Signatures are cited as `file:line`.
 
 ## Availability tags (CRITICAL)
 
 | Tag | Meaning |
 |---|---|
-| `✓ binary-public` | present in the shipped DLL as public API — usable |
-| `⚠ internal` / `⚠ protected` / `⚠ private` | documented (XML) but **not callable** from a consumer assembly |
-| `✗ absent` | in source/XML but not in the shipped DLL |
+| `[x] binary-public` | present in the shipped DLL as public API - usable |
+| `WARN  internal` / `WARN  protected` / `WARN  private` | documented (XML) but **not callable** from a consumer assembly |
+| `[ ] absent` | in source/XML but not in the shipped DLL |
 | `+undoc` | public in the shipped DLL but **not** covered by the shipped XML |
 
-Tally: 602 documented members → 565 `✓ binary-public`, 25 on `internal` types (`JmcModLib.Input.*` ×8 types + `MethodAccessor.ParamSignature`), 12 documented-but-non-public (4 protected, 1 internal method, 7 private).
+Tally: 602 documented members -> 565 `[x] binary-public`, 25 on `internal` types (`JmcModLib.Input.*` x8 types + `MethodAccessor.ParamSignature`), 12 documented-but-non-public (4 protected, 1 internal method, 7 private).
 
 ## Contents
 
@@ -33,7 +33,7 @@ Tally: 602 documented members → 565 `✓ binary-public`, 25 on `internal` type
 10. The dispatch build toolchain
 11. Full member index (all 602 documented members)
 
-*This file is a reference, not an adoption verdict — judgements live in `research/`.*
+*This file is a reference, not an adoption verdict - judgements live in `research/`.*
 
 ---
 
@@ -55,7 +55,7 @@ Tally: 602 documented members → 565 `✓ binary-public`, 25 on `internal` type
   "min_game_version": "0.107.1"
 }
 ```
-A consumer mod declares the dependency in its own `*.json` manifest as `"dependencies": [{ "id": "JmcModLib", "min_version": "1.4.0" }]` — the default template the BuildTools generate (`BuildTools/Jmc.Sts2Mod.Build.targets`).
+A consumer mod declares the dependency in its own `*.json` manifest as `"dependencies": [{ "id": "JmcModLib", "min_version": "1.4.0" }]` - the default template the BuildTools generate (`BuildTools/Jmc.Sts2Mod.Build.targets`).
 
 ## 1.2 Runtime loading descriptor (`JmcModLib.runtime.config`, installed)
 
@@ -72,9 +72,9 @@ A consumer mod declares the dependency in its own `*.json` manifest as `"depende
 
 ## 1.3 Loader split
 
-The game loads **`JmcModLib.dll`** (19 KB — a thin bootstrap named after the manifest). `BootstrapMain.Initialize` (`Bootstrap/BootstrapMain.cs:17`) installs a Linux Harmony fallback, reads the descriptor, installs an `AssemblyResolve` handler, loads dependencies, then loads **`JmcModLib.Runtime.dll`** (504 KB, assembly name `JmcModLib`) and reflects `JmcModLib.MainFile.Initialize` (`MainFile.cs:12`). Consumers reference **`JmcModLib.Runtime.dll`** only. `JmcModLib.pck` (975 KB) carries the settings-UI Godot scenes; `JmcModLib.Sts2.props` is the MSBuild reference entry point.
+The game loads **`JmcModLib.dll`** (19 KB - a thin bootstrap named after the manifest). `BootstrapMain.Initialize` (`Bootstrap/BootstrapMain.cs:17`) installs a Linux Harmony fallback, reads the descriptor, installs an `AssemblyResolve` handler, loads dependencies, then loads **`JmcModLib.Runtime.dll`** (504 KB, assembly name `JmcModLib`) and reflects `JmcModLib.MainFile.Initialize` (`MainFile.cs:12`). Consumers reference **`JmcModLib.Runtime.dll`** only. `JmcModLib.pck` (975 KB) carries the settings-UI Godot scenes; `JmcModLib.Sts2.props` is the MSBuild reference entry point.
 
-## 1.4 MSBuild integration (`JmcModLib.Sts2.props`, installed — verbatim)
+## 1.4 MSBuild integration (`JmcModLib.Sts2.props`, installed - verbatim)
 
 ```xml
 <Project>
@@ -91,14 +91,14 @@ The game loads **`JmcModLib.dll`** (19 KB — a thin bootstrap named after the m
   </ItemGroup>
 </Project>
 ```
-Import from the installed mod directory, e.g. `<Import Project="$(Sts2Path)\mods\JmcModLib\JmcModLib.Sts2.props" />`. Build-time `.Dispatch.targets` is covered in §10.
+Import from the installed mod directory, e.g. `<Import Project="$(Sts2Path)\mods\JmcModLib\JmcModLib.Sts2.props" />`. Build-time `.Dispatch.targets` is covered in Sec 10.
 
 ## 1.5 Registration: `Core.ModRegistry` / `Core.RegistryBuilder`
 
 XML `T:JmcModLib.Core.ModRegistry` summary (verbatim): *维护 STS2 子 MOD 与托管程序集之间的注册上下文，并分发生命周期事件。* ("Maintains the registration context between STS2 child mods and their managed assemblies, and dispatches lifecycle events.") Remarks (verbatim): *注册时会为目标程序集启用 JML 默认服务，包括按程序集隔离的 `ModLogger`、配置管理器和 Attribute 扫描管线。子 MOD 通常只需要在入口处调用一次泛型 `Register<MainFile>()`，即可自动完成上下文推断和 Attribute 扫描。* ("Registration enables JML default services for the target assembly: per-assembly `ModLogger`, config manager, and the attribute-scan pipeline. A child mod usually only needs one generic `Register<MainFile>()` call in its entry point.")
 
 ```csharp
-// JmcModLib.Core.ModRegistry (static) — Core/Registry/ModRegistry.cs
+// JmcModLib.Core.ModRegistry (static) - Core/Registry/ModRegistry.cs
 public static event Action<ModContext>? OnRegistered;                 // :33
 public static event Action<ModContext>? OnUnregistered;               // :38
 public static RegistryBuilder Register(string modId, string? displayName = null, string? version = null, Assembly? assembly = null);           // :54
@@ -120,7 +120,7 @@ public static bool Unregister(Assembly? assembly = null);             // :318
 XML `T:JmcModLib.Core.RegistryBuilder` summary (verbatim): *表示一次 MOD 注册过程中的链式补充设置。* ("Chainable supplemental settings for one mod registration.") Remarks: *所有补充设置完成后必须调用 `Done`，否则 Attribute 标记的配置、按钮和热键不会被扫描。* ("`Done()` MUST be called after all supplemental settings, or attribute-declared config, buttons and hotkeys will not be scanned.")
 
 ```csharp
-// JmcModLib.Core.RegistryBuilder (sealed) — Core/Registry/RegistryBuilder.cs
+// JmcModLib.Core.RegistryBuilder (sealed) - Core/Registry/RegistryBuilder.cs
 public RegistryBuilder WithDisplayName(string displayName);                       // :43
 public RegistryBuilder WithVersion(string version);                               // :54
 public RegistryBuilder WithConfigStorage(IConfigStorage storage);                 // :75
@@ -143,7 +143,7 @@ public ModContext Done();                                                       
 XML `T:JmcModLib.Core.ModContext` summary (verbatim): *描述一个已注册 MOD 的程序集、标识、显示名、版本和注册状态。* ("Describes a registered mod's assembly, id, display name, version and registration state.")
 
 ```csharp
-// JmcModLib.Core.ModContext (sealed) — Core/Registry/ModContext.cs
+// JmcModLib.Core.ModContext (sealed) - Core/Registry/ModContext.cs
 public Assembly Assembly { get; }                                   // :22
 public string ModId { get; internal set; }                          // :27
 public string DisplayName { get; internal set; }                    // :32
@@ -152,14 +152,14 @@ public bool IsCompleted { get; internal set; }                      // :42
 public string LoggerContext => $"{DisplayName} v{Version}";         // :47
 public string Tag => $"[{DisplayName} v{Version}]";                 // :52
 ```
-`Core.ModRuntime` and `Core.VersionInfo` are public in the binary (+undoc, no XML doc entries); see the authors' reference (`docs/JML_API_Reference_en.md` §2.2/§2.6) for their behavior. `JmcModLib.Core.VersionInfo` (SRC `Core/VersionInfo.cs:8-11`): `const string Name = "JmcModLib"`, `const string Version = "1.9.0"`, `string Tag`. `Core.ModRuntime` (SRC `Core/Runtime/ModRuntime.cs:8-85`): `Mod? TryGetLoadedMod(Assembly? = null)`, `ModManifest? TryGetManifest(...)`, `string? GetManifestId(...)`, `string GetPckName(...)`, `string GetDisplayName(...)`, `Version? GetLoadedVersion(...)`, `Mod? FindModById(string)`, `Mod? FindLoadedMod(string)`.
+`Core.ModRuntime` and `Core.VersionInfo` are public in the binary (+undoc, no XML doc entries); see the authors' reference (`docs/JML_API_Reference_en.md` Sec 2.2/Sec 2.6) for their behavior. `JmcModLib.Core.VersionInfo` (SRC `Core/VersionInfo.cs:8-11`): `const string Name = "JmcModLib"`, `const string Version = "1.9.0"`, `string Tag`. `Core.ModRuntime` (SRC `Core/Runtime/ModRuntime.cs:8-85`): `Mod? TryGetLoadedMod(Assembly? = null)`, `ModManifest? TryGetManifest(...)`, `string? GetManifestId(...)`, `string GetPckName(...)`, `string GetDisplayName(...)`, `Version? GetLoadedVersion(...)`, `Mod? FindModById(string)`, `Mod? FindLoadedMod(string)`.
 
 ## 1.6 Attribute scanning: `Core.AttributeRouter`
 
 XML `T:JmcModLib.Core.AttributeRouter.AttributeRouter` summary (verbatim): *Scans registered mod assemblies and routes discovered attributes to handlers.* Handlers are registered per attribute type and receive every matching `ReflectionAccessorBase`:
 
 ```csharp
-// JmcModLib.Core.AttributeRouter.AttributeRouter (static) — Core/AttributeRouting/AttributeRouter.cs
+// JmcModLib.Core.AttributeRouter.AttributeRouter (static) - Core/AttributeRouting/AttributeRouter.cs
 public static event Action<Assembly>? AssemblyScanned;                              // :19
 public static event Action<Assembly>? AssemblyUnscanned;                            // :21
 public static bool IsInitialized { get; }                                           // :23
@@ -170,7 +170,7 @@ public static void RegisterHandler<TAttribute>(Action<Assembly, ReflectionAccess
 public static bool UnregisterHandler(IAttributeHandler handler);                    // :78
 public static void ScanAssembly(Assembly assembly);                                 // :94
 public static void UnscanAssembly(Assembly assembly);                               // :133
-// interface IAttributeHandler — Core/AttributeRouting/IAttributeHandler.cs:10
+// interface IAttributeHandler - Core/AttributeRouting/IAttributeHandler.cs:10
 //   void Handle(Assembly assembly, ReflectionAccessorBase accessor, Attribute attribute);
 //   Action<Assembly, IReadOnlyList<ReflectionAccessorBase>>? Unregister { get; }
 ```
@@ -180,16 +180,16 @@ public static void UnscanAssembly(Assembly assembly);                           
 
 ---
 
-# 2. `Config` and `Config.UI` (116 documented members — largest area)
+# 2. `Config` and `Config.UI` (116 documented members - largest area)
 
 The settings model: a static field/property marked `[Config]` (+ an optional `UIConfigAttribute` widget) is scanned after registration, becomes a `ConfigEntry`, gets a row in the in-game **Mod Settings** tab (pck scenes), and is persisted through an `IConfigStorage`. Values write back to the field/property immediately; `OnChanged` callbacks and `ValueChanged` events fire; `FlushOnSet` persists on each change.
 
-## 2.1 `ConfigAttribute` — the entry marker
+## 2.1 `ConfigAttribute` - the entry marker
 
 XML `T:JmcModLib.Config.ConfigAttribute` summary (verbatim): *Marks a static field or property as a configuration entry.* Only the ctor has an XML doc entry; properties are `+undoc` (public in binary, source `Config/ConfigAttribute.cs`).
 
 ```csharp
-// JmcModLib.Config.ConfigAttribute (sealed : Attribute) — Config/ConfigAttribute.cs
+// JmcModLib.Config.ConfigAttribute (sealed : Attribute) - Config/ConfigAttribute.cs
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]   // :9
 public sealed class ConfigAttribute(string displayName, string? onChanged = null, string group = ConfigAttribute.DefaultGroup) : Attribute  // :10
 {
@@ -209,12 +209,12 @@ public sealed class ConfigAttribute(string displayName, string? onChanged = null
 }
 ```
 
-## 2.2 `ConfigManager` — registration + persistence hub
+## 2.2 `ConfigManager` - registration + persistence hub
 
 XML `T:JmcModLib.Config.ConfigManager` summary (verbatim): *Central registration and persistence layer for config entries.* (No member has an XML doc entry; all `+undoc`.)
 
 ```csharp
-// JmcModLib.Config.ConfigManager (static) — Config/ConfigManager.cs
+// JmcModLib.Config.ConfigManager (static) - Config/ConfigManager.cs
 public static bool FlushOnSet { get; set; } = true;                                   // :25
 public static event Action<Assembly>? AssemblyRegistered;                             // :27
 public static event Action<Assembly>? AssemblyUnregistered;                           // :29
@@ -249,10 +249,10 @@ public static void Unregister(Assembly? assembly = null);                       
 
 ## 2.3 Entries and storage
 
-XML `T:JmcModLib.Config.Entry.ConfigEntry` summary (verbatim): *Base class for a single registered config entry.* Its public ctor is `⚠ protected` (primary ctor, `Config/Entry/ConfigEntry.cs:13`); use `ConfigEntry<TValue>` (binary `+undoc`) or `ConfigManager.RegisterConfig<TValue>`.
+XML `T:JmcModLib.Config.Entry.ConfigEntry` summary (verbatim): *Base class for a single registered config entry.* Its public ctor is `WARN  protected` (primary ctor, `Config/Entry/ConfigEntry.cs:13`); use `ConfigEntry<TValue>` (binary `+undoc`) or `ConfigManager.RegisterConfig<TValue>`.
 
 ```csharp
-// JmcModLib.Config.Entry.ConfigEntry (abstract) — Config/Entry/ConfigEntry.cs
+// JmcModLib.Config.Entry.ConfigEntry (abstract) - Config/Entry/ConfigEntry.cs
 public Assembly Assembly { get; }                                  // :21
 public string StorageKey { get; }                                  // :23
 public string Group { get; }                                       // :25
@@ -274,7 +274,7 @@ public static string CreateStorageKey(Type declaringType, string memberName);  /
 public static string CreateKey(string storageKey, string group = ConfigAttribute.DefaultGroup); // :68
 ```
 ```csharp
-// JmcModLib.Config.Entry.ConfigEntry<TValue> (binary +undoc) — Config/Entry/ConfigEntry.cs:85-…
+// JmcModLib.Config.Entry.ConfigEntry<TValue> (binary +undoc) - Config/Entry/ConfigEntry.cs:85-...
 public sealed class ConfigEntry<TValue> : ConfigEntry   // (primary ctor: assembly, storageKey, group, displayName, defaultValue, getter, setter, onChanged, attribute, uiAttribute)
 {
     public TValue GetTypedValue();   public void SetTypedValue(TValue value);
@@ -283,22 +283,22 @@ public sealed class ConfigEntry<TValue> : ConfigEntry   // (primary ctor: assemb
     public override object? GetValue();       public override void SetValue(object? value);
     public override bool Reset();
 }
-// JmcModLib.Config.Entry.ButtonEntry (binary +undoc) — Config/Entry/ButtonEntry.cs:30-133
+// JmcModLib.Config.Entry.ButtonEntry (binary +undoc) - Config/Entry/ButtonEntry.cs:30-133
 public string ButtonText { get; }  public string? ButtonTextKey { get; }  public UIButtonColor Color { get; }
 public override Type ValueType => typeof(void);  public override object? DefaultValue => null;
 public void Invoke();   // runs the registered Action
 ```
 
-Storage backends implement `IConfigStorage` (`Config/Storage/IConfigStorage.cs:5`): `string GetFileName(Assembly?)`, `string GetFilePath(Assembly?)`, `bool Exists(Assembly?)`, `void Save(string key, string group, object? value, Assembly?)`, `bool TryLoad(string key, string group, Type valueType, out object? value, Assembly?)`, `void Flush(Assembly?)`. Two shipped backends (both `✓ binary-public`):
+Storage backends implement `IConfigStorage` (`Config/Storage/IConfigStorage.cs:5`): `string GetFileName(Assembly?)`, `string GetFilePath(Assembly?)`, `bool Exists(Assembly?)`, `void Save(string key, string group, object? value, Assembly?)`, `bool TryLoad(string key, string group, Type valueType, out object? value, Assembly?)`, `void Flush(Assembly?)`. Two shipped backends (both `[x] binary-public`):
 
-- `JsonConfigStorage` — XML summary (verbatim): *Dependency-free JSON storage backend for mod configuration files.* (`Config/Storage/JsonConfigStorage.cs:13`)
-- `NewtonsoftConfigStorage` — XML summary (verbatim): *Newtonsoft.Json based storage backend for mod configuration files.* (`Config/Storage/NewtonsoftConfigStorage.cs:15`) — **the default**; bundled `Newtonsoft.Json.dll` is loaded by the bootstrap.
+- `JsonConfigStorage` - XML summary (verbatim): *Dependency-free JSON storage backend for mod configuration files.* (`Config/Storage/JsonConfigStorage.cs:13`)
+- `NewtonsoftConfigStorage` - XML summary (verbatim): *Newtonsoft.Json based storage backend for mod configuration files.* (`Config/Storage/NewtonsoftConfigStorage.cs:15`) - **the default**; bundled `Newtonsoft.Json.dll` is loaded by the bootstrap.
 
 Both constructors take `string? rootDirectory = null`; the default root resolves to the game user-data directory. Persistence shape: `{ "groups": { "<Group>": { "<StorageKey>": <value> } } }`; the file name derives from the mod id (e.g. `<ModId>.json` in the config root). `Godot.Color` values serialize as hex via `JmcColorValue.ToHex` (alpha by default).
 
-## 2.4 Widget framework — UI attributes (`Config.UI`)
+## 2.4 Widget framework - UI attributes (`Config.UI`)
 
-The public surface is the **attribute layer**; the Godot widget controls themselves (`JmcSettingsButton`, `JmcSettingsDropdown`, `JmcSettingsSlider`, `JmcSettingsTickbox`, `JmcColorPickerEditor`, `JmcKeybindButton`, `JmcKeybindInputRelay`, `ModSettingsPanel`, `SettingsUiTemplates`, `JmcSettingsHoverTips`, …) are all `internal` in the binary (`Config/UI/Controls/*`, `Panels/*`) — you declare with attributes, you never touch controls. The Mod Settings tab is injected by `ModConfigUiBridge`/`ModSettingsTabBridge` (internal) into the native settings screen; `JmcModLib.pck` supplies the cloned templates.
+The public surface is the **attribute layer**; the Godot widget controls themselves (`JmcSettingsButton`, `JmcSettingsDropdown`, `JmcSettingsSlider`, `JmcSettingsTickbox`, `JmcColorPickerEditor`, `JmcKeybindButton`, `JmcKeybindInputRelay`, `ModSettingsPanel`, `SettingsUiTemplates`, `JmcSettingsHoverTips`, ...) are all `internal` in the binary (`Config/UI/Controls/*`, `Panels/*`) - you declare with attributes, you never touch controls. The Mod Settings tab is injected by `ModConfigUiBridge`/`ModSettingsTabBridge` (internal) into the native settings screen; `JmcModLib.pck` supplies the cloned templates.
 
 ```csharp
 // Config/UI/Attributes/ConfigUiAttribute.cs
@@ -316,7 +316,7 @@ public sealed class UIButtonAttribute(string description, string buttonText = "�
 
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
 public abstract class UIConfigAttribute : Attribute { public virtual bool IsValid(Type valueType, object? defaultValue, out string? errorMessage); } // :76-79
-public abstract class UIConfigAttribute<TValue> : UIConfigAttribute { }   // :85 — enforces valueType == typeof(TValue)
+public abstract class UIConfigAttribute<TValue> : UIConfigAttribute { }   // :85 - enforces valueType == typeof(TValue)
 public sealed class UIToggleAttribute : UIConfigAttribute<bool> { }       // :101  (empty)
 public sealed class UIKeybindAttribute(bool allowController = false, bool allowKeyboard = true) : UIConfigAttribute { } // :110
 public sealed class UIInputAttribute(int characterLimit = 0, bool multiline = false) : UIConfigAttribute<string>        // :156
@@ -356,7 +356,7 @@ public enum UIDropdownInvalidValuePolicy { KeepCurrent, SelectFirstAvailable, Re
 ```
 XML `T:UIDropdownInvalidValuePolicy` summary (verbatim): *动态下拉候选项变化后，当前值不再存在时的处理策略。* ("Policy when the current value vanishes after the dynamic dropdown options change.")
 
-XML `T:JmcModLib.Config.UI.UIVisibleWhenAttribute` summary (verbatim): *指定配置项在设置 UI 中何时显示。* ("Specifies when a config entry is shown in the settings UI.") Remarks: *该 Attribute 只影响 UI 中的显示状态，不影响配置项注册、读取、写入或持久化。未声明该 Attribute 的配置项会保持默认行为：始终显示。* ("UI display only — registration, read/write and persistence are unaffected. Without it, entries are always visible.")
+XML `T:JmcModLib.Config.UI.UIVisibleWhenAttribute` summary (verbatim): *指定配置项在设置 UI 中何时显示。* ("Specifies when a config entry is shown in the settings UI.") Remarks: *该 Attribute 只影响 UI 中的显示状态，不影响配置项注册、读取、写入或持久化。未声明该 Attribute 的配置项会保持默认行为：始终显示。* ("UI display only - registration, read/write and persistence are unaffected. Without it, entries are always visible.")
 
 ```csharp
 // Config/UI/Attributes/UIVisibleWhenAttribute.cs
@@ -414,7 +414,7 @@ public sealed class UIHotkeyAttribute(string displayName, string group = ConfigA
 XML `T:JmcModLib.Config.UI.JmcHotkeyManager` summary (verbatim): *JML 运行时热键分发器，用于处理 MOD 自有的可配置热键。* ("JML runtime hotkey dispatcher for a mod's own configurable hotkeys.")
 
 ```csharp
-// JmcModLib.Config.UI.JmcHotkeyManager (static) — Input/Hotkeys/JmcHotkeyManager.cs
+// JmcModLib.Config.UI.JmcHotkeyManager (static) - Input/Hotkeys/JmcHotkeyManager.cs
 public static bool IsInitialized { get; }                                              // :29
 public static void Init();                                                             // :34
 public static void Register(string key, Func<JmcKeyBinding> bindingGetter, Action action,
@@ -425,12 +425,12 @@ public static bool Unregister(string key, Assembly? assembly = null);           
 public static void UnregisterAssembly(Assembly? assembly = null);                      // :132
 ```
 
-XML `T:JmcModLib.Config.UI.HotkeyOptions` summary (verbatim): *运行时热键的触发选项。* ("Runtime hotkey trigger options.") — `public readonly record struct HotkeyOptions(bool ConsumeInput = true, bool ExactModifiers = true, bool AllowEcho = false, ulong DebounceMs = 150)` (`JmcHotkeyManager.cs:394`).
+XML `T:JmcModLib.Config.UI.HotkeyOptions` summary (verbatim): *运行时热键的触发选项。* ("Runtime hotkey trigger options.") - `public readonly record struct HotkeyOptions(bool ConsumeInput = true, bool ExactModifiers = true, bool AllowEcho = false, ulong DebounceMs = 150)` (`JmcHotkeyManager.cs:394`).
 
 XML `T:JmcModLib.Config.UI.JmcKeyBinding` summary (verbatim): *表示由 MOD 自己持有的热键绑定，不会直接写入游戏原生输入命令表。* ("A hotkey binding owned by the mod; never written into the game's native input command table.") XML `T:JmcModLib.Config.UI.JmcKeyModifiers` summary (verbatim): *键盘热键使用的修饰键组合。* ("Modifier-key combinations for keyboard hotkeys.") `[Flags] enum JmcKeyModifiers { None=0, Ctrl=1, Shift=2, Alt=4, Meta=8 }` (`Input/Hotkeys/JmcKeyBinding.cs:9`).
 
 ```csharp
-// JmcModLib.Config.UI.JmcKeyBinding (public readonly record struct) — Input/Hotkeys/JmcKeyBinding.cs
+// JmcModLib.Config.UI.JmcKeyBinding (public readonly record struct) - Input/Hotkeys/JmcKeyBinding.cs
 public JmcKeyBinding();                                                   // :71
 public JmcKeyBinding(Key keyboard);                                       // :80
 public JmcKeyBinding(Key keyboard = Key.None, string controller = "", JmcKeyModifiers modifiers = JmcKeyModifiers.None, bool enabled = true); // :92
@@ -457,17 +457,17 @@ public static JmcKeyModifiers ReadCurrentModifiers();                     // +un
 public static bool IsModifierKey(Key key);                                // +undoc
 public static Key ReadKey(InputEventKey keyEvent);                        // +undoc
 public string ToKeyboardText();                                           // +undoc
-public static implicit operator JmcKeyBinding(Key keyboard);              // :270  ✓ binary-public (XML documents op_Implicit)
+public static implicit operator JmcKeyBinding(Key keyboard);              // :270  [x] binary-public (XML documents op_Implicit)
 ```
 
-The runtime input dispatch layer (`JmcHotkeyInputRelay`, `JmcInputManager`, `JmcInputActionRegistry`, `SteamInputBackend`, `IJmcInputBackend`, `GodotActionInputBackend`, `JmcSteamInputManifestInstaller`, `SteamInputManifestMerger`, `SteamInputPatches`) is **`internal`** in source and **not exported** by the DLL (`Input/*.cs`); the XML documents those 8 types anyway → **`⚠ internal`, unusable from a consumer assembly**. Steam Input is driven implicitly by `[UIHotkey]`/`JmcKeyBinding` with `AllowController`; a merged Steam Input manifest is generated and installed before `SteamInput.Init`.
+The runtime input dispatch layer (`JmcHotkeyInputRelay`, `JmcInputManager`, `JmcInputActionRegistry`, `SteamInputBackend`, `IJmcInputBackend`, `GodotActionInputBackend`, `JmcSteamInputManifestInstaller`, `SteamInputManifestMerger`, `SteamInputPatches`) is **`internal`** in source and **not exported** by the DLL (`Input/*.cs`); the XML documents those 8 types anyway -> **`WARN  internal`, unusable from a consumer assembly**. Steam Input is driven implicitly by `[UIHotkey]`/`JmcKeyBinding` with `AllowController`; a merged Steam Input manifest is generated and installed before `SteamInput.Init`.
 
 ## 2.7 Declaring and showing a settings page (end to end)
 
 1. Mark a static field/property `[Config("Display Name", group: "MyGroup")]` + a widget attribute (`[UISlider(0, 100)]`, `[UIIntSlider]`, `[UIDropdown]`, `[UIToggle]`, `[UIKeybind]`, `[UIColor]`, `[UIInput]`); mark a static method `[UIButton("Description")]` or `[UIHotkey("Display Name")]`.
 2. Register: `ModRegistry.Register<MainFile>()` (or builder + `.Done()`). The attribute router scans the assembly (`ConfigAttributeHandler`, `Config/ConfigAttributeHandler.cs:13`) and creates `ConfigEntry` / `ButtonEntry` / hotkey registrations.
 3. The game's Mod Settings screen shows a **Mod Settings** tab whenever registered mods have entries; `ModSettingsPanel` (internal) renders per-group rows, hover tips (`JmcSettingsHoverTips.Attach`), and per-mod reset.
-4. Values persist through the default `NewtonsoftConfigStorage` (or `JsonConfigStorage`); `ConfigManager.FlushOnSet = true` writes on every change; `RestartRequired` entries surface the restart banner (`GameRestart`, §5) plus the Modding-screen restart-button patch (`Config/UI/Bridge/ModdingScreenRestartButtonPatch.cs`).
+4. Values persist through the default `NewtonsoftConfigStorage` (or `JsonConfigStorage`); `ConfigManager.FlushOnSet = true` writes on every change; `RestartRequired` entries surface the restart banner (`GameRestart`, Sec 5) plus the Modding-screen restart-button patch (`Config/UI/Bridge/ModdingScreenRestartButtonPatch.cs`).
 
 ---
 
@@ -506,7 +506,7 @@ public sealed class PauseMenuButtonOptions { public PauseMenuButtonOptions(); pu
     public Func<PauseMenuButtonContext, bool>? EnabledWhen { get; set; }     // :66
     public bool CloseMenuOnClick { get; set; }   public UIButtonColor Color { get; set; } = UIButtonColor.Default; }
 ```
-XML `T:JmcModLib.UI.PauseMenu.PauseMenuButtonContext` summary (verbatim): *暂停菜单按钮在可见性判断、启用判断和点击回调中使用的上下文。* ("Context used by visibility checks, enabled checks and click callbacks.") Remarks: *普通 MOD 通常只需要读取运行状态属性。`Menu` 和 `Button` 暴露的是原生节点，修改它们可能影响暂停菜单行为，请仅在确有需要时使用。* ("Most mods only read the run-state properties. `Menu`/`Button` are native nodes — mutating them can affect pause-menu behaviour.")
+XML `T:JmcModLib.UI.PauseMenu.PauseMenuButtonContext` summary (verbatim): *暂停菜单按钮在可见性判断、启用判断和点击回调中使用的上下文。* ("Context used by visibility checks, enabled checks and click callbacks.") Remarks: *普通 MOD 通常只需要读取运行状态属性。`Menu` 和 `Button` 暴露的是原生节点，修改它们可能影响暂停菜单行为，请仅在确有需要时使用。* ("Most mods only read the run-state properties. `Menu`/`Button` are native nodes - mutating them can affect pause-menu behaviour.")
 
 ```csharp
 // UI/PauseMenu/PauseMenuButtonContext.cs (sealed)
@@ -531,7 +531,7 @@ public static bool UnregisterButton(string key, Assembly? assembly = null);     
 public static void UnregisterAssembly(Assembly? assembly = null);                                                                // :114
 public static IReadOnlyCollection<PauseMenuButtonOptions> GetEntries(Assembly? assembly = null);                                 // :125
 ```
-Injection itself is a Harmony patch (`UI/PauseMenu/PauseMenuBridge.cs` — `internal`): a postfix on `NPauseMenu` open/refresh calls `PauseMenuBridge.Refresh(menu, runState, scheduleDeferred: true)`, which builds/clones buttons from registered entries (anchor-sorted). `RegistryBuilder.RegisterPauseMenuButton(...)` (§1.5) is the builder-path equivalent.
+Injection itself is a Harmony patch (`UI/PauseMenu/PauseMenuBridge.cs` - `internal`): a postfix on `NPauseMenu` open/refresh calls `PauseMenuBridge.Refresh(menu, runState, scheduleDeferred: true)`, which builds/clones buttons from registered entries (anchor-sorted). `RegistryBuilder.RegisterPauseMenuButton(...)` (Sec 1.5) is the builder-path equivalent.
 
 **Use:** custom acts / run-flow extensions of this project can add "Abandon run", "Restart", or act-specific actions into the in-run pause menu; `VisibleWhen`/`EnabledWhen` give per-run-state control (e.g. only during Act 3).
 
@@ -542,19 +542,19 @@ All popups render through the game's native `NModalContainer`; `IsAvailable` mea
 XML `T:JmcModLib.Prefabs.JmcConfirmationPopup` summary (verbatim): *通过游戏原生的 `NGenericPopup` 与 `NModalContainer` 显示通用弹窗。* ("Shows generic popups through the game's native `NGenericPopup` and `NModalContainer`.")
 
 ```csharp
-// JmcModLib.Prefabs.JmcConfirmationPopup (static) — Prefabs/JmcConfirmationPopup.cs
+// JmcModLib.Prefabs.JmcConfirmationPopup (static) - Prefabs/JmcConfirmationPopup.cs
 public static bool IsAvailable { get; }                    // :18  (+undoc)
 public static Task<bool> ShowConfirmationAsync(string title, string body, string? confirmText = null, string? cancelText = null, bool showBackstop = true, Assembly? assembly = null); // :31
 public static Task<bool> ShowMessageAsync(string title, string body, string? okText = null, bool showBackstop = true, Assembly? assembly = null);                                  // :67
 public static Task<bool> ShowConfirmationAsync(LocString title, LocString body, LocString? confirmText = null, LocString? cancelText = null, bool showBackstop = true, Assembly? assembly = null); // :101
 public static Task<bool> ShowMessageAsync(LocString title, LocString body, LocString? okText = null, bool showBackstop = true, Assembly? assembly = null);                            // :137
 ```
-(XML summaries: *显示原生双按钮确认弹窗。* / *显示只有一个确认按钮的原生提示弹窗。* with LocString variants prefixed *使用本地化文本…*; result `true` = confirm pressed, `false` = cancel/close/unavailable.)
+(XML summaries: *显示原生双按钮确认弹窗。* / *显示只有一个确认按钮的原生提示弹窗。* with LocString variants prefixed *使用本地化文本...*; result `true` = confirm pressed, `false` = cancel/close/unavailable.)
 
 XML `T:JmcModLib.Prefabs.JmcReportPopup` summary (verbatim): *通过游戏模态容器显示适合长文本、诊断报告和日志摘要的可滚动报告弹窗。* ("Shows a scrollable report popup for long text, diagnostic reports and log summaries via the game modal container.")
 
 ```csharp
-// JmcModLib.Prefabs.JmcReportPopup (static) — Prefabs/JmcReportPopup.cs
+// JmcModLib.Prefabs.JmcReportPopup (static) - Prefabs/JmcReportPopup.cs
 public static bool IsAvailable { get; }                       // :27
 public static JmcReportPopupHandle? Open(JmcReportPopupOptions options, Assembly? assembly = null); // :36  (null when container busy/invalid)
 
@@ -592,7 +592,7 @@ public sealed class JmcReportPopupHandle                          // :263  (live
 XML `T:JmcModLib.Prefabs.JmcSecretInputPopup` summary (verbatim): *通过游戏模态容器显示 Secret 输入框。* ("Shows a secret input box via the game modal container.")
 
 ```csharp
-// JmcModLib.Prefabs.JmcSecretInputPopup — Prefabs/JmcSecretInputPopup.cs
+// JmcModLib.Prefabs.JmcSecretInputPopup - Prefabs/JmcSecretInputPopup.cs
 public static bool IsAvailable { get; }                        // :71
 public static Task<string?> PromptAsync(JmcSecretInputPopupOptions options, Assembly? assembly = null); // :80 (null = cancelled/closed/unavailable)
 
@@ -605,7 +605,7 @@ public sealed class JmcSecretInputPopupOptions                  // :15
     public Vector2 MinimumSize { get; init; } = new(720f, 360f);  // :60 }
 ```
 
-**Use:** the report popup is ideal for diagnostics/log dumps from this project (Markdown body, live-update handle); the secret popup pairs with §6 for API tokens. `JmcReportPopup` is the only Markdown renderer JML ships.
+**Use:** the report popup is ideal for diagnostics/log dumps from this project (Markdown body, live-update handle); the secret popup pairs with Sec 6 for API tokens. `JmcReportPopup` is the only Markdown renderer JML ships.
 
 ---
 
@@ -614,7 +614,7 @@ public sealed class JmcSecretInputPopupOptions                  // :15
 XML `T:JmcModLib.Reflection.ReflectionAccessorBase` summary (verbatim): *所有访问器的基类* ("Base class of all accessors"). `T:ReflectionAccessorBase``2` (i.e. ``ReflectionAccessorBase`2``): *MemberAccessor 和 MethodAccessor 的派生基类* ("Derived base class of MemberAccessor and MethodAccessor").
 
 ```csharp
-// JmcModLib.Reflection.ReflectionAccessorBase — Reflection/ReflectionAccessorBase.cs
+// JmcModLib.Reflection.ReflectionAccessorBase - Reflection/ReflectionAccessorBase.cs
 public abstract class ReflectionAccessorBase
 {
     public const BindingFlags DefaultFlags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic; // :14  (no inheritance)
@@ -626,7 +626,7 @@ public abstract class ReflectionAccessorBase
     public bool HasAttribute<T>() where T : Attribute;    // :68
     public abstract Attribute[] GetAttributes(Type? type = null); // :74
     public Attribute[] GetAllAttributes();                // :79
-    protected readonly ConcurrentDictionary<Type, Attribute[]> _attrCache = new(); // :57 ⚠ protected
+    protected readonly ConcurrentDictionary<Type, Attribute[]> _attrCache = new(); // :57 WARN  protected
 }
 
 public abstract class ReflectionAccessorBase<TMemberInfo, TAccessor>(TMemberInfo member) : ReflectionAccessorBase
@@ -635,19 +635,19 @@ public abstract class ReflectionAccessorBase<TMemberInfo, TAccessor>(TMemberInfo
 {
     public static int CacheCount { get; }                  // :104
     public static void ClearCache();                       // :117
-    protected static TAccessor GetOrCreate(TMemberInfo member, Func<TMemberInfo, TAccessor> factory); // :109 ⚠ protected
+    protected static TAccessor GetOrCreate(TMemberInfo member, Func<TMemberInfo, TAccessor> factory); // :109 WARN  protected
     public TMemberInfo MemberInfo { get; }                 // :126
     public override string Name => MemberInfo.Name;        // :132
     public override Type DeclaringType => MemberInfo.DeclaringType!; // :137
     public override Attribute[] GetAttributes(Type? type = null);    // :146
 }
 ```
-> Availability note: `GetAttribute<T>`/`HasAttribute<T>`/`GetAllAttributes` and the public ctor are present **public** in the DLL; the *generic base ctor* (``ReflectionAccessorBase`2.#ctor``) and `GetOrCreate` are `⚠ protected`, `_attrCache` is `⚠ protected` — documented by XML but subclass-only. `MethodAccessor.CreateInvoker`/`EmitUnboxWithEnumSupport` are `⚠ private`; `MemberAccessor.IsSupportedMember` is `⚠ private`; `ExprHelper.Expect`/`CreateAccessorsByExpressionTree`/`CreateAccessorsByEmit`/`ClearAll` are `⚠ private`.
+> Availability note: `GetAttribute<T>`/`HasAttribute<T>`/`GetAllAttributes` and the public ctor are present **public** in the DLL; the *generic base ctor* (``ReflectionAccessorBase`2.#ctor``) and `GetOrCreate` are `WARN  protected`, `_attrCache` is `WARN  protected` - documented by XML but subclass-only. `MethodAccessor.CreateInvoker`/`EmitUnboxWithEnumSupport` are `WARN  private`; `MemberAccessor.IsSupportedMember` is `WARN  private`; `ExprHelper.Expect`/`CreateAccessorsByExpressionTree`/`CreateAccessorsByEmit`/`ClearAll` are `WARN  private`.
 
-XML `T:JmcModLib.Reflection.TypeAccessor` summary (verbatim): *类型访问器 - 提供对 Type 本身及其成员的统一访问* ("Type accessor — unified access to a Type and its members").
+XML `T:JmcModLib.Reflection.TypeAccessor` summary (verbatim): *类型访问器 - 提供对 Type 本身及其成员的统一访问* ("Type accessor - unified access to a Type and its members").
 
 ```csharp
-// JmcModLib.Reflection.TypeAccessor — Reflection/TypeAccessor.cs
+// JmcModLib.Reflection.TypeAccessor - Reflection/TypeAccessor.cs
 public class TypeAccessor : ReflectionAccessorBase<Type, TypeAccessor>
 {
     public TypeAccessor(Type type);                       // :20
@@ -661,10 +661,10 @@ public class TypeAccessor : ReflectionAccessorBase<Type, TypeAccessor>
 }
 ```
 
-XML `T:JmcModLib.Reflection.MemberAccessor` summary (verbatim): *字段 / 属性 的统一高性能访问器。* ("Unified high-performance accessor for fields/properties.") — fields, properties **and indexers**, with cached compiled getter/setter delegates.
+XML `T:JmcModLib.Reflection.MemberAccessor` summary (verbatim): *字段 / 属性 的统一高性能访问器。* ("Unified high-performance accessor for fields/properties.") - fields, properties **and indexers**, with cached compiled getter/setter delegates.
 
 ```csharp
-// JmcModLib.Reflection.MemberAccessor (sealed) — Reflection/MemberAccessor.cs
+// JmcModLib.Reflection.MemberAccessor (sealed) - Reflection/MemberAccessor.cs
 public sealed class MemberAccessor : ReflectionAccessorBase<MemberInfo, MemberAccessor>
 {
     public bool CanRead { get; }          public bool CanWrite { get; }     // :18,:23
@@ -687,10 +687,10 @@ public sealed class MemberAccessor : ReflectionAccessorBase<MemberInfo, MemberAc
 }
 ```
 
-XML `T:JmcModLib.Reflection.MethodAccessor` summary (verbatim): *用于反射方法* ("For reflecting methods"). XML `T:MethodAccessor.ParamSignature` (verbatim): *参数签名（用于缓存键）* — notes: `null`/no parameter list ⇒ `Length = -1` (default value); generic placeholders all map to `RuntimeTypeHandle = default`, so different `T` on one generic method definition share a signature. `ParamSignature` is nested **`internal`** (`⚠ internal`).
+XML `T:JmcModLib.Reflection.MethodAccessor` summary (verbatim): *用于反射方法* ("For reflecting methods"). XML `T:MethodAccessor.ParamSignature` (verbatim): *参数签名（用于缓存键）* - notes: `null`/no parameter list => `Length = -1` (default value); generic placeholders all map to `RuntimeTypeHandle = default`, so different `T` on one generic method definition share a signature. `ParamSignature` is nested **`internal`** (`WARN  internal`).
 
 ```csharp
-// JmcModLib.Reflection.MethodAccessor (sealed) — Reflection/MethodAccessor.cs
+// JmcModLib.Reflection.MethodAccessor (sealed) - Reflection/MethodAccessor.cs
 public sealed class MethodAccessor : ReflectionAccessorBase<MethodInfo, MethodAccessor>
 {
     public override bool IsStatic => MemberInfo.IsStatic;   // :71
@@ -706,7 +706,7 @@ public sealed class MethodAccessor : ReflectionAccessorBase<MethodInfo, MethodAc
     public object? Invoke(object? instance, object? a0);     // :417
     public object? Invoke(object? instance, object? a0, object? a1);          // :431
     public object? Invoke(object? instance, object? a0, object? a1, object? a2); // :445
-    // typed helpers (all ✓ binary-public; Invoke`2..`5 etc. documented in XML):
+    // typed helpers (all [x] binary-public; Invoke`2..`5 etc. documented in XML):
     public TResult Invoke<TTarget, TResult>(TTarget instance);                                   // +typed 0..3 args
     public void InvokeVoid<TTarget>(TTarget instance);                 // + 1..3 args (T1..T3)
     public TResult InvokeStatic<TResult>();                           // + 1..3 args
@@ -714,17 +714,17 @@ public sealed class MethodAccessor : ReflectionAccessorBase<MethodInfo, MethodAc
 }
 ```
 
-XML `T:JmcModLib.Utils.ExprHelper` summary (verbatim): *解析表达式的一些库* ("A small library for parsing expressions"). `T:Utils.ExprHelper.MemberAccessMode`: *生成Accessor的后端模式* ("Backend modes for generating accessors") — `Reflection=0, ExpressionTree=1, Emit=2, Default=2` (binary; `Default` aliases `Emit`). `T:Utils.ExprHelper.MemberAccessors`: *类型访问器辅助类* — `public record MemberAccessors(Delegate Getter, Delegate Setter)` (`ExprHelper.cs:142`).
+XML `T:JmcModLib.Utils.ExprHelper` summary (verbatim): *解析表达式的一些库* ("A small library for parsing expressions"). `T:Utils.ExprHelper.MemberAccessMode`: *生成Accessor的后端模式* ("Backend modes for generating accessors") - `Reflection=0, ExpressionTree=1, Emit=2, Default=2` (binary; `Default` aliases `Emit`). `T:Utils.ExprHelper.MemberAccessors`: *类型访问器辅助类* - `public record MemberAccessors(Delegate Getter, Delegate Setter)` (`ExprHelper.cs:142`).
 
 ```csharp
-// JmcModLib.Utils.ExprHelper (static) — Utils/ExprHelper.cs
+// JmcModLib.Utils.ExprHelper (static) - Utils/ExprHelper.cs
 public static bool EnableCache { get; set; }                                              // :51 (per-assembly)
 public static MemberAccessMode AccessMode { get; set; }                                   // :85
 public static (Func<T> getter, Action<T> setter) GetOrCreateAccessors<T>(Expression<Func<T>> expr, Assembly? assembly = null);  // :158
 public static (Func<T> getter, Action<T> setter) GetOrCreateAccessors<T>(Expression<Func<T>> expr, out bool cacheHit, Assembly? assembly = null); // :177
 public static void ClearAssemblyCache(Assembly? assembly = null);                         // :444
 ```
-`GetOrCreateAccessors<T>` accepts an expression like `() => someField` / `() => instance.Prop` and returns compiled getter/setter; `Assembly` selects the per-assembly mode/cache config. `ExprHelper.Expect`/`CreateAccessorsByExpressionTree`/`CreateAccessorsByEmit`/`ClearAll` are `⚠ private` (documented in XML, not callable).
+`GetOrCreateAccessors<T>` accepts an expression like `() => someField` / `() => instance.Prop` and returns compiled getter/setter; `Assembly` selects the per-assembly mode/cache config. `ExprHelper.Expect`/`CreateAccessorsByExpressionTree`/`CreateAccessorsByEmit`/`ClearAll` are `WARN  private` (documented in XML, not callable).
 
 **Use:** `MethodAccessor`/`MemberAccessor` are the fastest way to poke game internals this project needs (acts, run state, card-reward internals) without per-call reflection; `ExprHelper` compiles field/property accessors from expression trees.
 
@@ -736,10 +736,10 @@ XML `T:JmcModLib.Utils.ModLogger` summary (verbatim): *JML 对 STS2 原生日志
 
 XML `T:JmcModLib.Utils.LogPrefixFlags` summary (verbatim): *控制 JML 日志前缀的附加内容。* ("Controls what JML prepends to log lines.") `[Flags] enum { None=0, Timestamp=1, Default=1 }` (binary; `Default` == `Timestamp`).
 
-XML `T:JmcModLib.Utils.AssemblyLogConfiguration` summary (verbatim): *指定程序集的 JML 日志配置。* ("Per-assembly JML log configuration.") — properties `LogType` (default `LogType.Generic`), `PrefixFlags`, `ThrowOnFatal` (default `true`), `IncludeExceptionDetails` (default `true`). XML `T:JmcModLib.Utils.LoggerSnapshot` summary (verbatim): *指定程序集当前日志配置的只读快照。* ("Read-only snapshot of an assembly's current log configuration.") — `public readonly record struct LoggerSnapshot(LogType LogType, LogPrefixFlags PrefixFlags, bool ThrowOnFatal, bool IncludeExceptionDetails, string Context)` (`ModLogger.cs:63`).
+XML `T:JmcModLib.Utils.AssemblyLogConfiguration` summary (verbatim): *指定程序集的 JML 日志配置。* ("Per-assembly JML log configuration.") - properties `LogType` (default `LogType.Generic`), `PrefixFlags`, `ThrowOnFatal` (default `true`), `IncludeExceptionDetails` (default `true`). XML `T:JmcModLib.Utils.LoggerSnapshot` summary (verbatim): *指定程序集当前日志配置的只读快照。* ("Read-only snapshot of an assembly's current log configuration.") - `public readonly record struct LoggerSnapshot(LogType LogType, LogPrefixFlags PrefixFlags, bool ThrowOnFatal, bool IncludeExceptionDetails, string Context)` (`ModLogger.cs:63`).
 
 ```csharp
-// JmcModLib.Utils.ModLogger (static partial) — Utils/Logger/ModLogger.cs
+// JmcModLib.Utils.ModLogger (static partial) - Utils/Logger/ModLogger.cs
 public static LogType DefaultLogType { get; set; } = LogType.Generic;                     // :83
 public static LogPrefixFlags DefaultPrefixFlags { get; set; } = LogPrefixFlags.Default;   // :88
 public static bool DefaultThrowOnFatal { get; set; } = true;                              // :93
@@ -764,7 +764,7 @@ public static void Error(string message, Assembly? assembly = null);            
 public static void Error(string message, Exception exception, Assembly? assembly = null); // :298
 public static void Fatal(Exception exception, string? message = null, Assembly? assembly = null); // :308  (rethrows when ThrowOnFatal)
 ```
-All `assembly` parameters default to the caller's assembly via `AssemblyResolver`. Registering a mod assembly automatically configures its logger (`ModRegistry` → `ModLogger.RegisterAssembly`).
+All `assembly` parameters default to the caller's assembly via `AssemblyResolver`. Registering a mod assembly automatically configures its logger (`ModRegistry` -> `ModLogger.RegisterAssembly`).
 
 ---
 
@@ -773,7 +773,7 @@ All `assembly` parameters default to the caller's assembly via `AssemblyResolver
 XML `T:JmcModLib.Security.SecretAttribute` summary (verbatim): *将静态 `JmcSecretSlot` 字段或属性声明为一个 Secret 槽位。* ("Declares a static `JmcSecretSlot` field/property as a secret slot.") Remarks (verbatim): *Secret 槽位会显示在 JML 设置页中，但不会写入普通配置 JSON；保存、读取和删除都通过 `JmcSecretStore` 的独立后端完成。* ("The slot shows in the JML settings page but is never written to normal config JSON; save/read/delete go through the independent backends of `JmcSecretStore`.")
 
 ```csharp
-// JmcModLib.Security.SecretAttribute (sealed : Attribute) — Security/SecretAttribute.cs
+// JmcModLib.Security.SecretAttribute (sealed : Attribute) - Security/SecretAttribute.cs
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
 public sealed class SecretAttribute(string key) : Attribute   // :13
 {
@@ -793,12 +793,12 @@ public sealed class SecretAttribute(string key) : Attribute   // :13
 }
 ```
 
-XML `T:JmcModLib.Security.JmcSecretOptions` summary (verbatim): *手动注册 Secret 槽位时使用的显示、分组和后端选项。* ("Display, grouping and backend options when manually registering a secret slot.") — `public sealed class JmcSecretOptions` with the same properties as the attribute but `Func<string>? ScopeProvider` instead of a name (`Security/JmcSecretOptions.cs:8-78`).
+XML `T:JmcModLib.Security.JmcSecretOptions` summary (verbatim): *手动注册 Secret 槽位时使用的显示、分组和后端选项。* ("Display, grouping and backend options when manually registering a secret slot.") - `public sealed class JmcSecretOptions` with the same properties as the attribute but `Func<string>? ScopeProvider` instead of a name (`Security/JmcSecretOptions.cs:8-78`).
 
-XML `T:JmcModLib.Security.JmcSecretSlot` summary (verbatim): *子 MOD 持有的 Secret 槽位句柄。* ("Secret slot handle held by a child mod.") Remarks (verbatim): *本类型只保存槽位元数据，不保存密钥明文。读取到的 `String` 明文无法被 .NET 清零，调用方应避免记录日志、长时间缓存或传递到不可信位置。* ("This type holds only slot metadata, never plaintext. Read `string` plaintext cannot be zeroed by .NET — avoid logging, long caching, or passing it to untrusted places.")
+XML `T:JmcModLib.Security.JmcSecretSlot` summary (verbatim): *子 MOD 持有的 Secret 槽位句柄。* ("Secret slot handle held by a child mod.") Remarks (verbatim): *本类型只保存槽位元数据，不保存密钥明文。读取到的 `String` 明文无法被 .NET 清零，调用方应避免记录日志、长时间缓存或传递到不可信位置。* ("This type holds only slot metadata, never plaintext. Read `string` plaintext cannot be zeroed by .NET - avoid logging, long caching, or passing it to untrusted places.")
 
 ```csharp
-// JmcModLib.Security.JmcSecretSlot (sealed) — Security/JmcSecretSlot.cs
+// JmcModLib.Security.JmcSecretSlot (sealed) - Security/JmcSecretSlot.cs
 public string Key { get; }                                    // :17  ("" when unbound)
 public string ModId { get; }                                  // :22
 public string Scope { get; }                                  // :27  (resolved runtime scope)
@@ -810,12 +810,12 @@ public bool Exists();                                         // :92
 ```
 XML `T:JmcModLib.Security.JmcSecretStore` summary (verbatim): *JML Secret 的统一读写入口。* ("JML unified secret read/write entry.") Remarks: prefer `JmcSecretSlot`; this static class is for advanced keyed access. Enums (`Security/JmcSecretStatuses.cs`):
 
-- `JmcSecretProtectionLevel`: *表示当前 Secret 后端能够提供的保护等级。* — `Unknown=0, SystemKeychain=1, UserProfileProtected=2, WeakFileProtection=3, SessionOnly=4, Unavailable=5`
-- `JmcSecretReadStatus`: *表示读取 Secret 的结果状态。* — `Success=0, Missing=1, Unavailable=2, AccessDenied=3, DecryptionFailed=4, BackendError=5`
-- `JmcSecretWriteStatus`: *表示写入或删除 Secret 的结果状态。* — `Success=0, Unavailable=1, AccessDenied=2, WeakProtectionNotAllowed=3, BackendError=4`
+- `JmcSecretProtectionLevel`: *表示当前 Secret 后端能够提供的保护等级。* - `Unknown=0, SystemKeychain=1, UserProfileProtected=2, WeakFileProtection=3, SessionOnly=4, Unavailable=5`
+- `JmcSecretReadStatus`: *表示读取 Secret 的结果状态。* - `Success=0, Missing=1, Unavailable=2, AccessDenied=3, DecryptionFailed=4, BackendError=5`
+- `JmcSecretWriteStatus`: *表示写入或删除 Secret 的结果状态。* - `Success=0, Unavailable=1, AccessDenied=2, WeakProtectionNotAllowed=3, BackendError=4`
 
 ```csharp
-// JmcModLib.Security.JmcSecretStore (static) — Security/JmcSecretStore.cs
+// JmcModLib.Security.JmcSecretStore (static) - Security/JmcSecretStore.cs
 public static JmcSecretProtectionLevel GetProtectionLevel();                                          // :21
 public static bool TryRead(string key, out string value, out JmcSecretReadStatus status, string? scope = null, Assembly? assembly = null);   // :35
 public static bool TrySave(string key, string value, out JmcSecretWriteStatus status, string? scope = null, Assembly? assembly = null);     // :55
@@ -823,9 +823,9 @@ public static bool TryDelete(string key, out JmcSecretWriteStatus status, string
 public static bool Exists(string key, string? scope = null, Assembly? assembly = null);               // :91
 ```
 **Where and how it is stored** (backends are `internal`, `Security/Backends/*`): the backend is selected at runtime (`SecretBackendSelector`):
-- Windows: **DPAPI** (`WindowsDpapiSecretBackend`, `CryptProtectData` CurrentUser) → `UserProfileProtected`; file `mods/secrets/<ModId>/secrets.v1.json` (encrypted blobs, base64 `DataBlob`).
-- Without system storage: `WeakFileSecretBackend` → `WeakFileProtection`, file `mods/secrets/<ModId>/weak-secrets.v1.json` (plaintext JSON) — **only if** `AllowWeakFileProtection = true`, otherwise `WeakProtectionNotAllowed`.
-- Neither available: `UnavailableSecretBackend` → `Unavailable`.
+- Windows: **DPAPI** (`WindowsDpapiSecretBackend`, `CryptProtectData` CurrentUser) -> `UserProfileProtected`; file `mods/secrets/<ModId>/secrets.v1.json` (encrypted blobs, base64 `DataBlob`).
+- Without system storage: `WeakFileSecretBackend` -> `WeakFileProtection`, file `mods/secrets/<ModId>/weak-secrets.v1.json` (plaintext JSON) - **only if** `AllowWeakFileProtection = true`, otherwise `WeakProtectionNotAllowed`.
+- Neither available: `UnavailableSecretBackend` -> `Unavailable`.
 Paths derive from the game user-data dir (`SecretIdentifier.ModSecretDirectory`, `Security/Backends/SecretIdentifier.cs:37`). **What is encrypted:** the secret values (the slot key/scope structure is plain); DPAPI binds them to the current Windows user profile.
 
 **Use:** per-user API keys (e.g. LLM keys, account tokens) for this project's tooling; `[Secret]` gives you a settings-page row with set/clear buttons and a protection-level risk hint.
@@ -838,18 +838,18 @@ Five attribute scopes (`Persistence/`), each applicable to a static field/proper
 
 | Attribute (XML `T:` summary, verbatim) | Scope |
 |---|---|
-| `JmcLocalPreferenceAttribute(string key)` | *将静态字段或静态属性注册为当前机器本地的 JML 客户端偏好数据。* — machine-local; not in game saves, not profile-switched, not cloud/MP synced (UI state, sort order, collapsed state, window position). |
-| `JmcGlobalDataAttribute(string key)` | *将静态字段或静态属性注册为当前账号范围内的 JML 全局持久化数据。* — account-wide; shared across profiles (caches, stats). |
-| `JmcProfileDataAttribute(string key)` | *将静态字段或静态属性注册为当前 profile 范围内的 JML 持久化数据。* — reloads on profile switch. |
-| `JmcRunDataAttribute(string key)` | *将静态字段或静态属性注册为当前 run 范围内的 JML 非同步持久化数据。* — run-scoped, local only; no MP/reconnect sync in phase 1. |
-| `JmcClientRunDataAttribute(string key)` | *将静态 `JmcRunDataSlot<T>` 字段或属性注册为当前客户端、当前 run 生命周期内的数据。* — written to a **local sidecar file**, never the run save; survives save+quit, restored on load, cleaned up when the run ends/aborts/deletes or a new run starts. |
+| `JmcLocalPreferenceAttribute(string key)` | *将静态字段或静态属性注册为当前机器本地的 JML 客户端偏好数据。* - machine-local; not in game saves, not profile-switched, not cloud/MP synced (UI state, sort order, collapsed state, window position). |
+| `JmcGlobalDataAttribute(string key)` | *将静态字段或静态属性注册为当前账号范围内的 JML 全局持久化数据。* - account-wide; shared across profiles (caches, stats). |
+| `JmcProfileDataAttribute(string key)` | *将静态字段或静态属性注册为当前 profile 范围内的 JML 持久化数据。* - reloads on profile switch. |
+| `JmcRunDataAttribute(string key)` | *将静态字段或静态属性注册为当前 run 范围内的 JML 非同步持久化数据。* - run-scoped, local only; no MP/reconnect sync in phase 1. |
+| `JmcClientRunDataAttribute(string key)` | *将静态 `JmcRunDataSlot<T>` 字段或属性注册为当前客户端、当前 run 生命周期内的数据。* - written to a **local sidecar file**, never the run save; survives save+quit, restored on load, cleaned up when the run ends/aborts/deletes or a new run starts. |
 
 Sources: `JmcLocalPreferenceAttribute.cs:12`, `JmcGlobalDataAttribute.cs:11`, `JmcProfileDataAttribute.cs:11`, `JmcRunDataAttribute.cs:11`, `JmcClientRunDataAttribute.cs:11` (all `sealed : Attribute`, ctor `(string key)`).
 
-XML `T:JmcModLib.Persistence.JmcDataSlot``1` (i.e. ``JmcDataSlot`1``) summary (verbatim): *子 MOD 用于读写本地偏好、全局或 profile 持久化数据的槽位句柄。* ("Slot handle for a mod to read/write local-preference, global or profile data.") Remarks: for reference-type data mutated in place, wrap mutations in `Modify(...)` — do not rely on mutating the object returned by `Value` and expecting auto-save.
+XML `T:JmcModLib.Persistence.JmcDataSlot``1` (i.e. ``JmcDataSlot`1``) summary (verbatim): *子 MOD 用于读写本地偏好、全局或 profile 持久化数据的槽位句柄。* ("Slot handle for a mod to read/write local-preference, global or profile data.") Remarks: for reference-type data mutated in place, wrap mutations in `Modify(...)` - do not rely on mutating the object returned by `Value` and expecting auto-save.
 
 ```csharp
-// JmcModLib.Persistence.JmcDataSlot<T> (sealed) — Persistence/JmcDataSlot.cs
+// JmcModLib.Persistence.JmcDataSlot<T> (sealed) - Persistence/JmcDataSlot.cs
 public JmcDataSlot();                      public JmcDataSlot(T defaultValue);   // :19, :28
 public bool IsBound { get; }               // :36
 public string Key { get; }                 // :41  ("" when unbound)
@@ -857,14 +857,14 @@ public T Value { get; }                    // :46  (binding value; type default 
 public JmcDataWriteResult SetValue(T newValue);   // :53  (local preferences flush to disk immediately)
 public JmcDataWriteResult Modify(Action<T> update); // :69
 ```
-XML `T:JmcModLib.Persistence.JmcRunDataSlot``1` (i.e. ``JmcRunDataSlot`1``) summary (verbatim): *子 MOD 用于读写当前 run 或当前客户端本局非同步持久化数据的槽位句柄。* ("Slot handle for the current run or the current client's local unsynced run data.") — same members (`Persistence/JmcRunDataSlot.cs:12-90`): `JmcRunDataSlot()`, `JmcRunDataSlot(T defaultValue)`, `bool IsBound`, `string Key`, `T Value`, `JmcDataWriteResult SetValue(T)`, `JmcDataWriteResult Modify(Action<T>)`.
+XML `T:JmcModLib.Persistence.JmcRunDataSlot``1` (i.e. ``JmcRunDataSlot`1``) summary (verbatim): *子 MOD 用于读写当前 run 或当前客户端本局非同步持久化数据的槽位句柄。* ("Slot handle for the current run or the current client's local unsynced run data.") - same members (`Persistence/JmcRunDataSlot.cs:12-90`): `JmcRunDataSlot()`, `JmcRunDataSlot(T defaultValue)`, `bool IsBound`, `string Key`, `T Value`, `JmcDataWriteResult SetValue(T)`, `JmcDataWriteResult Modify(Action<T>)`.
 
-XML `T:JmcModLib.Persistence.JmcDataWritePolicy` summary (verbatim): *指定持久化数据在刷新时的写入策略。* — `enum { WhenChanged=0, Always=1 }`. XML `T:JmcDataWriteResult`: *表示一次持久化槽位写入请求的结果。* — `public readonly struct JmcDataWriteResult` with `bool Success`, `string Message`, `static Succeeded()`, `static Failed(string message)` (`Persistence/JmcDataWriteResult.cs:6-47`).
+XML `T:JmcModLib.Persistence.JmcDataWritePolicy` summary (verbatim): *指定持久化数据在刷新时的写入策略。* - `enum { WhenChanged=0, Always=1 }`. XML `T:JmcDataWriteResult`: *表示一次持久化槽位写入请求的结果。* - `public readonly struct JmcDataWriteResult` with `bool Success`, `string Message`, `static Succeeded()`, `static Failed(string message)` (`Persistence/JmcDataWriteResult.cs:6-47`).
 
 XML `T:JmcModLib.Persistence.JmcPersistenceManager` summary (verbatim): *JML Persistence 的统一初始化与刷新入口。* ("JML Persistence unified init and flush entry.") Remarks: child mods usually only declare the five attributes; this type is for manual flush.
 
 ```csharp
-// JmcModLib.Persistence.JmcPersistenceManager (static) — Persistence/JmcPersistenceManager.cs
+// JmcModLib.Persistence.JmcPersistenceManager (static) - Persistence/JmcPersistenceManager.cs
 public static bool IsInitialized { get; }          // :39
 public static void Init();                         // :44
 public static void Dispose();                      // :66
@@ -877,12 +877,12 @@ public static void FlushAll();                     // :127
 
 ---
 
-# 8. `Compat` (19 documented members; cross-version accessors — no new capability)
+# 8. `Compat` (19 documented members; cross-version accessors - no new capability)
 
-XML `T:JmcModLib.Compat.ModCompat` summary (verbatim): *封装不同 STS2 版本中的 MOD 列表、程序集与 manifest 成员差异。* ("Encapsulates version differences in the MOD list, assemblies and manifest members across STS2 versions.") Remarks (verbatim): *已归档的游戏 DLL 中，0.99.1 至 0.107.1 的 `Mod` 使用单个 `assembly` 字段；0.108 将其改为 `assemblies` 列表… 0.99.1 的 MOD 列表与加载状态分别由 `AllMods`/`LoadedMods` 和 `wasLoaded` 表示；0.103 起改为 `Mods`/`GetLoadedMods()` 和 `state`。其他 PascalCase 候选名用于防御性兼容，不表示已确认它们存在于上述归档版本。* ("Archived game DLLs 0.99.1–0.107.1 use a single `assembly` field on `Mod`; 0.108 changed it to an `assemblies` list… Other PascalCase candidates are defensive, not confirmed to exist in those archived versions.")
+XML `T:JmcModLib.Compat.ModCompat` summary (verbatim): *封装不同 STS2 版本中的 MOD 列表、程序集与 manifest 成员差异。* ("Encapsulates version differences in the MOD list, assemblies and manifest members across STS2 versions.") Remarks (verbatim): *已归档的游戏 DLL 中，0.99.1 至 0.107.1 的 `Mod` 使用单个 `assembly` 字段；0.108 将其改为 `assemblies` 列表... 0.99.1 的 MOD 列表与加载状态分别由 `AllMods`/`LoadedMods` 和 `wasLoaded` 表示；0.103 起改为 `Mods`/`GetLoadedMods()` 和 `state`。其他 PascalCase 候选名用于防御性兼容，不表示已确认它们存在于上述归档版本。* ("Archived game DLLs 0.99.1-0.107.1 use a single `assembly` field on `Mod`; 0.108 changed it to an `assemblies` list... Other PascalCase candidates are defensive, not confirmed to exist in those archived versions.")
 
 ```csharp
-// JmcModLib.Compat.ModCompat (static) — Compat/ModCompat.cs
+// JmcModLib.Compat.ModCompat (static) - Compat/ModCompat.cs
 public static IReadOnlyList<Mod> GetKnownMods();                        // :49   (engine: Mod manager list; 0.99.1 AllMods vs 0.103+ Mods)
 public static IReadOnlyList<Mod> GetLoadedMods();                       // :69   (0.99.1 LoadedMods vs 0.103+ GetLoadedMods())
 public static bool IsLoaded(Mod? mod);                                  // :95   (0.103-0.108 ModLoadState state; earlier wasLoaded)
@@ -898,16 +898,16 @@ public static string? GetManifestVersion(ModManifest? manifest);        // :219
 XML `T:JmcModLib.Compat.MultiplayerCompat` summary (verbatim): *封装不同 STS2 版本中的多人错误信息与加入流程成员差异。* ("Encapsulates version differences in multiplayer error info and the join flow.")
 
 ```csharp
-// JmcModLib.Compat.MultiplayerCompat (static) — Compat/MultiplayerCompat.cs
+// JmcModLib.Compat.MultiplayerCompat (static) - Compat/MultiplayerCompat.cs
 public static bool TryGetConnectionExtraInfo(NetErrorInfo info, [NotNullWhen(true)] out ConnectionFailureExtraInfo? extraInfo); // :98
-    // 0.99.1–0.107.1: private readonly field _connectionExtraInfo; 0.108+: public property ConnectionExtraInfo
+    // 0.99.1-0.107.1: private readonly field _connectionExtraInfo; 0.108+: public property ConnectionExtraInfo
 public static bool TryGetJoinFlowNetService(JoinFlow flow, [NotNullWhen(true)] out INetGameService? service); // :129
 public static IReadOnlyList<ulong> GetRunLobbyPlayerIds(RunLobby? lobby);           // :146  (0.109.1- ConnectedPlayerIds vs 0.110+ PlayerIds)
 public static IReadOnlyList<ulong> GetLoadRunLobbyPlayerIds(LoadRunLobby? lobby);   // :161
 public static IReadOnlyList<ulong> GetConnectedHostPeerIds(INetHostGameService hostService); // :179  (host-interface property 0.107.1-0.110.1 vs native host impl 0.111)
-// internal (⚠): TryReadJoinFlowNetService(JoinFlow, out INetGameService?) :225; TryGetGameplayModMismatch(...)
+// internal (WARN ): TryReadJoinFlowNetService(JoinFlow, out INetGameService?) :225; TryGetGameplayModMismatch(...)
 ```
-**Plainly:** every `Get*`/`TryGet*` here is a **cross-version accessor** over archived engine layouts — it reads the *same* logical data the game exposes differently across 0.99.1→0.111.0; it adds no new capability. `CompatMemberResolver` (internal) performs the member probing; candidate names not confirmed in an archived build are handled defensively (return `null`/`false`). **Use:** this project's mod-manifest/assembly lookups (`ModRuntime` uses these) and multiplayer host/lobby reads should go through these shims rather than direct engine reflection.
+**Plainly:** every `Get*`/`TryGet*` here is a **cross-version accessor** over archived engine layouts - it reads the *same* logical data the game exposes differently across 0.99.1->0.111.0; it adds no new capability. `CompatMemberResolver` (internal) performs the member probing; candidate names not confirmed in an archived build are handled defensively (return `null`/`false`). **Use:** this project's mod-manifest/assembly lookups (`ModRuntime` uses these) and multiplayer host/lobby reads should go through these shims rather than direct engine reflection.
 
 ---
 
@@ -915,10 +915,10 @@ public static IReadOnlyList<ulong> GetConnectedHostPeerIds(INetHostGameService h
 
 A feature that **may change network behaviour** is declared once and gated: while its config is enabled, it participates in join-compatibility checks; the runtime applies the enabled state to the current protocol only when the network is idle (or marks the run as requiring a restart).
 
-XML `T:JmcModLib.Multiplayer.OptionalNetworkFeatureAttribute` summary (verbatim): *将一个静态布尔配置声明为可选网络功能，并指定该功能独占的网络消息标记接口。* ("Declares a static boolean config as an optional network feature and names the network-message marker interface it exclusively owns.") Remarks (verbatim): the target member **must also** be registered as a static `bool` config via `ConfigAttribute`; `messageMarkerType` must be an interface deriving from the game's `INetMessage` and may only mark messages owned by this feature; the mod manifest must start with `affects_gameplay=false`; the declaration must be scanned during normal `ModRegistry.Register` init — **cannot be registered late** after the base protocol is up.
+XML `T:JmcModLib.Multiplayer.OptionalNetworkFeatureAttribute` summary (verbatim): *将一个静态布尔配置声明为可选网络功能，并指定该功能独占的网络消息标记接口。* ("Declares a static boolean config as an optional network feature and names the network-message marker interface it exclusively owns.") Remarks (verbatim): the target member **must also** be registered as a static `bool` config via `ConfigAttribute`; `messageMarkerType` must be an interface deriving from the game's `INetMessage` and may only mark messages owned by this feature; the mod manifest must start with `affects_gameplay=false`; the declaration must be scanned during normal `ModRegistry.Register` init - **cannot be registered late** after the base protocol is up.
 
 ```csharp
-// JmcModLib.Multiplayer.OptionalNetworkFeatureAttribute (sealed : Attribute) — Multiplayer/OptionalNetworkFeatureAttribute.cs
+// JmcModLib.Multiplayer.OptionalNetworkFeatureAttribute (sealed : Attribute) - Multiplayer/OptionalNetworkFeatureAttribute.cs
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
 public sealed class OptionalNetworkFeatureAttribute(string id, Type messageMarkerType) : Attribute  // :17
 {
@@ -931,7 +931,7 @@ public sealed class OptionalNetworkFeatureAttribute(string id, Type messageMarke
 XML `T:JmcModLib.Multiplayer.OptionalNetworkFeatureHandle` summary (verbatim): *提供可选网络功能的配置意图、当前生效状态和应用进度。* ("Provides a feature's config intent, currently effective state, and apply progress.")
 
 ```csharp
-// JmcModLib.Multiplayer.OptionalNetworkFeatureHandle (sealed) — Multiplayer/OptionalNetworkFeatureHandle.cs
+// JmcModLib.Multiplayer.OptionalNetworkFeatureHandle (sealed) - Multiplayer/OptionalNetworkFeatureHandle.cs
 public string Id { get; }                          // :35
 public string ModId { get; }                       // :40
 public string CompatibilityVersion { get; }        // :45
@@ -948,12 +948,12 @@ XML `T:JmcModLib.Multiplayer.OptionalNetworkFeatureApplyState` summary (verbatim
 XML `T:JmcModLib.Multiplayer.OptionalNetworkFeatures` summary (verbatim): *提供可选网络功能运行时句柄的查询入口。* ("Query entry for runtime handles of optional network features.")
 
 ```csharp
-// JmcModLib.Multiplayer.OptionalNetworkFeatures (static) — Multiplayer/OptionalNetworkFeatures.cs
+// JmcModLib.Multiplayer.OptionalNetworkFeatures (static) - Multiplayer/OptionalNetworkFeatures.cs
 public static OptionalNetworkFeatureHandle Get(string id, Assembly? assembly = null);  // :19  (KeyNotFoundException when unregistered/invalid)
 public static OptionalNetworkFeatureHandle Get<TOwner>(string id);                    // :38
 public static bool TryGet(string id, [NotNullWhen(true)] out OptionalNetworkFeatureHandle? handle, Assembly? assembly = null); // :50
 ```
-XML `T:JmcModLib.Multiplayer.OptionalNetworkMismatch` summary (verbatim): *提供 JML 可选网络功能不匹配错误的路由判断。* ("Routing judgement for JML optional-network-feature mismatch errors.") — `public static bool ShouldHandle(NetErrorInfo info)` (`Multiplayer/OptionalNetworkMismatch.cs:29`): true when the join error was caused by a registered optional feature mismatch and the local peer is not the host.
+XML `T:JmcModLib.Multiplayer.OptionalNetworkMismatch` summary (verbatim): *提供 JML 可选网络功能不匹配错误的路由判断。* ("Routing judgement for JML optional-network-feature mismatch errors.") - `public static bool ShouldHandle(NetErrorInfo info)` (`Multiplayer/OptionalNetworkMismatch.cs:29`): true when the join error was caused by a registered optional feature mismatch and the local peer is not the host.
 
 **How gating works** (manager internal, `Multiplayer/Internal/OptionalNetworkFeatureManager.cs`): during join validation the manager compares each feature's `CompatibilityVersion` + `RequestedEnabled` across peers; on mismatch it routes to `OptionalNetworkMismatch` and points the user at the settings entry. Applying a config change: if the network is idle the feature's effective state switches to `Applied` immediately; if a run/network session is active it stays `PendingNetworkIdle` until the network goes idle; if the protocol cannot change mid-session it becomes `RestartRequired`. Patches live in `Multiplayer/Patches/OptionalNetworkFeaturePatches.cs`. **Use:** this project's co-op-affecting features (e.g. shared map state, sync'd rerolls) should declare an `INetMessage` marker interface + `CompatibilityVersion` and gate via `RequestedEnabled`/`EffectiveEnabled` instead of custom net checks.
 
@@ -968,719 +968,719 @@ JML ships two cooperating MSBuild layers. The **BuildTools** layer is the generi
 `Jmc.Sts2Mod.Build.props` (3.7 KB): defaults for `TargetFramework` (`net10.0`), `Nullable`/`ImplicitUsings`/`LangVersion=latest`, author metadata (`Author`, `AuthorEmail`, `AuthorBilibiliUrl`, `AuthorGitHubUrl`, `SupportQQGroup`, `AuthorContactInfo`), tool paths (`SteamLibraryPath`, `Sts2Path`, `Sts2DataDir`, `GodotExe`), output layout (`ModLocalDir`, `PublishDir`, `ModManifestPath`, `ModGameDir`, `ModOneDriveDir`, `VersionInfoFile`), feature switches (`JmcSts2ModBuildEnabled`, `JmcSts2AddGameReferences`, `JmcSts2CopyDefaultDllToPublishDir`, `JmcSts2ExportPck`, `JmcSts2DeployToGameDir`, `JmcSts2DeployToOneDriveDir`, `PromptLaunchGameAfterBuild`), and the game reference item group: `GodotSharp.dll`, **`sts2.dll`** (the whole game assembly), `0Harmony.dll` (all `Private=false`, from `$(Sts2DataDir)`).
 
 `Jmc.Sts2Mod.Build.targets` (13.5 KB) targets, all gated on `JmcSts2ModBuildEnabled != false`:
-- `JmcSts2ModPrepareProjectFiles` — creates `project.godot`, `export_presets.cfg` and a default manifest (dependency `JmcModLib >= 1.4.0`, `affects_gameplay=false`) when absent; never overwrites an existing manifest.
-- `JmcSts2ModReadMetadata` (`BeforeTargets=GetAssemblyVersion`) — parses `Core\VersionInfo.cs` for `Version` and the manifest for `id`/`name`/`author`/`description`/`url`; injects `AssemblyMetadataAttribute` entries (`ModId`, `ModName`, `ModAuthor`, `ModVersion`, `ModDescription`, `AuthorEmail`, `AuthorBilibiliUrl`, `AuthorGitHubUrl`, `SupportQQGroup`, `AuthorContactInfo`, `ModRepositoryUrl`). One source of truth: `VersionInfo.cs` drives both assembly version and manifest `version`.
-- `JmcSts2ModSyncManifestVersion` — runs `scripts/Sync-ModManifestVersion.ps1` to rewrite only the `version` field, preserving JSON formatting.
-- `JmcSts2ModCopyDefaultDllToPublishDir` → `JmcSts2ModExportPck` (Godot `--headless --export-pack "Windows Desktop" modPublish\<ModName>.pck`) → `JmcSts2ModDeployToGameDir` / `JmcSts2ModDeployToOneDriveDir` (robocopy `/E /XO`) → `JmcSts2ModBuildAndDeploy` (`AfterTargets=Build`) → `JmcSts2ModAskToLaunchGame` (writes `steam_appid.txt` = 2868840, prompts to launch).
+- `JmcSts2ModPrepareProjectFiles` - creates `project.godot`, `export_presets.cfg` and a default manifest (dependency `JmcModLib >= 1.4.0`, `affects_gameplay=false`) when absent; never overwrites an existing manifest.
+- `JmcSts2ModReadMetadata` (`BeforeTargets=GetAssemblyVersion`) - parses `Core\VersionInfo.cs` for `Version` and the manifest for `id`/`name`/`author`/`description`/`url`; injects `AssemblyMetadataAttribute` entries (`ModId`, `ModName`, `ModAuthor`, `ModVersion`, `ModDescription`, `AuthorEmail`, `AuthorBilibiliUrl`, `AuthorGitHubUrl`, `SupportQQGroup`, `AuthorContactInfo`, `ModRepositoryUrl`). One source of truth: `VersionInfo.cs` drives both assembly version and manifest `version`.
+- `JmcSts2ModSyncManifestVersion` - runs `scripts/Sync-ModManifestVersion.ps1` to rewrite only the `version` field, preserving JSON formatting.
+- `JmcSts2ModCopyDefaultDllToPublishDir` -> `JmcSts2ModExportPck` (Godot `--headless --export-pack "Windows Desktop" modPublish\<ModName>.pck`) -> `JmcSts2ModDeployToGameDir` / `JmcSts2ModDeployToOneDriveDir` (robocopy `/E /XO`) -> `JmcSts2ModBuildAndDeploy` (`AfterTargets=Build`) -> `JmcSts2ModAskToLaunchGame` (writes `steam_appid.txt` = 2868840, prompts to launch).
 
-## 10.2 `JmcModLib.Dispatch.targets` (installed, 8.2 KB — the multi-version part)
+## 10.2 `JmcModLib.Dispatch.targets` (installed, 8.2 KB - the multi-version part)
 
 For a mod project named `<ModName>` producing `<ModName>.Runtime.dll`:
 - Property defaults: `JmcDispatchEnabled=true`, `JmcDispatchModName` (falls back to `ModName`, then project name), `JmcDispatchPublishDir`, `JmcDispatchRuntimeAssemblyName = <ModName>.Runtime`, `JmcDispatchInitializerType = <ModName>.MainFile`, `JmcDispatchInitializerMethod = Initialize`, descriptor `<ModName>.dispatch.json` in the publish dir, bootstrap project at `dispatch\JmcModLib.Dispatch.Bootstrap.csproj` (falling back to the JML-installed copy).
-- When enabled it sets `<AssemblyName>` to the runtime name and declares a default `JmcDispatchRuntime` item (`default` → `runtimes/default/<Runtime>.dll`).
-- `JmcDispatchNormalize` — fills `RuntimeAssembly` (`runtimes/<id>/…`), `ProbeDirectories`, `ProbeAllDlls`, `SourcePath` (`$(TargetPath)`), `SourceDirectory` per entry.
-- `JmcDispatchWriteDescriptor` — writes `<ModName>.dispatch.json`: `{ "initializerType", "initializerMethod", "entries": [ { "id", "minGameVersion", "maxGameVersionExclusive", "runtimeAssembly", "probeDirectories", "dependencies", "probeAllDlls" } ] }`.
-- `JmcDispatchBuildBootstrap` — MSBuild-restores/builds the shared bootstrap project with `AssemblyName=<ModName>` and copies `<ModName>.dll` to the publish dir. The bootstrap is **zero JML runtime dependency**: it only knows how to read the descriptor and load a runtime.
-- `JmcDispatchCopyRuntimes` — copies each built runtime's `*.dll/*.pdb/*.xml/*.json` into `publish\runtimes\<id>\`.
+- When enabled it sets `<AssemblyName>` to the runtime name and declares a default `JmcDispatchRuntime` item (`default` -> `runtimes/default/<Runtime>.dll`).
+- `JmcDispatchNormalize` - fills `RuntimeAssembly` (`runtimes/<id>/...`), `ProbeDirectories`, `ProbeAllDlls`, `SourcePath` (`$(TargetPath)`), `SourceDirectory` per entry.
+- `JmcDispatchWriteDescriptor` - writes `<ModName>.dispatch.json`: `{ "initializerType", "initializerMethod", "entries": [ { "id", "minGameVersion", "maxGameVersionExclusive", "runtimeAssembly", "probeDirectories", "dependencies", "probeAllDlls" } ] }`.
+- `JmcDispatchBuildBootstrap` - MSBuild-restores/builds the shared bootstrap project with `AssemblyName=<ModName>` and copies `<ModName>.dll` to the publish dir. The bootstrap is **zero JML runtime dependency**: it only knows how to read the descriptor and load a runtime.
+- `JmcDispatchCopyRuntimes` - copies each built runtime's `*.dll/*.pdb/*.xml/*.json` into `publish\runtimes\<id>\`.
 - `JmcDispatchPublish` (`AfterTargets=Build`) chains all of the above.
 
 Resulting layout: `publish\<ModName>.dll` (bootstrap entry), `publish\<ModName>.dispatch.json`, `publish\runtimes\<id>\<ModName>.Runtime.dll` per game-version range.
 
-## 10.3 Bootstrap behaviour (Dispatch sources, `internal` — technique, not API)
+## 10.3 Bootstrap behaviour (Dispatch sources, `internal` - technique, not API)
 
-`DispatchBootstrap.Initialize` (repo `Dispatch/DispatchBootstrap.cs`): resolves the mod dir, reads `<ModName>.dispatch.json`, reads the current game version via `ReleaseInfoManager` (`GameVersionInfo(RawVersion, SemVer)`), `SelectEntry(gameVersion)` picks the first `DispatchEntry` whose `minGameVersion ≤ v < maxGameVersionExclusive` (semver compare; entries without ranges match anything — `Dispatch/DispatchDescriptor.cs:176`), installs a dependency resolver (`BootstrapDependencyResolver.Install`, `Dispatch/BootstrapDependencyResolver.cs:20`), loads the chosen runtime assembly, and invokes the initializer by reflection. No entry matches ⇒ explicit `InvalidOperationException` (fail loud, not silently).
+`DispatchBootstrap.Initialize` (repo `Dispatch/DispatchBootstrap.cs`): resolves the mod dir, reads `<ModName>.dispatch.json`, reads the current game version via `ReleaseInfoManager` (`GameVersionInfo(RawVersion, SemVer)`), `SelectEntry(gameVersion)` picks the first `DispatchEntry` whose `minGameVersion <= v < maxGameVersionExclusive` (semver compare; entries without ranges match anything - `Dispatch/DispatchDescriptor.cs:176`), installs a dependency resolver (`BootstrapDependencyResolver.Install`, `Dispatch/BootstrapDependencyResolver.cs:20`), loads the chosen runtime assembly, and invokes the initializer by reflection. No entry matches => explicit `InvalidOperationException` (fail loud, not silently).
 
-**Why it matters for this project:** the game's managed surface changed repeatedly (0.99.1 → 0.111.0; see §8). A single DLL cannot safely reference the union of engine APIs. The dispatch pattern — keep the manifest entry assembly dependency-free, build one runtime per game version, select at load time by semver — is the documented JML technique for shipping one mod across several StS2 versions; `docs/JML_Dispatch.md` is the authors' usage guide.
+**Why it matters for this project:** the game's managed surface changed repeatedly (0.99.1 -> 0.111.0; see Sec 8). A single DLL cannot safely reference the union of engine APIs. The dispatch pattern - keep the manifest entry assembly dependency-free, build one runtime per game version, select at load time by semver - is the documented JML technique for shipping one mod across several StS2 versions; `docs/JML_Dispatch.md` is the authors' usage guide.
 
 ---
 
 # 11. Full member index (all 602 documented members)
 
-All rows are XML `<member>` entries from the installed `JmcModLib.Runtime.xml`. `Bin` column: `✓` = public in the shipped `JmcModLib.Runtime.dll`; `⚠ int. type` = type is internal (not exported) — members unusable; `⚠ internal`/`⚠ protected`/`⚠ private` = member not callable from a consumer assembly. Type rows are the XML `T:` entries (kind `type`). Member signatures are shown with their XML parameter lists; summaries are quoted in §§1–10.
+All rows are XML `<member>` entries from the installed `JmcModLib.Runtime.xml`. `Bin` column: `[x]` = public in the shipped `JmcModLib.Runtime.dll`; `WARN  int. type` = type is internal (not exported) - members unusable; `WARN  internal`/`WARN  protected`/`WARN  private` = member not callable from a consumer assembly. Type rows are the XML `T:` entries (kind `type`). Member signatures are shown with their XML parameter lists; summaries are quoted in Sec Sec 1-10.
 
-### `Config.UI` — 116 members
-
-| Type | Member | Kind | Bin |
-|---|---|---|---|
-| JmcKeyModifiers | `Alt` | field | ✓ |
-| JmcKeyModifiers | `Ctrl` | field | ✓ |
-| JmcKeyModifiers | `Meta` | field | ✓ |
-| JmcKeyModifiers | `None` | field | ✓ |
-| JmcKeyModifiers | `Shift` | field | ✓ |
-| UIButtonColor | `Blue` | field | ✓ |
-| UIButtonColor | `Default` | field | ✓ |
-| UIButtonColor | `Gold` | field | ✓ |
-| UIButtonColor | `Green` | field | ✓ |
-| UIButtonColor | `Red` | field | ✓ |
-| UIButtonColor | `Reset` | field | ✓ |
-| UIDropdownInvalidValuePolicy | `KeepCurrent` | field | ✓ |
-| UIDropdownInvalidValuePolicy | `ResetToDefault` | field | ✓ |
-| UIDropdownInvalidValuePolicy | `SelectFirstAvailable` | field | ✓ |
-| HotkeyOptions | `HotkeyOptions(System.Boolean,System.Boolean,System.Boolean,System.UInt64)` | method | ✓ |
-| IConfigUiContext | `Get(System.String)` | method | ✓ |
-| IConfigUiContext | `Get``1(System.String)` | method | ✓ |
-| IConfigUiContext | `TryGet(System.String,System.Object@)` | method | ✓ |
-| IConfigUiContext | `TryGet``1(System.String,``0@)` | method | ✓ |
-| JmcHotkeyAttribute | `JmcHotkeyAttribute(System.String)` | method | ✓ |
-| JmcHotkeyManager | `Init()` | method | ✓ |
-| JmcHotkeyManager | `Register(System.String,System.Func{Godot.Key},System.Action,System.Boolean,System.Boolean,System.Boolean,System.UInt64,System.Reflection.Assembly)` | method | ✓ |
-| JmcHotkeyManager | `Register(System.String,System.Func{JmcModLib.Config.UI.JmcKeyBinding},System.Action,System.Boolean,System.Boolean,System.Boolean,System.UInt64,System.Reflection.Assembly)` | method | ✓ |
-| JmcHotkeyManager | `Unregister(System.String,System.Reflection.Assembly)` | method | ✓ |
-| JmcHotkeyManager | `UnregisterAssembly(System.Reflection.Assembly)` | method | ✓ |
-| JmcKeyBinding | `JmcKeyBinding()` | method | ✓ |
-| JmcKeyBinding | `JmcKeyBinding(Godot.Key,JmcModLib.Config.UI.JmcKeyModifiers,System.Boolean)` | method | ✓ |
-| JmcKeyBinding | `JmcKeyBinding(Godot.Key,System.String,JmcModLib.Config.UI.JmcKeyModifiers,System.Boolean)` | method | ✓ |
-| JmcKeyBinding | `JmcKeyBinding(Godot.Key,System.String,JmcModLib.Config.UI.JmcKeyModifiers)` | method | ✓ |
-| JmcKeyBinding | `JmcKeyBinding(Godot.Key)` | method | ✓ |
-| JmcKeyBinding | `IsDown(System.Boolean)` | method | ✓ |
-| JmcKeyBinding | `IsModifierKey(Godot.Key)` | method | ✓ |
-| JmcKeyBinding | `IsPressed(Godot.InputEvent,System.Boolean,System.Boolean)` | method | ✓ |
-| JmcKeyBinding | `IsPressed(Godot.Key,Godot.InputEvent,System.Boolean)` | method | ✓ |
-| JmcKeyBinding | `IsReleased(Godot.InputEvent)` | method | ✓ |
-| JmcKeyBinding | `IsReleased(Godot.Key,Godot.InputEvent)` | method | ✓ |
-| JmcKeyBinding | `op_Implicit(Godot.Key)` | method | ✓ |
-| JmcKeyBinding | `ReadCurrentModifiers()` | method | ✓ |
-| JmcKeyBinding | `ReadKey(Godot.InputEventKey)` | method | ✓ |
-| JmcKeyBinding | `ReadModifiers(Godot.InputEventKey)` | method | ✓ |
-| JmcKeyBinding | `ToKeyboardText()` | method | ✓ |
-| JmcKeyBinding | `ToString()` | method | ✓ |
-| JmcKeyBinding | `WithController(System.String)` | method | ✓ |
-| JmcKeyBinding | `WithEnabled(System.Boolean)` | method | ✓ |
-| JmcKeyBinding | `WithKeyboard(Godot.Key,JmcModLib.Config.UI.JmcKeyModifiers)` | method | ✓ |
-| JmcKeyBinding | `WithKeyboard(Godot.Key)` | method | ✓ |
-| UIButtonAttribute | `UIButtonAttribute(System.String,System.String,System.String)` | method | ✓ |
-| UIDropdownOptionsProviderAttribute | `UIDropdownOptionsProviderAttribute(System.String,System.String[])` | method | ✓ |
-| UIDropdownOptionsProviderAttribute | `UIDropdownOptionsProviderAttribute(System.String)` | method | ✓ |
-| UIHotkeyAttribute | `UIHotkeyAttribute(System.String,System.String)` | method | ✓ |
-| UIKeybindAttribute | `UIKeybindAttribute(System.Boolean,System.Boolean)` | method | ✓ |
-| UIVisibleWhenAttribute | `UIVisibleWhenAttribute(System.String,System.Boolean)` | method | ✓ |
-| UIVisibleWhenAttribute | `UIVisibleWhenAttribute(System.String,System.Double)` | method | ✓ |
-| UIVisibleWhenAttribute | `UIVisibleWhenAttribute(System.String,System.Int32)` | method | ✓ |
-| UIVisibleWhenAttribute | `UIVisibleWhenAttribute(System.String,System.String)` | method | ✓ |
-| UIVisibleWhenAttribute | `UIVisibleWhenAttribute(System.String)` | method | ✓ |
-| HotkeyOptions | `AllowEcho` | property | ✓ |
-| HotkeyOptions | `ConsumeInput` | property | ✓ |
-| HotkeyOptions | `DebounceMs` | property | ✓ |
-| HotkeyOptions | `ExactModifiers` | property | ✓ |
-| JmcHotkeyAttribute | `AllowEcho` | property | ✓ |
-| JmcHotkeyAttribute | `BindingMember` | property | ✓ |
-| JmcHotkeyAttribute | `ConsumeInput` | property | ✓ |
-| JmcHotkeyAttribute | `DebounceMs` | property | ✓ |
-| JmcHotkeyAttribute | `ExactModifiers` | property | ✓ |
-| JmcHotkeyAttribute | `Key` | property | ✓ |
-| JmcHotkeyManager | `IsInitialized` | property | ✓ |
-| JmcKeyBinding | `Controller` | property | ✓ |
-| JmcKeyBinding | `Enabled` | property | ✓ |
-| JmcKeyBinding | `HasController` | property | ✓ |
-| JmcKeyBinding | `HasKeyboard` | property | ✓ |
-| JmcKeyBinding | `HasModifiers` | property | ✓ |
-| JmcKeyBinding | `Keyboard` | property | ✓ |
-| JmcKeyBinding | `Modifiers` | property | ✓ |
-| UIDropdownOptionsProviderAttribute | `DependsOn` | property | ✓ |
-| UIDropdownOptionsProviderAttribute | `InvalidValuePolicy` | property | ✓ |
-| UIDropdownOptionsProviderAttribute | `ProviderName` | property | ✓ |
-| UIHotkeyAttribute | `AllowController` | property | ✓ |
-| UIHotkeyAttribute | `AllowEcho` | property | ✓ |
-| UIHotkeyAttribute | `AllowKeyboard` | property | ✓ |
-| UIHotkeyAttribute | `ConsumeInput` | property | ✓ |
-| UIHotkeyAttribute | `DebounceMs` | property | ✓ |
-| UIHotkeyAttribute | `DefaultController` | property | ✓ |
-| UIHotkeyAttribute | `DefaultKeyboard` | property | ✓ |
-| UIHotkeyAttribute | `DefaultModifiers` | property | ✓ |
-| UIHotkeyAttribute | `Description` | property | ✓ |
-| UIHotkeyAttribute | `DescriptionKey` | property | ✓ |
-| UIHotkeyAttribute | `DisplayName` | property | ✓ |
-| UIHotkeyAttribute | `DisplayNameKey` | property | ✓ |
-| UIHotkeyAttribute | `ExactModifiers` | property | ✓ |
-| UIHotkeyAttribute | `Group` | property | ✓ |
-| UIHotkeyAttribute | `GroupKey` | property | ✓ |
-| UIHotkeyAttribute | `Key` | property | ✓ |
-| UIHotkeyAttribute | `LocTable` | property | ✓ |
-| UIHotkeyAttribute | `Order` | property | ✓ |
-| UIHotkeyAttribute | `RestartRequired` | property | ✓ |
-| UIKeybindAttribute | `AllowController` | property | ✓ |
-| UIKeybindAttribute | `AllowKeyboard` | property | ✓ |
-| UIVisibleWhenAttribute | `DependsOn` | property | ✓ |
-| UIVisibleWhenAttribute | `ExpectedValue` | property | ✓ |
-| UIVisibleWhenAttribute | `IgnoreCase` | property | ✓ |
-| UIVisibleWhenAttribute | `Invert` | property | ✓ |
-| — | `HotkeyOptions` | type | ✓ |
-| — | `IConfigUiContext` | type | ✓ |
-| — | `JmcHotkeyAttribute` | type | ✓ |
-| — | `JmcHotkeyManager` | type | ✓ |
-| — | `JmcKeyBinding` | type | ✓ |
-| — | `JmcKeyModifiers` | type | ✓ |
-| — | `UIButtonAttribute` | type | ✓ |
-| — | `UIButtonColor` | type | ✓ |
-| — | `UIConfigAttribute` | type | ✓ |
-| — | `UIDropdownInvalidValuePolicy` | type | ✓ |
-| — | `UIDropdownOptionsProviderAttribute` | type | ✓ |
-| — | `UIHotkeyAttribute` | type | ✓ |
-| — | `UIKeybindAttribute` | type | ✓ |
-| — | `UIVisibleWhenAttribute` | type | ✓ |
-
-### `Reflection` — 80 members
+### `Config.UI` - 116 members
 
 | Type | Member | Kind | Bin |
 |---|---|---|---|
-| ReflectionAccessorBase | `_attrCache` | field | ⚠ protected |
-| ReflectionAccessorBase | `DefaultFlags` | field | ✓ |
-| MemberAccessor | `Get(System.Reflection.MemberInfo)` | method | ✓ |
-| MemberAccessor | `Get(System.Type,System.String)` | method | ✓ |
-| MemberAccessor | `GetAll(System.Type,System.Reflection.BindingFlags)` | method | ✓ |
-| MemberAccessor | `GetAll``1(System.Reflection.BindingFlags)` | method | ✓ |
-| MemberAccessor | `GetIndexer(System.Type,System.Type[])` | method | ✓ |
-| MemberAccessor | `GetValue(System.Object,System.Object[])` | method | ✓ |
-| MemberAccessor | `GetValue(System.Object)` | method | ✓ |
-| MemberAccessor | `GetValue``1()` | method | ✓ |
-| MemberAccessor | `GetValue``2(``0)` | method | ✓ |
-| MemberAccessor | `IsSupportedMember(System.Reflection.MemberInfo)` | method | ⚠ private |
-| MemberAccessor | `SetValue(System.Object,System.Object,System.Object[])` | method | ✓ |
-| MemberAccessor | `SetValue(System.Object,System.Object)` | method | ✓ |
-| MemberAccessor | `SetValue``1(``0)` | method | ✓ |
-| MemberAccessor | `SetValue``2(``0,``1)` | method | ✓ |
-| MethodAccessor | `CreateInvoker(System.Reflection.MethodInfo)` | method | ⚠ private |
-| MethodAccessor | `EmitUnboxWithEnumSupport(System.Reflection.Emit.ILGenerator,System.Type)` | method | ⚠ private |
-| MethodAccessor | `Get(System.Reflection.MethodInfo)` | method | ✓ |
-| MethodAccessor | `Get(System.Type,System.String,System.Type[])` | method | ✓ |
-| MethodAccessor | `GetAll(System.Type,System.Reflection.BindingFlags)` | method | ✓ |
-| MethodAccessor | `GetAll``1(System.Reflection.BindingFlags)` | method | ✓ |
-| MethodAccessor | `GetTypedDelegate()` | method | ✓ |
-| MethodAccessor | `Invoke(System.Object,System.Object,System.Object,System.Object)` | method | ✓ |
-| MethodAccessor | `Invoke(System.Object,System.Object,System.Object)` | method | ✓ |
-| MethodAccessor | `Invoke(System.Object,System.Object)` | method | ✓ |
-| MethodAccessor | `Invoke(System.Object,System.Object[])` | method | ✓ |
-| MethodAccessor | `Invoke(System.Object)` | method | ✓ |
-| MethodAccessor | `Invoke``2(``0)` | method | ✓ |
-| MethodAccessor | `Invoke``3(``0,``1)` | method | ✓ |
-| MethodAccessor | `Invoke``4(``0,``1,``2)` | method | ✓ |
-| MethodAccessor | `Invoke``5(``0,``1,``2,``3)` | method | ✓ |
-| MethodAccessor | `InvokeStatic``1()` | method | ✓ |
-| MethodAccessor | `InvokeStatic``2(``0)` | method | ✓ |
-| MethodAccessor | `InvokeStatic``3(``0,``1)` | method | ✓ |
-| MethodAccessor | `InvokeStatic``4(``0,``1,``2)` | method | ✓ |
-| MethodAccessor | `InvokeStaticVoid()` | method | ✓ |
-| MethodAccessor | `InvokeStaticVoid``1(``0)` | method | ✓ |
-| MethodAccessor | `InvokeStaticVoid``2(``0,``1)` | method | ✓ |
-| MethodAccessor | `InvokeStaticVoid``3(``0,``1,``2)` | method | ✓ |
-| MethodAccessor | `InvokeVoid``1(``0)` | method | ✓ |
-| MethodAccessor | `InvokeVoid``2(``0,``1)` | method | ✓ |
-| MethodAccessor | `InvokeVoid``3(``0,``1,``2)` | method | ✓ |
-| MethodAccessor | `InvokeVoid``4(``0,``1,``2,``3)` | method | ✓ |
-| MethodAccessor | `MakeGeneric(System.Type[])` | method | ✓ |
-| ReflectionAccessorBase | `GetAllAttributes()` | method | ✓ |
-| ReflectionAccessorBase | `GetAttribute``1()` | method | ✓ |
-| ReflectionAccessorBase | `GetAttributes(System.Type)` | method | ✓ |
-| ReflectionAccessorBase | `HasAttribute``1()` | method | ✓ |
-| ReflectionAccessorBase | `IsSaveOwner(System.Type)` | method | ✓ |
-| ReflectionAccessorBase`2 | `ReflectionAccessorBase`2(`0)` | method | ⚠ protected |
-| ReflectionAccessorBase`2 | `ClearCache()` | method | ✓ |
-| ReflectionAccessorBase`2 | `GetAttributes(System.Type)` | method | ✓ |
-| ReflectionAccessorBase`2 | `GetOrCreate(`0,System.Func{`0,`1})` | method | ⚠ protected |
-| TypeAccessor | `CreateInstance()` | method | ✓ |
-| TypeAccessor | `CreateInstance(System.Object[])` | method | ✓ |
-| TypeAccessor | `CreateInstance``1()` | method | ✓ |
-| TypeAccessor | `Get(System.Type)` | method | ✓ |
-| TypeAccessor | `Get``1()` | method | ✓ |
-| MemberAccessor | `CanRead` | property | ✓ |
-| MemberAccessor | `CanWrite` | property | ✓ |
-| MemberAccessor | `MemberType` | property | ✓ |
-| MemberAccessor | `TypedGetter` | property | ✓ |
-| MemberAccessor | `TypedSetter` | property | ✓ |
-| MemberAccessor | `ValueType` | property | ✓ |
-| MethodAccessor | `IsStatic` | property | ✓ |
-| MethodAccessor | `TypedDelegate` | property | ✓ |
-| ReflectionAccessorBase | `DeclaringType` | property | ✓ |
-| ReflectionAccessorBase | `IsStatic` | property | ✓ |
-| ReflectionAccessorBase | `Name` | property | ✓ |
-| ReflectionAccessorBase`2 | `CacheCount` | property | ✓ |
-| ReflectionAccessorBase`2 | `DeclaringType` | property | ✓ |
-| ReflectionAccessorBase`2 | `MemberInfo` | property | ✓ |
-| ReflectionAccessorBase`2 | `Name` | property | ✓ |
-| TypeAccessor | `Type` | property | ✓ |
-| — | `MemberAccessor` | type | ✓ |
-| — | `MethodAccessor` | type | ✓ |
-| — | `ReflectionAccessorBase` | type | ✓ |
-| — | `ReflectionAccessorBase`2` | type | ✓ |
-| — | `TypeAccessor` | type | ✓ |
+| JmcKeyModifiers | `Alt` | field | [x] |
+| JmcKeyModifiers | `Ctrl` | field | [x] |
+| JmcKeyModifiers | `Meta` | field | [x] |
+| JmcKeyModifiers | `None` | field | [x] |
+| JmcKeyModifiers | `Shift` | field | [x] |
+| UIButtonColor | `Blue` | field | [x] |
+| UIButtonColor | `Default` | field | [x] |
+| UIButtonColor | `Gold` | field | [x] |
+| UIButtonColor | `Green` | field | [x] |
+| UIButtonColor | `Red` | field | [x] |
+| UIButtonColor | `Reset` | field | [x] |
+| UIDropdownInvalidValuePolicy | `KeepCurrent` | field | [x] |
+| UIDropdownInvalidValuePolicy | `ResetToDefault` | field | [x] |
+| UIDropdownInvalidValuePolicy | `SelectFirstAvailable` | field | [x] |
+| HotkeyOptions | `HotkeyOptions(System.Boolean,System.Boolean,System.Boolean,System.UInt64)` | method | [x] |
+| IConfigUiContext | `Get(System.String)` | method | [x] |
+| IConfigUiContext | `Get``1(System.String)` | method | [x] |
+| IConfigUiContext | `TryGet(System.String,System.Object@)` | method | [x] |
+| IConfigUiContext | `TryGet``1(System.String,``0@)` | method | [x] |
+| JmcHotkeyAttribute | `JmcHotkeyAttribute(System.String)` | method | [x] |
+| JmcHotkeyManager | `Init()` | method | [x] |
+| JmcHotkeyManager | `Register(System.String,System.Func{Godot.Key},System.Action,System.Boolean,System.Boolean,System.Boolean,System.UInt64,System.Reflection.Assembly)` | method | [x] |
+| JmcHotkeyManager | `Register(System.String,System.Func{JmcModLib.Config.UI.JmcKeyBinding},System.Action,System.Boolean,System.Boolean,System.Boolean,System.UInt64,System.Reflection.Assembly)` | method | [x] |
+| JmcHotkeyManager | `Unregister(System.String,System.Reflection.Assembly)` | method | [x] |
+| JmcHotkeyManager | `UnregisterAssembly(System.Reflection.Assembly)` | method | [x] |
+| JmcKeyBinding | `JmcKeyBinding()` | method | [x] |
+| JmcKeyBinding | `JmcKeyBinding(Godot.Key,JmcModLib.Config.UI.JmcKeyModifiers,System.Boolean)` | method | [x] |
+| JmcKeyBinding | `JmcKeyBinding(Godot.Key,System.String,JmcModLib.Config.UI.JmcKeyModifiers,System.Boolean)` | method | [x] |
+| JmcKeyBinding | `JmcKeyBinding(Godot.Key,System.String,JmcModLib.Config.UI.JmcKeyModifiers)` | method | [x] |
+| JmcKeyBinding | `JmcKeyBinding(Godot.Key)` | method | [x] |
+| JmcKeyBinding | `IsDown(System.Boolean)` | method | [x] |
+| JmcKeyBinding | `IsModifierKey(Godot.Key)` | method | [x] |
+| JmcKeyBinding | `IsPressed(Godot.InputEvent,System.Boolean,System.Boolean)` | method | [x] |
+| JmcKeyBinding | `IsPressed(Godot.Key,Godot.InputEvent,System.Boolean)` | method | [x] |
+| JmcKeyBinding | `IsReleased(Godot.InputEvent)` | method | [x] |
+| JmcKeyBinding | `IsReleased(Godot.Key,Godot.InputEvent)` | method | [x] |
+| JmcKeyBinding | `op_Implicit(Godot.Key)` | method | [x] |
+| JmcKeyBinding | `ReadCurrentModifiers()` | method | [x] |
+| JmcKeyBinding | `ReadKey(Godot.InputEventKey)` | method | [x] |
+| JmcKeyBinding | `ReadModifiers(Godot.InputEventKey)` | method | [x] |
+| JmcKeyBinding | `ToKeyboardText()` | method | [x] |
+| JmcKeyBinding | `ToString()` | method | [x] |
+| JmcKeyBinding | `WithController(System.String)` | method | [x] |
+| JmcKeyBinding | `WithEnabled(System.Boolean)` | method | [x] |
+| JmcKeyBinding | `WithKeyboard(Godot.Key,JmcModLib.Config.UI.JmcKeyModifiers)` | method | [x] |
+| JmcKeyBinding | `WithKeyboard(Godot.Key)` | method | [x] |
+| UIButtonAttribute | `UIButtonAttribute(System.String,System.String,System.String)` | method | [x] |
+| UIDropdownOptionsProviderAttribute | `UIDropdownOptionsProviderAttribute(System.String,System.String[])` | method | [x] |
+| UIDropdownOptionsProviderAttribute | `UIDropdownOptionsProviderAttribute(System.String)` | method | [x] |
+| UIHotkeyAttribute | `UIHotkeyAttribute(System.String,System.String)` | method | [x] |
+| UIKeybindAttribute | `UIKeybindAttribute(System.Boolean,System.Boolean)` | method | [x] |
+| UIVisibleWhenAttribute | `UIVisibleWhenAttribute(System.String,System.Boolean)` | method | [x] |
+| UIVisibleWhenAttribute | `UIVisibleWhenAttribute(System.String,System.Double)` | method | [x] |
+| UIVisibleWhenAttribute | `UIVisibleWhenAttribute(System.String,System.Int32)` | method | [x] |
+| UIVisibleWhenAttribute | `UIVisibleWhenAttribute(System.String,System.String)` | method | [x] |
+| UIVisibleWhenAttribute | `UIVisibleWhenAttribute(System.String)` | method | [x] |
+| HotkeyOptions | `AllowEcho` | property | [x] |
+| HotkeyOptions | `ConsumeInput` | property | [x] |
+| HotkeyOptions | `DebounceMs` | property | [x] |
+| HotkeyOptions | `ExactModifiers` | property | [x] |
+| JmcHotkeyAttribute | `AllowEcho` | property | [x] |
+| JmcHotkeyAttribute | `BindingMember` | property | [x] |
+| JmcHotkeyAttribute | `ConsumeInput` | property | [x] |
+| JmcHotkeyAttribute | `DebounceMs` | property | [x] |
+| JmcHotkeyAttribute | `ExactModifiers` | property | [x] |
+| JmcHotkeyAttribute | `Key` | property | [x] |
+| JmcHotkeyManager | `IsInitialized` | property | [x] |
+| JmcKeyBinding | `Controller` | property | [x] |
+| JmcKeyBinding | `Enabled` | property | [x] |
+| JmcKeyBinding | `HasController` | property | [x] |
+| JmcKeyBinding | `HasKeyboard` | property | [x] |
+| JmcKeyBinding | `HasModifiers` | property | [x] |
+| JmcKeyBinding | `Keyboard` | property | [x] |
+| JmcKeyBinding | `Modifiers` | property | [x] |
+| UIDropdownOptionsProviderAttribute | `DependsOn` | property | [x] |
+| UIDropdownOptionsProviderAttribute | `InvalidValuePolicy` | property | [x] |
+| UIDropdownOptionsProviderAttribute | `ProviderName` | property | [x] |
+| UIHotkeyAttribute | `AllowController` | property | [x] |
+| UIHotkeyAttribute | `AllowEcho` | property | [x] |
+| UIHotkeyAttribute | `AllowKeyboard` | property | [x] |
+| UIHotkeyAttribute | `ConsumeInput` | property | [x] |
+| UIHotkeyAttribute | `DebounceMs` | property | [x] |
+| UIHotkeyAttribute | `DefaultController` | property | [x] |
+| UIHotkeyAttribute | `DefaultKeyboard` | property | [x] |
+| UIHotkeyAttribute | `DefaultModifiers` | property | [x] |
+| UIHotkeyAttribute | `Description` | property | [x] |
+| UIHotkeyAttribute | `DescriptionKey` | property | [x] |
+| UIHotkeyAttribute | `DisplayName` | property | [x] |
+| UIHotkeyAttribute | `DisplayNameKey` | property | [x] |
+| UIHotkeyAttribute | `ExactModifiers` | property | [x] |
+| UIHotkeyAttribute | `Group` | property | [x] |
+| UIHotkeyAttribute | `GroupKey` | property | [x] |
+| UIHotkeyAttribute | `Key` | property | [x] |
+| UIHotkeyAttribute | `LocTable` | property | [x] |
+| UIHotkeyAttribute | `Order` | property | [x] |
+| UIHotkeyAttribute | `RestartRequired` | property | [x] |
+| UIKeybindAttribute | `AllowController` | property | [x] |
+| UIKeybindAttribute | `AllowKeyboard` | property | [x] |
+| UIVisibleWhenAttribute | `DependsOn` | property | [x] |
+| UIVisibleWhenAttribute | `ExpectedValue` | property | [x] |
+| UIVisibleWhenAttribute | `IgnoreCase` | property | [x] |
+| UIVisibleWhenAttribute | `Invert` | property | [x] |
+| - | `HotkeyOptions` | type | [x] |
+| - | `IConfigUiContext` | type | [x] |
+| - | `JmcHotkeyAttribute` | type | [x] |
+| - | `JmcHotkeyManager` | type | [x] |
+| - | `JmcKeyBinding` | type | [x] |
+| - | `JmcKeyModifiers` | type | [x] |
+| - | `UIButtonAttribute` | type | [x] |
+| - | `UIButtonColor` | type | [x] |
+| - | `UIConfigAttribute` | type | [x] |
+| - | `UIDropdownInvalidValuePolicy` | type | [x] |
+| - | `UIDropdownOptionsProviderAttribute` | type | [x] |
+| - | `UIHotkeyAttribute` | type | [x] |
+| - | `UIKeybindAttribute` | type | [x] |
+| - | `UIVisibleWhenAttribute` | type | [x] |
 
-### `Security` — 65 members
-
-| Type | Member | Kind | Bin |
-|---|---|---|---|
-| JmcSecretProtectionLevel | `SessionOnly` | field | ✓ |
-| JmcSecretProtectionLevel | `SystemKeychain` | field | ✓ |
-| JmcSecretProtectionLevel | `Unavailable` | field | ✓ |
-| JmcSecretProtectionLevel | `Unknown` | field | ✓ |
-| JmcSecretProtectionLevel | `UserProfileProtected` | field | ✓ |
-| JmcSecretProtectionLevel | `WeakFileProtection` | field | ✓ |
-| JmcSecretReadStatus | `AccessDenied` | field | ✓ |
-| JmcSecretReadStatus | `BackendError` | field | ✓ |
-| JmcSecretReadStatus | `DecryptionFailed` | field | ✓ |
-| JmcSecretReadStatus | `Missing` | field | ✓ |
-| JmcSecretReadStatus | `Success` | field | ✓ |
-| JmcSecretReadStatus | `Unavailable` | field | ✓ |
-| JmcSecretWriteStatus | `AccessDenied` | field | ✓ |
-| JmcSecretWriteStatus | `BackendError` | field | ✓ |
-| JmcSecretWriteStatus | `Success` | field | ✓ |
-| JmcSecretWriteStatus | `Unavailable` | field | ✓ |
-| JmcSecretWriteStatus | `WeakProtectionNotAllowed` | field | ✓ |
-| JmcSecretSlot | `Exists()` | method | ✓ |
-| JmcSecretSlot | `TryDelete(JmcModLib.Security.JmcSecretWriteStatus@)` | method | ✓ |
-| JmcSecretSlot | `TryRead(System.String@,JmcModLib.Security.JmcSecretReadStatus@)` | method | ✓ |
-| JmcSecretSlot | `TrySave(System.String,JmcModLib.Security.JmcSecretWriteStatus@)` | method | ✓ |
-| JmcSecretStore | `Exists(System.String,System.String,System.Reflection.Assembly)` | method | ✓ |
-| JmcSecretStore | `GetProtectionLevel()` | method | ✓ |
-| JmcSecretStore | `TryDelete(System.String,JmcModLib.Security.JmcSecretWriteStatus@,System.String,System.Reflection.Assembly)` | method | ✓ |
-| JmcSecretStore | `TryRead(System.String,System.String@,JmcModLib.Security.JmcSecretReadStatus@,System.String,System.Reflection.Assembly)` | method | ✓ |
-| JmcSecretStore | `TrySave(System.String,System.String,JmcModLib.Security.JmcSecretWriteStatus@,System.String,System.Reflection.Assembly)` | method | ✓ |
-| SecretAttribute | `SecretAttribute(System.String)` | method | ✓ |
-| JmcSecretOptions | `AllowWeakFileProtection` | property | ✓ |
-| JmcSecretOptions | `ClearButtonText` | property | ✓ |
-| JmcSecretOptions | `ClearButtonTextKey` | property | ✓ |
-| JmcSecretOptions | `Description` | property | ✓ |
-| JmcSecretOptions | `DescriptionKey` | property | ✓ |
-| JmcSecretOptions | `DisplayName` | property | ✓ |
-| JmcSecretOptions | `DisplayNameKey` | property | ✓ |
-| JmcSecretOptions | `Group` | property | ✓ |
-| JmcSecretOptions | `GroupKey` | property | ✓ |
-| JmcSecretOptions | `LocTable` | property | ✓ |
-| JmcSecretOptions | `Order` | property | ✓ |
-| JmcSecretOptions | `ScopeProvider` | property | ✓ |
-| JmcSecretOptions | `SetButtonText` | property | ✓ |
-| JmcSecretOptions | `SetButtonTextKey` | property | ✓ |
-| JmcSecretSlot | `Key` | property | ✓ |
-| JmcSecretSlot | `ModId` | property | ✓ |
-| JmcSecretSlot | `ProtectionLevel` | property | ✓ |
-| JmcSecretSlot | `Scope` | property | ✓ |
-| SecretAttribute | `AllowWeakFileProtection` | property | ✓ |
-| SecretAttribute | `ClearButtonTextKey` | property | ✓ |
-| SecretAttribute | `Description` | property | ✓ |
-| SecretAttribute | `DescriptionKey` | property | ✓ |
-| SecretAttribute | `DisplayName` | property | ✓ |
-| SecretAttribute | `DisplayNameKey` | property | ✓ |
-| SecretAttribute | `Group` | property | ✓ |
-| SecretAttribute | `GroupKey` | property | ✓ |
-| SecretAttribute | `Key` | property | ✓ |
-| SecretAttribute | `LocTable` | property | ✓ |
-| SecretAttribute | `Order` | property | ✓ |
-| SecretAttribute | `ScopeProvider` | property | ✓ |
-| SecretAttribute | `SetButtonTextKey` | property | ✓ |
-| — | `JmcSecretOptions` | type | ✓ |
-| — | `JmcSecretProtectionLevel` | type | ✓ |
-| — | `JmcSecretReadStatus` | type | ✓ |
-| — | `JmcSecretSlot` | type | ✓ |
-| — | `JmcSecretStore` | type | ✓ |
-| — | `JmcSecretWriteStatus` | type | ✓ |
-| — | `SecretAttribute` | type | ✓ |
-
-### `Persistence` — 58 members
+### `Reflection` - 80 members
 
 | Type | Member | Kind | Bin |
 |---|---|---|---|
-| JmcDataWritePolicy | `Always` | field | ✓ |
-| JmcDataWritePolicy | `WhenChanged` | field | ✓ |
-| JmcClientRunDataAttribute | `JmcClientRunDataAttribute(System.String)` | method | ✓ |
-| JmcDataSlot`1 | `JmcDataSlot`1()` | method | ✓ |
-| JmcDataSlot`1 | `JmcDataSlot`1(`0)` | method | ✓ |
-| JmcDataSlot`1 | `Modify(System.Action{`0})` | method | ✓ |
-| JmcDataSlot`1 | `SetValue(`0)` | method | ✓ |
-| JmcDataWriteResult | `Failed(System.String)` | method | ✓ |
-| JmcDataWriteResult | `Succeeded()` | method | ✓ |
-| JmcDataWriteResult | `ToString()` | method | ✓ |
-| JmcGlobalDataAttribute | `JmcGlobalDataAttribute(System.String)` | method | ✓ |
-| JmcLocalPreferenceAttribute | `JmcLocalPreferenceAttribute(System.String)` | method | ✓ |
-| JmcPersistenceManager | `Dispose()` | method | ✓ |
-| JmcPersistenceManager | `Flush(System.Reflection.Assembly)` | method | ✓ |
-| JmcPersistenceManager | `FlushAll()` | method | ✓ |
-| JmcPersistenceManager | `FlushClientRunData(System.Reflection.Assembly)` | method | ✓ |
-| JmcPersistenceManager | `FlushLocalPreferences(System.Reflection.Assembly)` | method | ✓ |
-| JmcPersistenceManager | `Init()` | method | ✓ |
-| JmcProfileDataAttribute | `JmcProfileDataAttribute(System.String)` | method | ✓ |
-| JmcRunDataAttribute | `JmcRunDataAttribute(System.String)` | method | ✓ |
-| JmcRunDataSlot`1 | `JmcRunDataSlot`1()` | method | ✓ |
-| JmcRunDataSlot`1 | `JmcRunDataSlot`1(`0)` | method | ✓ |
-| JmcRunDataSlot`1 | `Modify(System.Action{`0})` | method | ✓ |
-| JmcRunDataSlot`1 | `SetValue(`0)` | method | ✓ |
-| JmcClientRunDataAttribute | `Key` | property | ✓ |
-| JmcClientRunDataAttribute | `SchemaVersion` | property | ✓ |
-| JmcClientRunDataAttribute | `WritePolicy` | property | ✓ |
-| JmcDataSlot`1 | `IsBound` | property | ✓ |
-| JmcDataSlot`1 | `Key` | property | ✓ |
-| JmcDataSlot`1 | `Value` | property | ✓ |
-| JmcDataWriteResult | `Message` | property | ✓ |
-| JmcDataWriteResult | `Success` | property | ✓ |
-| JmcGlobalDataAttribute | `Key` | property | ✓ |
-| JmcGlobalDataAttribute | `SchemaVersion` | property | ✓ |
-| JmcGlobalDataAttribute | `WritePolicy` | property | ✓ |
-| JmcLocalPreferenceAttribute | `Key` | property | ✓ |
-| JmcLocalPreferenceAttribute | `SchemaVersion` | property | ✓ |
-| JmcLocalPreferenceAttribute | `WritePolicy` | property | ✓ |
-| JmcPersistenceManager | `IsInitialized` | property | ✓ |
-| JmcProfileDataAttribute | `Key` | property | ✓ |
-| JmcProfileDataAttribute | `SchemaVersion` | property | ✓ |
-| JmcProfileDataAttribute | `WritePolicy` | property | ✓ |
-| JmcRunDataAttribute | `Key` | property | ✓ |
-| JmcRunDataAttribute | `SchemaVersion` | property | ✓ |
-| JmcRunDataAttribute | `WritePolicy` | property | ✓ |
-| JmcRunDataSlot`1 | `IsBound` | property | ✓ |
-| JmcRunDataSlot`1 | `Key` | property | ✓ |
-| JmcRunDataSlot`1 | `Value` | property | ✓ |
-| — | `JmcClientRunDataAttribute` | type | ✓ |
-| — | `JmcDataSlot`1` | type | ✓ |
-| — | `JmcDataWritePolicy` | type | ✓ |
-| — | `JmcDataWriteResult` | type | ✓ |
-| — | `JmcGlobalDataAttribute` | type | ✓ |
-| — | `JmcLocalPreferenceAttribute` | type | ✓ |
-| — | `JmcPersistenceManager` | type | ✓ |
-| — | `JmcProfileDataAttribute` | type | ✓ |
-| — | `JmcRunDataAttribute` | type | ✓ |
-| — | `JmcRunDataSlot`1` | type | ✓ |
+| ReflectionAccessorBase | `_attrCache` | field | WARN  protected |
+| ReflectionAccessorBase | `DefaultFlags` | field | [x] |
+| MemberAccessor | `Get(System.Reflection.MemberInfo)` | method | [x] |
+| MemberAccessor | `Get(System.Type,System.String)` | method | [x] |
+| MemberAccessor | `GetAll(System.Type,System.Reflection.BindingFlags)` | method | [x] |
+| MemberAccessor | `GetAll``1(System.Reflection.BindingFlags)` | method | [x] |
+| MemberAccessor | `GetIndexer(System.Type,System.Type[])` | method | [x] |
+| MemberAccessor | `GetValue(System.Object,System.Object[])` | method | [x] |
+| MemberAccessor | `GetValue(System.Object)` | method | [x] |
+| MemberAccessor | `GetValue``1()` | method | [x] |
+| MemberAccessor | `GetValue``2(``0)` | method | [x] |
+| MemberAccessor | `IsSupportedMember(System.Reflection.MemberInfo)` | method | WARN  private |
+| MemberAccessor | `SetValue(System.Object,System.Object,System.Object[])` | method | [x] |
+| MemberAccessor | `SetValue(System.Object,System.Object)` | method | [x] |
+| MemberAccessor | `SetValue``1(``0)` | method | [x] |
+| MemberAccessor | `SetValue``2(``0,``1)` | method | [x] |
+| MethodAccessor | `CreateInvoker(System.Reflection.MethodInfo)` | method | WARN  private |
+| MethodAccessor | `EmitUnboxWithEnumSupport(System.Reflection.Emit.ILGenerator,System.Type)` | method | WARN  private |
+| MethodAccessor | `Get(System.Reflection.MethodInfo)` | method | [x] |
+| MethodAccessor | `Get(System.Type,System.String,System.Type[])` | method | [x] |
+| MethodAccessor | `GetAll(System.Type,System.Reflection.BindingFlags)` | method | [x] |
+| MethodAccessor | `GetAll``1(System.Reflection.BindingFlags)` | method | [x] |
+| MethodAccessor | `GetTypedDelegate()` | method | [x] |
+| MethodAccessor | `Invoke(System.Object,System.Object,System.Object,System.Object)` | method | [x] |
+| MethodAccessor | `Invoke(System.Object,System.Object,System.Object)` | method | [x] |
+| MethodAccessor | `Invoke(System.Object,System.Object)` | method | [x] |
+| MethodAccessor | `Invoke(System.Object,System.Object[])` | method | [x] |
+| MethodAccessor | `Invoke(System.Object)` | method | [x] |
+| MethodAccessor | `Invoke``2(``0)` | method | [x] |
+| MethodAccessor | `Invoke``3(``0,``1)` | method | [x] |
+| MethodAccessor | `Invoke``4(``0,``1,``2)` | method | [x] |
+| MethodAccessor | `Invoke``5(``0,``1,``2,``3)` | method | [x] |
+| MethodAccessor | `InvokeStatic``1()` | method | [x] |
+| MethodAccessor | `InvokeStatic``2(``0)` | method | [x] |
+| MethodAccessor | `InvokeStatic``3(``0,``1)` | method | [x] |
+| MethodAccessor | `InvokeStatic``4(``0,``1,``2)` | method | [x] |
+| MethodAccessor | `InvokeStaticVoid()` | method | [x] |
+| MethodAccessor | `InvokeStaticVoid``1(``0)` | method | [x] |
+| MethodAccessor | `InvokeStaticVoid``2(``0,``1)` | method | [x] |
+| MethodAccessor | `InvokeStaticVoid``3(``0,``1,``2)` | method | [x] |
+| MethodAccessor | `InvokeVoid``1(``0)` | method | [x] |
+| MethodAccessor | `InvokeVoid``2(``0,``1)` | method | [x] |
+| MethodAccessor | `InvokeVoid``3(``0,``1,``2)` | method | [x] |
+| MethodAccessor | `InvokeVoid``4(``0,``1,``2,``3)` | method | [x] |
+| MethodAccessor | `MakeGeneric(System.Type[])` | method | [x] |
+| ReflectionAccessorBase | `GetAllAttributes()` | method | [x] |
+| ReflectionAccessorBase | `GetAttribute``1()` | method | [x] |
+| ReflectionAccessorBase | `GetAttributes(System.Type)` | method | [x] |
+| ReflectionAccessorBase | `HasAttribute``1()` | method | [x] |
+| ReflectionAccessorBase | `IsSaveOwner(System.Type)` | method | [x] |
+| ReflectionAccessorBase`2 | `ReflectionAccessorBase`2(`0)` | method | WARN  protected |
+| ReflectionAccessorBase`2 | `ClearCache()` | method | [x] |
+| ReflectionAccessorBase`2 | `GetAttributes(System.Type)` | method | [x] |
+| ReflectionAccessorBase`2 | `GetOrCreate(`0,System.Func{`0,`1})` | method | WARN  protected |
+| TypeAccessor | `CreateInstance()` | method | [x] |
+| TypeAccessor | `CreateInstance(System.Object[])` | method | [x] |
+| TypeAccessor | `CreateInstance``1()` | method | [x] |
+| TypeAccessor | `Get(System.Type)` | method | [x] |
+| TypeAccessor | `Get``1()` | method | [x] |
+| MemberAccessor | `CanRead` | property | [x] |
+| MemberAccessor | `CanWrite` | property | [x] |
+| MemberAccessor | `MemberType` | property | [x] |
+| MemberAccessor | `TypedGetter` | property | [x] |
+| MemberAccessor | `TypedSetter` | property | [x] |
+| MemberAccessor | `ValueType` | property | [x] |
+| MethodAccessor | `IsStatic` | property | [x] |
+| MethodAccessor | `TypedDelegate` | property | [x] |
+| ReflectionAccessorBase | `DeclaringType` | property | [x] |
+| ReflectionAccessorBase | `IsStatic` | property | [x] |
+| ReflectionAccessorBase | `Name` | property | [x] |
+| ReflectionAccessorBase`2 | `CacheCount` | property | [x] |
+| ReflectionAccessorBase`2 | `DeclaringType` | property | [x] |
+| ReflectionAccessorBase`2 | `MemberInfo` | property | [x] |
+| ReflectionAccessorBase`2 | `Name` | property | [x] |
+| TypeAccessor | `Type` | property | [x] |
+| - | `MemberAccessor` | type | [x] |
+| - | `MethodAccessor` | type | [x] |
+| - | `ReflectionAccessorBase` | type | [x] |
+| - | `ReflectionAccessorBase`2` | type | [x] |
+| - | `TypeAccessor` | type | [x] |
 
-### `Utils` — 55 members
-
-| Type | Member | Kind | Bin |
-|---|---|---|---|
-| LogPrefixFlags | `Default` | field | ✓ |
-| LogPrefixFlags | `None` | field | ✓ |
-| LogPrefixFlags | `Timestamp` | field | ✓ |
-| ExprHelper | `ClearAll()` | method | ⚠ private |
-| ExprHelper | `ClearAssemblyCache(System.Reflection.Assembly)` | method | ✓ |
-| ExprHelper | `CreateAccessorsByEmit``1(System.Reflection.MemberInfo,System.Object)` | method | ⚠ private |
-| ExprHelper | `CreateAccessorsByExpressionTree``1(System.Reflection.MemberInfo,System.Object)` | method | ⚠ private |
-| ExprHelper | `Expect``2()` | method | ⚠ private |
-| ExprHelper | `GetOrCreateAccessors``1(System.Linq.Expressions.Expression{System.Func{``0}},System.Boolean@,System.Reflection.Assembly)` | method | ✓ |
-| ExprHelper | `GetOrCreateAccessors``1(System.Linq.Expressions.Expression{System.Func{``0}},System.Reflection.Assembly)` | method | ✓ |
-| GameRestart | `RequestRestart(System.Boolean,System.Reflection.Assembly)` | method | ✓ |
-| GameRestart | `ShowRestartConfirmationAsync(System.Boolean,System.Reflection.Assembly)` | method | ✓ |
-| GameRestart | `TryScheduleRestart(System.Boolean,System.Reflection.Assembly)` | method | ✓ |
-| LoggerSnapshot | `LoggerSnapshot(MegaCrit.Sts2.Core.Logging.LogType,JmcModLib.Utils.LogPrefixFlags,System.Boolean,System.Boolean,System.String)` | method | ✓ |
-| ModLogger | `Debug(System.String,System.Reflection.Assembly)` | method | ✓ |
-| ModLogger | `Error(System.String,System.Exception,System.Reflection.Assembly)` | method | ✓ |
-| ModLogger | `Error(System.String,System.Reflection.Assembly)` | method | ✓ |
-| ModLogger | `Fatal(System.Exception,System.String,System.Reflection.Assembly)` | method | ✓ |
-| ModLogger | `GetLogType(System.Reflection.Assembly)` | method | ✓ |
-| ModLogger | `GetPrefixFlags(System.Reflection.Assembly)` | method | ✓ |
-| ModLogger | `GetSnapshot(System.Reflection.Assembly)` | method | ✓ |
-| ModLogger | `HasPrefixFlag(JmcModLib.Utils.LogPrefixFlags,System.Reflection.Assembly)` | method | ✓ |
-| ModLogger | `Info(System.String,System.Reflection.Assembly)` | method | ✓ |
-| ModLogger | `Load(System.String,System.Reflection.Assembly)` | method | ✓ |
-| ModLogger | `RegisterAssembly(System.Reflection.Assembly,JmcModLib.Utils.LogPrefixFlags,System.Boolean,MegaCrit.Sts2.Core.Logging.LogType,System.Boolean)` | method | ✓ |
-| ModLogger | `SetLogType(MegaCrit.Sts2.Core.Logging.LogType,System.Reflection.Assembly)` | method | ✓ |
-| ModLogger | `SetPrefixFlags(JmcModLib.Utils.LogPrefixFlags,System.Reflection.Assembly)` | method | ✓ |
-| ModLogger | `TogglePrefixFlag(JmcModLib.Utils.LogPrefixFlags,System.Reflection.Assembly)` | method | ✓ |
-| ModLogger | `Trace(System.String,System.Reflection.Assembly)` | method | ✓ |
-| ModLogger | `UnregisterAssembly(System.Reflection.Assembly)` | method | ✓ |
-| ModLogger | `Warn(System.String,System.Exception,System.Reflection.Assembly)` | method | ✓ |
-| ModLogger | `Warn(System.String,System.Reflection.Assembly)` | method | ✓ |
-| AssemblyLogConfiguration | `IncludeExceptionDetails` | property | ✓ |
-| AssemblyLogConfiguration | `LogType` | property | ✓ |
-| AssemblyLogConfiguration | `PrefixFlags` | property | ✓ |
-| AssemblyLogConfiguration | `ThrowOnFatal` | property | ✓ |
-| ExprHelper | `AccessMode` | property | ✓ |
-| ExprHelper | `EnableCache` | property | ✓ |
-| GameRestart | `IsRestartSupported` | property | ✓ |
-| LoggerSnapshot | `Context` | property | ✓ |
-| LoggerSnapshot | `IncludeExceptionDetails` | property | ✓ |
-| LoggerSnapshot | `LogType` | property | ✓ |
-| LoggerSnapshot | `PrefixFlags` | property | ✓ |
-| LoggerSnapshot | `ThrowOnFatal` | property | ✓ |
-| ModLogger | `DefaultIncludeExceptionDetails` | property | ✓ |
-| ModLogger | `DefaultLogType` | property | ✓ |
-| ModLogger | `DefaultPrefixFlags` | property | ✓ |
-| ModLogger | `DefaultThrowOnFatal` | property | ✓ |
-| — | `AssemblyLogConfiguration` | type | ✓ |
-| — | `ExprHelper` | type | ✓ |
-| — | `GameRestart` | type | ✓ |
-| — | `L10n` | type | ✓ |
-| — | `LoggerSnapshot` | type | ✓ |
-| — | `LogPrefixFlags` | type | ✓ |
-| — | `ModLogger` | type | ✓ |
-
-### `Prefabs` — 53 members
+### `Security` - 65 members
 
 | Type | Member | Kind | Bin |
 |---|---|---|---|
-| JmcReportPopupBodyFormat | `Markdown` | field | ✓ |
-| JmcReportPopupBodyFormat | `PlainText` | field | ✓ |
-| JmcReportPopupBodyFormat | `RichText` | field | ✓ |
-| JmcConfirmationPopup | `ShowConfirmationAsync(MegaCrit.Sts2.Core.Localization.LocString,MegaCrit.Sts2.Core.Localization.LocString,MegaCrit.Sts2.Core.Localization.LocString,MegaCrit.Sts2.Core.Localization.LocString,System.Boolean,System.Reflection.Assembly)` | method | ✓ |
-| JmcConfirmationPopup | `ShowConfirmationAsync(System.String,System.String,System.String,System.String,System.Boolean,System.Reflection.Assembly)` | method | ✓ |
-| JmcConfirmationPopup | `ShowMessageAsync(MegaCrit.Sts2.Core.Localization.LocString,MegaCrit.Sts2.Core.Localization.LocString,MegaCrit.Sts2.Core.Localization.LocString,System.Boolean,System.Reflection.Assembly)` | method | ✓ |
-| JmcConfirmationPopup | `ShowMessageAsync(System.String,System.String,System.String,System.Boolean,System.Reflection.Assembly)` | method | ✓ |
-| JmcReportPopup | `Open(JmcModLib.Prefabs.JmcReportPopupOptions,System.Reflection.Assembly)` | method | ✓ |
-| JmcReportPopupButton | `JmcReportPopupButton(System.String,System.String,System.Action{JmcModLib.Prefabs.JmcReportPopupHandle},System.Boolean,System.Boolean)` | method | ✓ |
-| JmcReportPopupHandle | `Close()` | method | ✓ |
-| JmcReportPopupHandle | `SetBody(System.String,JmcModLib.Prefabs.JmcReportPopupBodyFormat)` | method | ✓ |
-| JmcReportPopupHandle | `SetBody(System.String,System.Boolean)` | method | ✓ |
-| JmcReportPopupHandle | `SetBody(System.String)` | method | ✓ |
-| JmcReportPopupHandle | `SetButtonEnabled(System.String,System.Boolean)` | method | ✓ |
-| JmcReportPopupHandle | `SetStatus(System.String)` | method | ✓ |
-| JmcReportPopupHandle | `SetSubtitle(System.String)` | method | ✓ |
-| JmcReportPopupHandle | `SetTitle(System.String)` | method | ✓ |
-| JmcSecretInputPopup | `PromptAsync(JmcModLib.Prefabs.JmcSecretInputPopupOptions,System.Reflection.Assembly)` | method | ✓ |
-| JmcReportPopup | `IsAvailable` | property | ✓ |
-| JmcReportPopupButton | `Action` | property | ✓ |
-| JmcReportPopupButton | `CloseOnClick` | property | ✓ |
-| JmcReportPopupButton | `Enabled` | property | ✓ |
-| JmcReportPopupButton | `Key` | property | ✓ |
-| JmcReportPopupButton | `Text` | property | ✓ |
-| JmcReportPopupHandle | `IsOpen` | property | ✓ |
-| JmcReportPopupOptions | `Body` | property | ✓ |
-| JmcReportPopupOptions | `BodyFormat` | property | ✓ |
-| JmcReportPopupOptions | `BodyUsesRichText` | property | ✓ |
-| JmcReportPopupOptions | `Buttons` | property | ✓ |
-| JmcReportPopupOptions | `CloseOnEscape` | property | ✓ |
-| JmcReportPopupOptions | `MinimumSize` | property | ✓ |
-| JmcReportPopupOptions | `ShowBackstop` | property | ✓ |
-| JmcReportPopupOptions | `Status` | property | ✓ |
-| JmcReportPopupOptions | `Subtitle` | property | ✓ |
-| JmcReportPopupOptions | `Title` | property | ✓ |
-| JmcSecretInputPopup | `IsAvailable` | property | ✓ |
-| JmcSecretInputPopupOptions | `CancelText` | property | ✓ |
-| JmcSecretInputPopupOptions | `ConfirmText` | property | ✓ |
-| JmcSecretInputPopupOptions | `Description` | property | ✓ |
-| JmcSecretInputPopupOptions | `EmptyText` | property | ✓ |
-| JmcSecretInputPopupOptions | `MinimumSize` | property | ✓ |
-| JmcSecretInputPopupOptions | `Placeholder` | property | ✓ |
-| JmcSecretInputPopupOptions | `ProtectionLevel` | property | ✓ |
-| JmcSecretInputPopupOptions | `ShowBackstop` | property | ✓ |
-| JmcSecretInputPopupOptions | `Title` | property | ✓ |
-| — | `JmcConfirmationPopup` | type | ✓ |
-| — | `JmcReportPopup` | type | ✓ |
-| — | `JmcReportPopupBodyFormat` | type | ✓ |
-| — | `JmcReportPopupButton` | type | ✓ |
-| — | `JmcReportPopupHandle` | type | ✓ |
-| — | `JmcReportPopupOptions` | type | ✓ |
-| — | `JmcSecretInputPopup` | type | ✓ |
-| — | `JmcSecretInputPopupOptions` | type | ✓ |
+| JmcSecretProtectionLevel | `SessionOnly` | field | [x] |
+| JmcSecretProtectionLevel | `SystemKeychain` | field | [x] |
+| JmcSecretProtectionLevel | `Unavailable` | field | [x] |
+| JmcSecretProtectionLevel | `Unknown` | field | [x] |
+| JmcSecretProtectionLevel | `UserProfileProtected` | field | [x] |
+| JmcSecretProtectionLevel | `WeakFileProtection` | field | [x] |
+| JmcSecretReadStatus | `AccessDenied` | field | [x] |
+| JmcSecretReadStatus | `BackendError` | field | [x] |
+| JmcSecretReadStatus | `DecryptionFailed` | field | [x] |
+| JmcSecretReadStatus | `Missing` | field | [x] |
+| JmcSecretReadStatus | `Success` | field | [x] |
+| JmcSecretReadStatus | `Unavailable` | field | [x] |
+| JmcSecretWriteStatus | `AccessDenied` | field | [x] |
+| JmcSecretWriteStatus | `BackendError` | field | [x] |
+| JmcSecretWriteStatus | `Success` | field | [x] |
+| JmcSecretWriteStatus | `Unavailable` | field | [x] |
+| JmcSecretWriteStatus | `WeakProtectionNotAllowed` | field | [x] |
+| JmcSecretSlot | `Exists()` | method | [x] |
+| JmcSecretSlot | `TryDelete(JmcModLib.Security.JmcSecretWriteStatus@)` | method | [x] |
+| JmcSecretSlot | `TryRead(System.String@,JmcModLib.Security.JmcSecretReadStatus@)` | method | [x] |
+| JmcSecretSlot | `TrySave(System.String,JmcModLib.Security.JmcSecretWriteStatus@)` | method | [x] |
+| JmcSecretStore | `Exists(System.String,System.String,System.Reflection.Assembly)` | method | [x] |
+| JmcSecretStore | `GetProtectionLevel()` | method | [x] |
+| JmcSecretStore | `TryDelete(System.String,JmcModLib.Security.JmcSecretWriteStatus@,System.String,System.Reflection.Assembly)` | method | [x] |
+| JmcSecretStore | `TryRead(System.String,System.String@,JmcModLib.Security.JmcSecretReadStatus@,System.String,System.Reflection.Assembly)` | method | [x] |
+| JmcSecretStore | `TrySave(System.String,System.String,JmcModLib.Security.JmcSecretWriteStatus@,System.String,System.Reflection.Assembly)` | method | [x] |
+| SecretAttribute | `SecretAttribute(System.String)` | method | [x] |
+| JmcSecretOptions | `AllowWeakFileProtection` | property | [x] |
+| JmcSecretOptions | `ClearButtonText` | property | [x] |
+| JmcSecretOptions | `ClearButtonTextKey` | property | [x] |
+| JmcSecretOptions | `Description` | property | [x] |
+| JmcSecretOptions | `DescriptionKey` | property | [x] |
+| JmcSecretOptions | `DisplayName` | property | [x] |
+| JmcSecretOptions | `DisplayNameKey` | property | [x] |
+| JmcSecretOptions | `Group` | property | [x] |
+| JmcSecretOptions | `GroupKey` | property | [x] |
+| JmcSecretOptions | `LocTable` | property | [x] |
+| JmcSecretOptions | `Order` | property | [x] |
+| JmcSecretOptions | `ScopeProvider` | property | [x] |
+| JmcSecretOptions | `SetButtonText` | property | [x] |
+| JmcSecretOptions | `SetButtonTextKey` | property | [x] |
+| JmcSecretSlot | `Key` | property | [x] |
+| JmcSecretSlot | `ModId` | property | [x] |
+| JmcSecretSlot | `ProtectionLevel` | property | [x] |
+| JmcSecretSlot | `Scope` | property | [x] |
+| SecretAttribute | `AllowWeakFileProtection` | property | [x] |
+| SecretAttribute | `ClearButtonTextKey` | property | [x] |
+| SecretAttribute | `Description` | property | [x] |
+| SecretAttribute | `DescriptionKey` | property | [x] |
+| SecretAttribute | `DisplayName` | property | [x] |
+| SecretAttribute | `DisplayNameKey` | property | [x] |
+| SecretAttribute | `Group` | property | [x] |
+| SecretAttribute | `GroupKey` | property | [x] |
+| SecretAttribute | `Key` | property | [x] |
+| SecretAttribute | `LocTable` | property | [x] |
+| SecretAttribute | `Order` | property | [x] |
+| SecretAttribute | `ScopeProvider` | property | [x] |
+| SecretAttribute | `SetButtonTextKey` | property | [x] |
+| - | `JmcSecretOptions` | type | [x] |
+| - | `JmcSecretProtectionLevel` | type | [x] |
+| - | `JmcSecretReadStatus` | type | [x] |
+| - | `JmcSecretSlot` | type | [x] |
+| - | `JmcSecretStore` | type | [x] |
+| - | `JmcSecretWriteStatus` | type | [x] |
+| - | `SecretAttribute` | type | [x] |
 
-### `UI.PauseMenu` — 46 members
-
-| Type | Member | Kind | Bin |
-|---|---|---|---|
-| PauseMenuButtonAnchor | `AfterCompendium` | field | ✓ |
-| PauseMenuButtonAnchor | `AfterResume` | field | ✓ |
-| PauseMenuButtonAnchor | `AfterSettings` | field | ✓ |
-| PauseMenuButtonAnchor | `BeforeExitActions` | field | ✓ |
-| PauseMenuButtonAnchor | `End` | field | ✓ |
-| PauseMenuButtonAttribute | `PauseMenuButtonAttribute(System.String)` | method | ✓ |
-| PauseMenuButtonOptions | `PauseMenuButtonOptions()` | method | ✓ |
-| PauseMenuButtonOptions | `PauseMenuButtonOptions(System.String,System.String)` | method | ✓ |
-| PauseMenuRegistry | `GetEntries(System.Reflection.Assembly)` | method | ✓ |
-| PauseMenuRegistry | `RegisterButton(JmcModLib.UI.PauseMenu.PauseMenuButtonOptions,System.Action,System.Reflection.Assembly)` | method | ✓ |
-| PauseMenuRegistry | `RegisterButton(JmcModLib.UI.PauseMenu.PauseMenuButtonOptions,System.Action{JmcModLib.UI.PauseMenu.PauseMenuButtonContext},System.Reflection.Assembly)` | method | ✓ |
-| PauseMenuRegistry | `RegisterButton(JmcModLib.UI.PauseMenu.PauseMenuButtonOptions,System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Threading.Tasks.Task},System.Reflection.Assembly)` | method | ✓ |
-| PauseMenuRegistry | `RegisterButton(JmcModLib.UI.PauseMenu.PauseMenuButtonOptions,System.Func{System.Threading.Tasks.Task},System.Reflection.Assembly)` | method | ✓ |
-| PauseMenuRegistry | `UnregisterAssembly(System.Reflection.Assembly)` | method | ✓ |
-| PauseMenuRegistry | `UnregisterButton(System.String,System.Reflection.Assembly)` | method | ✓ |
-| PauseMenuButtonAttribute | `Anchor` | property | ✓ |
-| PauseMenuButtonAttribute | `CloseMenuOnClick` | property | ✓ |
-| PauseMenuButtonAttribute | `Color` | property | ✓ |
-| PauseMenuButtonAttribute | `Key` | property | ✓ |
-| PauseMenuButtonAttribute | `LocTable` | property | ✓ |
-| PauseMenuButtonAttribute | `Order` | property | ✓ |
-| PauseMenuButtonAttribute | `Text` | property | ✓ |
-| PauseMenuButtonAttribute | `TextKey` | property | ✓ |
-| PauseMenuButtonContext | `Assembly` | property | ✓ |
-| PauseMenuButtonContext | `Button` | property | ✓ |
-| PauseMenuButtonContext | `IsGameOver` | property | ✓ |
-| PauseMenuButtonContext | `IsMultiplayerClient` | property | ✓ |
-| PauseMenuButtonContext | `IsRunInProgress` | property | ✓ |
-| PauseMenuButtonContext | `Menu` | property | ✓ |
-| PauseMenuButtonContext | `Mod` | property | ✓ |
-| PauseMenuButtonContext | `RunState` | property | ✓ |
-| PauseMenuButtonOptions | `Anchor` | property | ✓ |
-| PauseMenuButtonOptions | `CloseMenuOnClick` | property | ✓ |
-| PauseMenuButtonOptions | `Color` | property | ✓ |
-| PauseMenuButtonOptions | `EnabledWhen` | property | ✓ |
-| PauseMenuButtonOptions | `Key` | property | ✓ |
-| PauseMenuButtonOptions | `LocTable` | property | ✓ |
-| PauseMenuButtonOptions | `Order` | property | ✓ |
-| PauseMenuButtonOptions | `Text` | property | ✓ |
-| PauseMenuButtonOptions | `TextKey` | property | ✓ |
-| PauseMenuButtonOptions | `VisibleWhen` | property | ✓ |
-| — | `PauseMenuButtonAnchor` | type | ✓ |
-| — | `PauseMenuButtonAttribute` | type | ✓ |
-| — | `PauseMenuButtonContext` | type | ✓ |
-| — | `PauseMenuButtonOptions` | type | ✓ |
-| — | `PauseMenuRegistry` | type | ✓ |
-
-### `Core` — 42 members
+### `Persistence` - 58 members
 
 | Type | Member | Kind | Bin |
 |---|---|---|---|
-| ModRegistry | `OnRegistered` | event | ✓ |
-| ModRegistry | `OnUnregistered` | event | ✓ |
-| ModRegistry | `GetContext(System.Reflection.Assembly)` | method | ✓ |
-| ModRegistry | `GetDisplayName(System.Reflection.Assembly)` | method | ✓ |
-| ModRegistry | `GetModId(System.Reflection.Assembly)` | method | ✓ |
-| ModRegistry | `GetTag(System.Reflection.Assembly)` | method | ✓ |
-| ModRegistry | `GetVersion(System.Reflection.Assembly)` | method | ✓ |
-| ModRegistry | `IsRegistered(System.Reflection.Assembly)` | method | ✓ |
-| ModRegistry | `Register(System.Boolean,System.Object,System.String,System.String,System.Reflection.Assembly)` | method | ✓ |
-| ModRegistry | `Register(System.Boolean,System.String,System.String,System.String,System.Reflection.Assembly)` | method | ✓ |
-| ModRegistry | `Register(System.String,System.String,System.String,System.Reflection.Assembly)` | method | ✓ |
-| ModRegistry | `Register``1()` | method | ✓ |
-| ModRegistry | `Register``1(System.Boolean,System.String,System.String,System.String)` | method | ✓ |
-| ModRegistry | `Register``1(System.Boolean)` | method | ✓ |
-| ModRegistry | `Register``1(System.String,System.String,System.String)` | method | ✓ |
-| ModRegistry | `TryGetContext(JmcModLib.Core.ModContext@,System.Reflection.Assembly)` | method | ✓ |
-| ModRegistry | `Unregister(System.Reflection.Assembly)` | method | ✓ |
-| ModRuntime | `FindLoadedMod(System.String)` | method | ✓ |
-| ModRuntime | `FindModById(System.String)` | method | ✓ |
-| RegistryBuilder | `Done()` | method | ✓ |
-| RegistryBuilder | `RegisterButton(System.String,System.Action,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Int32,JmcModLib.Config.UI.UIButtonColor)` | method | ✓ |
-| RegistryBuilder | `RegisterButton(System.String@,System.String,System.Action,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Int32,JmcModLib.Config.UI.UIButtonColor)` | method | ✓ |
-| RegistryBuilder | `RegisterPauseMenuButton(System.String,System.String,System.Action,System.Int32,JmcModLib.UI.PauseMenu.PauseMenuButtonAnchor,System.String,System.String,System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Boolean},System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Boolean},System.Boolean,JmcModLib.Config.UI.UIButtonColor)` | method | ✓ |
-| RegistryBuilder | `RegisterPauseMenuButton(System.String,System.String,System.Action{JmcModLib.UI.PauseMenu.PauseMenuButtonContext},System.Int32,JmcModLib.UI.PauseMenu.PauseMenuButtonAnchor,System.String,System.String,System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Boolean},System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Boolean},System.Boolean,JmcModLib.Config.UI.UIButtonColor)` | method | ✓ |
-| RegistryBuilder | `RegisterPauseMenuButton(System.String,System.String,System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Threading.Tasks.Task},System.Int32,JmcModLib.UI.PauseMenu.PauseMenuButtonAnchor,System.String,System.String,System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Boolean},System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Boolean},System.Boolean,JmcModLib.Config.UI.UIButtonColor)` | method | ✓ |
-| RegistryBuilder | `RegisterPauseMenuButton(System.String,System.String,System.Func{System.Threading.Tasks.Task},System.Int32,JmcModLib.UI.PauseMenu.PauseMenuButtonAnchor,System.String,System.String,System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Boolean},System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Boolean},System.Boolean,JmcModLib.Config.UI.UIButtonColor)` | method | ✓ |
-| RegistryBuilder | `RegisterSecret(JmcModLib.Security.JmcSecretSlot,System.String,JmcModLib.Security.JmcSecretOptions)` | method | ✓ |
-| RegistryBuilder | `RegisterSecret(JmcModLib.Security.JmcSecretSlot@,System.String,JmcModLib.Security.JmcSecretOptions)` | method | ✓ |
-| RegistryBuilder | `RegisterSecret(System.String,JmcModLib.Security.JmcSecretOptions)` | method | ✓ |
-| RegistryBuilder | `WithConfigStorage(JmcModLib.Config.Storage.IConfigStorage)` | method | ✓ |
-| RegistryBuilder | `WithDisplayName(System.String)` | method | ✓ |
-| RegistryBuilder | `WithVersion(System.String)` | method | ✓ |
-| ModContext | `Assembly` | property | ✓ |
-| ModContext | `DisplayName` | property | ✓ |
-| ModContext | `IsCompleted` | property | ✓ |
-| ModContext | `LoggerContext` | property | ✓ |
-| ModContext | `ModId` | property | ✓ |
-| ModContext | `Tag` | property | ✓ |
-| ModContext | `Version` | property | ✓ |
-| — | `ModContext` | type | ✓ |
-| — | `ModRegistry` | type | ✓ |
-| — | `RegistryBuilder` | type | ✓ |
+| JmcDataWritePolicy | `Always` | field | [x] |
+| JmcDataWritePolicy | `WhenChanged` | field | [x] |
+| JmcClientRunDataAttribute | `JmcClientRunDataAttribute(System.String)` | method | [x] |
+| JmcDataSlot`1 | `JmcDataSlot`1()` | method | [x] |
+| JmcDataSlot`1 | `JmcDataSlot`1(`0)` | method | [x] |
+| JmcDataSlot`1 | `Modify(System.Action{`0})` | method | [x] |
+| JmcDataSlot`1 | `SetValue(`0)` | method | [x] |
+| JmcDataWriteResult | `Failed(System.String)` | method | [x] |
+| JmcDataWriteResult | `Succeeded()` | method | [x] |
+| JmcDataWriteResult | `ToString()` | method | [x] |
+| JmcGlobalDataAttribute | `JmcGlobalDataAttribute(System.String)` | method | [x] |
+| JmcLocalPreferenceAttribute | `JmcLocalPreferenceAttribute(System.String)` | method | [x] |
+| JmcPersistenceManager | `Dispose()` | method | [x] |
+| JmcPersistenceManager | `Flush(System.Reflection.Assembly)` | method | [x] |
+| JmcPersistenceManager | `FlushAll()` | method | [x] |
+| JmcPersistenceManager | `FlushClientRunData(System.Reflection.Assembly)` | method | [x] |
+| JmcPersistenceManager | `FlushLocalPreferences(System.Reflection.Assembly)` | method | [x] |
+| JmcPersistenceManager | `Init()` | method | [x] |
+| JmcProfileDataAttribute | `JmcProfileDataAttribute(System.String)` | method | [x] |
+| JmcRunDataAttribute | `JmcRunDataAttribute(System.String)` | method | [x] |
+| JmcRunDataSlot`1 | `JmcRunDataSlot`1()` | method | [x] |
+| JmcRunDataSlot`1 | `JmcRunDataSlot`1(`0)` | method | [x] |
+| JmcRunDataSlot`1 | `Modify(System.Action{`0})` | method | [x] |
+| JmcRunDataSlot`1 | `SetValue(`0)` | method | [x] |
+| JmcClientRunDataAttribute | `Key` | property | [x] |
+| JmcClientRunDataAttribute | `SchemaVersion` | property | [x] |
+| JmcClientRunDataAttribute | `WritePolicy` | property | [x] |
+| JmcDataSlot`1 | `IsBound` | property | [x] |
+| JmcDataSlot`1 | `Key` | property | [x] |
+| JmcDataSlot`1 | `Value` | property | [x] |
+| JmcDataWriteResult | `Message` | property | [x] |
+| JmcDataWriteResult | `Success` | property | [x] |
+| JmcGlobalDataAttribute | `Key` | property | [x] |
+| JmcGlobalDataAttribute | `SchemaVersion` | property | [x] |
+| JmcGlobalDataAttribute | `WritePolicy` | property | [x] |
+| JmcLocalPreferenceAttribute | `Key` | property | [x] |
+| JmcLocalPreferenceAttribute | `SchemaVersion` | property | [x] |
+| JmcLocalPreferenceAttribute | `WritePolicy` | property | [x] |
+| JmcPersistenceManager | `IsInitialized` | property | [x] |
+| JmcProfileDataAttribute | `Key` | property | [x] |
+| JmcProfileDataAttribute | `SchemaVersion` | property | [x] |
+| JmcProfileDataAttribute | `WritePolicy` | property | [x] |
+| JmcRunDataAttribute | `Key` | property | [x] |
+| JmcRunDataAttribute | `SchemaVersion` | property | [x] |
+| JmcRunDataAttribute | `WritePolicy` | property | [x] |
+| JmcRunDataSlot`1 | `IsBound` | property | [x] |
+| JmcRunDataSlot`1 | `Key` | property | [x] |
+| JmcRunDataSlot`1 | `Value` | property | [x] |
+| - | `JmcClientRunDataAttribute` | type | [x] |
+| - | `JmcDataSlot`1` | type | [x] |
+| - | `JmcDataWritePolicy` | type | [x] |
+| - | `JmcDataWriteResult` | type | [x] |
+| - | `JmcGlobalDataAttribute` | type | [x] |
+| - | `JmcLocalPreferenceAttribute` | type | [x] |
+| - | `JmcPersistenceManager` | type | [x] |
+| - | `JmcProfileDataAttribute` | type | [x] |
+| - | `JmcRunDataAttribute` | type | [x] |
+| - | `JmcRunDataSlot`1` | type | [x] |
 
-### `Multiplayer` — 25 members
-
-| Type | Member | Kind | Bin |
-|---|---|---|---|
-| OptionalNetworkFeatureHandle | `EffectiveEnabledChanged` | event | ✓ |
-| OptionalNetworkFeatureHandle | `StateChanged` | event | ✓ |
-| OptionalNetworkFeatureApplyState | `Applied` | field | ✓ |
-| OptionalNetworkFeatureApplyState | `PendingNetworkIdle` | field | ✓ |
-| OptionalNetworkFeatureApplyState | `RestartRequired` | field | ✓ |
-| OptionalNetworkFeatureAttribute | `OptionalNetworkFeatureAttribute(System.String,System.Type)` | method | ✓ |
-| OptionalNetworkFeatures | `Get(System.String,System.Reflection.Assembly)` | method | ✓ |
-| OptionalNetworkFeatures | `Get``1(System.String)` | method | ✓ |
-| OptionalNetworkFeatures | `TryGet(System.String,JmcModLib.Multiplayer.OptionalNetworkFeatureHandle@,System.Reflection.Assembly)` | method | ✓ |
-| OptionalNetworkMismatch | `ShouldHandle(MegaCrit.Sts2.Core.Entities.Multiplayer.NetErrorInfo)` | method | ✓ |
-| OptionalNetworkFeatureAttribute | `CompatibilityVersion` | property | ✓ |
-| OptionalNetworkFeatureAttribute | `Id` | property | ✓ |
-| OptionalNetworkFeatureAttribute | `MessageMarkerType` | property | ✓ |
-| OptionalNetworkFeatureHandle | `ApplyState` | property | ✓ |
-| OptionalNetworkFeatureHandle | `CompatibilityVersion` | property | ✓ |
-| OptionalNetworkFeatureHandle | `EffectiveEnabled` | property | ✓ |
-| OptionalNetworkFeatureHandle | `HasPendingApply` | property | ✓ |
-| OptionalNetworkFeatureHandle | `Id` | property | ✓ |
-| OptionalNetworkFeatureHandle | `ModId` | property | ✓ |
-| OptionalNetworkFeatureHandle | `RequestedEnabled` | property | ✓ |
-| — | `OptionalNetworkFeatureApplyState` | type | ✓ |
-| — | `OptionalNetworkFeatureAttribute` | type | ✓ |
-| — | `OptionalNetworkFeatureHandle` | type | ✓ |
-| — | `OptionalNetworkFeatures` | type | ✓ |
-| — | `OptionalNetworkMismatch` | type | ✓ |
-
-### `Input` — 24 members
+### `Utils` - 55 members
 
 | Type | Member | Kind | Bin |
 |---|---|---|---|
-| GodotActionInputBackend | `Initialize()` | method | ⚠ int. type |
-| GodotActionInputBackend | `Process()` | method | ⚠ int. type |
-| GodotActionInputBackend | `Shutdown()` | method | ⚠ int. type |
-| IJmcInputBackend | `Initialize()` | method | ⚠ int. type |
-| IJmcInputBackend | `Process()` | method | ⚠ int. type |
-| IJmcInputBackend | `Shutdown()` | method | ⚠ int. type |
-| JmcInputManager | `Initialize()` | method | ⚠ int. type |
-| JmcInputManager | `Process()` | method | ⚠ int. type |
-| JmcInputManager | `Shutdown()` | method | ⚠ int. type |
-| SteamInputBackend | `Initialize()` | method | ⚠ int. type |
-| SteamInputBackend | `Process()` | method | ⚠ int. type |
-| SteamInputBackend | `Shutdown()` | method | ⚠ int. type |
-| GodotActionInputBackend | `Name` | property | ⚠ int. type |
-| IJmcInputBackend | `Name` | property | ⚠ int. type |
-| JmcInputManager | `RegisteredBackends` | property | ⚠ int. type |
-| SteamInputBackend | `Name` | property | ⚠ int. type |
-| — | `GodotActionInputBackend` | type | ⚠ int. type |
-| — | `IJmcInputBackend` | type | ⚠ int. type |
-| — | `JmcInputActionRegistry` | type | ⚠ int. type |
-| — | `JmcInputManager` | type | ⚠ int. type |
-| — | `JmcSteamInputManifestInstaller` | type | ⚠ int. type |
-| — | `SteamInputBackend` | type | ⚠ int. type |
-| — | `SteamInputManifestMerger` | type | ⚠ int. type |
-| — | `SteamInputPatches` | type | ⚠ int. type |
+| LogPrefixFlags | `Default` | field | [x] |
+| LogPrefixFlags | `None` | field | [x] |
+| LogPrefixFlags | `Timestamp` | field | [x] |
+| ExprHelper | `ClearAll()` | method | WARN  private |
+| ExprHelper | `ClearAssemblyCache(System.Reflection.Assembly)` | method | [x] |
+| ExprHelper | `CreateAccessorsByEmit``1(System.Reflection.MemberInfo,System.Object)` | method | WARN  private |
+| ExprHelper | `CreateAccessorsByExpressionTree``1(System.Reflection.MemberInfo,System.Object)` | method | WARN  private |
+| ExprHelper | `Expect``2()` | method | WARN  private |
+| ExprHelper | `GetOrCreateAccessors``1(System.Linq.Expressions.Expression{System.Func{``0}},System.Boolean@,System.Reflection.Assembly)` | method | [x] |
+| ExprHelper | `GetOrCreateAccessors``1(System.Linq.Expressions.Expression{System.Func{``0}},System.Reflection.Assembly)` | method | [x] |
+| GameRestart | `RequestRestart(System.Boolean,System.Reflection.Assembly)` | method | [x] |
+| GameRestart | `ShowRestartConfirmationAsync(System.Boolean,System.Reflection.Assembly)` | method | [x] |
+| GameRestart | `TryScheduleRestart(System.Boolean,System.Reflection.Assembly)` | method | [x] |
+| LoggerSnapshot | `LoggerSnapshot(MegaCrit.Sts2.Core.Logging.LogType,JmcModLib.Utils.LogPrefixFlags,System.Boolean,System.Boolean,System.String)` | method | [x] |
+| ModLogger | `Debug(System.String,System.Reflection.Assembly)` | method | [x] |
+| ModLogger | `Error(System.String,System.Exception,System.Reflection.Assembly)` | method | [x] |
+| ModLogger | `Error(System.String,System.Reflection.Assembly)` | method | [x] |
+| ModLogger | `Fatal(System.Exception,System.String,System.Reflection.Assembly)` | method | [x] |
+| ModLogger | `GetLogType(System.Reflection.Assembly)` | method | [x] |
+| ModLogger | `GetPrefixFlags(System.Reflection.Assembly)` | method | [x] |
+| ModLogger | `GetSnapshot(System.Reflection.Assembly)` | method | [x] |
+| ModLogger | `HasPrefixFlag(JmcModLib.Utils.LogPrefixFlags,System.Reflection.Assembly)` | method | [x] |
+| ModLogger | `Info(System.String,System.Reflection.Assembly)` | method | [x] |
+| ModLogger | `Load(System.String,System.Reflection.Assembly)` | method | [x] |
+| ModLogger | `RegisterAssembly(System.Reflection.Assembly,JmcModLib.Utils.LogPrefixFlags,System.Boolean,MegaCrit.Sts2.Core.Logging.LogType,System.Boolean)` | method | [x] |
+| ModLogger | `SetLogType(MegaCrit.Sts2.Core.Logging.LogType,System.Reflection.Assembly)` | method | [x] |
+| ModLogger | `SetPrefixFlags(JmcModLib.Utils.LogPrefixFlags,System.Reflection.Assembly)` | method | [x] |
+| ModLogger | `TogglePrefixFlag(JmcModLib.Utils.LogPrefixFlags,System.Reflection.Assembly)` | method | [x] |
+| ModLogger | `Trace(System.String,System.Reflection.Assembly)` | method | [x] |
+| ModLogger | `UnregisterAssembly(System.Reflection.Assembly)` | method | [x] |
+| ModLogger | `Warn(System.String,System.Exception,System.Reflection.Assembly)` | method | [x] |
+| ModLogger | `Warn(System.String,System.Reflection.Assembly)` | method | [x] |
+| AssemblyLogConfiguration | `IncludeExceptionDetails` | property | [x] |
+| AssemblyLogConfiguration | `LogType` | property | [x] |
+| AssemblyLogConfiguration | `PrefixFlags` | property | [x] |
+| AssemblyLogConfiguration | `ThrowOnFatal` | property | [x] |
+| ExprHelper | `AccessMode` | property | [x] |
+| ExprHelper | `EnableCache` | property | [x] |
+| GameRestart | `IsRestartSupported` | property | [x] |
+| LoggerSnapshot | `Context` | property | [x] |
+| LoggerSnapshot | `IncludeExceptionDetails` | property | [x] |
+| LoggerSnapshot | `LogType` | property | [x] |
+| LoggerSnapshot | `PrefixFlags` | property | [x] |
+| LoggerSnapshot | `ThrowOnFatal` | property | [x] |
+| ModLogger | `DefaultIncludeExceptionDetails` | property | [x] |
+| ModLogger | `DefaultLogType` | property | [x] |
+| ModLogger | `DefaultPrefixFlags` | property | [x] |
+| ModLogger | `DefaultThrowOnFatal` | property | [x] |
+| - | `AssemblyLogConfiguration` | type | [x] |
+| - | `ExprHelper` | type | [x] |
+| - | `GameRestart` | type | [x] |
+| - | `L10n` | type | [x] |
+| - | `LoggerSnapshot` | type | [x] |
+| - | `LogPrefixFlags` | type | [x] |
+| - | `ModLogger` | type | [x] |
 
-### `Compat` — 19 members
-
-| Type | Member | Kind | Bin |
-|---|---|---|---|
-| ModCompat | `ContainsAssembly(MegaCrit.Sts2.Core.Modding.Mod,System.Reflection.Assembly)` | method | ✓ |
-| ModCompat | `GetAssemblies(MegaCrit.Sts2.Core.Modding.Mod)` | method | ✓ |
-| ModCompat | `GetKnownMods()` | method | ✓ |
-| ModCompat | `GetLoadedMods()` | method | ✓ |
-| ModCompat | `GetManifest(MegaCrit.Sts2.Core.Modding.Mod)` | method | ✓ |
-| ModCompat | `GetManifestId(MegaCrit.Sts2.Core.Modding.ModManifest)` | method | ✓ |
-| ModCompat | `GetManifestName(MegaCrit.Sts2.Core.Modding.ModManifest)` | method | ✓ |
-| ModCompat | `GetManifestVersion(MegaCrit.Sts2.Core.Modding.ModManifest)` | method | ✓ |
-| ModCompat | `GetPckName(MegaCrit.Sts2.Core.Modding.Mod)` | method | ✓ |
-| ModCompat | `GetPrimaryAssembly(MegaCrit.Sts2.Core.Modding.Mod)` | method | ✓ |
-| ModCompat | `IsLoaded(MegaCrit.Sts2.Core.Modding.Mod)` | method | ✓ |
-| MultiplayerCompat | `GetConnectedHostPeerIds(MegaCrit.Sts2.Core.Multiplayer.Game.INetHostGameService)` | method | ✓ |
-| MultiplayerCompat | `GetLoadRunLobbyPlayerIds(MegaCrit.Sts2.Core.Multiplayer.Game.Lobby.LoadRunLobby)` | method | ✓ |
-| MultiplayerCompat | `GetRunLobbyPlayerIds(MegaCrit.Sts2.Core.Multiplayer.Game.Lobby.RunLobby)` | method | ✓ |
-| MultiplayerCompat | `TryGetConnectionExtraInfo(MegaCrit.Sts2.Core.Entities.Multiplayer.NetErrorInfo,MegaCrit.Sts2.Core.Entities.Multiplayer.ConnectionFailureExtraInfo@)` | method | ✓ |
-| MultiplayerCompat | `TryGetJoinFlowNetService(MegaCrit.Sts2.Core.Multiplayer.Game.JoinFlow,MegaCrit.Sts2.Core.Multiplayer.Game.INetGameService@)` | method | ✓ |
-| MultiplayerCompat | `TryReadJoinFlowNetService(MegaCrit.Sts2.Core.Multiplayer.Game.JoinFlow,MegaCrit.Sts2.Core.Multiplayer.Game.INetGameService@)` | method | ⚠ internal |
-| — | `ModCompat` | type | ✓ |
-| — | `MultiplayerCompat` | type | ✓ |
-
-### `Utils.ExprHelper` — 7 members
-
-| Type | Member | Kind | Bin |
-|---|---|---|---|
-| MemberAccessMode | `Default` | field | ✓ |
-| MemberAccessMode | `Emit` | field | ✓ |
-| MemberAccessMode | `ExpressionTree` | field | ✓ |
-| MemberAccessMode | `Reflection` | field | ✓ |
-| MemberAccessors | `MemberAccessors(System.Delegate,System.Delegate)` | method | ✓ |
-| — | `MemberAccessMode` | type | ✓ |
-| — | `MemberAccessors` | type | ✓ |
-
-### `Config.Entry` — 4 members
+### `Prefabs` - 53 members
 
 | Type | Member | Kind | Bin |
 |---|---|---|---|
-| ConfigEntry | `ConfigEntry(System.Reflection.Assembly,System.String,System.String,System.String,JmcModLib.Config.ConfigAttribute,JmcModLib.Config.UI.UIConfigAttribute)` | method | ⚠ protected |
-| ConfigEntry | `DropdownOptionsProviderAttribute` | property | ✓ |
-| ConfigEntry | `VisibleWhenAttribute` | property | ✓ |
-| — | `ConfigEntry` | type | ✓ |
+| JmcReportPopupBodyFormat | `Markdown` | field | [x] |
+| JmcReportPopupBodyFormat | `PlainText` | field | [x] |
+| JmcReportPopupBodyFormat | `RichText` | field | [x] |
+| JmcConfirmationPopup | `ShowConfirmationAsync(MegaCrit.Sts2.Core.Localization.LocString,MegaCrit.Sts2.Core.Localization.LocString,MegaCrit.Sts2.Core.Localization.LocString,MegaCrit.Sts2.Core.Localization.LocString,System.Boolean,System.Reflection.Assembly)` | method | [x] |
+| JmcConfirmationPopup | `ShowConfirmationAsync(System.String,System.String,System.String,System.String,System.Boolean,System.Reflection.Assembly)` | method | [x] |
+| JmcConfirmationPopup | `ShowMessageAsync(MegaCrit.Sts2.Core.Localization.LocString,MegaCrit.Sts2.Core.Localization.LocString,MegaCrit.Sts2.Core.Localization.LocString,System.Boolean,System.Reflection.Assembly)` | method | [x] |
+| JmcConfirmationPopup | `ShowMessageAsync(System.String,System.String,System.String,System.Boolean,System.Reflection.Assembly)` | method | [x] |
+| JmcReportPopup | `Open(JmcModLib.Prefabs.JmcReportPopupOptions,System.Reflection.Assembly)` | method | [x] |
+| JmcReportPopupButton | `JmcReportPopupButton(System.String,System.String,System.Action{JmcModLib.Prefabs.JmcReportPopupHandle},System.Boolean,System.Boolean)` | method | [x] |
+| JmcReportPopupHandle | `Close()` | method | [x] |
+| JmcReportPopupHandle | `SetBody(System.String,JmcModLib.Prefabs.JmcReportPopupBodyFormat)` | method | [x] |
+| JmcReportPopupHandle | `SetBody(System.String,System.Boolean)` | method | [x] |
+| JmcReportPopupHandle | `SetBody(System.String)` | method | [x] |
+| JmcReportPopupHandle | `SetButtonEnabled(System.String,System.Boolean)` | method | [x] |
+| JmcReportPopupHandle | `SetStatus(System.String)` | method | [x] |
+| JmcReportPopupHandle | `SetSubtitle(System.String)` | method | [x] |
+| JmcReportPopupHandle | `SetTitle(System.String)` | method | [x] |
+| JmcSecretInputPopup | `PromptAsync(JmcModLib.Prefabs.JmcSecretInputPopupOptions,System.Reflection.Assembly)` | method | [x] |
+| JmcReportPopup | `IsAvailable` | property | [x] |
+| JmcReportPopupButton | `Action` | property | [x] |
+| JmcReportPopupButton | `CloseOnClick` | property | [x] |
+| JmcReportPopupButton | `Enabled` | property | [x] |
+| JmcReportPopupButton | `Key` | property | [x] |
+| JmcReportPopupButton | `Text` | property | [x] |
+| JmcReportPopupHandle | `IsOpen` | property | [x] |
+| JmcReportPopupOptions | `Body` | property | [x] |
+| JmcReportPopupOptions | `BodyFormat` | property | [x] |
+| JmcReportPopupOptions | `BodyUsesRichText` | property | [x] |
+| JmcReportPopupOptions | `Buttons` | property | [x] |
+| JmcReportPopupOptions | `CloseOnEscape` | property | [x] |
+| JmcReportPopupOptions | `MinimumSize` | property | [x] |
+| JmcReportPopupOptions | `ShowBackstop` | property | [x] |
+| JmcReportPopupOptions | `Status` | property | [x] |
+| JmcReportPopupOptions | `Subtitle` | property | [x] |
+| JmcReportPopupOptions | `Title` | property | [x] |
+| JmcSecretInputPopup | `IsAvailable` | property | [x] |
+| JmcSecretInputPopupOptions | `CancelText` | property | [x] |
+| JmcSecretInputPopupOptions | `ConfirmText` | property | [x] |
+| JmcSecretInputPopupOptions | `Description` | property | [x] |
+| JmcSecretInputPopupOptions | `EmptyText` | property | [x] |
+| JmcSecretInputPopupOptions | `MinimumSize` | property | [x] |
+| JmcSecretInputPopupOptions | `Placeholder` | property | [x] |
+| JmcSecretInputPopupOptions | `ProtectionLevel` | property | [x] |
+| JmcSecretInputPopupOptions | `ShowBackstop` | property | [x] |
+| JmcSecretInputPopupOptions | `Title` | property | [x] |
+| - | `JmcConfirmationPopup` | type | [x] |
+| - | `JmcReportPopup` | type | [x] |
+| - | `JmcReportPopupBodyFormat` | type | [x] |
+| - | `JmcReportPopupButton` | type | [x] |
+| - | `JmcReportPopupHandle` | type | [x] |
+| - | `JmcReportPopupOptions` | type | [x] |
+| - | `JmcSecretInputPopup` | type | [x] |
+| - | `JmcSecretInputPopupOptions` | type | [x] |
 
-### `Config` — 3 members
+### `UI.PauseMenu` - 46 members
 
 | Type | Member | Kind | Bin |
 |---|---|---|---|
-| ConfigAttribute | `ConfigAttribute(System.String,System.String,System.String)` | method | ✓ |
-| — | `ConfigAttribute` | type | ✓ |
-| — | `ConfigManager` | type | ✓ |
+| PauseMenuButtonAnchor | `AfterCompendium` | field | [x] |
+| PauseMenuButtonAnchor | `AfterResume` | field | [x] |
+| PauseMenuButtonAnchor | `AfterSettings` | field | [x] |
+| PauseMenuButtonAnchor | `BeforeExitActions` | field | [x] |
+| PauseMenuButtonAnchor | `End` | field | [x] |
+| PauseMenuButtonAttribute | `PauseMenuButtonAttribute(System.String)` | method | [x] |
+| PauseMenuButtonOptions | `PauseMenuButtonOptions()` | method | [x] |
+| PauseMenuButtonOptions | `PauseMenuButtonOptions(System.String,System.String)` | method | [x] |
+| PauseMenuRegistry | `GetEntries(System.Reflection.Assembly)` | method | [x] |
+| PauseMenuRegistry | `RegisterButton(JmcModLib.UI.PauseMenu.PauseMenuButtonOptions,System.Action,System.Reflection.Assembly)` | method | [x] |
+| PauseMenuRegistry | `RegisterButton(JmcModLib.UI.PauseMenu.PauseMenuButtonOptions,System.Action{JmcModLib.UI.PauseMenu.PauseMenuButtonContext},System.Reflection.Assembly)` | method | [x] |
+| PauseMenuRegistry | `RegisterButton(JmcModLib.UI.PauseMenu.PauseMenuButtonOptions,System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Threading.Tasks.Task},System.Reflection.Assembly)` | method | [x] |
+| PauseMenuRegistry | `RegisterButton(JmcModLib.UI.PauseMenu.PauseMenuButtonOptions,System.Func{System.Threading.Tasks.Task},System.Reflection.Assembly)` | method | [x] |
+| PauseMenuRegistry | `UnregisterAssembly(System.Reflection.Assembly)` | method | [x] |
+| PauseMenuRegistry | `UnregisterButton(System.String,System.Reflection.Assembly)` | method | [x] |
+| PauseMenuButtonAttribute | `Anchor` | property | [x] |
+| PauseMenuButtonAttribute | `CloseMenuOnClick` | property | [x] |
+| PauseMenuButtonAttribute | `Color` | property | [x] |
+| PauseMenuButtonAttribute | `Key` | property | [x] |
+| PauseMenuButtonAttribute | `LocTable` | property | [x] |
+| PauseMenuButtonAttribute | `Order` | property | [x] |
+| PauseMenuButtonAttribute | `Text` | property | [x] |
+| PauseMenuButtonAttribute | `TextKey` | property | [x] |
+| PauseMenuButtonContext | `Assembly` | property | [x] |
+| PauseMenuButtonContext | `Button` | property | [x] |
+| PauseMenuButtonContext | `IsGameOver` | property | [x] |
+| PauseMenuButtonContext | `IsMultiplayerClient` | property | [x] |
+| PauseMenuButtonContext | `IsRunInProgress` | property | [x] |
+| PauseMenuButtonContext | `Menu` | property | [x] |
+| PauseMenuButtonContext | `Mod` | property | [x] |
+| PauseMenuButtonContext | `RunState` | property | [x] |
+| PauseMenuButtonOptions | `Anchor` | property | [x] |
+| PauseMenuButtonOptions | `CloseMenuOnClick` | property | [x] |
+| PauseMenuButtonOptions | `Color` | property | [x] |
+| PauseMenuButtonOptions | `EnabledWhen` | property | [x] |
+| PauseMenuButtonOptions | `Key` | property | [x] |
+| PauseMenuButtonOptions | `LocTable` | property | [x] |
+| PauseMenuButtonOptions | `Order` | property | [x] |
+| PauseMenuButtonOptions | `Text` | property | [x] |
+| PauseMenuButtonOptions | `TextKey` | property | [x] |
+| PauseMenuButtonOptions | `VisibleWhen` | property | [x] |
+| - | `PauseMenuButtonAnchor` | type | [x] |
+| - | `PauseMenuButtonAttribute` | type | [x] |
+| - | `PauseMenuButtonContext` | type | [x] |
+| - | `PauseMenuButtonOptions` | type | [x] |
+| - | `PauseMenuRegistry` | type | [x] |
 
-### `Config.Storage` — 2 members
+### `Core` - 42 members
 
 | Type | Member | Kind | Bin |
 |---|---|---|---|
-| — | `JsonConfigStorage` | type | ✓ |
-| — | `NewtonsoftConfigStorage` | type | ✓ |
+| ModRegistry | `OnRegistered` | event | [x] |
+| ModRegistry | `OnUnregistered` | event | [x] |
+| ModRegistry | `GetContext(System.Reflection.Assembly)` | method | [x] |
+| ModRegistry | `GetDisplayName(System.Reflection.Assembly)` | method | [x] |
+| ModRegistry | `GetModId(System.Reflection.Assembly)` | method | [x] |
+| ModRegistry | `GetTag(System.Reflection.Assembly)` | method | [x] |
+| ModRegistry | `GetVersion(System.Reflection.Assembly)` | method | [x] |
+| ModRegistry | `IsRegistered(System.Reflection.Assembly)` | method | [x] |
+| ModRegistry | `Register(System.Boolean,System.Object,System.String,System.String,System.Reflection.Assembly)` | method | [x] |
+| ModRegistry | `Register(System.Boolean,System.String,System.String,System.String,System.Reflection.Assembly)` | method | [x] |
+| ModRegistry | `Register(System.String,System.String,System.String,System.Reflection.Assembly)` | method | [x] |
+| ModRegistry | `Register``1()` | method | [x] |
+| ModRegistry | `Register``1(System.Boolean,System.String,System.String,System.String)` | method | [x] |
+| ModRegistry | `Register``1(System.Boolean)` | method | [x] |
+| ModRegistry | `Register``1(System.String,System.String,System.String)` | method | [x] |
+| ModRegistry | `TryGetContext(JmcModLib.Core.ModContext@,System.Reflection.Assembly)` | method | [x] |
+| ModRegistry | `Unregister(System.Reflection.Assembly)` | method | [x] |
+| ModRuntime | `FindLoadedMod(System.String)` | method | [x] |
+| ModRuntime | `FindModById(System.String)` | method | [x] |
+| RegistryBuilder | `Done()` | method | [x] |
+| RegistryBuilder | `RegisterButton(System.String,System.Action,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Int32,JmcModLib.Config.UI.UIButtonColor)` | method | [x] |
+| RegistryBuilder | `RegisterButton(System.String@,System.String,System.Action,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Int32,JmcModLib.Config.UI.UIButtonColor)` | method | [x] |
+| RegistryBuilder | `RegisterPauseMenuButton(System.String,System.String,System.Action,System.Int32,JmcModLib.UI.PauseMenu.PauseMenuButtonAnchor,System.String,System.String,System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Boolean},System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Boolean},System.Boolean,JmcModLib.Config.UI.UIButtonColor)` | method | [x] |
+| RegistryBuilder | `RegisterPauseMenuButton(System.String,System.String,System.Action{JmcModLib.UI.PauseMenu.PauseMenuButtonContext},System.Int32,JmcModLib.UI.PauseMenu.PauseMenuButtonAnchor,System.String,System.String,System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Boolean},System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Boolean},System.Boolean,JmcModLib.Config.UI.UIButtonColor)` | method | [x] |
+| RegistryBuilder | `RegisterPauseMenuButton(System.String,System.String,System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Threading.Tasks.Task},System.Int32,JmcModLib.UI.PauseMenu.PauseMenuButtonAnchor,System.String,System.String,System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Boolean},System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Boolean},System.Boolean,JmcModLib.Config.UI.UIButtonColor)` | method | [x] |
+| RegistryBuilder | `RegisterPauseMenuButton(System.String,System.String,System.Func{System.Threading.Tasks.Task},System.Int32,JmcModLib.UI.PauseMenu.PauseMenuButtonAnchor,System.String,System.String,System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Boolean},System.Func{JmcModLib.UI.PauseMenu.PauseMenuButtonContext,System.Boolean},System.Boolean,JmcModLib.Config.UI.UIButtonColor)` | method | [x] |
+| RegistryBuilder | `RegisterSecret(JmcModLib.Security.JmcSecretSlot,System.String,JmcModLib.Security.JmcSecretOptions)` | method | [x] |
+| RegistryBuilder | `RegisterSecret(JmcModLib.Security.JmcSecretSlot@,System.String,JmcModLib.Security.JmcSecretOptions)` | method | [x] |
+| RegistryBuilder | `RegisterSecret(System.String,JmcModLib.Security.JmcSecretOptions)` | method | [x] |
+| RegistryBuilder | `WithConfigStorage(JmcModLib.Config.Storage.IConfigStorage)` | method | [x] |
+| RegistryBuilder | `WithDisplayName(System.String)` | method | [x] |
+| RegistryBuilder | `WithVersion(System.String)` | method | [x] |
+| ModContext | `Assembly` | property | [x] |
+| ModContext | `DisplayName` | property | [x] |
+| ModContext | `IsCompleted` | property | [x] |
+| ModContext | `LoggerContext` | property | [x] |
+| ModContext | `ModId` | property | [x] |
+| ModContext | `Tag` | property | [x] |
+| ModContext | `Version` | property | [x] |
+| - | `ModContext` | type | [x] |
+| - | `ModRegistry` | type | [x] |
+| - | `RegistryBuilder` | type | [x] |
 
-### `Core.AttributeRouter` — 2 members
+### `Multiplayer` - 25 members
 
 | Type | Member | Kind | Bin |
 |---|---|---|---|
-| — | `AttributeRouter` | type | ✓ |
-| — | `IAttributeHandler` | type | ✓ |
+| OptionalNetworkFeatureHandle | `EffectiveEnabledChanged` | event | [x] |
+| OptionalNetworkFeatureHandle | `StateChanged` | event | [x] |
+| OptionalNetworkFeatureApplyState | `Applied` | field | [x] |
+| OptionalNetworkFeatureApplyState | `PendingNetworkIdle` | field | [x] |
+| OptionalNetworkFeatureApplyState | `RestartRequired` | field | [x] |
+| OptionalNetworkFeatureAttribute | `OptionalNetworkFeatureAttribute(System.String,System.Type)` | method | [x] |
+| OptionalNetworkFeatures | `Get(System.String,System.Reflection.Assembly)` | method | [x] |
+| OptionalNetworkFeatures | `Get``1(System.String)` | method | [x] |
+| OptionalNetworkFeatures | `TryGet(System.String,JmcModLib.Multiplayer.OptionalNetworkFeatureHandle@,System.Reflection.Assembly)` | method | [x] |
+| OptionalNetworkMismatch | `ShouldHandle(MegaCrit.Sts2.Core.Entities.Multiplayer.NetErrorInfo)` | method | [x] |
+| OptionalNetworkFeatureAttribute | `CompatibilityVersion` | property | [x] |
+| OptionalNetworkFeatureAttribute | `Id` | property | [x] |
+| OptionalNetworkFeatureAttribute | `MessageMarkerType` | property | [x] |
+| OptionalNetworkFeatureHandle | `ApplyState` | property | [x] |
+| OptionalNetworkFeatureHandle | `CompatibilityVersion` | property | [x] |
+| OptionalNetworkFeatureHandle | `EffectiveEnabled` | property | [x] |
+| OptionalNetworkFeatureHandle | `HasPendingApply` | property | [x] |
+| OptionalNetworkFeatureHandle | `Id` | property | [x] |
+| OptionalNetworkFeatureHandle | `ModId` | property | [x] |
+| OptionalNetworkFeatureHandle | `RequestedEnabled` | property | [x] |
+| - | `OptionalNetworkFeatureApplyState` | type | [x] |
+| - | `OptionalNetworkFeatureAttribute` | type | [x] |
+| - | `OptionalNetworkFeatureHandle` | type | [x] |
+| - | `OptionalNetworkFeatures` | type | [x] |
+| - | `OptionalNetworkMismatch` | type | [x] |
 
-### `Reflection.MethodAccessor` — 1 members
+### `Input` - 24 members
 
 | Type | Member | Kind | Bin |
 |---|---|---|---|
-| — | `ParamSignature` | type | ⚠ int. type |
+| GodotActionInputBackend | `Initialize()` | method | WARN  int. type |
+| GodotActionInputBackend | `Process()` | method | WARN  int. type |
+| GodotActionInputBackend | `Shutdown()` | method | WARN  int. type |
+| IJmcInputBackend | `Initialize()` | method | WARN  int. type |
+| IJmcInputBackend | `Process()` | method | WARN  int. type |
+| IJmcInputBackend | `Shutdown()` | method | WARN  int. type |
+| JmcInputManager | `Initialize()` | method | WARN  int. type |
+| JmcInputManager | `Process()` | method | WARN  int. type |
+| JmcInputManager | `Shutdown()` | method | WARN  int. type |
+| SteamInputBackend | `Initialize()` | method | WARN  int. type |
+| SteamInputBackend | `Process()` | method | WARN  int. type |
+| SteamInputBackend | `Shutdown()` | method | WARN  int. type |
+| GodotActionInputBackend | `Name` | property | WARN  int. type |
+| IJmcInputBackend | `Name` | property | WARN  int. type |
+| JmcInputManager | `RegisteredBackends` | property | WARN  int. type |
+| SteamInputBackend | `Name` | property | WARN  int. type |
+| - | `GodotActionInputBackend` | type | WARN  int. type |
+| - | `IJmcInputBackend` | type | WARN  int. type |
+| - | `JmcInputActionRegistry` | type | WARN  int. type |
+| - | `JmcInputManager` | type | WARN  int. type |
+| - | `JmcSteamInputManifestInstaller` | type | WARN  int. type |
+| - | `SteamInputBackend` | type | WARN  int. type |
+| - | `SteamInputManifestMerger` | type | WARN  int. type |
+| - | `SteamInputPatches` | type | WARN  int. type |
+
+### `Compat` - 19 members
+
+| Type | Member | Kind | Bin |
+|---|---|---|---|
+| ModCompat | `ContainsAssembly(MegaCrit.Sts2.Core.Modding.Mod,System.Reflection.Assembly)` | method | [x] |
+| ModCompat | `GetAssemblies(MegaCrit.Sts2.Core.Modding.Mod)` | method | [x] |
+| ModCompat | `GetKnownMods()` | method | [x] |
+| ModCompat | `GetLoadedMods()` | method | [x] |
+| ModCompat | `GetManifest(MegaCrit.Sts2.Core.Modding.Mod)` | method | [x] |
+| ModCompat | `GetManifestId(MegaCrit.Sts2.Core.Modding.ModManifest)` | method | [x] |
+| ModCompat | `GetManifestName(MegaCrit.Sts2.Core.Modding.ModManifest)` | method | [x] |
+| ModCompat | `GetManifestVersion(MegaCrit.Sts2.Core.Modding.ModManifest)` | method | [x] |
+| ModCompat | `GetPckName(MegaCrit.Sts2.Core.Modding.Mod)` | method | [x] |
+| ModCompat | `GetPrimaryAssembly(MegaCrit.Sts2.Core.Modding.Mod)` | method | [x] |
+| ModCompat | `IsLoaded(MegaCrit.Sts2.Core.Modding.Mod)` | method | [x] |
+| MultiplayerCompat | `GetConnectedHostPeerIds(MegaCrit.Sts2.Core.Multiplayer.Game.INetHostGameService)` | method | [x] |
+| MultiplayerCompat | `GetLoadRunLobbyPlayerIds(MegaCrit.Sts2.Core.Multiplayer.Game.Lobby.LoadRunLobby)` | method | [x] |
+| MultiplayerCompat | `GetRunLobbyPlayerIds(MegaCrit.Sts2.Core.Multiplayer.Game.Lobby.RunLobby)` | method | [x] |
+| MultiplayerCompat | `TryGetConnectionExtraInfo(MegaCrit.Sts2.Core.Entities.Multiplayer.NetErrorInfo,MegaCrit.Sts2.Core.Entities.Multiplayer.ConnectionFailureExtraInfo@)` | method | [x] |
+| MultiplayerCompat | `TryGetJoinFlowNetService(MegaCrit.Sts2.Core.Multiplayer.Game.JoinFlow,MegaCrit.Sts2.Core.Multiplayer.Game.INetGameService@)` | method | [x] |
+| MultiplayerCompat | `TryReadJoinFlowNetService(MegaCrit.Sts2.Core.Multiplayer.Game.JoinFlow,MegaCrit.Sts2.Core.Multiplayer.Game.INetGameService@)` | method | WARN  internal |
+| - | `ModCompat` | type | [x] |
+| - | `MultiplayerCompat` | type | [x] |
+
+### `Utils.ExprHelper` - 7 members
+
+| Type | Member | Kind | Bin |
+|---|---|---|---|
+| MemberAccessMode | `Default` | field | [x] |
+| MemberAccessMode | `Emit` | field | [x] |
+| MemberAccessMode | `ExpressionTree` | field | [x] |
+| MemberAccessMode | `Reflection` | field | [x] |
+| MemberAccessors | `MemberAccessors(System.Delegate,System.Delegate)` | method | [x] |
+| - | `MemberAccessMode` | type | [x] |
+| - | `MemberAccessors` | type | [x] |
+
+### `Config.Entry` - 4 members
+
+| Type | Member | Kind | Bin |
+|---|---|---|---|
+| ConfigEntry | `ConfigEntry(System.Reflection.Assembly,System.String,System.String,System.String,JmcModLib.Config.ConfigAttribute,JmcModLib.Config.UI.UIConfigAttribute)` | method | WARN  protected |
+| ConfigEntry | `DropdownOptionsProviderAttribute` | property | [x] |
+| ConfigEntry | `VisibleWhenAttribute` | property | [x] |
+| - | `ConfigEntry` | type | [x] |
+
+### `Config` - 3 members
+
+| Type | Member | Kind | Bin |
+|---|---|---|---|
+| ConfigAttribute | `ConfigAttribute(System.String,System.String,System.String)` | method | [x] |
+| - | `ConfigAttribute` | type | [x] |
+| - | `ConfigManager` | type | [x] |
+
+### `Config.Storage` - 2 members
+
+| Type | Member | Kind | Bin |
+|---|---|---|---|
+| - | `JsonConfigStorage` | type | [x] |
+| - | `NewtonsoftConfigStorage` | type | [x] |
+
+### `Core.AttributeRouter` - 2 members
+
+| Type | Member | Kind | Bin |
+|---|---|---|---|
+| - | `AttributeRouter` | type | [x] |
+| - | `IAttributeHandler` | type | [x] |
+
+### `Reflection.MethodAccessor` - 1 members
+
+| Type | Member | Kind | Bin |
+|---|---|---|---|
+| - | `ParamSignature` | type | WARN  int. type |

@@ -4,7 +4,7 @@ using Spire1.Spire1Code.Monsters;
 namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
-/// StS1 Act-3 "Reptomancer" elite encounter — <see cref="Reptomancer"/> with two
+/// StS1 Act-3 "Reptomancer" elite encounter - <see cref="Reptomancer"/> with two
 /// <see cref="SnakeDagger"/>s.
 /// </summary>
 public sealed class ReptomancerEncounter : Spire1Encounter

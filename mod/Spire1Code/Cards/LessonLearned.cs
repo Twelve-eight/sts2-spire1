@@ -12,7 +12,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Lesson Learned (Rare Attack). Deal 10 damage (13 upgraded); if Fatal, permanently Upgrade a random
+/// StS1 Watcher - Lesson Learned (Rare Attack). Deal 10 damage (13 upgraded); if Fatal, permanently Upgrade a random
 /// card in your deck. Exhaust.
 /// </summary>
 [Pool(typeof(WatcherCardPool))]

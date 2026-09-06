@@ -12,7 +12,7 @@ public class WatcherCardPool : CustomCardPoolModel
     public override string EnergyColorName => "regent";
 
     // FLAG: "card_frame_purple" is NOT a shipped StS2 material (shipped: blue, pink, orange,
-    // colorless, curse, quest, red, green — see AssetSets + base-game pools), so per pool
+    // colorless, curse, quest, red, green - see AssetSets + base-game pools), so per pool
     // conventions we use "card_frame_red" and tint it purple via the HSV shader below.
     public override string CardFrameMaterialPath => "card_frame_red";
 

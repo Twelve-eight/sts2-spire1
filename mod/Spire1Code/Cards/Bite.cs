@@ -9,7 +9,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Colorless — Bite (SPECIAL Attack). Deal 7 damage, heal 2 HP (8 damage / 3 HP upgraded). 1 cost.
+/// StS1 Colorless - Bite (SPECIAL Attack). Deal 7 damage, heal 2 HP (8 damage / 3 HP upgraded). 1 cost.
 /// Granted only by the Vampires event, which replaces every Strike with five of these.
 ///
 /// Verified against the jar bytecode (com.megacrit.cardcrawl.cards.colorless.Bite): cost 1, baseDamage 7,
@@ -22,8 +22,8 @@ namespace Spire1.Spire1Code.Cards;
 /// and nothing in the shipped content reads a "healing" tag, so the behaviour-less tag is simply dropped.
 ///
 /// StS1's SPECIAL rarity (never offered in card rewards, only handed out by events) maps onto StS2's
-/// CardRarity.Ancient + EventCardPool: that is exactly how the shipped Apparition — the other StS1 colorless
-/// SPECIAL card — is registered (.tmp/dllsrc/MegaCrit.Sts2.Core.Models.CardPools/EventCardPool.cs:24).
+/// CardRarity.Ancient + EventCardPool: that is exactly how the shipped Apparition - the other StS1 colorless
+/// SPECIAL card - is registered (.tmp/dllsrc/MegaCrit.Sts2.Core.Models.CardPools/EventCardPool.cs:24).
 /// ColorlessCardPool would instead expose the card to Toolbox and the colorless shop, which StS1 never does.
 /// </summary>
 [Pool(typeof(EventCardPool))]

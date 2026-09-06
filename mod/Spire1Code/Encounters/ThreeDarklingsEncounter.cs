@@ -4,7 +4,7 @@ using Spire1.Spire1Code.Monsters;
 namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
-/// StS1 Act-3 "Three Darklings" weak encounter — three <see cref="Darkling"/>s.
+/// StS1 Act-3 "Three Darklings" weak encounter - three <see cref="Darkling"/>s.
 /// </summary>
 public sealed class ThreeDarklingsEncounter : Spire1Encounter
 {

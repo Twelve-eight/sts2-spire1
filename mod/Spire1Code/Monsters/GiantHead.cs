@@ -16,18 +16,18 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The Beyond — Giant Head elite (<c>com.megacrit.cardcrawl.monsters.beyond.GiantHead</c>).
+/// StS1 The Beyond - Giant Head elite (<c>com.megacrit.cardcrawl.monsters.beyond.GiantHead</c>).
 /// 官方中文名：大脑袋。
 /// <para>
 /// Bytecode: HP 500/500, A8 520/520; COUNT_DMG 13 (no ascension variant); DEATH_DMG
 /// (<c>startingDeathDmg</c>) 30, A3 40; GLARE_WEAK 1. <c>count</c> starts at 5, A18 at 4.
-/// <c>damage</c> table: [0]=13, [1]=death, [2]=death+5 … [7]=death+30.
+/// <c>damage</c> table: [0]=13, [1]=death, [2]=death+5 ... [7]=death+30.
 /// </para>
 /// <para>
 /// usePreBattleAction applies <see cref="SlowPower"/> to itself, then A18 decrements the count.
-/// getMove: <c>count &gt; 1</c> → count-- then roll r&lt;50: last(GLARE) ? COUNT(13) : GLARE,
-/// r&gt;=50: lastTwo(COUNT) ? GLARE : COUNT; <c>-6 &lt; count &lt;= 1</c> → count--, IT_IS_TIME;
-/// <c>count &lt;= -6</c> → IT_IS_TIME (no further decrement). takeTurn IT_IS_TIME hits with
+/// getMove: <c>count &gt; 1</c> -> count-- then roll r&lt;50: last(GLARE) ? COUNT(13) : GLARE,
+/// r&gt;=50: lastTwo(COUNT) ? GLARE : COUNT; <c>-6 &lt; count &lt;= 1</c> -> count--, IT_IS_TIME;
+/// <c>count &lt;= -6</c> -> IT_IS_TIME (no further decrement). takeTurn IT_IS_TIME hits with
 /// <c>damage[min(1 - count, 7)]</c> (SMASH), i.e. death +5 per elapsed turn after the first,
 /// capped at death+30. Vanilla's intent label for late loops resets to the base death damage
 /// while still dealing the capped value; we always display what will actually be dealt.
@@ -35,9 +35,9 @@ namespace Spire1.Spire1Code.Monsters;
 /// <para>
 /// The counting shouts (<c>#r~N...~</c> / random DIALOG quotes) are cosmetic ShoutActions and
 /// are omitted, consistent with <see cref="Spire1Monster.HasDeathSfx"/>.
-/// Ascension mapping: A8 HP tier → ToughEnemies, A3 death-damage tier → DeadlyEnemies, the A18
-/// head-start tier → DoubleBoss (top StS2 tier, the TheCollector A19 precedent).
-/// Donor: <c>waterfall_giant</c> — a colossal stone figure whose rig ships every default track
+/// Ascension mapping: A8 HP tier -> ToughEnemies, A3 death-damage tier -> DeadlyEnemies, the A18
+/// head-start tier -> DoubleBoss (top StS2 tier, the TheCollector A19 precedent).
+/// Donor: <c>waterfall_giant</c> - a colossal stone figure whose rig ships every default track
 /// (idle_loop/cast/attack/hurt/die), the closest shipped silhouette for a giant stone head.
 /// </para>
 /// </summary>
@@ -71,7 +71,7 @@ public sealed class GiantHead : Spire1Monster
         }
     }
 
-    /// <summary>takeTurn IT_IS_TIME: damage[min(1 - count, 7)] from {13, d, d+5 … d+30}.</summary>
+    /// <summary>takeTurn IT_IS_TIME: damage[min(1 - count, 7)] from {13, d, d+5 ... d+30}.</summary>
     private decimal ItIsTimeDamage
     {
         get

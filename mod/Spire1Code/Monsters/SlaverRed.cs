@@ -13,7 +13,7 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 Exordium — Red Slaver (<c>com.megacrit.cardcrawl.monsters.exordium.SlaverRed</c>).
+/// StS1 Exordium - Red Slaver (<c>com.megacrit.cardcrawl.monsters.exordium.SlaverRed</c>).
 /// <para>
 /// Bytecode: HP 46-50, A2 48-52; STAB_DMG 13 (A2 14), SCRAPE_DMG 8 (A2 9), VULN_AMT 1.
 /// getMove: first turn always STAB; r&gt;=75 &amp;&amp; !usedEntangle -&gt; ENTANGLE (once per combat);
@@ -24,7 +24,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// <para>
 /// Entangle maps to the engine's shipped <see cref="TangledPower"/> debuff: it afflicts every
 /// Attack card in the player's deck with the shipped <c>Entangled</c> affliction, which raises
-/// the card's energy cost by 1 — StS2's own translation of "can't play Attacks", used by the
+/// the card's energy cost by 1 - StS2's own translation of "can't play Attacks", used by the
 /// shipped Tangled/Entangled content. No custom power is created.
 /// </para>
 /// </summary>

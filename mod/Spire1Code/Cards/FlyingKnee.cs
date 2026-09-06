@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Flying Knee (Common). Deal 8 damage; next turn, gain 1 Energy (11 upgraded).</summary>
+/// <summary>StS1 Silent - Flying Knee (Common). Deal 8 damage; next turn, gain 1 Energy (11 upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class FlyingKnee() : Spire1Card(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {

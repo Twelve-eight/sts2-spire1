@@ -19,7 +19,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The City — Shelled Parasite (<c>com.megacrit.cardcrawl.monsters.city.ShelledParasite</c>).
+/// StS1 The City - Shelled Parasite (<c>com.megacrit.cardcrawl.monsters.city.ShelledParasite</c>).
 /// 官方中文名：带壳寄生怪。
 /// <para>
 /// Bytecode: HP 68-72, A7 70-75; doubleStrikeDmg 6 (A2 7), fellDmg 18 (A2 21), suckDmg 10 (A2 12);
@@ -28,25 +28,25 @@ namespace Spire1.Spire1Code.Monsters;
 /// </para>
 /// <para>
 /// Shell-break: StS1's plated armor loses 1 stack per unblocked hit; when it reaches 0 the
-/// monster changes to ARMOR_BREAK — three hops, then its pending move becomes STUNNED
+/// monster changes to ARMOR_BREAK - three hops, then its pending move becomes STUNNED
 /// (a wasted turn showing the Stunned text; the next pending move after it is FELL, which
 /// vanilla's takeTurn case 4 sets directly). Ported via <see cref="AfterDamageReceivedLate"/>
 /// (runs after the power's decrement) forcing <see cref="SetMoveImmediate"/> onto the stunned
 /// state, the Lagavulin wake-up idiom; the hop VFX is cosmetic and omitted.
 /// </para>
 /// <para>
-/// getMove: firstMove → A17+ FELL, else randomBoolean ? DOUBLE_STRIKE : LIFE_SUCK; afterwards
+/// getMove: firstMove -> A17+ FELL, else randomBoolean ? DOUBLE_STRIKE : LIFE_SUCK; afterwards
 /// r&lt;20: last(FELL) ? reroll 20-99 : FELL; 20&lt;=r&lt;60: lastTwo(DOUBLE_STRIKE) ? LIFE_SUCK :
 /// DOUBLE_STRIKE; r&gt;=60: lastTwo(LIFE_SUCK) ? DOUBLE_STRIKE : LIFE_SUCK. Recursive rerolls are
 /// approximated by falling through to the next band (Darkling precedent).
 /// </para>
 /// <para>
-/// LIFE_SUCK uses StS1's VampireDamageAction — the parasite heals for the unblocked damage it
+/// LIFE_SUCK uses StS1's VampireDamageAction - the parasite heals for the unblocked damage it
 /// deals, read back from the attack's <see cref="DamageResult"/>s. Ascension mapping: A7 HP tier
-/// → ToughEnemies, A2 damage tier → DeadlyEnemies, A17 first-move tier → DoubleBoss (top tier;
+/// -> ToughEnemies, A2 damage tier -> DeadlyEnemies, A17 first-move tier -> DoubleBoss (top tier;
 /// Darkling maps its A17 tier onto DeadlyEnemies, but DoubleBoss is used here for uniformity
 /// with the other A17+/A18 tiers in this batch).
-/// Donor: <c>phrog_parasite</c> — a shipped parasite creature with a standard rig.
+/// Donor: <c>phrog_parasite</c> - a shipped parasite creature with a standard rig.
 /// </para>
 /// </summary>
 public sealed class ShelledParasite : Spire1Monster
@@ -91,7 +91,7 @@ public sealed class ShelledParasite : Spire1Monster
     /// <summary>
     /// Shell-break detection. <c>AfterDamageReceivedLate</c> runs after every model's
     /// <c>AfterDamageReceived</c>, so PlatedArmorPower has already decremented by now.
-    /// Vanilla's ARMOR_BREAK also plays three hops (cosmetic — omitted) and forces STUNNED.
+    /// Vanilla's ARMOR_BREAK also plays three hops (cosmetic - omitted) and forces STUNNED.
     /// </summary>
     public override async Task AfterDamageReceivedLate(PlayerChoiceContext choiceContext, Creature target,
         DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource)
@@ -134,7 +134,7 @@ public sealed class ShelledParasite : Spire1Monster
         doubleStrike.FollowUpState = decide;
         lifeSuck.FollowUpState = decide;
 
-        // takeTurn STUNNED ends with setMove(FELL) — the post-stun move is fixed, not rolled.
+        // takeTurn STUNNED ends with setMove(FELL) - the post-stun move is fixed, not rolled.
         stunned.FollowUpState = fell;
 
         // Opening (vanilla firstMove latch): A17+ -> FELL, else 50/50 DOUBLE_STRIKE / LIFE_SUCK.
@@ -174,7 +174,7 @@ public sealed class ShelledParasite : Spire1Monster
 
     private async Task LifeSuckMove(IReadOnlyList<Creature> targets)
     {
-        // takeTurn LIFE_SUCK: ChangeState ATTACK + BiteEffect VFX + VampireDamageAction —
+        // takeTurn LIFE_SUCK: ChangeState ATTACK + BiteEffect VFX + VampireDamageAction -
         // the parasite heals for the unblocked damage it deals.
         await CreatureCmd.TriggerAnim(Creature, "Cast", 0.6f);
         var attack = DamageCmd.Attack(SuckDamage).FromMonster(this)
@@ -190,7 +190,7 @@ public sealed class ShelledParasite : Spire1Monster
 
     private Task StunnedMove(IReadOnlyList<Creature> targets)
     {
-        // takeTurn STUNNED: TextAboveCreatureAction(STUNNED) only — the turn is wasted.
+        // takeTurn STUNNED: TextAboveCreatureAction(STUNNED) only - the turn is wasted.
         return Task.CompletedTask;
     }
 

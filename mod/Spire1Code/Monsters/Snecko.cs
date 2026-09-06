@@ -14,10 +14,10 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The City — Snecko (<c>com.megacrit.cardcrawl.monsters.city.Snecko</c>). 官方中文名：异蛇。
+/// StS1 The City - Snecko (<c>com.megacrit.cardcrawl.monsters.city.Snecko</c>). 官方中文名：异蛇。
 /// <para>
 /// Bytecode: HP 114-120, A7 120-125; BITE_DMG 15 (A2 18), TAIL_DMG 8 (A2 10), VULNERABLE_AMT 2.
-/// getMove: first turn GLARE (STRONG_DEBUFF); then r&lt;40 → TAIL; else lastTwoMoves(TAIL) → BITE,
+/// getMove: first turn GLARE (STRONG_DEBUFF); then r&lt;40 -> TAIL; else lastTwoMoves(TAIL) -> BITE,
 /// otherwise GLARE. takeTurn: GLARE = ConfusionPower on the player (vanilla "your hand is
 /// randomized"); TAIL = 8 dmg + Weak 2 (A17) + Vulnerable 2; BITE = 15 dmg.
 /// </para>
@@ -31,7 +31,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// behaviour, so it is applied directly; no custom power is created.
 /// </para>
 /// <para>
-/// Donor: <c>terror_eel</c> — the shipped serpentine creature; closest visual match among shipped
+/// Donor: <c>terror_eel</c> - the shipped serpentine creature; closest visual match among shipped
 /// scenes for a long coiling snake body.
 /// </para>
 /// </summary>
@@ -66,8 +66,8 @@ public sealed class Snecko : Spire1Monster
         bite.FollowUpState = branch;
         tail.FollowUpState = branch;
 
-        // Priority chain mirrors getMove: opening GLARE; roll<40 → TAIL; last two were
-        // BITE → TAIL; otherwise BITE.
+        // Priority chain mirrors getMove: opening GLARE; roll<40 -> TAIL; last two were
+        // BITE -> TAIL; otherwise BITE.
         branch.AddState(glare, () => !_usedGlare);
         branch.AddState(tail, () => RollHundred() < 40);
         branch.AddState(tail, () => LastTwoWere(bite));
@@ -80,7 +80,7 @@ public sealed class Snecko : Spire1Monster
     {
         _usedGlare = true;
         await CreatureCmd.TriggerAnim(base.Creature, "Cast", 0.6f);
-        // takeTurn GLARE: ApplyPowerAction(new ConfusionPower(player)) — see FLAG note on naming.
+        // takeTurn GLARE: ApplyPowerAction(new ConfusionPower(player)) - see FLAG note on naming.
         await PowerCmd.Apply<ConfusedPower>(new ThrowingPlayerChoiceContext(), targets, 1, base.Creature, null);
     }
 
@@ -96,7 +96,7 @@ public sealed class Snecko : Spire1Monster
         await DamageCmd.Attack(TailDamage).FromMonster(this).WithAttackerAnim("Attack", 0.4f)
             .WithHitFx("vfx/vfx_attack_blunt")
             .Execute(null);
-        // Vanilla applies Weak 2 only from A17 (unreachable in StS2 — dropped); always Vulnerable 2.
+        // Vanilla applies Weak 2 only from A17 (unreachable in StS2 - dropped); always Vulnerable 2.
         await PowerCmd.Apply<VulnerablePower>(new ThrowingPlayerChoiceContext(), targets, TailVulnerable, base.Creature, null);
     }
 

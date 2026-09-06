@@ -10,7 +10,7 @@ namespace Spire1.Spire1Code.Character;
 /// BaseLib's CustomCardModel ctor throws without a Pool attribute), but they must NOT be
 /// offered as rewards: a StS1 character drawing "Survivor" should get the real StS2 card.
 /// No character references this pool and IsShared is false, so it never surfaces in any
-/// reward screen, shop, or card library — the cards are effectively retired while their
+/// reward screen, shop, or card library - the cards are effectively retired while their
 /// model ids remain loadable for old saves.
 /// </summary>
 public class Spire1LegacyPool : CustomCardPoolModel

@@ -1,7 +1,7 @@
 {
   "SPIRE1-IRONCLAD.title": "StS1 - Ironclad",
   "SPIRE1-IRONCLAD.titleObject": "the Ironclad",
-  "SPIRE1-IRONCLAD.description": "The Ironclad from Slay the Spire 1. A weathered soldier, last of a fallen order, who trades life for raw power — heavy strikes, brutal exhausts, and stacking Strength.",
+  "SPIRE1-IRONCLAD.description": "The Ironclad from Slay the Spire 1. A weathered soldier, last of a fallen order, who trades life for raw power - heavy strikes, brutal exhausts, and stacking Strength.",
   "SPIRE1-IRONCLAD.pronounSubject": "they",
   "SPIRE1-IRONCLAD.pronounObject": "them",
   "SPIRE1-IRONCLAD.pronounPossessive": "theirs",
@@ -43,7 +43,7 @@
   "SPIRE1-DEFECT.banter.dead.endTurnPing": "...",
   "SPIRE1-WATCHER.title": "StS1 - Watcher",
   "SPIRE1-WATCHER.titleObject": "the Watcher",
-  "SPIRE1-WATCHER.description": "The Watcher from Slay the Spire 1. A cloistered ascetic who reads the flow of combat and bends it to her will. (Her stance mechanics — Calm, Wrath, Divinity — are not yet available in this port.)",
+  "SPIRE1-WATCHER.description": "The Watcher from Slay the Spire 1. A cloistered ascetic who reads the flow of combat and bends it to her will. (Her stance mechanics - Calm, Wrath, Divinity - are not yet available in this port.)",
   "SPIRE1-WATCHER.pronounSubject": "she",
   "SPIRE1-WATCHER.pronounObject": "her",
   "SPIRE1-WATCHER.pronounPossessive": "hers",

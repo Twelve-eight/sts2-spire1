@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Expertise (Uncommon Skill). Draw cards until you have 6 in your hand (7 upgraded).</summary>
+/// <summary>StS1 Silent - Expertise (Uncommon Skill). Draw cards until you have 6 in your hand (7 upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class Expertise() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {

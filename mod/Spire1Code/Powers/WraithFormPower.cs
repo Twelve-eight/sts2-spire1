@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Powers;
 
-/// <summary>StS1 Silent — Wraith Form. At the end of your turn, lose 1 Dexterity (per stack).</summary>
+/// <summary>StS1 Silent - Wraith Form. At the end of your turn, lose 1 Dexterity (per stack).</summary>
 public class WraithFormPower : CustomPowerModel
 {
     public override PowerType Type => PowerType.Buff;

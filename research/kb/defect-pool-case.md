@@ -15,7 +15,7 @@ SPIRE1-DEFECT 卡牌奖励池异常贫瘠：
 | 层 | 机制 | 出处 |
 |---|---|---|
 | 冻结时机 | `ModHelper.AddModelToPool` 在池首次生成时冻结全部 modded 内容，之后追加抛异常。注入必须先于引擎初始化完成 | SharedCardReuse.cs 类注释；DEVELOP.md 7a |
-| 复用缺失 | LEAN-CODE 规则要求同名同数值卡复用官方模型，但初版 DefectReuse 数组为空——机器人池一条复用都没有 | 8781855 前 SharedCardReuse.cs |
+| 复用缺失 | LEAN-CODE 规则要求同名同数值卡复用官方模型，但初版 DefectReuse 数组为空--机器人池一条复用都没有 | 8781855 前 SharedCardReuse.cs |
 | 退役误标 | 早期整批移入 Spire1LegacyPool 的 12 张卡实际仍在役语义，白白退出循环 | 8781855 diff：12 类各 -2 行旧标记 |
 
 放大器：`GetPossibleCards` 无拥有去重（贫池观感更糟）；ROOM_FULL_OF_CHEESE 硬性 8 张普通卡需求。
@@ -33,7 +33,7 @@ SPIRE1-DEFECT 卡牌奖励池异常贫瘠：
 | 指标 | 前 | 后（154 局 drain 终态） |
 |---|---|---|
 | 自有池 C/U/R | 3 / 18 / 6 | 13 / 43 / 12 |
-| 覆盖矩阵 | 51/58 停滞 | **63/63 ✅** |
+| 覆盖矩阵 | 51/58 停滞 | **63/63 [x]** |
 
 覆盖口径：coverage.js 双 id 记账（我方 id 与复用通道原版 id 均计命中）。
 
@@ -41,9 +41,9 @@ SPIRE1-DEFECT 卡牌奖励池异常贫瘠：
 
 - **GA 池归属是独立 bug**：漏挂 `[Pool]` 继承铁甲池，af6d1d7 修复；勿与本案混淆。
 - **已知残留**：(官方)ThunderClap 154 局 0 次出现=RNG 缺口，queue 文件持续追踪。
-- **未解之谜（低危）**：PoolCensus 启动探针行未见于任何归档日志（初始化期文件 sink 未挂载之疑）；功能不受影响——池内容已由 play 日志独立证实。后续若需启动期池证据，改用 GD.Print 直写或落盘文件探针。
+- **未解之谜（低危）**：PoolCensus 启动探针行未见于任何归档日志（初始化期文件 sink 未挂载之疑）；功能不受影响--池内容已由 play 日志独立证实。后续若需启动期池证据，改用 GD.Print 直写或落盘文件探针。
 
 ## 六、预防机制沉淀
 
-三道闸：PoolCensus 启动探针 → coverage.js 终态矩阵（双 id 记账）→ RitsuLib divergence 对拍。
+三道闸：PoolCensus 启动探针 -> coverage.js 终态矩阵（双 id 记账）-> RitsuLib divergence 对拍。
 方法论全文见 `.omp/skills/sts2-spire1-card-audit/SKILL.md`。

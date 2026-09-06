@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Indignation (Uncommon Skill). If you are in Wrath, apply 3 Vulnerable (5 upgraded) to ALL
+/// StS1 Watcher - Indignation (Uncommon Skill). If you are in Wrath, apply 3 Vulnerable (5 upgraded) to ALL
 /// enemies; otherwise enter Wrath.
 /// The card has no target type (StS1 CardTarget.NONE), so the AoE apply is handed the hittable enemies directly
 /// rather than going through card.GetTargets(), which returns nothing for TargetType.None.

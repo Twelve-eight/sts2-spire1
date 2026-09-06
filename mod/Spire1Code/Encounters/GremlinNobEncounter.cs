@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Gremlin Nob" elite encounter (<c>MonsterHelper.getEncounter("Gremlin Nob")</c>,
-/// bytecode <c>new MonsterGroup(new GremlinNob(0f, 0f))</c> — single monster).
+/// bytecode <c>new MonsterGroup(new GremlinNob(0f, 0f))</c> - single monster).
 /// StS1 pays 25-35 gold (<c>AbstractRoom</c> elite branch:
 /// <c>treasureRng.random(25, 35)</c>), so the range is pinned instead of the shipped
 /// RoomType.Elite default of 35..45.

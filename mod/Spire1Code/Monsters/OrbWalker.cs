@@ -19,12 +19,12 @@ using Spire1.Spire1Code.Cards;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The Beyond — Orb Walker (<c>com.megacrit.cardcrawl.monsters.beyond.OrbWalker</c>).
+/// StS1 The Beyond - Orb Walker (<c>com.megacrit.cardcrawl.monsters.beyond.OrbWalker</c>).
 /// 官方中文名：圆球行者。
 /// <para>
 /// Bytecode: HP monsterHpRng.random(90,96), A7 setHp(92,102); clawDmg 15 (A2 16),
 /// laserDmg 10 (A2 11). usePreBattleAction applies GenericStrengthUpPower(MOVES[0], 3)
-/// (A17: 5) — "gains N Strength at the start of its turn". getMove: roll&lt;40 → CLAW unless
+/// (A17: 5) - "gains N Strength at the start of its turn". getMove: roll&lt;40 -> CLAW unless
 /// the last two moves were CLAW (then LASER); else LASER unless the last two were LASER
 /// (then CLAW). takeTurn: CLAW = one clawDmg hit (SLASH_HEAVY); LASER = one laserDmg hit
 /// (FIRE) + MakeTempCardInDiscardAndDeckAction(Burn).
@@ -37,7 +37,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// (turn 1 already buffed, +N at every later turn end).
 /// </para>
 /// <para>
-/// Donor: <c>globe_head</c> — the shipped floating orb-headed creature (same donor as Donu).
+/// Donor: <c>globe_head</c> - the shipped floating orb-headed creature (same donor as Donu).
 /// </para>
 /// </summary>
 public sealed class OrbWalker : Spire1Monster
@@ -62,7 +62,7 @@ public sealed class OrbWalker : Spire1Monster
     public override async Task AfterAddedToRoom()
     {
         await base.AfterAddedToRoom();
-        // usePreBattleAction: GenericStrengthUpPower(MOVES[0], 3/5) — see FLAG note.
+        // usePreBattleAction: GenericStrengthUpPower(MOVES[0], 3/5) - see FLAG note.
         await PowerCmd.Apply<RitualPower>(new ThrowingPlayerChoiceContext(), Creature, StrengthGain, Creature, null);
         // Pre-grant one stack so turn 1 matches vanilla's start-of-turn buff (see class remarks).
         await PowerCmd.Apply<StrengthPower>(new ThrowingPlayerChoiceContext(), Creature, StrengthGain, Creature, null);

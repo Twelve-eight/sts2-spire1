@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Prepared (Common). Draw 1 card, discard 1 card (2 / 2 upgraded).</summary>
+/// <summary>StS1 Silent - Prepared (Common). Draw 1 card, discard 1 card (2 / 2 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class Prepared() : Spire1Card(0, CardType.Skill, CardRarity.Common, TargetType.None)
 {

@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Distraction (Uncommon Skill). Add a random Skill into your hand; it costs 0 this turn. Exhaust (0 cost upgraded).</summary>
+/// <summary>StS1 Silent - Distraction (Uncommon Skill). Add a random Skill into your hand; it costs 0 this turn. Exhaust (0 cost upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class Distraction() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 {

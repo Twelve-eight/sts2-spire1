@@ -1,4 +1,4 @@
-# Silent RARE cards (19) — StS1 vanilla
+# Silent RARE cards (19) - StS1 vanilla
 
 Every number below was extracted from the shipped StS1 jar (`desktop-1.0.jar`) bytecode. Use these EXACT values. The `StS2 name collision` field decides the localization title prefix.
 
@@ -93,7 +93,7 @@ Every number below was extracted from the shipped StS1 jar (`desktop-1.0.jar`) b
 - upgrade deltas: upgradeDamage=4
 - official StS1 description: `Deal !D! damage twice. Decrease the damage of this card by 2 this combat.`
 - StS2 name collision: no -> plain title "Glass Knife"
-- IMPL: Attack cost 1: deal 8 damage (+4) TWICE; permanently (this combat) decrease this card's damage by 2 each time it is played. hitCount: 2 then DynamicVars.Damage must be reduced by 2 for the rest of the combat (verify the exact combat-scoped value-change API; the mod's Rampage.cs does a per-combat damage increase — copy that mechanism inverted).
+- IMPL: Attack cost 1: deal 8 damage (+4) TWICE; permanently (this combat) decrease this card's damage by 2 each time it is played. hitCount: 2 then DynamicVars.Damage must be reduced by 2 for the rest of the combat (verify the exact combat-scoped value-change API; the mod's Rampage.cs does a per-combat damage increase - copy that mechanism inverted).
 
 ## GrandFinale  (class name = `GrandFinale`, loc key `SPIRE1-GRAND_FINALE`)
 - StS1 id: `Grand Finale`, official name: `Grand Finale`
@@ -111,7 +111,7 @@ Every number below was extracted from the shipped StS1 jar (`desktop-1.0.jar`) b
 - official StS1 description: `Enemy loses X Strength. Apply X Weak. NL Exhaust.`
 - official upgraded description: `Enemy loses X+1 Strength. Apply X+1 Weak. NL Exhaust.`
 - StS2 name collision: YES -> localization title MUST be "StS1 - Malaise"
-- IMPL: Skill, X-COST, Exhaust, target enemy: the enemy loses X Strength and gains X Weak (X+1 upgraded). Strength loss = apply negative StrengthPower amount (verify that a negative apply is allowed; the mod's PiercingWail slice uses the same mechanism — coordinate with the other worker via hub if needed).
+- IMPL: Skill, X-COST, Exhaust, target enemy: the enemy loses X Strength and gains X Weak (X+1 upgraded). Strength loss = apply negative StrengthPower amount (verify that a negative apply is allowed; the mod's PiercingWail slice uses the same mechanism - coordinate with the other worker via hub if needed).
 
 ## Nightmare  (class name = `Nightmare`, loc key `SPIRE1-NIGHTMARE`)
 - StS1 id: `Night Terror`, official name: `Nightmare`
@@ -136,7 +136,7 @@ Every number below was extracted from the shipped StS1 jar (`desktop-1.0.jar`) b
 - official StS1 description: `Discard your hand. NL Add 1 *Shiv into your hand for each card discarded.`
 - official upgraded description: `Discard your hand. NL Add 1 *Shiv+ into your hand for each card discarded.`
 - StS2 name collision: YES -> localization title MUST be "StS1 - Storm of Steel"
-- IMPL: Skill cost 1: discard your hand, then add 1 Shiv into your hand for EACH card discarded (upgraded adds Shiv+ — upgraded Shivs). Count hand first, discard the whole hand (CardCmd.Discard with a materialised list), then Shiv.CreateInHand(Owner, count, Owner.Creature.CombatState, Owner); when upgraded, upgrade each created Shiv (CardCmd.Upgrade or card.Upgrade — verify).
+- IMPL: Skill cost 1: discard your hand, then add 1 Shiv into your hand for EACH card discarded (upgraded adds Shiv+ - upgraded Shivs). Count hand first, discard the whole hand (CardCmd.Discard with a materialised list), then Shiv.CreateInHand(Owner, count, Owner.Creature.CombatState, Owner); when upgraded, upgrade each created Shiv (CardCmd.Upgrade or card.Upgrade - verify).
 
 ## ToolsOfTheTrade  (class name = `ToolsOfTheTrade`, loc key `SPIRE1-TOOLS_OF_THE_TRADE`)
 - StS1 id: `Tools of the Trade`, official name: `Tools of the Trade`

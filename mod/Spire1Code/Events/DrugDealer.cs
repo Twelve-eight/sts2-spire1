@@ -14,7 +14,7 @@ using Spire1.Spire1Code.Relics;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 The City — Augmenter (Drug Dealer).
+/// StS1 The City - Augmenter (Drug Dealer).
 /// Three trades: gain a J.A.X. card, transform 2 cards, or gain the Mutagenic Strength relic.
 ///
 /// All three trades are free. <c>com.megacrit.cardcrawl.events.city.DrugDealer.buttonEffect</c> hands
@@ -71,7 +71,7 @@ public class DrugDealer : Spire1Event
         // StS1 buttonEffect case 2 is exactly:
         //   if (!player.hasRelic("MutagenicStrength")) spawnRelicAndObtain(new MutagenicStrength());
         //   else                                       spawnRelicAndObtain(new Circlet());
-        // and nothing more — the trade is free, like [Test J.A.X.].
+        // and nothing more - the trade is free, like [Test J.A.X.].
         //
         // Circlet is not reimplemented: StS2 ships it (MegaCrit.Sts2.Core.Models.Relics/Circlet.cs,
         // RelicRarity.None + IsStackable), which is precisely StS1's "you already own the reward relic"

@@ -4,7 +4,7 @@ using Spire1.Spire1Code.Monsters;
 namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
-/// StS1 Act-3 "Orb Walker" weak encounter — single <see cref="OrbWalker"/>.
+/// StS1 Act-3 "Orb Walker" weak encounter - single <see cref="OrbWalker"/>.
 /// </summary>
 public sealed class OrbWalkerEncounter : Spire1Encounter
 {

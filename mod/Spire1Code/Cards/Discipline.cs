@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — DEPRECATED Discipline (Rare Power, cost 2 / 1 upgraded). If you end your turn with unused Energy,
+/// StS1 Watcher - DEPRECATED Discipline (Rare Power, cost 2 / 1 upgraded). If you end your turn with unused Energy,
 /// draw that many additional cards next turn.
 /// </summary>
 [Pool(typeof(WatcherCardPool))]

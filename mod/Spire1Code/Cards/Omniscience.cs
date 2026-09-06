@@ -10,7 +10,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Omniscience (Rare Skill, cost 4 / 3 upgraded). Choose a card in your draw pile, play it twice and
+/// StS1 Watcher - Omniscience (Rare Skill, cost 4 / 3 upgraded). Choose a card in your draw pile, play it twice and
 /// Exhaust it. Exhaust.
 /// The two plays are free auto-plays of stat-equivalent copies (CardModel.CreateCloneForPlayer + CardCmd.AutoPlay,
 /// the shipped Imitation Learning pattern); the chosen original is then Exhausted, exactly like vanilla's

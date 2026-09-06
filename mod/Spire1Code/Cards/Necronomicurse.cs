@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 — Necronomicurse (Curse). Unplayable, and it cannot be got rid of while you still hold the
+/// StS1 - Necronomicurse (Curse). Unplayable, and it cannot be got rid of while you still hold the
 /// Necronomicon. Granted by <see cref="Necronomicon"/> on pickup.
 ///
 /// Verified against the jar bytecode (com.megacrit.cardcrawl.cards.curses.Necronomicurse): cost -2
 /// (unplayable), CURSE type/colour, SPECIAL rarity, target NONE, empty use() and upgrade(). The whole
-/// card is two callbacks, and — this is the part that is easy to miss — BOTH are gated on still owning
+/// card is two callbacks, and - this is the part that is easy to miss - BOTH are gated on still owning
 /// the relic (`AbstractDungeon.player.hasRelic("Necronomicon")`), after which they flash the relic:
 ///  * onRemoveFromMasterDeck() queues a NecronomicurseEffect holding a brand-new Necronomicurse, which
 ///    puts a fresh copy back into the master deck. Removing it from your deck therefore accomplishes
@@ -26,7 +26,7 @@ namespace Spire1.Spire1Code.Cards;
 ///  * removal raises the awaitable AbstractModel.BeforeCardRemoved hook for every run-state model
 ///    (CardPileCmd.cs:62, immediately before RemoveFromCurrentPile, so only the removed instance is
 ///    pulled and a copy added here survives);
-///  * transformation does not raise it — the original's only callback is the synchronous
+///  * transformation does not raise it - the original's only callback is the synchronous
 ///    CardModel.AfterTransformedFrom();
 ///  * exhaust raises AbstractModel.AfterCardExhausted (AbstractModel.cs:447).
 /// All three are overridden below, so the card is complete; no clause is approximated.

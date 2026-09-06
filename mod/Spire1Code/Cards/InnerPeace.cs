@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Powers;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Watcher — Inner Peace (Uncommon Skill). If you are in Calm, draw 3 cards (4 upgraded); otherwise enter Calm.</summary>
+/// <summary>StS1 Watcher - Inner Peace (Uncommon Skill). If you are in Calm, draw 3 cards (4 upgraded); otherwise enter Calm.</summary>
 [Pool(typeof(WatcherCardPool))]
 public class InnerPeace() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {

@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Extensions;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Watcher — Empty Mind (Uncommon Skill). Draw 2 cards (3 upgraded), then exit your Stance.</summary>
+/// <summary>StS1 Watcher - Empty Mind (Uncommon Skill). Draw 2 cards (3 upgraded), then exit your Stance.</summary>
 [Pool(typeof(WatcherCardPool))]
 public class EmptyMind() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {

@@ -8,7 +8,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Inflame (Uncommon Power). Gain 2 Strength (3 upgraded).</summary>
+/// <summary>StS1 Ironclad - Inflame (Uncommon Power). Gain 2 Strength (3 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class Inflame() : Spire1Card(1, CardType.Power, CardRarity.Uncommon, TargetType.None)
 {

@@ -18,19 +18,19 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The Beyond — Spire Growth (<c>com.megacrit.cardcrawl.monsters.beyond.SpireGrowth</c>,
+/// StS1 The Beyond - Spire Growth (<c>com.megacrit.cardcrawl.monsters.beyond.SpireGrowth</c>,
 /// internal id "Serpent"). 官方中文名：高塔之蔓。
 /// <para>
 /// Bytecode: HP 170, A7 190; tackleDmg 16 (A2 18), smashDmg 22 (A2 25), constrictDmg 10
 /// (A17 takeTurn: 12). getMove: at A17 the CONSTRICT check runs first (player lacks Constricted
-/// and last move wasn't CONSTRICT → CONSTRICT); then roll&lt;50 → QUICK_TACKLE unless the last
+/// and last move wasn't CONSTRICT -> CONSTRICT); then roll&lt;50 -> QUICK_TACKLE unless the last
 /// two were QUICK_TACKLE; then the same CONSTRICT check again (all tiers); then SMASH unless
 /// the last two were SMASH, else QUICK_TACKLE. takeTurn: QUICK_TACKLE = one tackle hit
 /// (BLUNT_HEAVY); CONSTRICT = apply ConstrictedPower to the player (10, or 12 at A17);
 /// SMASH = one smash hit (BLUNT_HEAVY).
 /// </para>
 /// <para>
-/// Note on "splitting": per bytecode SpireGrowth never spawns anything — the pack-splitting
+/// Note on "splitting": per bytecode SpireGrowth never spawns anything - the pack-splitting
 /// monster in this act is Darkling's half-death/reincarnate cycle (see Darkling.cs).
 /// </para>
 /// <para>
@@ -40,13 +40,13 @@ namespace Spire1.Spire1Code.Monsters;
 /// shipped power is applied verbatim as the closest available stand-in.
 /// </para>
 /// <para>
-/// Donor: <c>vine_shambler</c> — the shipped plant-vine creature; closest visual match for a
+/// Donor: <c>vine_shambler</c> - the shipped plant-vine creature; closest visual match for a
 /// serpentine spire growth.
 /// </para>
 /// </summary>
 public sealed class SpireGrowth : Spire1Monster
 {
-    // setHp(170); ascension >= 7 -> setHp(190) — fixed single value per tier.
+    // setHp(170); ascension >= 7 -> setHp(190) - fixed single value per tier.
     public override int MinInitialHp => AscensionHelper.GetValueIfAscension(AscensionLevel.ToughEnemies, 190, 170);
 
     public override int MaxInitialHp => AscensionHelper.GetValueIfAscension(AscensionLevel.ToughEnemies, 190, 170);

@@ -8,7 +8,7 @@ namespace Spire1.Spire1Code.Encounters;
 /// StS1 "3 Cultists" strong encounter (<c>MonsterHelper.getEncounter("3 Cultists")</c>).
 /// Bytecode (<c>.tmp/r9-tmp/MonsterHelper.txt</c>, getEncounter case 7):
 /// <c>new MonsterGroup(new Cultist(-465f, -20f, false), new Cultist(-130f, 15f, false),
-/// new Cultist(200f, -5f))</c> — three Act-1 <see cref="Cultist"/>s. The first two spawn
+/// new Cultist(200f, -5f))</c> - three Act-1 <see cref="Cultist"/>s. The first two spawn
 /// with <c>talky=false</c> (the (FFZ) ctor); the third uses the (FF) ctor whose talky
 /// defaults true, but the pre-fight babble is cosmetic and StS2 has no per-monster talk
 /// channel here, so it is dropped.
@@ -20,7 +20,7 @@ namespace Spire1.Spire1Code.Encounters;
 /// <para>
 /// Gold: StS1 normal monster rooms pay <c>treasureRng.random(10, 20)</c>
 /// (<c>AbstractRoom.applyEvents</c> bytecode :1004-1015), matching the shipped StS2
-/// <c>RoomType.Monster</c> default of 10..20 — no override needed.
+/// <c>RoomType.Monster</c> default of 10..20 - no override needed.
 /// </para>
 /// </summary>
 public sealed class ThreeCultistsEncounter : Spire1Encounter
@@ -52,5 +52,5 @@ public sealed class ThreeCultistsEncounter : Spire1Encounter
     public override List<(string, string)>? Localization =>
         new EncounterLoc(Tr("Triple Cultists", "三邪教徒"),
             Tr("{character} was slain by some [gold]{encounter}[/gold]. [sine]Caaaaw[/sine]...",
-               "{character}被一些[gold]{encounter}[/gold]杀害。[sine]咔咔[/sine]……"));
+               "{character}被一些[gold]{encounter}[/gold]杀害。[sine]咔咔[/sine]......"));
 }

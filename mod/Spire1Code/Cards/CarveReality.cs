@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Watcher — Carve Reality (Uncommon Attack). Deal 6 damage (10 upgraded) and add a Smite into your hand.</summary>
+/// <summary>StS1 Watcher - Carve Reality (Uncommon Attack). Deal 6 damage (10 upgraded) and add a Smite into your hand.</summary>
 [Pool(typeof(WatcherCardPool))]
 public class CarveReality() : Spire1Card(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {

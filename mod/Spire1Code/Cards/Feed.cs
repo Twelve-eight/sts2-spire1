@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Feed (Rare Attack). Deal 10 damage; if this kills the enemy, permanently raise your Max HP by 3 (12 damage / 4 HP upgraded). Exhaust.</summary>
+/// <summary>StS1 Ironclad - Feed (Rare Attack). Deal 10 damage; if this kills the enemy, permanently raise your Max HP by 3 (12 damage / 4 HP upgraded). Exhaust.</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class Feed() : Spire1Card(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
 {
@@ -26,8 +26,8 @@ public class Feed() : Spire1Card(1, CardType.Attack, CardRarity.Rare, TargetType
         var target = play.Target ?? throw new ArgumentNullException(nameof(play.Target));
 
         // (2026-08-26 reverify fix) The predicate must match the engine's own Feed exactly:
-        // All(p => p.ShouldOwnerDeathTriggerFatal()) — e.g. MinionPower overrides it to false
-        // so minions are excluded from the max-HP reward. The previous !p.… inversion was the
+        // All(p => p.ShouldOwnerDeathTriggerFatal()) - e.g. MinionPower overrides it to false
+        // so minions are excluded from the max-HP reward. The previous !p.... inversion was the
         // same bug fixed in LessonLearned (3cfbcf1) but missed here.
         bool shouldTriggerFatal = target.Powers.All(p => p.ShouldOwnerDeathTriggerFatal());
 

@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Ragnarok (Rare Attack). Deal 5 damage (6 upgraded) to a random enemy 5 times (6 upgraded).
+/// StS1 Watcher - Ragnarok (Rare Attack). Deal 5 damage (6 upgraded) to a random enemy 5 times (6 upgraded).
 /// Each hit re-rolls the target from the currently hittable enemies, like the mod's Rip and Tear.
 /// </summary>
 [Pool(typeof(WatcherCardPool))]

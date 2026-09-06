@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Reach Heaven (Uncommon Attack). Deal 10 damage (15 upgraded), then shuffle a Through Violence
+/// StS1 Watcher - Reach Heaven (Uncommon Attack). Deal 10 damage (15 upgraded), then shuffle a Through Violence
 /// into your draw pile.
 /// </summary>
 [Pool(typeof(WatcherCardPool))]

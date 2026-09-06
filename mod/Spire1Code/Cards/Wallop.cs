@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Wallop (Uncommon Attack). Deal 9 damage (12 upgraded) and gain Block equal to the unblocked
+/// StS1 Watcher - Wallop (Uncommon Attack). Deal 9 damage (12 upgraded) and gain Block equal to the unblocked
 /// damage actually dealt. The real number comes off the executed attack command's DamageResults, the same structure
 /// the mod's Sunder reads.
 /// </summary>

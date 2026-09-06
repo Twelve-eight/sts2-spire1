@@ -12,7 +12,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Brilliance (Rare Attack). Deal 12 damage (16 upgraded) plus the total Mantra gained this combat.
+/// StS1 Watcher - Brilliance (Rare Attack). Deal 12 damage (16 upgraded) plus the total Mantra gained this combat.
 /// </summary>
 [Pool(typeof(WatcherCardPool))]
 public class Brilliance() : Spire1Card(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)

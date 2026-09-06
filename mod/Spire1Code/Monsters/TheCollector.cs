@@ -18,27 +18,27 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The City — The Collector (<c>com.megacrit.cardcrawl.monsters.city.TheCollector</c>;
+/// StS1 The City - The Collector (<c>com.megacrit.cardcrawl.monsters.city.TheCollector</c>;
 /// 官方中文名「收藏家」). Boss encounter.
 /// <para>
 /// Bytecode: HP 282 (A9+: 300), rakeDmg (Fireball) 18 (A4+: 21), strAmt 3 (A4+: 4, A19+: 5),
 /// megaDebuffAmt 3 (A4+: 3, A19+: 5), blockAmt 15 (A9+: 18, A19+: +5).
-/// getMove: <c>initialSpawn</c> → SPAWN (1, UNKNOWN); <c>turnsTaken >= 3 &amp;&amp; !ultUsed</c> →
+/// getMove: <c>initialSpawn</c> -> SPAWN (1, UNKNOWN); <c>turnsTaken >= 3 &amp;&amp; !ultUsed</c> ->
 /// MEGA_DEBUFF (4, STRONG_DEBUFF); else a single MonsterAi roll (0-99) gates:
-/// ≤25 &amp;&amp; minion dying &amp;&amp; last != REVIVE → REVIVE (5, UNKNOWN);
-/// 26-70 &amp;&amp; !lastTwo(FIREBALL) → FIREBALL (2, ATTACK);
-/// &gt;70 or lastMove != BUFF → BUFF (3, DEFEND_BUFF); else FIREBALL.
-/// takeTurn: SPAWN spawns 2 TorchHead + SFX + enemySlots map; FIREBALL → DamageAction(FIRE);
-/// BUFF → GainBlock + StrengthPower on all living monsters; MEGA_DEBUFF → Talk(DIALOG[0]) +
-/// Weak/Vulnerable/Frail × megaDebuffAmt; REVIVE → respawn dying TorchHead into their slots.
+/// <=25 &amp;&amp; minion dying &amp;&amp; last != REVIVE -> REVIVE (5, UNKNOWN);
+/// 26-70 &amp;&amp; !lastTwo(FIREBALL) -> FIREBALL (2, ATTACK);
+/// &gt;70 or lastMove != BUFF -> BUFF (3, DEFEND_BUFF); else FIREBALL.
+/// takeTurn: SPAWN spawns 2 TorchHead + SFX + enemySlots map; FIREBALL -> DamageAction(FIRE);
+/// BUFF -> GainBlock + StrengthPower on all living monsters; MEGA_DEBUFF -> Talk(DIALOG[0]) +
+/// Weak/Vulnerable/Frail x megaDebuffAmt; REVIVE -> respawn dying TorchHead into their slots.
 /// </para>
 /// <para>
-/// Ascension mapping: vanilla A9 HP/block tier → <see cref="AscensionLevel.ToughEnemies"/>;
-/// A4 rakeDmg/strAmt tier → <see cref="AscensionLevel.DeadlyEnemies"/>;
-/// A19 strAmt/block/megaDebuff tier → <see cref="AscensionLevel.DoubleBoss"/>.
+/// Ascension mapping: vanilla A9 HP/block tier -> <see cref="AscensionLevel.ToughEnemies"/>;
+/// A4 rakeDmg/strAmt tier -> <see cref="AscensionLevel.DeadlyEnemies"/>;
+/// A19 strAmt/block/megaDebuff tier -> <see cref="AscensionLevel.DoubleBoss"/>.
 /// </para>
 /// <para>
-/// Donor: <c>the_obscura</c> — the shipped occult summoner boss (floating robed figure with
+/// Donor: <c>the_obscura</c> - the shipped occult summoner boss (floating robed figure with
 /// glowing eyes, full idle_loop/cast/attack/hurt/die track set, and a Summon trigger). Closest
 /// silhouette among the 121 shipped scenes for a soul-collecting robed caster.
 /// </para>
@@ -46,14 +46,14 @@ namespace Spire1.Spire1Code.Monsters;
 /// NOTE: The vanilla SPAWN-first-turn SFX, the MEGA_DEBUFF SFX + CollectorCurseEffect VFX,
 /// and the per-frame eye-fire particle emitter are cosmetic and are omitted (consistent with
 /// <see cref="Spire1Monster.HasDeathSfx"/> policy). The <c>usePreBattleAction</c> music/bgm
-/// and <c>die()</c> minion health-bar cleanup are also not ported — the engine ends combat
+/// and <c>die()</c> minion health-bar cleanup are also not ported - the engine ends combat
 /// when the last <c>IsPrimaryEnemy</c> dies (the spawned TorchHeads are not primary), and
 /// no modded FMOD event path exists for the collector.
 /// </para>
 /// <para>
 /// The talk line during MEGA_DEBUFF is the canonical StS1 Collector line; the exact text
 /// is not bytecode-verifyable from the local workspace (DIALOG[0] comes from the game's
-/// localization files). The line is in English only — the StS2 loc system falls back to
+/// localization files). The line is in English only - the StS2 loc system falls back to
 /// English for missing zh locale keys.
 /// </para>
 /// </summary>
@@ -81,15 +81,15 @@ public sealed class TheCollector : Spire1Monster
 
     /// <summary>
     /// Shipped <c>the_obscura</c>: a floating occult summoner with hooded robe and glowing
-    /// eyes — the closest silhouette among the shipped StS2 scenes for a soul-collecting
+    /// eyes - the closest silhouette among the shipped StS2 scenes for a soul-collecting
     /// robed caster. The rig has idle_loop/cast/attack/hurt/die; the default engine animator
     /// works without a custom override.
     /// </summary>
     protected override string DonorId => "the_obscura";
 
-    // ── Vanilla fields ──────────────────────────────────────────────────────
+    // -- Vanilla fields ------------------------------------------------------
 
-    /// <summary>Vanilla <c>enemySlots</c>: slot index → current minion creature.</summary>
+    /// <summary>Vanilla <c>enemySlots</c>: slot index -> current minion creature.</summary>
     private readonly Dictionary<int, Creature> _minionSlots = new();
 
     /// <summary>Slots whose occupant is in the dying state (marked by <see cref="BeforeDeath"/>).</summary>
@@ -101,7 +101,7 @@ public sealed class TheCollector : Spire1Monster
     /// </summary>
     private bool _ultUsed;
 
-    // ── Localization ────────────────────────────────────────────────────────
+    // -- Localization --------------------------------------------------------
 
     private static string Tr(string eng, string zhs) =>
         LocManager.Instance != null && LocManager.Instance.Language == "zhs" ? zhs : eng;
@@ -115,11 +115,11 @@ public sealed class TheCollector : Spire1Monster
             ("MEGA_DEBUFF_MOVE", Tr("Mega Debuff", "强效诅咒")),
             ("REVIVE_MOVE", Tr("Revive", "复活")),
         ],
-        // Vanilla DIALOG[0] — the canonical Collector line; text not locally
+        // Vanilla DIALOG[0] - the canonical Collector line; text not locally
         // verifiable from bytecode, follows established StS1 community knowledge.
         ("moves.MEGA_DEBUFF_MOVE.taunt", "You will make a fine addition to my collection."));
 
-    // ── State machine ───────────────────────────────────────────────────────
+    // -- State machine -------------------------------------------------------
 
     protected override MonsterMoveStateMachine GenerateMoveStateMachine()
     {
@@ -129,7 +129,7 @@ public sealed class TheCollector : Spire1Monster
         MoveState megaDebuff = new("MEGA_DEBUFF_MOVE", MegaDebuffMove, new DebuffIntent(strong: true));
         MoveState revive = new("REVIVE_MOVE", ReviveMove, new UnknownIntent());
 
-        // Vanilla tail: last move was BUFF → force fireball (no double buff).
+        // Vanilla tail: last move was BUFF -> force fireball (no double buff).
         ConditionalBranchState buffTail = new("BUFF_TAIL");
         buffTail.AddState(buff, () => !LastWas(buff));
         buffTail.AddState(fireball, () => true);
@@ -166,7 +166,7 @@ public sealed class TheCollector : Spire1Monster
         return new MonsterMoveStateMachine(states, spawn);
     }
 
-    // ── Turn / history helpers ─────────────────────────────────────────────
+    // -- Turn / history helpers ---------------------------------------------
 
     /// <summary>Vanilla <c>turnsTaken</c>: number of completed turns.</summary>
     private int TurnCount => base.MoveStateMachine.StateLog.Count;
@@ -188,7 +188,7 @@ public sealed class TheCollector : Spire1Monster
     /// <summary>Vanilla <c>isMinionDead()</c>: any tracked minion slot is dying.</summary>
     private bool AnyMinionDying() => _deadSlots.Count > 0;
 
-    // ── Move bodies ─────────────────────────────────────────────────────────
+    // -- Move bodies ---------------------------------------------------------
 
     /// <summary>
     /// SPAWN (byte 1, UNKNOWN intent): spawn 2 TorchHeads at indexed slots,
@@ -267,7 +267,7 @@ public sealed class TheCollector : Spire1Monster
         }
     }
 
-    // ── Hooks ───────────────────────────────────────────────────────────────
+    // -- Hooks ---------------------------------------------------------------
 
     /// <summary>
     /// StS1 <c>isMinionDead()</c> detection: watch for ally deaths via

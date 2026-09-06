@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Cards;
 namespace Spire1.Spire1Code.Powers;
 
 /// <summary>
-/// StS1 Watcher — Collect. At the start of each of your next Amount turns, put an upgraded Miracle into your
+/// StS1 Watcher - Collect. At the start of each of your next Amount turns, put an upgraded Miracle into your
 /// hand and tick one turn off the counter. The counter is set by Collect to its X value (+1 when upgraded).
 /// </summary>
 public class CollectPower : CustomPowerModel

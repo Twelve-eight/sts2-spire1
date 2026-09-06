@@ -5,7 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 namespace Spire1.Spire1Code.Powers;
 
 /// <summary>
-/// StS1 <c>com.megacrit.cardcrawl.powers.RegrowPower</c> — Darkling's marker buff.
+/// StS1 <c>com.megacrit.cardcrawl.powers.RegrowPower</c> - Darkling's marker buff.
 /// <para>
 /// Display-only in vanilla too: the half-death/revive mechanic lives in
 /// <c>Darkling.damage()</c> (halfDead latch), <c>getMove()</c> (REINCARNATE) and the

@@ -9,7 +9,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Shockwave (Uncommon). Apply 3 Weak and 3 Vulnerable to ALL enemies, Exhaust (5 / 5 upgraded).</summary>
+/// <summary>StS1 Ironclad - Shockwave (Uncommon). Apply 3 Weak and 3 Vulnerable to ALL enemies, Exhaust (5 / 5 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class Shockwave() : Spire1Card(2, CardType.Skill, CardRarity.Uncommon, TargetType.AllEnemies)
 {

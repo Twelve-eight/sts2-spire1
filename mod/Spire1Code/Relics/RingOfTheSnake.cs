@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Relics;
 
 /// <summary>
-/// StS1 Silent — Ring of the Snake (Starter). At the start of each combat, draw 2 additional cards.
+/// StS1 Silent - Ring of the Snake (Starter). At the start of each combat, draw 2 additional cards.
 /// ID = SPIRE1-RING_OF_THE_SNAKE. Sits in the Silent relic pool (overrides the base Spire1Relic pool).
 /// </summary>
 [Pool(typeof(SilentRelicPool))]

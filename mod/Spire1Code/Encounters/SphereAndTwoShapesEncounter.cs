@@ -6,7 +6,7 @@ namespace Spire1.Spire1Code.Encounters;
 /// <summary>
 /// StS1 Act-3 "Sphere and Two Shapes" strong encounter (bytecode 3506-3552): a
 /// <see cref="SphericGuardian"/> at (110, 10) and two independently rolled shapes at (-435, 10)
-/// and (-210, 0) — each <c>getAncientShape</c> is its own miscRng.random(2), so the same shape
+/// and (-210, 0) - each <c>getAncientShape</c> is its own miscRng.random(2), so the same shape
 /// can appear twice.
 /// </summary>
 public sealed class SphereAndTwoShapesEncounter : Spire1Encounter
@@ -27,7 +27,7 @@ public sealed class SphereAndTwoShapesEncounter : Spire1Encounter
 
     protected override IReadOnlyList<(MonsterModel, string?)> GenerateMonsters()
     {
-        // getAncientShape: miscRng.random(2) → 0 Spiker, 1 Repulsor, 2 Exploder.
+        // getAncientShape: miscRng.random(2) -> 0 Spiker, 1 Repulsor, 2 Exploder.
         MonsterModel RollShape() => base.Rng.NextInt(3) switch
         {
             0 => ModelDb.Monster<Spiker>(),

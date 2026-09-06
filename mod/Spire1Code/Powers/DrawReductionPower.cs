@@ -13,7 +13,7 @@ namespace Spire1.Spire1Code.Powers;
 
 /// <summary>
 /// StS1 <c>com.megacrit.cardcrawl.powers.DrawReductionPower</c>. Reduces the owner player's
-/// hand size by Amount on their next turn, then removes itself — the engine's
+/// hand size by Amount on their next turn, then removes itself - the engine's
 /// <c>ModifyHandDraw</c> hook is the direct equivalent of vanilla's <c>onPlayerDraw</c> cut.
 /// </summary>
 public sealed class DrawReductionPower : CustomPowerModel

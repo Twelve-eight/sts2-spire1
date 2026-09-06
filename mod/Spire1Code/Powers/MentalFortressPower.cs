@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Extensions;
 namespace Spire1.Spire1Code.Powers;
 
 /// <summary>
-/// StS1 Watcher — Mental Fortress. Whenever you change Stances, gain Amount Block.
+/// StS1 Watcher - Mental Fortress. Whenever you change Stances, gain Amount Block.
 /// Fires on every stance transition StanceCmd dispatches (enter, swap and exit); StanceCmd.Enter is a no-op when
 /// the requested stance is already active, so re-entering the same stance does not trigger this, as in StS1.
 /// </summary>

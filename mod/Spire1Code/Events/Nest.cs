@@ -13,7 +13,7 @@ using Spire1.Spire1Code.Cards;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 The City — The Nest.
+/// StS1 The City - The Nest.
 /// Join the cult: lose 6 HP and receive a Ritual Dagger. Or smash and grab the donation box
 /// for 99 gold (50 at Ascension 15+).
 ///

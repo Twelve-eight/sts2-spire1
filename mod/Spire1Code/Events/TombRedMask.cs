@@ -12,18 +12,18 @@ using MegaCrit.Sts2.Core.Models.Relics;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 Beyond event — Tomb of Lord Red Mask.
+/// StS1 Beyond event - Tomb of Lord Red Mask.
 /// Two mutually exclusive trades plus a Leave, reproduced from the jar bytecode
 /// (com.megacrit.cardcrawl.events.beyond.TombRedMask):
-///  * "[Don the Red Mask] Gain 222 Gold." — offered only while the player already holds the Red Mask;
+///  * "[Don the Red Mask] Gain 222 Gold." - offered only while the player already holds the Red Mask;
 ///    otherwise StS1 shows "[Locked] Requires: Red Mask." in that slot. GOLD_AMT = 222 (three separate
 ///    sipush 222 sites: the option title, the gainGold call and the locked-slot text).
-///  * "[Offer: {gold} Gold] Lose all Gold. Obtain a Relic." — loseGold(all) then spawnRelicAndObtain of a
+///  * "[Offer: {gold} Gold] Lose all Gold. Obtain a Relic." - loseGold(all) then spawnRelicAndObtain of a
 ///    RedMask. The option title splices the player's current gold, which is why StS1's OPTIONS[2]/[3] are
 ///    two fragments around it.
 ///
 /// The Red Mask relic is NOT reimplemented here: StS2 ships an identical one
-/// (MegaCrit.Sts2.Core.Models.Relics/RedMask.cs — at the start of each combat apply 1 Weak to ALL
+/// (MegaCrit.Sts2.Core.Models.Relics/RedMask.cs - at the start of each combat apply 1 Weak to ALL
 /// enemies), so per the lean-code rule the shipped relic is granted.
 /// </summary>
 public class TombRedMask : Spire1Event
@@ -53,7 +53,7 @@ public class TombRedMask : Spire1Event
         ];
 
         // StS1 always shows the offer slot; with 0 gold it is a trade of nothing for the relic, which is
-        // what the bytecode does — there is no gold-amount guard on the option.
+        // what the bytecode does - there is no gold-amount guard on the option.
         options.Add(Option(OfferGold));
         options.Add(Option(Leave));
         return options;

@@ -11,7 +11,7 @@ namespace Spire1.Spire1Code.Powers;
 
 /// <summary>
 /// StS1 <c>com.megacrit.cardcrawl.powers.TimeWarpPower</c>. Hung on the Time Eater at combat
-/// start; every card the player plays (no type filter — statuses and curses count too)
+/// start; every card the player plays (no type filter - statuses and curses count too)
 /// decrements the counter, and when it reaches 0 the player's turn is forcibly ended, the
 /// counter resets to 12, and EVERY monster gains 2 Strength.
 /// </summary>

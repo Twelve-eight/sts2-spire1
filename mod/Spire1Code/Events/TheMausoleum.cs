@@ -10,7 +10,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 The City — The Mausoleum.
+/// StS1 The City - The Mausoleum.
 /// Open the coffin for a random relic; 50% of the time you also gain the Writhe curse
 /// (100% at Ascension 15+).
 ///

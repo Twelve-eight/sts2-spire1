@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Heel Hook (Uncommon Attack). Deal 5 damage; if the enemy has Weak, gain 1 Energy and draw 1 card (8 upgraded).</summary>
+/// <summary>StS1 Silent - Heel Hook (Uncommon Attack). Deal 5 damage; if the enemy has Weak, gain 1 Energy and draw 1 card (8 upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class HeelHook() : Spire1Card(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {

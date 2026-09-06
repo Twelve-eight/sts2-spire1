@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Colorless — Finesse (Common Skill). Gain 2 Block and draw 1 card (4 Block upgraded). 0 cost.</summary>
+/// <summary>StS1 Colorless - Finesse (Common Skill). Gain 2 Block and draw 1 card (4 Block upgraded). 0 cost.</summary>
 [Pool(typeof(ColorlessCardPool))]
 public class Finesse() : Spire1Card(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {

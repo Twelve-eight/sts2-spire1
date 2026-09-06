@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Juggernaut (Rare Power). Whenever you gain Block, deal 5 damage to a random enemy (7 upgraded).</summary>
+/// <summary>StS1 Ironclad - Juggernaut (Rare Power). Whenever you gain Block, deal 5 damage to a random enemy (7 upgraded).</summary>
 public class Juggernaut() : Spire1Card(2, CardType.Power, CardRarity.Rare, TargetType.None)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<JuggernautPower>(5)];

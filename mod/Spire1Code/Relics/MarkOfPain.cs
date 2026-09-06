@@ -5,7 +5,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 
 namespace Spire1.Spire1Code.Relics;
 
-/// <summary>StS1 Ironclad — Mark of Pain (Boss). At the start of each combat, gain !E! Energy.</summary>
+/// <summary>StS1 Ironclad - Mark of Pain (Boss). At the start of each combat, gain !E! Energy.</summary>
 public class MarkOfPain : Spire1Relic
 {
     public override RelicRarity Rarity => RelicRarity.Ancient;
@@ -15,7 +15,7 @@ public class MarkOfPain : Spire1Relic
     public override List<(string, string)>? Localization =>
         new RelicLoc(
             "StS1 - Mark of Pain",
-            "#At the start of each combat, gain !E! *Energy*. (Vanilla also adds 2 Wounds to your deck on pickup — not wired.)",
+            "#At the start of each combat, gain !E! *Energy*. (Vanilla also adds 2 Wounds to your deck on pickup - not wired.)",
             "Pain is the only teacher.");
 
     public override async Task BeforeCombatStart()

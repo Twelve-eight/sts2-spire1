@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Impervious (Rare Skill). Exhaust. Gain 30 Block (40 upgraded).</summary>
+/// <summary>StS1 Ironclad - Impervious (Rare Skill). Exhaust. Gain 30 Block (40 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class Impervious() : Spire1Card(2, CardType.Skill, CardRarity.Rare, TargetType.None)
 {

@@ -14,27 +14,27 @@ using Spire1.Spire1Code.Cards;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The Beyond — Snake Dagger (<c>com.megacrit.cardcrawl.monsters.beyond.SnakeDagger</c>),
+/// StS1 The Beyond - Snake Dagger (<c>com.megacrit.cardcrawl.monsters.beyond.SnakeDagger</c>),
 /// the Reptomancer's summoned minion. 官方中文名：蛇匕首。
 /// <para>
 /// Bytecode: HP monsterHpRng.random(20, 25) per instance (no ascension variant); STAB_DMG 9,
-/// SACRIFICE_DMG 25. getMove: firstMove → WOUND, else EXPLODE forever.
+/// SACRIFICE_DMG 25. getMove: firstMove -> WOUND, else EXPLODE forever.
 /// takeTurn WOUND: ChangeState ATTACK + DamageAction(damage[0] = 9, SLASH_HORIZONTAL) +
 /// MakeTempCardInDiscardAction(new Wound(), 1). takeTurn EXPLODE: ChangeState SUICIDE +
-/// DamageAction(damage[1] = 25, SLASH_HEAVY), then LoseHPAction(this, this, currentHealth) —
+/// DamageAction(damage[1] = 25, SLASH_HEAVY), then LoseHPAction(this, this, currentHealth) -
 /// the dagger spends its whole remaining HP and dies right after the strike.
 /// </para>
 /// <para>
 /// The suicide uses <c>CreatureCmd.Kill</c> (the game's normal death path, ExplosivePower /
 /// SlimeBoss pattern) standing in for StS1's full-current-health LoseHPAction. Wound is our
 /// ported status card (<see cref="Wound"/>), added to the discard pile via
-/// <c>CardPileCmd.AddToCombatAndPreview</c> — the same call shipped monsters use.
-/// Donor: <c>stabbot</c> — a small pointy stabbing construct with a standard rig; closest
+/// <c>CardPileCmd.AddToCombatAndPreview</c> - the same call shipped monsters use.
+/// Donor: <c>stabbot</c> - a small pointy stabbing construct with a standard rig; closest
 /// silhouette among the shipped scenes for a floating dagger.
 /// </summary>
 public sealed class SnakeDagger : Spire1Monster
 {
-    // constructor: monsterHpRng.random(20, 25) — the engine draws uniformly from these bounds.
+    // constructor: monsterHpRng.random(20, 25) - the engine draws uniformly from these bounds.
     public override int MinInitialHp => 20;
 
     public override int MaxInitialHp => 25;

@@ -1,11 +1,11 @@
-// semantics-audit.mjs — mechanical subset of the semantics review gate
+// semantics-audit.mjs - mechanical subset of the semantics review gate
 // (research/kb/semantics-review-checklist.md). Runs the automatable checks:
 //   P4  [Pool] attribution lint          (delegates to pool-audit.mjs)
 //   P1  pool-object exclusion patterns   (allowed only as Remove+Id-subtract pairs;
 //        whitelist: Patches/SplashOwnSetSubtractPatch.cs)
 //   I7  selection-screen cards vs .selectionScreenPrompt loc keys (both langs)
-// Usage: node tools/semantics-audit.mjs   → exit 0 clean / 1 findings.
-// The semantic questions (P2/P3/P5-P8, M1-M4) stay reviewer-driven — see checklist.
+// Usage: node tools/semantics-audit.mjs   -> exit 0 clean / 1 findings.
+// The semantic questions (P2/P3/P5-P8, M1-M4) stay reviewer-driven - see checklist.
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -21,7 +21,7 @@ try {
 } catch (e) {
   p4 = e.stdout ?? String(e);
 }
-if (/no resolvable \[Pool\]/.test(p4)) findings.push('P4: [Pool] orphans present — see output above');
+if (/no resolvable \[Pool\]/.test(p4)) findings.push('P4: [Pool] orphans present - see output above');
 notes.push(['P4 pool attribution', /ok.*every concrete class resolves/.test(p4) ? 'ok' : 'FINDINGS']);
 
 // ---- P1: pool-object exclusion --------------------------------------------
@@ -38,7 +38,7 @@ const p1hits = [];
       if (/Remove\(\s*[\w.]*CardPool\s*\)/.test(src) && !whitelist.test(rel)) {
         p1hits.push(rel);
       }
-      // pool-object comparison exclusion (no Id-level follow-up check here — reviewer verifies)
+      // pool-object comparison exclusion (no Id-level follow-up check here - reviewer verifies)
       if (/Where\(\s*\w+\s*=>\s*\w+\.(CardPool|Pool)\s*!=/.test(src) && !whitelist.test(rel)) {
         p1hits.push(rel + ' (Where != pool)');
       }

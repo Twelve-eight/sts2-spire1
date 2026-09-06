@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Concentrate (Uncommon Skill). Discard 3 cards (2 upgraded), gain 2 Energy.</summary>
+/// <summary>StS1 Silent - Concentrate (Uncommon Skill). Discard 3 cards (2 upgraded), gain 2 Energy.</summary>
 [Pool(typeof(SilentCardPool))]
 public class Concentrate() : Spire1Card(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {

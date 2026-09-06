@@ -18,18 +18,18 @@ namespace Spire1.Spire1Code.Monsters;
 /// Exact <c>takeTurn</c>:
 /// <list type="bullet">
 /// <item>PROTECT: <c>GainBlockRandomMonsterAction(this, blockAmt)</c>, then count monsters that are
-/// neither dying nor escaping; if <c>escapeNext</c> → Escape, else if that count is greater than 1
-/// → PROTECT again, else → BASH.</item>
-/// <item>BASH: slow attack for <c>bashDmg</c> (AttackEffect.BLUNT_LIGHT); if <c>escapeNext</c> →
-/// Escape, else BASH again — it never returns to PROTECT.</item>
+/// neither dying nor escaping; if <c>escapeNext</c> -> Escape, else if that count is greater than 1
+/// -> PROTECT again, else -> BASH.</item>
+/// <item>BASH: slow attack for <c>bashDmg</c> (AttackEffect.BLUNT_LIGHT); if <c>escapeNext</c> ->
+/// Escape, else BASH again - it never returns to PROTECT.</item>
 /// </list>
 /// <c>GainBlockRandomMonsterAction</c> bytecode: the pool is every monster that is not the source,
 /// does not intend to Escape and is not dying; only when that pool is empty does the source shield
 /// itself. Ally-targeting idiom copied from shipped <c>Guardbot.GuardMove</c>.
 /// </para>
 /// <para>
-/// Ascension mapping: HP and the A7 block bump → <see cref="AscensionLevel.ToughEnemies"/> (A8);
-/// Bash damage and the A17 block bump → <see cref="AscensionLevel.DeadlyEnemies"/> (A9). StS2
+/// Ascension mapping: HP and the A7 block bump -> <see cref="AscensionLevel.ToughEnemies"/> (A8);
+/// Bash damage and the A17 block bump -> <see cref="AscensionLevel.DeadlyEnemies"/> (A9). StS2
 /// exposes exactly these two enemy-difficulty levels, so all three vanilla block tiers survive.
 /// </para>
 /// </summary>
@@ -49,7 +49,7 @@ public sealed class GremlinShield : Spire1Monster
     private int BashDamage => AscensionHelper.GetValueIfAscension(AscensionLevel.DeadlyEnemies, 8, 6);
 
     /// <summary>
-    /// Borrows the shipped Guardbot scene — the shipped shield-bearer, and the closest match for a
+    /// Borrows the shipped Guardbot scene - the shipped shield-bearer, and the closest match for a
     /// gremlin whose whole job is blocking for allies. Guardbot ships no animator override, so its
     /// rig follows the engine default names (<c>idle_loop</c>/<c>cast</c>/<c>hurt</c>/<c>die</c>,
     /// with <c>Cast</c> proven by <c>Guardbot.GuardMove</c>) and no remap is needed here.

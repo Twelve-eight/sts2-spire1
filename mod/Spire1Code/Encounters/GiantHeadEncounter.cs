@@ -4,7 +4,7 @@ using Spire1.Spire1Code.Monsters;
 namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
-/// StS1 Act-3 "Giant Head" elite encounter — single <see cref="GiantHead"/>.
+/// StS1 Act-3 "Giant Head" elite encounter - single <see cref="GiantHead"/>.
 /// </summary>
 public sealed class GiantHeadEncounter : Spire1Encounter
 {

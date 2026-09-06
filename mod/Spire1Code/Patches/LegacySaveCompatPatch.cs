@@ -9,15 +9,15 @@ namespace Spire1.Spire1Code.Patches;
 /// 删类旧存档兼容层（LEAN-CODE 去重批 2e405f8 的善后）。
 /// <para>
 /// 背景：该提交硬删了 8 个遗物（Anchor/BagOfMarbles/BloodVial/BronzeScales/Lantern/
-/// LetterOpener/OrnamentalFan/Akabeko——官方 StS2 均已内置同效果版本）与 6 个药水
+/// LetterOpener/OrnamentalFan/Akabeko--官方 StS2 均已内置同效果版本）与 6 个药水
 /// （BlockPotion/StrengthPotion/DexterityPotion/EnergyPotion/FirePotion/WeakPotion）。
-/// 引擎加载旧存档时，Player.FromSerializable → LoadInventory → PopulateRelics/LoadPotions
+/// 引擎加载旧存档时，Player.FromSerializable -> LoadInventory -> PopulateRelics/LoadPotions
 /// 会把未知 id 解析为 DeprecatedRelic/DeprecatedPotion 占位模型（dllsrc Player.cs:362-365,
-/// RelicModel.FromSerializable → SaveUtil.RelicOrDeprecated）——不崩溃，但背包里会留下
+/// RelicModel.FromSerializable -> SaveUtil.RelicOrDeprecated）--不崩溃，但背包里会留下
 /// 无图标无效果的幽灵条目。
 /// </para>
 /// <para>
-/// 修复：Prefix（非 postfix——LoadInventory 在 FromSerializable 方法体内部执行，必须赶在
+/// 修复：Prefix（非 postfix--LoadInventory 在 FromSerializable 方法体内部执行，必须赶在
 /// 它之前）把已删 id 从 SerializablePlayer 的 relics/potions 列表静默剔除。每个被剔除的
 /// id 记一行日志，方便玩家核对背包差异。官方同名遗物不受影响：它们的 id 是
 /// RELIC.ANCHOR 等原生 Category.Entry，与 SPIRE1- 前缀条目天然不冲突。
@@ -61,7 +61,7 @@ internal static class LegacySaveCompatPatch
         }
         catch (System.Exception e)
         {
-            // 兼容层绝不允许把存档加载整个打断——异常时退回引擎原生 deprecated 占位行为。
+            // 兼容层绝不允许把存档加载整个打断--异常时退回引擎原生 deprecated 占位行为。
             MainFile.Logger.Error($"[Spire1] legacy save strip failed (falling back to deprecated placeholders): {e.Message}");
         }
     }

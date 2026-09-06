@@ -12,7 +12,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Weave (Uncommon Attack). Deal 4 damage (6 upgraded); whenever you Scry, this returns from the
+/// StS1 Watcher - Weave (Uncommon Attack). Deal 4 damage (6 upgraded); whenever you Scry, this returns from the
 /// discard pile to your hand.
 /// The trigger is BaseLib's IAfterScryed (research/BaseLib-StS2/Hooks/IAfterScryed.cs:17), dispatched to every card
 /// in a combat pile via HookUtils.Dispatch (research/BaseLib-StS2/Utils/HookUtils.cs:48) from

@@ -6,7 +6,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// <summary>
 /// Base for every ported vanilla StS1 monster.
 /// <para>
-/// Visuals borrow one of the 121 shipped StS2 creature scenes rather than shipping art —
+/// Visuals borrow one of the 121 shipped StS2 creature scenes rather than shipping art -
 /// the same redirection <c>PlaceholderCharacterModel</c> already uses for our characters,
 /// which is proven in-game. <see cref="MonsterModel.VisualsPath"/> is
 /// <c>creature_visuals/&lt;Id.Entry.ToLowerInvariant()&gt;</c>, and BaseLib's
@@ -36,7 +36,7 @@ public abstract class Spire1Monster : CustomMonsterModel, ILocalizationProvider
     /// <summary>
     /// Vanilla monster sfx paths are derived from the model Id, so they cannot resolve for a
     /// modded id. Default to silence instead of a broken FMOD event. To add sound, copy the
-    /// event string verbatim out of the donor's shipped model source and re-enable this —
+    /// event string verbatim out of the donor's shipped model source and re-enable this -
     /// the paths are not mechanically derivable (<c>DampCultist</c> dies to
     /// <c>.../cultists/cultists_die_damp</c>, not <c>.../damp_cultist/...</c>).
     /// </summary>

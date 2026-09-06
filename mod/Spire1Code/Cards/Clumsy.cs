@@ -6,7 +6,7 @@ using BaseLib.Utils;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Clumsy (Curse). Unplayable. Ethereal. Mirror of the base-game Clumsy.</summary>
+/// <summary>StS1 Ironclad - Clumsy (Curse). Unplayable. Ethereal. Mirror of the base-game Clumsy.</summary>
 [Pool(typeof(CurseCardPool))]
 public class Clumsy() : Spire1Curse()
 {

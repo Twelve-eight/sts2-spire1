@@ -10,7 +10,7 @@ using MegaCrit.Sts2.Core.Models.Acts;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 — Dead Adventurer. A multi-stage search over a shuffled GOLD / NOTHING / RELIC queue; each
+/// StS1 - Dead Adventurer. A multi-stage search over a shuffled GOLD / NOTHING / RELIC queue; each
 /// successful search raises the chance (starting 25%, +25% per search) that the next search wakes a
 /// monster. Searching three times exhausts the corpse.
 /// </summary>

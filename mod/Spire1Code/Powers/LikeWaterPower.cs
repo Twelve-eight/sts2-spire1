@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Extensions;
 
 namespace Spire1.Spire1Code.Powers;
 
-/// <summary>StS1 Watcher — Like Water. At the end of your turn, if you are in Calm, gain Amount Block.</summary>
+/// <summary>StS1 Watcher - Like Water. At the end of your turn, if you are in Calm, gain Amount Block.</summary>
 public class LikeWaterPower : CustomPowerModel
 {
     public override PowerType Type => PowerType.Buff;

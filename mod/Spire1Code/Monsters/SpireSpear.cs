@@ -19,13 +19,13 @@ using Spire1.Spire1Code.Cards;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The Ending — Spire Spear (<c>com.megacrit.cardcrawl.monsters.ending.SpireSpear</c>).
+/// StS1 The Ending - Spire Spear (<c>com.megacrit.cardcrawl.monsters.ending.SpireSpear</c>).
 /// 官方中文名：高塔之矛（<c>.tmp/m25-zhs-names.json</c>）。
 /// <para>
-/// Bytecode (<c>ending_SpireSpear.txt</c>): HP 160, A8 180; BURN_STRIKE_DMG 5 (A3 6) ×2 +
-/// 2×Burn (A18: into the draw pile, else discard), PIERCER: all monsters Strength 2,
-/// SKEWER_DMG 10 × skewerCount (3, A3 4). usePreBattleAction: ArtifactPower(1, A18 2).
-/// getMove: moveCount%3 0→last BURN_STRIKE ? PIERCER : BURN_STRIKE; 1→SKEWER; 2→50/50.
+/// Bytecode (<c>ending_SpireSpear.txt</c>): HP 160, A8 180; BURN_STRIKE_DMG 5 (A3 6) x2 +
+/// 2xBurn (A18: into the draw pile, else discard), PIERCER: all monsters Strength 2,
+/// SKEWER_DMG 10 x skewerCount (3, A3 4). usePreBattleAction: ArtifactPower(1, A18 2).
+/// getMove: moveCount%3 0->last BURN_STRIKE ? PIERCER : BURN_STRIKE; 1->SKEWER; 2->50/50.
 /// die(): remove Surrounded from player and BackAttack from survivors.
 /// </para>
 /// <para>
@@ -33,7 +33,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// flanking hook works (the Shield carries BackAttackLeftPower); AfterDeath removes both markers.
 /// </para>
 /// <para>
-/// Donor: <c>stabbot</c> — the shipped pointy stabby construct (Sentry, SnakeDagger, Slavers);
+/// Donor: <c>stabbot</c> - the shipped pointy stabby construct (Sentry, SnakeDagger, Slavers);
 /// idle_loop/attack/hurt/die tracks match the vanilla animator defaults.
 /// </para>
 /// </summary>
@@ -93,7 +93,7 @@ public sealed class SpireSpear : Spire1Monster
     public override async Task AfterAddedToRoom()
     {
         await base.AfterAddedToRoom();
-        // BackAttackRightPower on self — flanking marker for the engine SurroundedPower.
+        // BackAttackRightPower on self - flanking marker for the engine SurroundedPower.
         await PowerCmd.Apply<BackAttackRightPower>(new ThrowingPlayerChoiceContext(), base.Creature, 1, base.Creature, null);
         // usePreBattleAction: ArtifactPower(1, A18 2).
         await PowerCmd.Apply<ArtifactPower>(new ThrowingPlayerChoiceContext(), base.Creature,
@@ -113,7 +113,7 @@ public sealed class SpireSpear : Spire1Monster
         piercer.FollowUpState = branch;
         skewer.FollowUpState = branch;
 
-        // getMove: moveCount%3 0→last BURN_STRIKE ? PIERCER : BURN_STRIKE; 1→SKEWER; 2→50/50.
+        // getMove: moveCount%3 0->last BURN_STRIKE ? PIERCER : BURN_STRIKE; 1->SKEWER; 2->50/50.
         branch.AddState(burnStrike, () => MoveNum % 3 == 0 ? !LastWas(burnStrike) : (MoveNum % 3 == 2 ? !RollFifty() : false));
         branch.AddState(piercer, () => MoveNum % 3 == 0 ? LastWas(burnStrike) : (MoveNum % 3 == 2 ? RollFifty() : false));
         branch.AddState(skewer, () => true);
@@ -123,7 +123,7 @@ public sealed class SpireSpear : Spire1Monster
     private async Task BurnStrikeMove(IReadOnlyList<Creature> targets)
     {
         // takeTurn BURN_STRIKE: two ChangeState(ATTACK) + Wait(0.15) + DamageAction(damage[0], FIRE)
-        // each, then Burn ×2 — A18: draw pile, else discard.
+        // each, then Burn x2 - A18: draw pile, else discard.
         await DamageCmd.Attack(BurnStrikeDamage).WithHitCount(BurnStrikeHits).FromMonster(this)
             .WithAttackerAnim("Attack", 0.15f)
             .WithHitFx("vfx/vfx_fire_burst")
@@ -148,7 +148,7 @@ public sealed class SpireSpear : Spire1Monster
 
     private async Task SkewerMove(IReadOnlyList<Creature> targets)
     {
-        // takeTurn SKEWER: skewerCount × (ChangeState(ATTACK) + Wait(0.05) +
+        // takeTurn SKEWER: skewerCount x (ChangeState(ATTACK) + Wait(0.05) +
         // DamageAction(damage[1], SLASH_DIAGONAL, deadOn)).
         await DamageCmd.Attack(SkewerDamage).WithHitCount(SkewerCount).FromMonster(this)
             .WithAttackerAnim("Attack", 0.05f)

@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 
 namespace Spire1.Spire1Code.Extensions;
 

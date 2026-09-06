@@ -8,7 +8,7 @@ namespace Spire1.Spire1Code.Patches;
 /// <summary>
 /// 归档角色的内容从卡牌总览（Card Library）隐藏。
 /// <para>
-/// 背景：观者已归档（用户裁定硬隐藏），但模型仍注册在 ModelDb——这是刻意的：
+/// 背景：观者已归档（用户裁定硬隐藏），但模型仍注册在 ModelDb--这是刻意的：
 /// 注销会改变 ModelID 序列化映射并破坏引用观者牌的旧存档。副作用是总览里能翻到
 /// 借用储君占位美术的观者牌。引擎在 NCardLibraryGrid._Ready 用
 /// <c>CardModel.ShouldShowInCardLibrary</code> 过滤入册卡（dllsrc CardModel.cs:826-829，
@@ -51,7 +51,7 @@ internal static class CharacterArchive
     {
         var result = new HashSet<Type>();
 
-        // 用 CustomAttributeData 反射读 [Pool(...)] 的构造实参——不实例化特性、
+        // 用 CustomAttributeData 反射读 [Pool(...)] 的构造实参--不实例化特性、
         // 不依赖 BaseLib 特性类的公开成员形态（单 Type 或 Type[] 两种 ctor 都覆盖）。
         foreach (Type type in typeof(MainFile).Assembly.GetTypes())
         {

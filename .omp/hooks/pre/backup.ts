@@ -1,6 +1,6 @@
 // 容灾备份 hook：写工具（edit/write/ast_edit/rename_file）执行成功后自动 git commit 快照。
 // 发现机制：项目级 <cwd>/.omp/hooks/pre/*.ts（hookCapability），会话启动时加载。
-// 注意：用 tool_result（post-execution）而非 tool_call——tool_call 是执行前拦截，此时工作区
+// 注意：用 tool_result（post-execution）而非 tool_call--tool_call 是执行前拦截，此时工作区
 // 尚无改动，status --porcelain 恒为空，快照永远提交不到本次更改（实测验证）。
 // 只处理位于 git 仓库内的目标路径；任何异常静默吞掉，绝不阻断/影响工具结果（handler 抛错会 fail-closed）。
 import type { HookAPI } from "@oh-my-pi/pi-coding-agent/extensibility/hooks";

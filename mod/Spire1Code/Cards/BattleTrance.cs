@@ -9,7 +9,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Battle Trance (Uncommon Skill). Draw 3 cards, cannot draw more this turn (4 upgraded).</summary>
+/// <summary>StS1 Ironclad - Battle Trance (Uncommon Skill). Draw 3 cards, cannot draw more this turn (4 upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
 public class BattleTrance() : Spire1Card(0, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 {

@@ -13,7 +13,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 — Shining Light. Entering the light costs 20% of Max HP and upgrades two random upgradeable
+/// StS1 - Shining Light. Entering the light costs 20% of Max HP and upgrades two random upgradeable
 /// cards (only one if the deck holds a single upgradeable card). The choice is locked when nothing
 /// can be upgraded.
 /// </summary>

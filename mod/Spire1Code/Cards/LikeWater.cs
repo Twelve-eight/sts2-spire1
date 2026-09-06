@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Powers;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Watcher — Like Water (Uncommon Power). At the end of your turn, if you are in Calm, gain 5 Block (7 upgraded).</summary>
+/// <summary>StS1 Watcher - Like Water (Uncommon Power). At the end of your turn, if you are in Calm, gain 5 Block (7 upgraded).</summary>
 [Pool(typeof(WatcherCardPool))]
 public class LikeWater() : Spire1Card(1, CardType.Power, CardRarity.Uncommon, TargetType.None)
 {

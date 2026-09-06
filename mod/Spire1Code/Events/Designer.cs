@@ -16,7 +16,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 shrine — Designer In-Spire. Pay for a service: Adjustments (upgrade 1 card, or 2 random
+/// StS1 shrine - Designer In-Spire. Pay for a service: Adjustments (upgrade 1 card, or 2 random
 /// cards), Clean Up (remove 1 card, or transform 2), Full Service (remove 1 card + upgrade 1 random
 /// card), or punch the designer. Which Adjustments/Clean Up variant is offered is rolled per event
 /// (50/50). Prices and punch damage scale at Ascension 15+ (StS1 bytecode: 40/60/90/3 below A15,

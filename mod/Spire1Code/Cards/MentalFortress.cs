@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Powers;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Watcher — Mental Fortress (Uncommon Power). Whenever you change Stances, gain 4 Block (6 upgraded).</summary>
+/// <summary>StS1 Watcher - Mental Fortress (Uncommon Power). Whenever you change Stances, gain 4 Block (6 upgraded).</summary>
 [Pool(typeof(WatcherCardPool))]
 public class MentalFortress() : Spire1Card(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
 {

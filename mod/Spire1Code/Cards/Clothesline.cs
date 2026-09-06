@@ -8,7 +8,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Ironclad — Clothesline (Common). Deal 12, apply 2 Weak (14 / 3 upgraded).</summary>
+/// <summary>StS1 Ironclad - Clothesline (Common). Deal 12, apply 2 Weak (14 / 3 upgraded).</summary>
 public class Clothesline() : Spire1Card(2, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars =>

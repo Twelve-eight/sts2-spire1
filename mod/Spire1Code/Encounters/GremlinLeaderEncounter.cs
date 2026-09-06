@@ -5,8 +5,8 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Gremlin Leader" elite encounter (<c>MonsterHelper.getEncounter("Gremlin Leader")</c>).
-/// Bytecode (3555-3630): two independent <c>spawnGremlin(x, y)</c> rolls at GremlinLeader.POSX/POSY[0..1] —
-/// (-366, -4) and (-170, 6) — each roll rebuilds the full 8-entry multiset
+/// Bytecode (3555-3630): two independent <c>spawnGremlin(x, y)</c> rolls at GremlinLeader.POSX/POSY[0..1] -
+/// (-366, -4) and (-170, 6) - each roll rebuilds the full 8-entry multiset
 /// (2x GremlinWarrior, 2x GremlinThief, 2x GremlinFat, 1x GremlinTsundere, 1x GremlinWizard) and draws
 /// once (WITH replacement, so the two minions may be identical), then the <see cref="GremlinLeader"/>
 /// herself at (148, -15). Reproduced by rebuilding the multiset for each of the two minion rolls.
@@ -53,7 +53,7 @@ public sealed class GremlinLeaderEncounter : Spire1Encounter
             monsters.Add((picked.ToMutable(), null));
         }
 
-        // GremlinLeader.POSX/POSY slot [2] — she always spawns last.
+        // GremlinLeader.POSX/POSY slot [2] - she always spawns last.
         monsters.Add((ModelDb.Monster<GremlinLeader>().ToMutable(), null));
         return monsters;
     }

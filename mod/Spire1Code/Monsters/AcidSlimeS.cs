@@ -17,7 +17,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// StS1 "Acid Slime (S)" (8-12 HP, A7: 9-13). Does NOT split in vanilla.
 /// Moves: Tackle (3/4 dmg) and Lick (1 Weak). getMove alternates: 50/50 roll (A17+: strict
 /// lastTwoMoves alternation). takeTurn self-alternates after each move.
-/// Donor: leaf_slime_s — the only shipped small green slime rig.
+/// Donor: leaf_slime_s - the only shipped small green slime rig.
 /// </summary>
 public sealed class AcidSlimeS : Spire1Monster, ISlimeSplitSpawn
 {
@@ -39,7 +39,7 @@ public sealed class AcidSlimeS : Spire1Monster, ISlimeSplitSpawn
         var lick = new MoveState("LICK", Lick, new DebuffIntent());
 
         // Vanilla base: 50/50 roll between Tackle and Lick (both repeatable).
-        // A17+: strict alternation — lastTwoMoves(Tackle) forces Lick, else Tackle.
+        // A17+: strict alternation - lastTwoMoves(Tackle) forces Lick, else Tackle.
         // A17 has no StS2 equivalent; gated on DeadlyEnemies as the nearest higher-difficulty tier.
         var normalAi = new RandomBranchState("AI");
         normalAi.AddBranch(tackle, 1, () => 1f);

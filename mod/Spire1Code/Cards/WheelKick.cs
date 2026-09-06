@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Watcher — Wheel Kick (Uncommon Attack). Deal 15 damage (20 upgraded), then draw 2 cards.</summary>
+/// <summary>StS1 Watcher - Wheel Kick (Uncommon Attack). Deal 15 damage (20 upgraded), then draw 2 cards.</summary>
 [Pool(typeof(WatcherCardPool))]
 public class WheelKick() : Spire1Card(2, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {

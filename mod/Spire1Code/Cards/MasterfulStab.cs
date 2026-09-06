@@ -13,7 +13,7 @@ using System.Linq;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Silent — Masterful Stab (Uncommon Attack). Deal 12 damage. Costs 1 additional Energy for each time you lose HP
+/// StS1 Silent - Masterful Stab (Uncommon Attack). Deal 12 damage. Costs 1 additional Energy for each time you lose HP
 /// this combat (16 upgraded).
 /// </summary>
 [Pool(typeof(SilentCardPool))]

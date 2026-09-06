@@ -13,8 +13,8 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The City — BanditPointy (<c>com.megacrit.cardcrawl.monsters.city.BanditPointy</c>,
-/// internal id "BanditChild"; 官方中文名「尖头强盗」). Masked Bandits trio member —
+/// StS1 The City - BanditPointy (<c>com.megacrit.cardcrawl.monsters.city.BanditPointy</c>,
+/// internal id "BanditChild"; 官方中文名「尖头强盗」). Masked Bandits trio member -
 /// event-spawned only, never a regular encounter (Main-agent bytecode audit 2026-08).
 /// <para>
 /// Bytecode: HP 30 flat, A7 34; attackDmg 5 (A2 6), POINTY_SPECIAL hits twice
@@ -26,7 +26,7 @@ namespace Spire1.Spire1Code.Monsters;
 /// convention). Cosmetic spine SLASH state juggling not ported.
 /// </para>
 /// <para>
-/// Art: donor rig <c>nibbit</c> — small scrappy rodent-with-a-blade (Nibbit, HP 42-48,
+/// Art: donor rig <c>nibbit</c> - small scrappy rodent-with-a-blade (Nibbit, HP 42-48,
 /// slash moves); the shipped rig closest to a pint-sized stab-happy bandit. NOTE
 /// (FLAGGED): nibbit's animator maps Cast->hiss and has no separate hurt track issue;
 /// default triggers work. Alternative if it reads too beast-like: <c>vantom</c>.

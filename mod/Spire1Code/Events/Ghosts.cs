@@ -12,7 +12,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 The City — Council of Ghosts.
+/// StS1 The City - Council of Ghosts.
 /// Accept: lose ceil(50% of Max HP) Max HP (capped at Max HP - 1) and receive 5 Apparition
 /// cards (3 at Ascension 15+). Refuse: leave.
 ///

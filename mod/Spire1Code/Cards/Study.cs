@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Study (Uncommon Power). At the end of your turn, shuffle an Insight into your draw pile.
+/// StS1 Watcher - Study (Uncommon Power). At the end of your turn, shuffle an Insight into your draw pile.
 /// The upgrade only lowers the cost from 2 to 1.
 /// </summary>
 [Pool(typeof(WatcherCardPool))]

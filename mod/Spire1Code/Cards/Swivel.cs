@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Swivel (Uncommon Skill). Gain 8 Block (11 upgraded); the next Attack you play costs 0.
+/// StS1 Watcher - Swivel (Uncommon Skill). Gain 8 Block (11 upgraded); the next Attack you play costs 0.
 /// REUSE_SHIPPED_POWER: StS1's Swivel applies FreeAttackPower and StS2 ships an identical one
 /// (.tmp/dllsrc/MegaCrit.Sts2.Core.Models.Powers/FreeAttackPower.cs:14 zeroes the cost of the next Attack in
 /// Hand/Play via TryModifyEnergyCostInCombatLate, then decrements itself in BeforeCardPlayed), so no mod power

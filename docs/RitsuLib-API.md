@@ -1,7 +1,7 @@
 # RitsuLib API Reference
 
 **Library:** STS2-RitsuLib v0.5.13 (assembly `STS2-RitsuLib`, MIT, repo `github.com/BAKAOLC/STS2-RitsuLib`, author OLC)
-**Game target:** Slay the Spire 2 **0.111.0** (Godot 4.5 / C# / .NET 9) — variant shipped in `lib/0.111.0/`
+**Game target:** Slay the Spire 2 **0.111.0** (Godot 4.5 / C# / .NET 9) - variant shipped in `lib/0.111.0/`
 **Public surface:** 1,325 public types across 92 namespaces
 **Scope:** standing interface reference for writing code against RitsuLib, for the sts2-spire1 project.
 
@@ -9,12 +9,12 @@
 
 Every entry below is attributed with one of:
 
-- `[XML]` — author documentation `lib/0.111.0/STS2-RitsuLib.xml` (authoritative; summaries quoted verbatim, English or Chinese as published)
-- `[dump <file>]` — pre-built audit dumps in `.tmp/ritsu/` (`sec-all.txt`, `sec-registry.txt`, `sec-cards.txt`, `sec-visuals.txt`, `sec-content.txt`, `sec-rewards.txt`, `allpatches.txt`, `ns.txt`, `nsindex.md`, `api-0.111.0.json`)
-- `[loader.json]` — metadata dump of the loader assembly `STS2-RitsuLib.Loader`
-- `[file]` — e.g. `mod_manifest.json`, `ritsulib-variants.manifest`, `compat-target.txt`, nuspec
+- `[XML]` - author documentation `lib/0.111.0/STS2-RitsuLib.xml` (authoritative; summaries quoted verbatim, English or Chinese as published)
+- `[dump <file>]` - pre-built audit dumps in `.tmp/ritsu/` (`sec-all.txt`, `sec-registry.txt`, `sec-cards.txt`, `sec-visuals.txt`, `sec-content.txt`, `sec-rewards.txt`, `allpatches.txt`, `ns.txt`, `nsindex.md`, `api-0.111.0.json`)
+- `[loader.json]` - metadata dump of the loader assembly `STS2-RitsuLib.Loader`
+- `[file]` - e.g. `mod_manifest.json`, `ritsulib-variants.manifest`, `compat-target.txt`, nuspec
 
-`R::` in dumps abbreviates `STS2RitsuLib::` (e.g. `R::Content.ModContentRegistry` = `STS2RitsuLib.Content.ModContentRegistry`); `Sts2::` abbreviates `MegaCrit.Sts2::`. Dump signatures preserve member order and omit parameter names; XML does not carry signatures. Where a type exists in the source/XML but is **not public in the shipped binary**, it is marked `⚠ not in shipped binary` (verified against `api-0.111.0.json` visibility).
+`R::` in dumps abbreviates `STS2RitsuLib::` (e.g. `R::Content.ModContentRegistry` = `STS2RitsuLib.Content.ModContentRegistry`); `Sts2::` abbreviates `MegaCrit.Sts2::`. Dump signatures preserve member order and omit parameter names; XML does not carry signatures. Where a type exists in the source/XML but is **not public in the shipped binary**, it is marked `WARN  not in shipped binary` (verified against `api-0.111.0.json` visibility).
 
 ## Contents
 
@@ -37,13 +37,13 @@ Workshop item `3747602295` ("RitsuLib", id `STS2-RitsuLib`, manifest version `0.
 
 ```
 3747602295/
-├─ mod_manifest.json          # id "STS2-RitsuLib", version "0.5.13", min_game_version "0.111.0", has_dll true, has_pck false [file]
-├─ STS2-RitsuLib.dll          # LOADER shim, 33 KB — assembly "STS2-RitsuLib.Loader" 1.0.0.0 [loader.json]
-├─ STS2-RitsuLib.Loader.pdb
-├─ ritsulib-variants.manifest # variant index: compatTarget → lib/<ver>/STS2-RitsuLib.dll + sha256 [file]
-├─ viewer/                    # static HTML viewer assets [file]
-└─ lib/
-   ├─ 0.107.1/  ├─ 0.109.0/  ├─ 0.110.0/  └─ 0.111.0/   # one variant per game version
++- mod_manifest.json          # id "STS2-RitsuLib", version "0.5.13", min_game_version "0.111.0", has_dll true, has_pck false [file]
++- STS2-RitsuLib.dll          # LOADER shim, 33 KB - assembly "STS2-RitsuLib.Loader" 1.0.0.0 [loader.json]
++- STS2-RitsuLib.Loader.pdb
++- ritsulib-variants.manifest # variant index: compatTarget -> lib/<ver>/STS2-RitsuLib.dll + sha256 [file]
++- viewer/                    # static HTML viewer assets [file]
++- lib/
+   +- 0.107.1/  +- 0.109.0/  +- 0.110.0/  +- 0.111.0/   # one variant per game version
       each contains: STS2-RitsuLib.dll (8.0 MB), STS2-RitsuLib.pdb, STS2-RitsuLib.xml (5.9 MB), compat-target.txt
 ```
 
@@ -56,15 +56,15 @@ The mod root assembly is a **loader shim**; the real library lives in `lib/<vers
 ```csharp
 namespace STS2RitsuLib.Loader;                      // assembly "STS2-RitsuLib.Loader" 1.0.0.0 [loader.json]
 public static class Bootstrap {
-    public static void Initialize();                 // [loader.json] row 27 — the entry point
+    public static void Initialize();                 // [loader.json] row 27 - the entry point
 }
 ```
 
-`Initialize()` performs (private helpers, from `[loader.json]`): resolve the current game version (`Sts2HostVersion`); read `ritsulib-variants.manifest` (`LoadVariantManifest`); pick the variant whose `compatTarget` matches (`PickVariant`); verify the variant's SHA-256 (`MatchesExpectedHash`); load that `lib/<ver>/STS2-RitsuLib.dll`; associate it with the mod (via a patched reflection bridge, `ReflectionHelperModTypesPatch`, plus `AssociateAssemblyWithModMethod`); and invoke the real initializer type in the loaded assembly (`InvokeRealInitializer` → `RitsuLibFramework`). The manifest's `sha256` fields are `904b998…1558` (0.107.1), `4825dd7…90cf` (0.109.0), `704410e…b0e51` (0.110.0), `3e42c74…bcf0b` (0.111.0). [file]
+`Initialize()` performs (private helpers, from `[loader.json]`): resolve the current game version (`Sts2HostVersion`); read `ritsulib-variants.manifest` (`LoadVariantManifest`); pick the variant whose `compatTarget` matches (`PickVariant`); verify the variant's SHA-256 (`MatchesExpectedHash`); load that `lib/<ver>/STS2-RitsuLib.dll`; associate it with the mod (via a patched reflection bridge, `ReflectionHelperModTypesPatch`, plus `AssociateAssemblyWithModMethod`); and invoke the real initializer type in the loaded assembly (`InvokeRealInitializer` -> `RitsuLibFramework`). The manifest's `sha256` fields are `904b998...1558` (0.107.1), `4825dd7...90cf` (0.109.0), `704410e...b0e51` (0.110.0), `3e42c74...bcf0b` (0.111.0). [file]
 
 ### 1.3 NuGet PackageReference
 
-Consumers reference the signed NuGet package **`STS2.RitsuLib` 0.5.13** (`lib/net9.0/STS2-RitsuLib.dll` + `.xml`; deps `GodotSharp 4.5.1`, `Godot.SourceGenerators 4.5.1`, `System.IO.Hashing 9.0.0`; MIT; repo commit `6a1d7db…`). [file: nuspec]
+Consumers reference the signed NuGet package **`STS2.RitsuLib` 0.5.13** (`lib/net9.0/STS2-RitsuLib.dll` + `.xml`; deps `GodotSharp 4.5.1`, `Godot.SourceGenerators 4.5.1`, `System.IO.Hashing 9.0.0`; MIT; repo commit `6a1d7db...`). [file: nuspec]
 
 The package's `buildTransitive/STS2.RitsuLib.targets` copies the DLL, PDB, XML, `mod_manifest.json` and `viewer/` into `$(RitsuLibDeployDir)` after build. Control properties: `RitsuLibAutoCopy` (default `true`), `RitsuLibDeployDir` (set to your mod's output folder; empty disables copying). [file: targets]
 
@@ -102,23 +102,23 @@ public static class ModTypeDiscoveryHub {                    // STS2RitsuLib.Int
 
 ## 2. Namespace index
 
-Counts = public types in the shipped 0.111.0 binary (`[api-0.111.0.json]`). Namespaces not expanded in §3–§8 are covered by this index; expanded namespaces still list their full member set in their sections.
+Counts = public types in the shipped 0.111.0 binary (`[api-0.111.0.json]`). Namespaces not expanded in Sec 3-Sec 8 are covered by this index; expanded namespaces still list their full member set in their sections.
 
 | Public types | Namespace | Purpose |
 |---|---|---|
-| 139 | `STS2RitsuLib.Scaffolding.Content` | Registration-entry classes for every content kind (each `XxxRegistrationEntry` implements `IContentRegistrationEntry`), asset-profile records, and the model templates (`ModMonsterTemplate`, `ModEncounterTemplate`, `ModActTemplate`, `ModCardTemplate`, …). |
+| 139 | `STS2RitsuLib.Scaffolding.Content` | Registration-entry classes for every content kind (each `XxxRegistrationEntry` implements `IContentRegistrationEntry`), asset-profile records, and the model templates (`ModMonsterTemplate`, `ModEncounterTemplate`, `ModActTemplate`, `ModCardTemplate`, ...). |
 | 127 | `STS2RitsuLib.Settings` | Full mod-settings framework: typed entry definitions, bindings, UI controls and the mod-settings screen. |
 | 101 | `STS2RitsuLib` | Framework lifecycle event structs (about 90 `*Event` types + `Const`, `RitsuLibFramework`, `RitsuModInfo`). |
-| 89 | `STS2RitsuLib.Models.Capabilities` | Model capability system: `IModelCapability`, capability base classes per model kind, and contributor interfaces (card properties, costs, titles, type text, overlays, …). |
+| 89 | `STS2RitsuLib.Models.Capabilities` | Model capability system: `IModelCapability`, capability base classes per model kind, and contributor interfaces (card properties, costs, titles, type text, overlays, ...). |
 | 88 | `STS2RitsuLib.Combat.SecondaryResources` | Secondary-resource system: registry, card-cost UI, counters, hover tips, multiplayer ticker, star-counter VFX. |
 | 76 | `STS2RitsuLib.Interop.AutoRegistration` | `[RegisterXxx]` attributes that auto-register content via the discovery pipeline. |
 | 58 | `STS2RitsuLib.Networking.Sidecar` | Out-of-band multiplayer wire protocol: envelopes, opcodes, chunk streams, sync services, session management, typed messages. |
 | 58 | `STS2RitsuLib.Audio` | FMOD wrappers: handles, playback options, routing, adaptive music, vanilla bridge. |
 | 47 | `STS2RitsuLib.Ui.Shell.Theme` | Shell theme token/metric/color classes. |
 | 34 | `STS2RitsuLib.Utils.HarmonyIl` | Harmony IL analysis/editing toolkit (control-flow graph, effect analysis, async IL bridges, match helpers). |
-| 32 | `STS2RitsuLib.Scaffolding.Content.Patches` | Patch-side asset-override interfaces (`IModCardAssetOverrides`, …), `ExternalAssetOverrideRegistry`, `RuntimeAssetRefreshCoordinator`, material/icon override registries. |
+| 32 | `STS2RitsuLib.Scaffolding.Content.Patches` | Patch-side asset-override interfaces (`IModCardAssetOverrides`, ...), `ExternalAssetOverrideRegistry`, `RuntimeAssetRefreshCoordinator`, material/icon override registries. |
 | 27 | `STS2RitsuLib.CardPiles` | Custom card piles: `ModCardPile`, registry, handlers, flight/pile UI specs. |
-| 23 | `STS2RitsuLib.Scaffolding.Characters` | Character scaffolding: `CharacterAssetProfile` + per-asset-set records, `ModCharacterTemplate<TPool…>`, selection-policy interfaces. |
+| 23 | `STS2RitsuLib.Scaffolding.Characters` | Character scaffolding: `CharacterAssetProfile` + per-asset-set records, `ModCharacterTemplate<TPool...>`, selection-policy interfaces. |
 | 19 | `STS2RitsuLib.Saves.RawProgress` | Raw progress commit/read/recovery bridge API (cloud-save interop). |
 | 18 | `STS2RitsuLib.Telemetry` | Telemetry adapters (PostHog/HTTP/disabled), envelopes, registry, consent. |
 | 16 | `STS2RitsuLib.Content` | `ModContentRegistry` itself plus act-entry resolution, placeholder descriptors, public-entry options, compendium placement. |
@@ -130,7 +130,7 @@ Counts = public types in the shipped 0.111.0 binary (`[api-0.111.0.json]`). Name
 | 12 | `STS2RitsuLib.Diagnostics.DevConsole` | Dev-console autocomplete and owned-id catalog enhancements. |
 | 11 | `STS2RitsuLib.RunData` | Run-saved-data store: run-scoped and per-player slots, lobby staging. |
 | 10 | `STS2RitsuLib.Ui.Catalog` | `RitsuCatalogBrowser` and catalog item/filter/presentation models. |
-| 10 | `STS2RitsuLib.Cards.DynamicVars` | Computed dynamic card vars (`{Computed}`, `{ComputedPower}`, …) and tooltip registry. |
+| 10 | `STS2RitsuLib.Cards.DynamicVars` | Computed dynamic card vars (`{Computed}`, `{ComputedPower}`, ...) and tooltip registry. |
 | 8 | `STS2RitsuLib.Utils.Persistence` | Profile-manager persistence: `ProfileManager`, `PersistentDataEntry<T>`, save scopes, lifecycle events. |
 | 8 | `STS2RitsuLib.TopBar` | Top-bar buttons: registry, definitions, specs, hover tips. |
 | 8 | `STS2RitsuLib.Timeline.Scaffolding` | Epoch/story templates (`ModEpochTemplate`, `ModStoryTemplate`, unlock epoch templates). |
@@ -175,7 +175,7 @@ Counts = public types in the shipped 0.111.0 binary (`[api-0.111.0.json]`). Name
 | 3 | `STS2RitsuLib.Diagnostics.CardExport` | Card PNG export (request/capture mode/exporter). |
 | 3 | `STS2RitsuLib.Combat.Healing` | Heal hooks and context. |
 | 3 | `STS2RitsuLib.Combat.AttackHits` | Attack-hit hooks and context. |
-| 3 | `STS2RitsuLib.Cards.FreePlay` | Free-play detection (see §5). |
+| 3 | `STS2RitsuLib.Cards.FreePlay` | Free-play detection (see Sec 5). |
 | 3 | `STS2RitsuLib.CardPiles.Nodes` | `NModCardPileButton`, `NModExtraHand`, `NModTopBarPileButton` Godot nodes. |
 | 2 | `STS2RitsuLib.Utils.Persistence.Interop` | Interop migration adapter, JSON-document interop. |
 | 2 | `STS2RitsuLib.Scaffolding.Characters.Visuals` | Cue playback helpers (`ModCreatureVisualPlayback`), world-scene node factory. |
@@ -188,18 +188,18 @@ Counts = public types in the shipped 0.111.0 binary (`[api-0.111.0.json]`). Name
 | 2 | `STS2RitsuLib.Diagnostics.Commands` | Console commands (`RitsuLibConsoleCmd`, `OpenLogViewerConsoleCmd`). |
 | 2 | `STS2RitsuLib.Data` | `ModDataStore`, `ModDataStoreCache<T>`. |
 | 2 | `STS2RitsuLib.Combat.Powers` | Temporary-power templates (`ModTemporaryPowerTemplate`, `ModTemporaryAppliedPowerTemplate<TOrigin,TPower>`). |
-| 2 | `STS2RitsuLib.Combat.HandSize` | Max-hand-size modifiers and calculator (see §10). |
+| 2 | `STS2RitsuLib.Combat.HandSize` | Max-hand-size modifiers and calculator (see Sec 10). |
 | 2 | `STS2RitsuLib.CardTags.Serialization` | Card-tag JSON converters. |
 | 2 | `STS2RitsuLib.Cards.Transforms` | Card-transform registry and context. |
-| 1 | `STS2RitsuLib.Screens` | `ModScreenService` (see §8). |
+| 1 | `STS2RitsuLib.Screens` | `ModScreenService` (see Sec 8). |
 | 1 | `STS2RitsuLib.Scaffolding.Visuals` | `ModVisualCues` factories (`CueSet()`, `FrameSequence()`). |
-| 1 | `STS2RitsuLib.Scaffolding.MonsterMoves` | `ModMonsterMoveStateMachines` (see §4). |
+| 1 | `STS2RitsuLib.Scaffolding.MonsterMoves` | `ModMonsterMoveStateMachines` (see Sec 4). |
 | 1 | `STS2RitsuLib.Scaffolding.Content.Visuals` | `AncientStageProceduralRootFactory`. |
 | 1 | `STS2RitsuLib.Scaffolding.Combat` | `CombatTurnPhaseExtensions`. |
 | 1 | `STS2RitsuLib.Saves` | `PreservedProgressRecords`. |
 | 1 | `STS2RitsuLib.Patching` | `PrivateAccess`. |
 | 1 | `STS2RitsuLib.Patching.Builders` | `DynamicPatchBuilder`. |
-| 1 | `STS2RitsuLib.Networking.MessageExtensions` | `RitsuNetMessageTailExtensions` (see §7). |
+| 1 | `STS2RitsuLib.Networking.MessageExtensions` | `RitsuNetMessageTailExtensions` (see Sec 7). |
 | 1 | `STS2RitsuLib.Data.Models` | `RitsuLibSettings`. |
 
 Counts come from `[api-0.111.0.json]` (public types only, excluding the nested Godot `MethodName`/`PropertyName`/`SignalName` helper classes the type dumps list separately); type lists per namespace cross-check `nsindex.md` `[dump]`.
@@ -208,9 +208,9 @@ Counts come from `[api-0.111.0.json]` (public types only, excluding the nested G
 
 ### 3.1 `STS2RitsuLib.Content.ModContentRegistry`
 
-Per-mod registry for pool models, standalone models, act-scoped content, and stable public-entry overrides used by the patched `ModelDb` identity system. `[XML]` — "Provides a per-mod registry for pool models, standalone models, act-scoped content, and stable public-entry overrides used by the patched `ModelDb` identity system."
+Per-mod registry for pool models, standalone models, act-scoped content, and stable public-entry overrides used by the patched `ModelDb` identity system. `[XML]` - "Provides a per-mod registry for pool models, standalone models, act-scoped content, and stable public-entry overrides used by the patched `ModelDb` identity system."
 
-Get an instance with `ModContentRegistry.For(modId)` — "Gets the registry for `modId`, creating it on first use." `[XML]`
+Get an instance with `ModContentRegistry.For(modId)` - "Gets the registry for `modId`, creating it on first use." `[XML]`
 
 ```csharp
 public sealed class ModContentRegistry {                       // [dump sec-registry.txt]
@@ -362,17 +362,17 @@ Author prose (`[XML]`):
 
 ### 3.3 Registration semantics (XML prose)
 
-- `RegisterCard<TPool,TCard>` — "Registers `TCard` with `TPool` using the default public entry." `[XML]`
-- `RegisterMonster<TMonster>` — "Registers a mod monster model for identity tracking, dynamic injection, and inclusion in the patched `ModelDb.Monsters` list." `[XML]`
-- `RegisterAct<TAct>` — "Registers a mod act model for inclusion in `ModelDb.Acts`. This does not add it to the vanilla randomized act list; implement `IModActRandomListPolicy` to opt in." `[XML]`
-- `RegisterActEncounter<TAct,TEncounter>` — "Registers an encounter model scoped to `TAct`." `[XML]`
-- `RegisterGlobalEncounter<TEncounter>` — "Registers a global encounter appended to every act's `GenerateAllEncounters` result, after vanilla and act-scoped mod encounters. Use `RegisterActEncounter<TAct,TEncounter>` for an encounter belonging to only one act." `[XML]`
-- `RegisterCharacter<TCharacter>` — "Registers a mod character model for inclusion in `ModelDb.AllCharacters`." `[XML]`
-- `RegisterPower<TPower>` — "Registers a mod power model for inclusion in `ModelDb.AllPowers`." `[XML]`
-- `RegisterCharacterAssetReplacement(string, CharacterAssetProfile)` — "Registers asset replacements for a character ID. Non-null fields from later registrations take precedence." `[XML]`
-- `RegisterGlobalCharacterAssetReplacement(CharacterAssetProfile)` — "Registers this mod's asset replacements for all characters. Character-specific replacements take precedence." `[XML]`
+- `RegisterCard<TPool,TCard>` - "Registers `TCard` with `TPool` using the default public entry." `[XML]`
+- `RegisterMonster<TMonster>` - "Registers a mod monster model for identity tracking, dynamic injection, and inclusion in the patched `ModelDb.Monsters` list." `[XML]`
+- `RegisterAct<TAct>` - "Registers a mod act model for inclusion in `ModelDb.Acts`. This does not add it to the vanilla randomized act list; implement `IModActRandomListPolicy` to opt in." `[XML]`
+- `RegisterActEncounter<TAct,TEncounter>` - "Registers an encounter model scoped to `TAct`." `[XML]`
+- `RegisterGlobalEncounter<TEncounter>` - "Registers a global encounter appended to every act's `GenerateAllEncounters` result, after vanilla and act-scoped mod encounters. Use `RegisterActEncounter<TAct,TEncounter>` for an encounter belonging to only one act." `[XML]`
+- `RegisterCharacter<TCharacter>` - "Registers a mod character model for inclusion in `ModelDb.AllCharacters`." `[XML]`
+- `RegisterPower<TPower>` - "Registers a mod power model for inclusion in `ModelDb.AllPowers`." `[XML]`
+- `RegisterCharacterAssetReplacement(string, CharacterAssetProfile)` - "Registers asset replacements for a character ID. Non-null fields from later registrations take precedence." `[XML]`
+- `RegisterGlobalCharacterAssetReplacement(CharacterAssetProfile)` - "Registers this mod's asset replacements for all characters. Character-specific replacements take precedence." `[XML]`
 
-`ModelPublicEntryOptions` — "Configures the public `ModelDb` entry assigned to a RitsuLib-registered model." Static factories: `FromTypeName`, `FromStem(string)`, `FromFullPublicEntry(string)`. `[dump sec-registry.txt; XML]`
+`ModelPublicEntryOptions` - "Configures the public `ModelDb` entry assigned to a RitsuLib-registered model." Static factories: `FromTypeName`, `FromStem(string)`, `FromFullPublicEntry(string)`. `[dump sec-registry.txt; XML]`
 
 ### 3.4 Model templates
 
@@ -413,7 +413,7 @@ public abstract class ModEncounterTemplate : EncounterModel, IModEncounterAssetO
     protected ModEncounterTemplate();
 }
 ```
-`[XML]` `ModEncounterTemplate`: "Provides a base `EncounterModel` for mods with asset overrides, optional runtime combat scene creation, act-specific eligibility, and a choice of act, encounter-specific, or programmatically created combat backgrounds. … Register it for one act through `RegisterActEncounter`, or for every act through `RegisterGlobalEncounter`. Each `MonsterModel` used by the encounter must also be registered."
+`[XML]` `ModEncounterTemplate`: "Provides a base `EncounterModel` for mods with asset overrides, optional runtime combat scene creation, act-specific eligibility, and a choice of act, encounter-specific, or programmatically created combat backgrounds. ... Register it for one act through `RegisterActEncounter`, or for every act through `RegisterGlobalEncounter`. Each `MonsterModel` used by the encounter must also be registered."
 
 ```csharp
 public abstract class ModActTemplate : ActModel, IModActAssetOverrides, IModActRandomListPolicy {   // [dump sec-content.txt]
@@ -438,7 +438,7 @@ public abstract class ModCharacterTemplate<TCardPool,TRelicPool,TPotionPool> : C
     IModCreatureAnimatorFactory, IModCharacterCreatureAnimatorFactory,
     IModCreatureCombatAnimationStateMachineFactory, IModNonSpineAnimationStateMachineFactory,
     IModCharacterMerchantAnimationStateMachineFactory, IModCharacterRestSiteAnimationStateMachineFactory,
-    IModCharacterEpochTimelineRequirement, … {                                        // [dump sec-visuals.txt]
+    IModCharacterEpochTimelineRequirement, ... {                                        // [dump sec-visuals.txt]
     public CardPoolModel CardPool { get; }
     public RelicPoolModel RelicPool { get; }
     public PotionPoolModel PotionPool { get; }
@@ -458,7 +458,7 @@ public abstract class ModCharacterTemplate<TCardPool,TRelicPool,TPotionPool> : C
     protected ModCharacterTemplate();
 }
 ```
-`[XML]` `ModCharacterTemplate<…>`: "Base class for mod characters with typed content pools, extensible starting content, and asset overrides." `StartingDeckEntry` = `{ Type CardType; int Count; }` with `static StartingDeckEntry Of<TCard>(int count)`. `[dump sec-visuals.txt]`
+`[XML]` `ModCharacterTemplate<...>`: "Base class for mod characters with typed content pools, extensible starting content, and asset overrides." `StartingDeckEntry` = `{ Type CardType; int Count; }` with `static StartingDeckEntry Of<TCard>(int count)`. `[dump sec-visuals.txt]`
 
 ### 3.5 Policy interfaces and `CharacterAssetProfile`
 
@@ -467,12 +467,12 @@ public interface IModEncounterActValidity {                                     
     bool IsValidForAct(Sts2::Core.Models.ActModel act);
 }
 ```
-`[XML]` — "Optionally determines whether a mod `EncounterModel` can enter the encounter pool for a particular `ActModel` during room generation."
+`[XML]` - "Optionally determines whether a mod `EncounterModel` can enter the encounter pool for a particular `ActModel` during room generation."
 
 ```csharp
 public interface IModActRandomListPolicy { bool AllowInRandomActList { get; } }      // [dump sec-content.txt]
 ```
-`[XML]` — "Controls whether a registered mod act can appear in vanilla act-list randomization."
+`[XML]` - "Controls whether a registered mod act can appear in vanilla act-list randomization."
 
 ```csharp
 public interface IModCharacterVanillaSelectionPolicy {                              // [dump sec-visuals.txt]
@@ -481,13 +481,13 @@ public interface IModCharacterVanillaSelectionPolicy {                          
     bool HideInCardLibraryCompendium { get; }
 }
 ```
-`[XML]` — "Controls a mod character's participation in base-game character selection and the Card Library."
+`[XML]` - "Controls a mod character's participation in base-game character selection and the Card Library."
 
 Related one-property policies (`[dump sec-content.txt]`): `IModOrbRandomPoolPolicy { bool AllowInRandomOrbPool }`; `IModCharacterEpochTimelineRequirement { bool RequiresEpochAndTimeline }`; `IModCharacterUnlockPrerequisite { Type UnlocksAfterRunAsType }`; `IModCharacterCardLibraryCompendiumPlacement { IReadOnlyList<CardLibraryCompendiumPlacementRule> CardLibraryCompendiumPlacementRules }`.
 
-#### `CharacterAssetProfile` — full slot list
+#### `CharacterAssetProfile` - full slot list
 
-`[dump sec-visuals.txt]` — `[XML]`: "Groups optional assets and visual overrides for a mod character."
+`[dump sec-visuals.txt]` - `[XML]`: "Groups optional assets and visual overrides for a mod character."
 
 ```csharp
 public sealed class CharacterAssetProfile {            // slots (all get/set):
@@ -514,7 +514,7 @@ Fluent helpers in `CharacterAssetProfiles` (`[dump sec-visuals.txt]`): `FromChar
 
 ## 4. Animation and visuals without Spine
 
-The non-Spine model is **texture path + duration**: a cue names an animation; the cue set maps it to either a static texture path, a `VisualFrameSequence` (list of `{ TexturePath, DurationSeconds }` frames), or both; `CueAnimationBackend` plays these on a plain `Sprite2D`. No `SpriteFrames` resources and no `.tscn` scenes are required — only `res://`-style texture paths. `[dump sec-visuals.txt; XML]`
+The non-Spine model is **texture path + duration**: a cue names an animation; the cue set maps it to either a static texture path, a `VisualFrameSequence` (list of `{ TexturePath, DurationSeconds }` frames), or both; `CueAnimationBackend` plays these on a plain `Sprite2D`. No `SpriteFrames` resources and no `.tscn` scenes are required - only `res://`-style texture paths. `[dump sec-visuals.txt; XML]`
 
 ### 4.1 Definitions
 
@@ -527,7 +527,7 @@ public sealed class VisualCueSet {                                 // [dump sec-
     public VisualCueSet(IReadOnlyDictionary<string,string>, IReadOnlyDictionary<string,VisualFrameSequence>, IReadOnlyDictionary<string,VisualNodeStyle>);
 }
 ```
-`[XML]` — "Defines immutable visuals for named cues, with one static texture, one `VisualFrameSequence`, or both for each cue. Cue sets support combat, game-over screens, merchant and rest-site characters, Ancient foreground layers, and similar contexts."
+`[XML]` - "Defines immutable visuals for named cues, with one static texture, one `VisualFrameSequence`, or both for each cue. Cue sets support combat, game-over screens, merchant and rest-site characters, Ancient foreground layers, and similar contexts."
 
 ```csharp
 public struct VisualFrame { public string TexturePath; public float DurationSeconds; }   // [dump sec-visuals.txt]
@@ -540,7 +540,7 @@ public sealed class VisualFrameSequence {                          // [dump sec-
     public VisualFrameSequence(IReadOnlyList<VisualFrame>, bool, VisualNodeStyle, IReadOnlyList<VisualNodeStyle>);
 }
 ```
-`[XML]` `VisualFrameSequence` — "Defines an immutable ordered frame sequence for one logical cue, such as combat, a merchant room, or an Ancient event stage."
+`[XML]` `VisualFrameSequence` - "Defines an immutable ordered frame sequence for one logical cue, such as combat, a merchant room, or an Ancient event stage."
 
 ```csharp
 public sealed class VisualNodeStyle {                              // [dump sec-visuals.txt]
@@ -574,13 +574,13 @@ public sealed class VisualFrameSequenceBuilder {                   // [dump sec-
     public VisualFrameSequence Build();
 }
 ```
-`[XML]` `VisualCueSetBuilder.Single(…, float)` — "Binds one texture to a non-looping timed cue. The cue completes after its effective `durationSeconds`, allowing state machines to advance." `Sequence(string, VisualFrameSequence)` — "Binds a completed frame sequence to a cue, replacing any static texture registered for the same key."
+`[XML]` `VisualCueSetBuilder.Single(..., float)` - "Binds one texture to a non-looping timed cue. The cue completes after its effective `durationSeconds`, allowing state machines to advance." `Sequence(string, VisualFrameSequence)` - "Binds a completed frame sequence to a cue, replacing any static texture registered for the same key."
 
 ### 4.2 `CueAnimationBackend`
 
 ```csharp
 public sealed class CueAnimationBackend : IAnimationBackend, IAnimationTimingProvider {   // [dump sec-visuals.txt]
-    public event … Started, Completed, Interrupted;                // IAnimationBackend events
+    public event ... Started, Completed, Interrupted;                // IAnimationBackend events
     public Node OwnerNode { get; }
     public CueAnimationBackend(Godot.Node ownerNode, Godot.Sprite2D sprite, VisualCueSet cueSet);
     public bool HasAnimation(string cue);   public void Play(string cue, bool loop);   public void Queue(string cue, bool loop);
@@ -588,7 +588,7 @@ public sealed class CueAnimationBackend : IAnimationBackend, IAnimationTimingPro
     public bool TryGetAnimationDuration(string, out float);   public bool TryGetCurrentAnimationRemaining(out float);
 }
 ```
-`[XML]` — "Drives cue-based visuals from static textures and `VisualFrameSequence` data." Other backends: `SpineAnimationBackend(MegaSprite)`, `GodotAnimationPlayerBackend(AnimationPlayer)`, `AnimatedSprite2DBackend(AnimatedSprite2D)`, `AnimationTreeStateMachineBackend(AnimationTree)`, `CompositeAnimationBackend(IReadOnlyList<IAnimationBackend>, Node)`, `FormSwitchingAnimationBackend(IReadOnlyDictionary<string,IAnimationBackend>, string activeFormId, Node)`. `[dump sec-visuals.txt]`
+`[XML]` - "Drives cue-based visuals from static textures and `VisualFrameSequence` data." Other backends: `SpineAnimationBackend(MegaSprite)`, `GodotAnimationPlayerBackend(AnimationPlayer)`, `AnimatedSprite2DBackend(AnimatedSprite2D)`, `AnimationTreeStateMachineBackend(AnimationTree)`, `CompositeAnimationBackend(IReadOnlyList<IAnimationBackend>, Node)`, `FormSwitchingAnimationBackend(IReadOnlyDictionary<string,IAnimationBackend>, string activeFormId, Node)`. `[dump sec-visuals.txt]`
 
 ### 4.3 `ModAnimStateMachine` and builder
 
@@ -601,7 +601,7 @@ public sealed class ModAnimState {                                 // [dump sec-
     public bool HasTrigger(string);   public void MarkHasLooped();
 }
 public sealed class ModAnimStateMachine {                          // [dump sec-visuals.txt]
-    public event … BoundsUpdated, AnimationStarted, AnimationCompleted, AnimationInterrupted;
+    public event ... BoundsUpdated, AnimationStarted, AnimationCompleted, AnimationInterrupted;
     public ModAnimState Current { get; set; }   public IAnimationBackend Backend { get; }
     public ModAnimStateMachine(IAnimationBackend backend);
     public void AddAnyState(string trigger, ModAnimState target, Func<bool> condition);
@@ -619,9 +619,9 @@ public sealed class ModAnimStateMachineBuilder {                   // [dump sec-
     public ModAnimStateMachine BuildForVisualsRoot(Godot.Node visualsRoot, CharacterModel character, VisualCueSet cueSet);
 }
 ```
-`[XML]` `ModAnimStateMachine` — "Drives `ModAnimState` transitions through any `IAnimationBackend`." `SetTrigger` — "Evaluates `trigger` against any-state, then the current state, and enters the first matching target." `Build` — "Materializes the graph against `backend` and starts the resulting state machine." `BuildForVisualsRoot` — "Discovers cue, Spine, Godot AnimationPlayer, and AnimatedSprite2D backends under `visualsRoot`, then builds the state machine."
+`[XML]` `ModAnimStateMachine` - "Drives `ModAnimState` transitions through any `IAnimationBackend`." `SetTrigger` - "Evaluates `trigger` against any-state, then the current state, and enters the first matching target." `Build` - "Materializes the graph against `backend` and starts the resulting state machine." `BuildForVisualsRoot` - "Discovers cue, Spine, Godot AnimationPlayer, and AnimatedSprite2D backends under `visualsRoot`, then builds the state machine."
 
-`ModAnimStateMachines` (`[dump sec-visuals.txt]`, `[XML]` "convenience factories for the standard creature-animation state graph… state graph shape corresponds to baselib's `CustomCharacterModel.SetupAnimationState`"): `Standard(MegaSprite, string idle, bool idleLoop, string attack, …, string death, bool deathLoop)` returns `CreatureAnimator`; `StandardCue(Node, CharacterModel, …same 8 state args…, VisualCueSet)` / `StandardMerchantCue` / `StandardRestSiteCue` return `ModAnimStateMachine`. (Exact parameter list per dump: 12 `string`/`bool` pairs + loop flags — see `sec-visuals.txt`.)
+`ModAnimStateMachines` (`[dump sec-visuals.txt]`, `[XML]` "convenience factories for the standard creature-animation state graph... state graph shape corresponds to baselib's `CustomCharacterModel.SetupAnimationState`"): `Standard(MegaSprite, string idle, bool idleLoop, string attack, ..., string death, bool deathLoop)` returns `CreatureAnimator`; `StandardCue(Node, CharacterModel, ...same 8 state args..., VisualCueSet)` / `StandardMerchantCue` / `StandardRestSiteCue` return `ModAnimStateMachine`. (Exact parameter list per dump: 12 `string`/`bool` pairs + loop flags - see `sec-visuals.txt`.)
 
 ### 4.4 Creature factory interfaces
 
@@ -633,7 +633,7 @@ public interface IModNonSpineAnimationStateMachineFactory {                     
     ModAnimStateMachine TryCreateNonSpineAnimationStateMachine(Godot.Node node);
 }
 ```
-`[XML]` `IModCreatureCombatAnimationStateMachineFactory` — "Defines a runtime combat `ModAnimStateMachine` factory for creature models whose `NCreature.SetAnimationTrigger(string)` calls should be handled by `ModAnimStateMachine.SetTrigger(string)`. It supports Spine and non-Spine animation backends." (Companions: `IModCreatureVisualsFactory.TryCreateCreatureVisuals()`, `IModCreatureAnimatorFactory.TryCreateCreatureAnimator(MegaSprite)`, `IModCharacterCreatureVisualsFactory`, `IModCharacterCreatureAnimatorFactory`, `IModCharacterMerchantAnimationStateMachineFactory.TryCreateMerchantAnimationStateMachine(Node, CharacterModel)`, `IModCharacterRestSiteAnimationStateMachineFactory.TryCreateRestSiteAnimationStateMachine(Node, CharacterModel)` — all `[dump sec-content.txt]`.)
+`[XML]` `IModCreatureCombatAnimationStateMachineFactory` - "Defines a runtime combat `ModAnimStateMachine` factory for creature models whose `NCreature.SetAnimationTrigger(string)` calls should be handled by `ModAnimStateMachine.SetTrigger(string)`. It supports Spine and non-Spine animation backends." (Companions: `IModCreatureVisualsFactory.TryCreateCreatureVisuals()`, `IModCreatureAnimatorFactory.TryCreateCreatureAnimator(MegaSprite)`, `IModCharacterCreatureVisualsFactory`, `IModCharacterCreatureAnimatorFactory`, `IModCharacterMerchantAnimationStateMachineFactory.TryCreateMerchantAnimationStateMachine(Node, CharacterModel)`, `IModCharacterRestSiteAnimationStateMachineFactory.TryCreateRestSiteAnimationStateMachine(Node, CharacterModel)` - all `[dump sec-content.txt]`.)
 
 ### 4.5 `ModMonsterMoveStateMachines`
 
@@ -647,7 +647,7 @@ public static class ModMonsterMoveStateMachines {                               
     public static MonsterMoveStateMachine.MonsterMoveStateMachine ConditionalEntry(string name, Action<ConditionalBranchState> configure, IReadOnlyList<MonsterState> states);
 }
 ```
-`[XML]` — "Provides common `MonsterMoveStateMachine.MonsterMoveStateMachine` construction patterns for mod monsters, keeping `MonsterModel.GenerateMoveStateMachine` implementations concise." Types are the game's own `MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine.*` (`MoveState`, `RandomBranchState`, `ConditionalBranchState`, `MonsterState`).
+`[XML]` - "Provides common `MonsterMoveStateMachine.MonsterMoveStateMachine` construction patterns for mod monsters, keeping `MonsterModel.GenerateMoveStateMachine` implementations concise." Types are the game's own `MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine.*` (`MoveState`, `RandomBranchState`, `ConditionalBranchState`, `MonsterState`).
 
 ## 5. Cards
 
@@ -677,9 +677,9 @@ public sealed class FreePlayResolution {                                        
     public FreePlayResolution(bool isAutoPlayNoSpend, bool isCardBindingFree, bool isRegisteredDetectorFree);
 }
 ```
-`[XML]` `FreePlayBindingRegistry` — "Provides an extensible registry for determining whether a card play is free." `FreePlayResolution` — "Describes which detection sources marked a card play as free."
+`[XML]` `FreePlayBindingRegistry` - "Provides an extensible registry for determining whether a card play is free." `FreePlayResolution` - "Describes which detection sources marked a card play as free."
 
-Method prose (`[XML]`): `Register` — "Registers an additional free-play detector. The detector should return `true` when mod-defined rules consider the specified `CardPlay` free." `MarkCardFreeNextPlay` — "Marks the card's base costs as free for its next play." `MarkCardFreeThisTurn` — "Marks the card's base costs as free until the end of the turn or its next play." `MarkCardFreeThisCombat` — "Marks the card's base costs as free for the current combat." `MarkCurrentPlayFree` — "Immediately marks the current `CardPlay` as free." `Resolve` — "Resolves the free-play sources for this `CardPlay`." `IsFreeForPlay` — "Returns whether any source marks the play as free." `IsCardFreeForUpcomingPlay` — "Returns whether the card is marked free before a `CardPlay` exists, without consuming a next-play charge." `ClearCardFreeThisTurn` — "Clears current-turn free-play charges that were not consumed by playing the card." `ClearCardFreeAfterPlayed` — "Clears free-play bindings that expire after the card is played." `SetToFreeForRestOfTurn` — "Makes the card's fixed base costs free for the rest of the current turn, including every subsequent play of that card during the turn."
+Method prose (`[XML]`): `Register` - "Registers an additional free-play detector. The detector should return `true` when mod-defined rules consider the specified `CardPlay` free." `MarkCardFreeNextPlay` - "Marks the card's base costs as free for its next play." `MarkCardFreeThisTurn` - "Marks the card's base costs as free until the end of the turn or its next play." `MarkCardFreeThisCombat` - "Marks the card's base costs as free for the current combat." `MarkCurrentPlayFree` - "Immediately marks the current `CardPlay` as free." `Resolve` - "Resolves the free-play sources for this `CardPlay`." `IsFreeForPlay` - "Returns whether any source marks the play as free." `IsCardFreeForUpcomingPlay` - "Returns whether the card is marked free before a `CardPlay` exists, without consuming a next-play charge." `ClearCardFreeThisTurn` - "Clears current-turn free-play charges that were not consumed by playing the card." `ClearCardFreeAfterPlayed` - "Clears free-play bindings that expire after the card is played." `SetToFreeForRestOfTurn` - "Makes the card's fixed base costs free for the rest of the current turn, including every subsequent play of that card during the turn."
 
 ### 5.2 `Cards.ICardOnPlayHookListener` and contexts
 
@@ -708,7 +708,7 @@ public static class CardOnPlayHook {                                            
     public static Task AfterCardOnPlay(AfterCardOnPlayContext context);
 }
 ```
-`[XML]` `ICardOnPlayHookListener` — "Receives hooks immediately before and after a card's own `OnPlay` method." `BeforeCardOnPlayContext` — "Context for hooks that run before a card's own `OnPlay` method." `ICardOnPlayHookListener.BeforeCardOnPlay` — "Runs before the card's own `OnPlay` method. Return `true` to skip that method without skipping the remaining `CardModel.OnPlayWrapper` flow." `CardOnPlayHook.RegisterGlobalListener` — "Registers a process-wide listener. Effects owned by a model should normally implement `ICardOnPlayHookListener` directly."
+`[XML]` `ICardOnPlayHookListener` - "Receives hooks immediately before and after a card's own `OnPlay` method." `BeforeCardOnPlayContext` - "Context for hooks that run before a card's own `OnPlay` method." `ICardOnPlayHookListener.BeforeCardOnPlay` - "Runs before the card's own `OnPlay` method. Return `true` to skip that method without skipping the remaining `CardModel.OnPlayWrapper` flow." `CardOnPlayHook.RegisterGlobalListener` - "Registers a process-wide listener. Effects owned by a model should normally implement `ICardOnPlayHookListener` directly."
 
 ### 5.3 `Models.Capabilities.ICardPropertyContributor`
 
@@ -720,19 +720,19 @@ public interface ICardPropertyContributor {                                     
     IEnumerable<CardTag> GetTags(CardModel card);
 }
 ```
-`[XML]` — "Optional card capability that contributes card-facing property overrides." (Types are `MegaCrit.Sts2.Core.Entities.Cards.*`.)
+`[XML]` - "Optional card capability that contributes card-facing property overrides." (Types are `MegaCrit.Sts2.Core.Entities.Cards.*`.)
 
 ### 5.4 Related card hooks
 
-- `CardTypeTextHook` (`STS2RitsuLib.Cards`) — `RegisterGlobalModifier(ICardTypeTextModifier)`; `[XML]`: "Applies BaseLib-compatible card-type text modifiers supplied by cards, model capabilities, run or combat listeners, and registered global modifiers." See §10.
-- `Cards.Transforms.ModCardTransformRegistry` — per-mod registry with `Register(string id, Action<ModCardTransformContext>)` / async / guarded variants and typed `Register<TOriginal,TReplacement>(string, Action<TOriginal,TReplacement>)`, `RegisterFrom<TOriginal>`, `RegisterTo<TReplacement>`, `Unregister(string)`; context = `{ CardModel Original, Replacement; CardPile OriginalPile; int OriginalPileIndex }`. `[dump sec-cards.txt]`
-- `Cards.DynamicVars.*` — `ModCardVars` factory (10 types, `[dump sec-cards.txt]`): static `Int`, `String`, `Bool`, `Cards`, `Damage`, `OstyDamage`, `Block`, `Gold`, `Heal`, `HpLoss`, `MaxHp`, `Repeat`, `Forge`, `Summon`, `Energy`, `Stars`, `Power<T>`, plus `Computed`/`ComputedEnergy`/`ComputedStars`/`ComputedPower<T>`/`ComputedPowerAmountGiven<T>`/`ComputedDamage`/`ComputedOstyDamage`/`ComputedBlock` factories taking `Func<CardModel,decimal>` or `ComputedDynamicVarFactory` (delegate over `ComputedDynamicVarContext`). `[XML]` `Computed` — "Creates a `ComputedDynamicVar` with optional preview-specific evaluation."
+- `CardTypeTextHook` (`STS2RitsuLib.Cards`) - `RegisterGlobalModifier(ICardTypeTextModifier)`; `[XML]`: "Applies BaseLib-compatible card-type text modifiers supplied by cards, model capabilities, run or combat listeners, and registered global modifiers." See Sec 10.
+- `Cards.Transforms.ModCardTransformRegistry` - per-mod registry with `Register(string id, Action<ModCardTransformContext>)` / async / guarded variants and typed `Register<TOriginal,TReplacement>(string, Action<TOriginal,TReplacement>)`, `RegisterFrom<TOriginal>`, `RegisterTo<TReplacement>`, `Unregister(string)`; context = `{ CardModel Original, Replacement; CardPile OriginalPile; int OriginalPileIndex }`. `[dump sec-cards.txt]`
+- `Cards.DynamicVars.*` - `ModCardVars` factory (10 types, `[dump sec-cards.txt]`): static `Int`, `String`, `Bool`, `Cards`, `Damage`, `OstyDamage`, `Block`, `Gold`, `Heal`, `HpLoss`, `MaxHp`, `Repeat`, `Forge`, `Summon`, `Energy`, `Stars`, `Power<T>`, plus `Computed`/`ComputedEnergy`/`ComputedStars`/`ComputedPower<T>`/`ComputedPowerAmountGiven<T>`/`ComputedDamage`/`ComputedOstyDamage`/`ComputedBlock` factories taking `Func<CardModel,decimal>` or `ComputedDynamicVarFactory` (delegate over `ComputedDynamicVarContext`). `[XML]` `Computed` - "Creates a `ComputedDynamicVar` with optional preview-specific evaluation."
 
 ## 6. Assets and runtime refresh
 
 ### 6.1 `Scaffolding.Content.Patches.ExternalAssetOverrideRegistry`
 
-"Provides external asset overrides for non-card content." `[XML]` — full member list `[dump sec-content.txt]`. Every method is `static void Register<Kind>Provider(string id, Func<Model, …> provider)`; `Unregister(string)` and `Clear()` apply registry-wide.
+"Provides external asset overrides for non-card content." `[XML]` - full member list `[dump sec-content.txt]`. Every method is `static void Register<Kind>Provider(string id, Func<Model, ...> provider)`; `Unregister(string)` and `Clear()` apply registry-wide.
 
 ```csharp
 public static class ExternalAssetOverrideRegistry {
@@ -790,7 +790,7 @@ public static class ExternalAssetOverrideRegistry {
 }
 ```
 
-Sibling registries in the same namespace (`[dump sec-content.txt]`): `ExternalBadgeIconOverrideRegistry` (`RegisterIconPathProvider(string, Func<string,string>)`, `RegisterFrameProvider(…)`), `ExternalCardMaterialOverrideRegistry` (material providers per card), `CardPoolDeckViewStyleRegistry` (`RegisterProvider(string, Func<CardPoolModel, CardPoolDeckViewStyle>)`).
+Sibling registries in the same namespace (`[dump sec-content.txt]`): `ExternalBadgeIconOverrideRegistry` (`RegisterIconPathProvider(string, Func<string,string>)`, `RegisterFrameProvider(...)`), `ExternalCardMaterialOverrideRegistry` (material providers per card), `CardPoolDeckViewStyleRegistry` (`RegisterProvider(string, Func<CardPoolModel, CardPoolDeckViewStyle>)`).
 
 ### 6.2 `Scaffolding.Content.Patches.RuntimeAssetRefreshCoordinator`
 
@@ -807,7 +807,7 @@ public static class RuntimeAssetRefreshCoordinator {                            
 }
 public enum RuntimeAssetRefreshScope { None, Cards, Relics, Potions, Powers, Orbs, AllSafe }
 ```
-`Request(scope)` — "Requests a deferred refresh pass for the specified `scope`." `[XML]` (The `Where` overloads refresh only models matching the predicate; `AllSafe` excludes none of the safe categories.)
+`Request(scope)` - "Requests a deferred refresh pass for the specified `scope`." `[XML]` (The `Where` overloads refresh only models matching the predicate; `AllSafe` excludes none of the safe categories.)
 
 ## 7. Run, lobby and multiplayer
 
@@ -852,7 +852,7 @@ public sealed class RunSavedDataLobbyStagingEvent : IFrameworkLifecycleEvent {
 public enum RunSavedDataLobbyStagingReason { ContributionMerged, PlayerJoined, Manual, Committing, PlayerLeft }
 public sealed class RunSavedDataOptions { int SchemaVersion; RunSavedDataWritePolicy WritePolicy; bool SyncLobbyOnChange; IReadOnlyList<IMigration> Migrations; }
 ```
-`[XML]` `RunSavedDataLobbyStagingEvent` — "Notifies mods that start-run lobby staging data can be read or changed before it is committed to the run." Also `RunSavedDataPreparingEvent` exists for pre-run preparation. `[dump sec-all.txt]`
+`[XML]` `RunSavedDataLobbyStagingEvent` - "Notifies mods that start-run lobby staging data can be read or changed before it is committed to the run." Also `RunSavedDataPreparingEvent` exists for pre-run preparation. `[dump sec-all.txt]`
 
 ### 7.2 Managed net actions
 
@@ -863,7 +863,7 @@ public static class RitsuLibManagedNetActions {                                 
     public static bool Request<T>(RunManager runManager, RitsuLibManagedNetActionDescriptor<T> descriptor, T payload, ulong? targetNetId = null);
 }
 ```
-`[XML]` `RitsuLibManagedNetActions` — "Registers and requests RitsuLib-managed actions through vanilla action-enqueue messages." `Register<T>` — "Registers a managed net-action descriptor and returns its stable opcode. Registering the same module, action key, type, and action type is idempotent; an opcode conflict throws." `Request<T>` — "Serializes and requests a managed action through the vanilla action-queue synchronizer. A `true` result means the enqueue request was issued, not that its executor ran successfully."
+`[XML]` `RitsuLibManagedNetActions` - "Registers and requests RitsuLib-managed actions through vanilla action-enqueue messages." `Register<T>` - "Registers a managed net-action descriptor and returns its stable opcode. Registering the same module, action key, type, and action type is idempotent; an opcode conflict throws." `Request<T>` - "Serializes and requests a managed action through the vanilla action-queue synchronizer. A `true` result means the enqueue request was issued, not that its executor ran successfully."
 
 Supporting types (`[dump sec-all.txt]`): `RitsuLibManagedNetAction` (abstract; "Base class for vanilla queue-action messages that carry RitsuLib-managed actions"), `RitsuLibManagedGameAction`, `RitsuLibManagedNetActionDescriptor<T>` (`{ string Module, ActionKey; Func<T,byte[]> Serialize; Func<ReadOnlySpan<byte>,T> Deserialize; Func<RitsuLibManagedNetActionContext<T>,Task> Execute; GameActionType ActionType }`), `RitsuLibManagedNetActionContext<T>` ("Provides runtime context to a managed net-action executor").
 
@@ -877,14 +877,14 @@ public static class RitsuNetMessageTailExtensions {                             
     public static void Read<TMessage>(this PacketReader reader);
 }
 ```
-`[XML]` — "Registers and dispatches bounded, versioned extension payloads appended to vanilla network messages." `RegisterBytes<TMessage>` — "Registers a bounded binary extension for `TMessage`." `Write<TMessage>` — "Appends all registered extensions for `TMessage` after its vanilla body." `Read<TMessage>` — "Reads and dispatches all registered extensions following the vanilla `TMessage` body."
+`[XML]` - "Registers and dispatches bounded, versioned extension payloads appended to vanilla network messages." `RegisterBytes<TMessage>` - "Registers a bounded binary extension for `TMessage`." `Write<TMessage>` - "Appends all registered extensions for `TMessage` after its vanilla body." `Read<TMessage>` - "Reads and dispatches all registered extensions following the vanilla `TMessage` body."
 
 ### 7.4 `Networking.Sidecar.*` type-level index (58 public types)
 
 OOB wire protocol layered on the vanilla multiplayer transport. `[api-0.111.0.json]`; key summaries `[XML]`.
 
 - **Envelope/wire:** `RitsuLibSidecar` ("Builds Sidecar envelopes for the current wire layout"; `CreateEnvelope`, `CreateEnvelopeCompressed`, `CreateEnvelopeWithDelivery`, `CreateEnvelopeWithDeliveryCompressed`), `RitsuLibSidecarEnvelope`, `RitsuLibSidecarChunkGapBinary`, `RitsuLibSidecarHandshakeBinary`, `RitsuLibSidecarHeaderExtension`, `RitsuLibSidecarWire`, `RitsuLibSidecarWireFlags` (enum), `RitsuLibSidecarDeliverySemantics` (enum), `RitsuLibSidecarPayloadCompression` (enum), `RitsuLibSidecarControlOpcodes`, `RitsuLibSidecarOpcodes` (`For(module, action)`).
-- **Bus/dispatch:** `RitsuLibSidecarBus` ("Dispatches Sidecar payloads and one-shot waiters by 64-bit opcode": `RegisterHandler(ulong, Action<RitsuLibSidecarDispatchContext>)`, `UnregisterHandler`, `ClearHandlers`, `WaitForNextAsync(ulong, TimeSpan, Func<…,bool>, bool, CancellationToken)`), `RitsuLibSidecarDispatchContext` ("Context for a received Sidecar envelope after magic detection, length checks, optional decompression, and opcode dispatch"; has `WithOwnedEnvelopeMemory()` for deferred work).
+- **Bus/dispatch:** `RitsuLibSidecarBus` ("Dispatches Sidecar payloads and one-shot waiters by 64-bit opcode": `RegisterHandler(ulong, Action<RitsuLibSidecarDispatchContext>)`, `UnregisterHandler`, `ClearHandlers`, `WaitForNextAsync(ulong, TimeSpan, Func<...,bool>, bool, CancellationToken)`), `RitsuLibSidecarDispatchContext` ("Context for a received Sidecar envelope after magic detection, length checks, optional decompression, and opcode dispatch"; has `WithOwnedEnvelopeMemory()` for deferred work).
 - **Chunked transfers:** `RitsuLibSidecarChunkBinary` (`FixedHeaderSize`, `DefaultMaxSegmentDataBytes`, `WriteFrame`, `ReadFrame`), `RitsuLibSidecarChunkStream`, `RitsuLibSidecarChunkReceiveProgress` (struct), `RitsuLibSidecarChunkStreamSendProgress` (struct), `RitsuLibSidecarChunkTransferNotifications`.
 - **Typed messaging:** `RitsuLibSidecarTypedMessageRegistry`, `RitsuLibSidecarMessageDescriptor<T>`, `RitsuLibSidecarMessageBinding`, `RitsuLibSidecarTypedDispatchContext<T>` (struct), `IRitsuLibSidecarMessageCodec<T>` (`ulong Opcode; bool TryDecode(ReadOnlySpan<byte>, out T); void Encode(IBufferWriter<byte>, T)`), `RitsuLibSidecarJsonSerializer<T>`, `RitsuLibSidecarTypedMessageReceivedEvent`, `RitsuLibSidecarSyncMessages`, `RitsuLibSidecarSyncMessageDescriptor<T>`, `RitsuLibSidecarSyncMessageContext<T>` (struct), `IRitsuLibSidecarSyncProcessor<T>` (`void Apply(T, ref RitsuLibSidecarDispatchContext)`), `RitsuLibSidecarSyncBroadcastScope` (enum), `RitsuLibSidecarSyncFailurePolicy` (enum).
 - **Sessions/connection:** `RitsuLibSidecarSessionManager`, `RitsuLibSidecarConnectionSession`, `RitsuLibSidecarConnectionExchange`, `RitsuLibSidecarNetworkMapping`, `RitsuLibSidecarProtocol`, `RitsuLibSidecarNetworkingLifecycle`, `RitsuLibSidecarEvents`, `RitsuLibSidecarHighLevelSend`, `RitsuLibSidecarSend`, `RitsuLibSidecarRequestCorrelation`, `RitsuLibSidecarRequestReply`, `RitsuLibSidecarTrafficCounters`, `RitsuLibSidecarNetDiagnosticsOptions`, `RitsuLibSidecarGodotMainLoopScheduling`, `RitsuLibSidecarResourcePolicy`.
@@ -910,7 +910,7 @@ public sealed class ModNodeAttachmentRegistry {                                 
     public static string GetQualifiedNodeAttachmentId(string modId, string localId);
 }
 ```
-`RegisterReadyChild<TParent,TNode>` — "Registers a factory-created child for `TParent` `_Ready` callbacks." `EnsureReadyAttachments` — "Ensures that all `_Ready`-time attachments registered for `parent` are applied." `[XML]`
+`RegisterReadyChild<TParent,TNode>` - "Registers a factory-created child for `TParent` `_Ready` callbacks." `EnsureReadyAttachments` - "Ensures that all `_Ready`-time attachments registered for `parent` are applied." `[XML]`
 
 Options/policy types `[dump sec-visuals.txt]`:
 
@@ -936,7 +936,7 @@ public static class ModScreenService {                                          
     public static bool Toggle(ICapstoneScreen screen);
 }
 ```
-`[XML]` — "Opens, closes, and queries custom `ICapstoneScreen` instances through `NCapstoneContainer`." `Open` — "Mounts `screen` in `NCapstoneContainer`. Opening the screen replaces a different current screen; opening the already current instance is a no-op." `Close` — "Closes the current Capstone screen, if any." `Toggle` — "Closes `screen` when it is current; otherwise opens it."
+`[XML]` - "Opens, closes, and queries custom `ICapstoneScreen` instances through `NCapstoneContainer`." `Open` - "Mounts `screen` in `NCapstoneContainer`. Opening the screen replaces a different current screen; opening the already current instance is a no-op." `Close` - "Closes the current Capstone screen, if any." `Toggle` - "Closes `screen` when it is current; otherwise opens it."
 
 ### 8.3 `Ui.Windows.RitsuFloatingWindow`
 
@@ -962,7 +962,7 @@ public sealed class RitsuFloatingWindowOptions {                                
 }
 public struct RitsuFloatingWindowGeometry { public Vector2 Position; public Vector2 Size; }
 ```
-`[XML]` `RitsuFloatingWindow` — "Provides a themed content window that can remain fixed or allow dragging and eight-direction resizing. It also supports replacing content and saving or restoring window geometry." `SetContent` — "Replaces the window content and returns the previous content. The new content must be a valid unattached control. Replaced content is detached but not freed."
+`[XML]` `RitsuFloatingWindow` - "Provides a themed content window that can remain fixed or allow dragging and eight-direction resizing. It also supports replacing content and saving or restoring window geometry." `SetContent` - "Replaces the window content and returns the previous content. The new content must be a valid unattached control. Replaced content is detached but not freed."
 
 ### 8.4 `Scaffolding.Godot.RitsuGodotTreeCompat`
 
@@ -972,9 +972,9 @@ public static class RitsuGodotTreeCompat {                                      
     public static void MoveChildSafely(Node parent, Node child, int index);
 }
 ```
-`[XML]` — "Provides tree mutations matching the base game's `GodotTreeExtensions` behavior on versions that expose those helpers. Game version 0.103.2 lacks `MoveChildSafely`, so this compatibility API allows the same layout code to compile against every supported version." `AddChildSafely` — "Adds a child immediately or defers the call using the same conditions as the base game's `MegaCrit.Sts2.Core.Helpers.GodotTreeExtensions.AddChildSafely`."
+`[XML]` - "Provides tree mutations matching the base game's `GodotTreeExtensions` behavior on versions that expose those helpers. Game version 0.103.2 lacks `MoveChildSafely`, so this compatibility API allows the same layout code to compile against every supported version." `AddChildSafely` - "Adds a child immediately or defers the call using the same conditions as the base game's `MegaCrit.Sts2.Core.Helpers.GodotTreeExtensions.AddChildSafely`."
 
-Related: `RitsuGodotNodeFactories` ("Provides explicitly invoked Godot node construction APIs. These methods do not patch `PackedScene.Instantiate`, so BaseLib scene conversion and base-game loading retain control of their own hooks." `[XML]`) with `CreateFromResource<TNode>`, `CreateFromScene<TNode>(PackedScene, …)`, `CreateFromScenePath<TNode>(string, …)`, plus `RegisterFactory<TNode>(…)`. `[dump sec-visuals.txt]`
+Related: `RitsuGodotNodeFactories` ("Provides explicitly invoked Godot node construction APIs. These methods do not patch `PackedScene.Instantiate`, so BaseLib scene conversion and base-game loading retain control of their own hooks." `[XML]`) with `CreateFromResource<TNode>`, `CreateFromScene<TNode>(PackedScene, ...)`, `CreateFromScenePath<TNode>(string, ...)`, plus `RegisterFactory<TNode>(...)`. `[dump sec-visuals.txt]`
 
 ## 9. Harmony patch inventory
 
@@ -982,9 +982,9 @@ Related: `RitsuGodotNodeFactories` ("Provides explicitly invoked Godot node cons
 
 ### 9.1 Unannotated (1)
 
-- `STS2RitsuLib.Ui.Overlay.RitsuOverlayActiveScreenPatch` — `[HarmonyPriority(0)]`
+- `STS2RitsuLib.Ui.Overlay.RitsuOverlayActiveScreenPatch` - `[HarmonyPriority(0)]`
 
-### 9.2 `[HarmonyAfter(["BaseLib"])]` — 35 patches (define coexistence: run after BaseLib's equivalent hooks)
+### 9.2 `[HarmonyAfter(["BaseLib"])]` - 35 patches (define coexistence: run after BaseLib's equivalent hooks)
 
 Settings screen integration:
 - `STS2RitsuLib.Settings.Patches.MainMenuModSettingsButtonPatch`
@@ -994,18 +994,18 @@ Settings screen integration:
 Run-history / asset path routing (Scaffolding.Content.Patches):
 - `ImageHelperAncientModRunHistoryIconPathPatch`, `ImageHelperModEncounterRunHistoryIconPathPatch`, `MonsterVisualsPathPatch`
 
-Character asset paths & SFX (Scaffolding.Characters.Patches) — 25 patches: `CardLibraryCompendiumPatch`, `CharacterIconOutlineTexturePathPatch`, `CharacterVisualsPathPatch`, `CharacterEnergyCounterPathPatch`, `CharacterMerchantAnimPathPatch`, `CharacterRestSiteAnimPathPatch`, `CharacterIconTexturePathPatch`, `CharacterIconPathPatch`, `CharacterSelectBgPathPatch`, `CharacterSelectIconPathPatch`, `CharacterSelectLockedIconPathPatch`, `CharacterMapMarkerPathPatch`, `CharacterSelectTransitionPathPatch`, `CharacterTrailPathPatch`, `CharacterAttackSfxPatch`, `CharacterCastSfxPatch`, `CharacterDeathSfxPatch`, `CharacterArmPointingTexturePathPatch`, `CharacterArmRockTexturePathPatch`, `CharacterArmPaperTexturePathPatch`, `CharacterArmScissorsTexturePathPatch`, `CharacterEnergyCounterStarAnchorPatch`
+Character asset paths & SFX (Scaffolding.Characters.Patches) - 25 patches: `CardLibraryCompendiumPatch`, `CharacterIconOutlineTexturePathPatch`, `CharacterVisualsPathPatch`, `CharacterEnergyCounterPathPatch`, `CharacterMerchantAnimPathPatch`, `CharacterRestSiteAnimPathPatch`, `CharacterIconTexturePathPatch`, `CharacterIconPathPatch`, `CharacterSelectBgPathPatch`, `CharacterSelectIconPathPatch`, `CharacterSelectLockedIconPathPatch`, `CharacterMapMarkerPathPatch`, `CharacterSelectTransitionPathPatch`, `CharacterTrailPathPatch`, `CharacterAttackSfxPatch`, `CharacterCastSfxPatch`, `CharacterDeathSfxPatch`, `CharacterArmPointingTexturePathPatch`, `CharacterArmRockTexturePathPatch`, `CharacterArmPaperTexturePathPatch`, `CharacterArmScissorsTexturePathPatch`, `CharacterEnergyCounterStarAnchorPatch`
 
 Health bars (Combat.HealthBars.Patches):
 - `NHealthBarReadyForecastPatch`, `NHealthBarRefreshForegroundOrderedPatch`, `NHealthBarContainerResizeForecastPatch`, `NHealthBarRefreshMiddlegroundForecastPatch`, `NHealthBarRefreshTextForecastPatch`
 
-### 9.3 `[HarmonyBefore(["BaseLib"])]` — 6 patches
+### 9.3 `[HarmonyBefore(["BaseLib"])]` - 6 patches
 
 Animation playback (must own the frame before BaseLib converts):
 - `STS2RitsuLib.Scaffolding.Characters.Patches.ModCreatureCombatAnimationPlaybackPatch`
 - `STS2RitsuLib.Scaffolding.Characters.Patches.ModMerchantCharacterVisualPlaybackPatch`
 
-Keyword routes — `[HarmonyPriority(800)]` (higher than the default 0):
+Keyword routes - `[HarmonyPriority(800)]` (higher than the default 0):
 - `STS2RitsuLib.Keywords.Patches.CardKeywordGetTitleModRoutePatch`
 - `STS2RitsuLib.Keywords.Patches.CardKeywordGetDescriptionModRoutePatch`
 - `STS2RitsuLib.Keywords.Patches.CardKeywordGetCardTextModRoutePatch`
@@ -1021,11 +1021,11 @@ The loader shim additionally installs `STS2RitsuLib.Loader.ReflectionHelperModTy
 
 ## 10. Interop with BaseLib
 
-Every explicit BaseLib accommodation found in the library (signatures `[dump sec-all.txt]`, prose `[XML]`). Harmony ordering between the two libraries is covered in §9.
+Every explicit BaseLib accommodation found in the library (signatures `[dump sec-all.txt]`, prose `[XML]`). Harmony ordering between the two libraries is covered in Sec 9.
 
-**Identity constants** — `STS2RitsuLib.Const` exposes `BaseLibHarmonyId` ("BaseLib's primary Harmony instance ID") and `FrameworkContentRegistryHarmonyId`. `[XML]`
+**Identity constants** - `STS2RitsuLib.Const` exposes `BaseLibHarmonyId` ("BaseLib's primary Harmony instance ID") and `FrameworkContentRegistryHarmonyId`. `[XML]`
 
-**Card type text** — the composition contract is shared with BaseLib:
+**Card type text** - the composition contract is shared with BaseLib:
 ```csharp
 public interface ICardTypeTextModifier {                        // STS2RitsuLib.Models.Capabilities
     IEnumerable<LocString> GetTypeModifiers(CardModel card);
@@ -1035,30 +1035,30 @@ public static class CardTypeTextHook {                           // STS2RitsuLib
 }
 public interface ICustomTypeTextCard { IEnumerable<LocString> GetTypeModifiers(); }
 ```
-`[XML]` `ICardTypeTextModifier` — "Optional model or model-capability hook for visually modifying cards' type text. The method signature and composition contract match BaseLib's `ICardTypeTextModifier`." `ICustomTypeTextCard` — "Optional card interface for visually modifying its own type text. Returned strings use the same composition contract as BaseLib: entries containing `{Type}` wrap the selected base text, while entries without it replace the base text." `CardTypeTextHook` — "Applies BaseLib-compatible card-type text modifiers supplied by cards, model capabilities, run or combat listeners, and registered global modifiers." Implementation is `Models.Capabilities.Patches.CardModelCapabilityPatches.TypeTextPatch` — "Applies BaseLib-compatible type-text modifiers before the plaque LocString is formatted."
+`[XML]` `ICardTypeTextModifier` - "Optional model or model-capability hook for visually modifying cards' type text. The method signature and composition contract match BaseLib's `ICardTypeTextModifier`." `ICustomTypeTextCard` - "Optional card interface for visually modifying its own type text. Returned strings use the same composition contract as BaseLib: entries containing `{Type}` wrap the selected base text, while entries without it replace the base text." `CardTypeTextHook` - "Applies BaseLib-compatible card-type text modifiers supplied by cards, model capabilities, run or combat listeners, and registered global modifiers." Implementation is `Models.Capabilities.Patches.CardModelCapabilityPatches.TypeTextPatch` - "Applies BaseLib-compatible type-text modifiers before the plaque LocString is formatted."
 
-**Custom target types** — `Combat.CardTargeting.BaseLibTargetTypeBridge` — "Bridges BaseLib custom-target predicates when BaseLib is loaded." (Internal plumbing; consumers use `CustomTargetType.RegisterSingleTargetType/RegisterMultiTargetType/…`.) `[XML]`
+**Custom target types** - `Combat.CardTargeting.BaseLibTargetTypeBridge` - "Bridges BaseLib custom-target predicates when BaseLib is loaded." (Internal plumbing; consumers use `CustomTargetType.RegisterSingleTargetType/RegisterMultiTargetType/...`.) `[XML]`
 
-**Max hand size** — `Combat.HandSize.MaxHandSizeCalculator.Calculate(Player)` — "Calculates the effective maximum hand size for `player`. Uses BaseLib's value as the base when available, then applies RitsuLib hook-listener modifiers once." `[XML]` Supporting surface: `IMaxHandSizeModifier { int ModifyMaxHandSize(Player, int); int ModifyMaxHandSizeLate(Player, int); }` and `MaxHandSizeCalculator.ApplyHookListenerModifiers(Player, int)`. ⚠ `Combat.HandSize.BaseLibMaxHandSizeBridge` — "Bridges BaseLib's maximum-hand-size support by detecting its active patches, extending its calculator with RitsuLib modifiers, and using its result as the base value when available" — is documented in the XML but **`NotPublic` (internal) in the shipped binary** (`[api-0.111.0.json]`); consumer code cannot call it directly.
+**Max hand size** - `Combat.HandSize.MaxHandSizeCalculator.Calculate(Player)` - "Calculates the effective maximum hand size for `player`. Uses BaseLib's value as the base when available, then applies RitsuLib hook-listener modifiers once." `[XML]` Supporting surface: `IMaxHandSizeModifier { int ModifyMaxHandSize(Player, int); int ModifyMaxHandSizeLate(Player, int); }` and `MaxHandSizeCalculator.ApplyHookListenerModifiers(Player, int)`. WARN  `Combat.HandSize.BaseLibMaxHandSizeBridge` - "Bridges BaseLib's maximum-hand-size support by detecting its active patches, extending its calculator with RitsuLib modifiers, and using its result as the base value when available" - is documented in the XML but **`NotPublic` (internal) in the shipped binary** (`[api-0.111.0.json]`); consumer code cannot call it directly.
 
-**Health bars** — two registries bridge into BaseLib's foreign-consumer API so one renderer serves both libraries:
-- `Combat.HealthBars.BaseLibHealthBarForecastBridge` — "Bridges `HealthBarForecastRegistry.GetSegments(Creature)` to BaseLib's `HealthBarForecastRegistry.RegisterForeign` API so a single renderer can consume both libraries' forecast segments."
-- `Combat.HealthBars.BaseLibVisualGraftBridge` — "Bridges `HealthBarVisualGraftRegistry.Aggregate(Creature)` to BaseLib's `HealthBarVisualGraftRegistry.RegisterForeign` API so a single renderer can consume both libraries' visual-extension metrics."
-- `Combat.HealthBars.Patches.NHealthBarForecastPatchHelper` — "Renders RitsuLib and imported legacy BaseLib forecasts on `NHealthBar` while BaseLib's current renderer has not taken ownership."
+**Health bars** - two registries bridge into BaseLib's foreign-consumer API so one renderer serves both libraries:
+- `Combat.HealthBars.BaseLibHealthBarForecastBridge` - "Bridges `HealthBarForecastRegistry.GetSegments(Creature)` to BaseLib's `HealthBarForecastRegistry.RegisterForeign` API so a single renderer can consume both libraries' forecast segments."
+- `Combat.HealthBars.BaseLibVisualGraftBridge` - "Bridges `HealthBarVisualGraftRegistry.Aggregate(Creature)` to BaseLib's `HealthBarVisualGraftRegistry.RegisterForeign` API so a single renderer can consume both libraries' visual-extension metrics."
+- `Combat.HealthBars.Patches.NHealthBarForecastPatchHelper` - "Renders RitsuLib and imported legacy BaseLib forecasts on `NHealthBar` while BaseLib's current renderer has not taken ownership."
 Both bridge types are public in the binary (`[api-0.111.0.json]`); their exact members are internal (dumps list only the type-level XML summary).
 
-**Type discovery timing** — `ModTypeDiscoveryHub` — "Extensible post-mod-load type-discovery pipeline invoked during early localization initialization. It mirrors BaseLib's scan timing without coupling discovery to one feature." Its `ModTypeDiscoveryPatch` "Runs `ModTypeDiscoveryHub` once at the same lifecycle point used by BaseLib, before later game systems consume localization data." `STS2RitsuLib.Lifecycle.Patches.ReflectionHelperModTypeCachePostModLoadPatch` — "Clears the base-game mod-type cache at the first initialization point after mods load, before other mods such as BaseLib consume `ReflectionHelper.ModTypes`." `[XML]`
+**Type discovery timing** - `ModTypeDiscoveryHub` - "Extensible post-mod-load type-discovery pipeline invoked during early localization initialization. It mirrors BaseLib's scan timing without coupling discovery to one feature." Its `ModTypeDiscoveryPatch` "Runs `ModTypeDiscoveryHub` once at the same lifecycle point used by BaseLib, before later game systems consume localization data." `STS2RitsuLib.Lifecycle.Patches.ReflectionHelperModTypeCachePostModLoadPatch` - "Clears the base-game mod-type cache at the first initialization point after mods load, before other mods such as BaseLib consume `ReflectionHelper.ModTypes`." `[XML]`
 
-**Animation graph shape** — `Scaffolding.Visuals.StateMachine.ModAnimStateMachines` — "They mirror baselib's `CustomCharacterModel.SetupAnimationState` shape for Spine and for the non-Spine backends selected from a visuals root." `[XML]` (§4.3).
+**Animation graph shape** - `Scaffolding.Visuals.StateMachine.ModAnimStateMachines` - "They mirror baselib's `CustomCharacterModel.SetupAnimationState` shape for Spine and for the non-Spine backends selected from a visuals root." `[XML]` (Sec 4.3).
 
-**Godot node construction — no global instantiation patch** — `Scaffolding.Godot.RitsuGodotNodeFactories` — "Provides explicitly invoked Godot node construction APIs. These methods do not patch `PackedScene.Instantiate`, so BaseLib scene conversion and base-game loading retain control of their own hooks." Related types that name BaseLib explicitly: `RitsuGodotNodeSlot<T>` ("Stores named-slot metadata… corresponding to BaseLib's `NodeInfo<T>`"), `RitsuNode2DSceneRootFactory` ("The factory mirrors BaseLib's flexible root conversion without requiring any named child slots"), `RitsuNRestSiteCharacterNodeFactory` ("This is RitsuLib's explicit-factory counterpart to BaseLib's `NRestSiteCharacter`…"), `RitsuGodotNodeFactoryRegistry` ("Conversion runs only through explicit factory calls; no global `PackedScene.Instantiate` postfix is installed, so BaseLib and base-game scene loading are unaffected"), `RitsuNCreatureVisualsNodeFactory`. `[XML]`
+**Godot node construction - no global instantiation patch** - `Scaffolding.Godot.RitsuGodotNodeFactories` - "Provides explicitly invoked Godot node construction APIs. These methods do not patch `PackedScene.Instantiate`, so BaseLib scene conversion and base-game loading retain control of their own hooks." Related types that name BaseLib explicitly: `RitsuGodotNodeSlot<T>` ("Stores named-slot metadata... corresponding to BaseLib's `NodeInfo<T>`"), `RitsuNode2DSceneRootFactory` ("The factory mirrors BaseLib's flexible root conversion without requiring any named child slots"), `RitsuNRestSiteCharacterNodeFactory` ("This is RitsuLib's explicit-factory counterpart to BaseLib's `NRestSiteCharacter`..."), `RitsuGodotNodeFactoryRegistry` ("Conversion runs only through explicit factory calls; no global `PackedScene.Instantiate` postfix is installed, so BaseLib and base-game scene loading are unaffected"), `RitsuNCreatureVisualsNodeFactory`. `[XML]`
 
-**Settings storage** — `Settings.ModSettingsCallbackValueBinding<TValue>` — "Binds a mod setting to custom read, write, and save callbacks instead of `RitsuLibFramework.GetDataStore(string)`, for example when using a BaseLib JSON configuration or a third-party store." `[XML]`
+**Settings storage** - `Settings.ModSettingsCallbackValueBinding<TValue>` - "Binds a mod setting to custom read, write, and save callbacks instead of `RitsuLibFramework.GetDataStore(string)`, for example when using a BaseLib JSON configuration or a third-party store." `[XML]`
 
-## Appendix — what could not be read
+## Appendix - what could not be read
 
 - Parameter **names** are not preserved by the metadata dumps (only types, in declaration order); XML docs carry no signatures. Signatures above are type-exact, name-free except where XML prose names them (`slotIndex`, `priority`, `eligible`, `modId`, `extensionId`, `maxPayloadBytes`).
-- The exact 12-arg shape of `ModAnimStateMachines.Standard/StandardCue/StandardMerchantCue/StandardRestSiteCue` is truncated in `sec-visuals.txt` (768-char line cap); the dump records the parameter types as repeated `string, bool` pairs — re-read `sec-visuals.txt` lines for `ModAnimStateMachines` before writing code against it.
-- `ModCharacterTemplate<…>`'s interface list is truncated in the dump (`…,`); the listed member set is complete.
+- The exact 12-arg shape of `ModAnimStateMachines.Standard/StandardCue/StandardMerchantCue/StandardRestSiteCue` is truncated in `sec-visuals.txt` (768-char line cap); the dump records the parameter types as repeated `string, bool` pairs - re-read `sec-visuals.txt` lines for `ModAnimStateMachines` before writing code against it.
+- `ModCharacterTemplate<...>`'s interface list is truncated in the dump (`...,`); the listed member set is complete.
 - Full member lists of the three BaseLib bridge classes (public type, internal members) and `RunSavedDataStore`'s remaining accessors: read from `api-0.111.0.json` / `sec-all.txt` if needed.
 - `ModEncounterTemplate`'s full virtual surface in the dump matches the listed members; `BuildProgrammaticCombatBackground` returns the game's `Sts2.Core.Rooms.BackgroundAssets`.

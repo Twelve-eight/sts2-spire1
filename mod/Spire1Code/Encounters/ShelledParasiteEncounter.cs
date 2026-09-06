@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Shell Parasite" weak encounter (<c>MonsterHelper.getEncounter("Shell Parasite")</c>,
-/// bytecode <c>new MonsterGroup(new ShelledParasite())</c> — single monster; the encounter key
+/// bytecode <c>new MonsterGroup(new ShelledParasite())</c> - single monster; the encounter key
 /// says "Shell", the class is <c>ShelledParasite</c>).
 /// </summary>
 public sealed class ShelledParasiteEncounter : Spire1Encounter

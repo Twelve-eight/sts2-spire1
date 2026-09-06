@@ -8,7 +8,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Colorless — Trip (Common Skill). Apply 2 Vulnerable to the enemy (upgraded: to ALL enemies). 0 cost.
+/// StS1 Colorless - Trip (Common Skill). Apply 2 Vulnerable to the enemy (upgraded: to ALL enemies). 0 cost.
 /// Upgrade changes target type (AnyEnemy -&gt; AllEnemies) via the TargetType override; CommonActions.Apply with the
 /// card+play overload routes single-target (play.Target) vs all (card.GetTargets() -&gt; HittableEnemies).
 /// </summary>

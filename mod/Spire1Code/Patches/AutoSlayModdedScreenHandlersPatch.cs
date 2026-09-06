@@ -18,7 +18,7 @@ namespace Spire1.Spire1Code.Patches;
 /// <c>--autoslay</c>-only: teaches the engine's smoke-test drain loop to drive Acts From The
 /// Past's custom minigame overlays (<c>NWheelSpinScreen</c>, <c>NMatchAndKeepScreen</c>).
 /// Without this, any verification run that rolls these shrine events stalls ("No handler for
-/// screen type: ...") and the watchdog aborts the whole run — observed at Wheel of Change,
+/// screen type: ...") and the watchdog aborts the whole run - observed at Wheel of Change,
 /// Act 1 Floor 12, seed P1SMOKE1.
 /// <para>
 /// The minigames pre-roll their outcome at construction and expose a public parameterless
@@ -27,7 +27,7 @@ namespace Spire1.Spire1Code.Patches;
 /// Change's remove-card outcome opens a second "begin removal" option after the engine's
 /// EventRoomHandler has already returned). Registration goes through reflection into
 /// <c>AutoSlayer._screenHandlers</c> because the engine offers no extension API yet (drafted
-/// upstream). <c>NPortalMapBuilderScreen</c> is NOT registered — its minigame has no public
+/// upstream). <c>NPortalMapBuilderScreen</c> is NOT registered - its minigame has no public
 /// completion method.
 /// </para>
 /// </summary>
@@ -92,7 +92,7 @@ internal sealed class AftpMinigameScreenHandler : IScreenHandler
         target.Value.complete.Invoke(target.Value.instance, null);
         AutoSlayLog.Action($"Drove {_screenType.Name} minigame to completion");
 
-        // 引擎收尾是 ≥4s 的补间链，末端才 NOverlayStack.Remove(屏体)。
+        // 引擎收尾是 >=4s 的补间链，末端才 NOverlayStack.Remove(屏体)。
         // 先给足自关时间；超时仍在栈上则代为移除，否则 drain loop 会抛
         // "Screen ... not closing after being handled"（PURE-13 MatchAndKeep 实测）。
         for (int wait = 0; wait < 8; wait++)
@@ -160,17 +160,17 @@ internal sealed class AftpMinigameScreenHandler : IScreenHandler
 
 /// <summary>
 /// <c>--autoslay</c>-only: widens the engine's hard-coded run length. The main loop plays
-/// <c>while (runState.TotalFloor &lt; 49)</c> — tuned for vanilla's three ~16-floor acts.
+/// <c>while (runState.TotalFloor &lt; 49)</c> - tuned for vanilla's three ~16-floor acts.
 /// Ecosystem runs are longer (StS1-faithful acts run 16-17 floors EACH, plus Act4Heart's
-/// fourth act), so TotalFloor crosses 49 around the act 3→4 transition and AutoSlayer
-/// abandons a perfectly healthy run ("Run completed (max floor reached)") — observed right
+/// fourth act), so TotalFloor crosses 49 around the act 3->4 transition and AutoSlayer
+/// abandons a perfectly healthy run ("Run completed (max floor reached)") - observed right
 /// at Act 4's first rest site, seed P1SMOKE1. Surgical fix: rewrite only the literal that
-/// follows the <c>get_TotalFloor</c> call (49 → 120); real endings still come from the
+/// follows the <c>get_TotalFloor</c> call (49 -> 120); real endings still come from the
 /// victory / game-over paths inside the loop, and the 25-minute run timeout is the backstop.
 [HarmonyPatch]
  internal static class AutoSlayMaxFloorPatch
  {
-    /// <summary>PlayRunAsync is `async`: its IL — including the TotalFloor &lt; 49 loop bound —
+    /// <summary>PlayRunAsync is `async`: its IL - including the TotalFloor &lt; 49 loop bound -
     /// lives in the compiler-generated <c>&lt;PlayRunAsync&gt;d__*.MoveNext</c>, not in the stub
     /// method the first attempt patched (which is why the widen silently no-op'd once).
     /// Resolved by name so we do not depend on any Harmony AsyncEnumerator sugar.</summary>

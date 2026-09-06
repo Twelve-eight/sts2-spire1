@@ -9,16 +9,16 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Relics;
 
 /// <summary>
-/// StS1 — Odd Mushroom (event relic, reward of the Mushrooms / Mushroom Lair fight). While Vulnerable, take
+/// StS1 - Odd Mushroom (event relic, reward of the Mushrooms / Mushroom Lair fight). While Vulnerable, take
 /// 25% more attack damage instead of 50%.
 ///
 /// StS1 (relics.json "OddMushroom", VULN_EFFECTIVENESS = 1.25f, EFFECTIVENESS_STRING = 25): the relic overrides no
-/// hook at all. VulnerablePower.atDamageReceive does the work — for NORMAL damage, when the power's owner is the
+/// hook at all. VulnerablePower.atDamageReceive does the work - for NORMAL damage, when the power's owner is the
 /// player and the player holds Odd Mushroom, it returns damage * 1.25f early instead of the usual 1.5x.
 ///
 /// StS2 has no such opening. .tmp/dllsrc/MegaCrit.Sts2.Core.Models.Powers/VulnerablePower.cs:26-56 hard-codes the
-/// only three things allowed to move its multiplier — PaperPhrog (via GetRelic&lt;PaperPhrog&gt;()), CrueltyPower and
-/// DebilitatePower (via GetPower&lt;T&gt;()) — and each of those exposes its own non-virtual ModifyVulnerableMultiplier
+/// only three things allowed to move its multiplier - PaperPhrog (via GetRelic&lt;PaperPhrog&gt;()), CrueltyPower and
+/// DebilitatePower (via GetPower&lt;T&gt;()) - and each of those exposes its own non-virtual ModifyVulnerableMultiplier
 /// (PaperPhrog.cs:17, CrueltyPower.cs:17, DebilitatePower.cs:26); PaperPhrog is `sealed`. A mod relic cannot register
 /// there, so the reduction has to be emulated from the relic's own ModifyDamageMultiplicative
 /// (AbstractModel.cs:1613), which Hook.ModifyDamageInternal (Hook.cs:2536-2547) folds into the same running product
@@ -45,12 +45,12 @@ public class OddMushroom : Spire1Relic
     /// <summary>
     /// Cancels half of the Vulnerable damage bonus on its holder.
     ///
-    /// Derivation — every number below is read out of the engine, none is guessed:
+    /// Derivation - every number below is read out of the engine, none is guessed:
     /// * VulnerablePower.cs:29 declares CanonicalVars = { DynamicVar("DamageIncrease", 1.5m) }, and
     ///   VulnerablePower.cs:41 starts from exactly that BaseValue, so the real Vulnerable multiplier is 1.5.
     ///   VulnerablePower.cs:42-56 may then raise it (PaperPhrog +0.25, CrueltyPower +Amount/100,
     ///   DebilitatePower doubles the bonus), so instead of hard-coding 1.5 this asks the live power for the value it
-    ///   is about to contribute — the same call Hook.ModifyDamageInternal will make (Hook.cs:2540). It is a pure
+    ///   is about to contribute - the same call Hook.ModifyDamageInternal will make (Hook.cs:2540). It is a pure
     ///   read of DynamicVars plus relic/power lookups, so calling it here has no side effects.
     /// * Hook.cs:2540-2541 multiplies each listener's factor into the running damage, so the two factors compose:
     ///   total = live * ours.
@@ -65,7 +65,7 @@ public class OddMushroom : Spire1Relic
     /// The +_oneUlp is a truncation guard, not a fudge factor. 5/6 has no exact decimal form: 1.25m / 1.5m rounds
     /// DOWN to 0.8333333333333333333333333333, so a 4-damage Vulnerable hit computes 4 * 1.5 * that
     /// = 4.9999999999999999999999999998, and Creature.LoseHpInternal casts the result with (int) (Creature.cs:450),
-    /// which truncates — 4 damage where StS1 deals 5. Adding one ulp makes the factor the smallest decimal that is
+    /// which truncates - 4 damage where StS1 deals 5. Adding one ulp makes the factor the smallest decimal that is
     /// >= the exact ratio, so 6m * 0.8333333333333333333333333334 = 5.0000000000000000000000000004 truncates to 5.
     /// The introduced excess is at most damage * live * 1e-28 (below 1e-18 for any damage the engine can hold, which
     /// LoseHpInternal clamps to 999999999), while the smallest gap between a true product and the next integer is
@@ -73,14 +73,14 @@ public class OddMushroom : Spire1Relic
     ///
     /// Both halves of that argument were checked numerically against an exact 28-decimal-digit emulation of this
     /// pipeline (round-half-away division, then a single truncation), not just reasoned about:
-    ///  * without the nudge the result is one short of StS1 for EXACTLY the damage values divisible by 4 — 500 of
-    ///    the first 2000, the cases where damage * 1.25 lands on a whole number — and correct for all others;
+    ///  * without the nudge the result is one short of StS1 for EXACTLY the damage values divisible by 4 - 500 of
+    ///    the first 2000, the cases where damage * 1.25 lands on a whole number - and correct for all others;
     ///  * with the nudge it matches StS1's truncated flat 1.25 for every damage value from 1 to 2000, and never
     ///    exceeds it anywhere in 1..200000.
     ///
     /// Interaction with StS2's own Vulnerable amplifiers, stated plainly rather than flagged: because the target is a
     /// flat 1.25, an active CrueltyPower (on the attacking enemy) or DebilitatePower (on the holder) has its whole
-    /// contribution cancelled — 1.25 / live exactly undoes it. That IS what StS1's early return does structurally,
+    /// contribution cancelled - 1.25 / live exactly undoes it. That IS what StS1's early return does structurally,
     /// and neither power exists in StS1, so there is no vanilla behaviour being lost. PaperPhrog never overlaps at
     /// all: it returns early when the Vulnerable target is its own owner (PaperPhrog.cs:19-22), i.e. the holder.
     /// </summary>
@@ -102,7 +102,7 @@ public class OddMushroom : Spire1Relic
     /// <summary>
     /// Flash site. This runs only for models that actually changed the damage
     /// (Hook.cs:706-715 filters on the modifier list) and only on the real damage path
-    /// (CreatureCmd.cs:283-284), never during intent/damage previews — which is why the flash lives here instead of
+    /// (CreatureCmd.cs:283-284), never during intent/damage previews - which is why the flash lives here instead of
     /// in the multiplier hook. Same pattern as shipped SlowPower.cs:53 and IntangiblePower.cs:60.
     /// </summary>
     public override Task AfterModifyingDamageAmount(CardModel? cardSource)

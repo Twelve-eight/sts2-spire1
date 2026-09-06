@@ -1,4 +1,4 @@
-﻿using BaseLib.Abstracts;
+using BaseLib.Abstracts;
 using Spire1.Spire1Code.Extensions;
 using Godot;
 

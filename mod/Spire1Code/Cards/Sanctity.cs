@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Sanctity (Uncommon Skill). Gain 6 Block (9 upgraded); if the last card played this combat was a
+/// StS1 Watcher - Sanctity (Uncommon Skill). Gain 6 Block (9 upgraded); if the last card played this combat was a
 /// Skill, draw 2 cards. Same "last card played" lookup as the mod's SashWhip / CrushJoints.
 /// </summary>
 [Pool(typeof(WatcherCardPool))]

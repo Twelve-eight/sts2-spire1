@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Establishment (Rare Power). Whenever a card is Retained, reduce its cost by 1 this combat.
+/// StS1 Watcher - Establishment (Rare Power). Whenever a card is Retained, reduce its cost by 1 this combat.
 /// Upgrade adds Innate.
 /// </summary>
 [Pool(typeof(WatcherCardPool))]

@@ -12,7 +12,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 — World of Goop (Goop Puddle). Fishing the gold out of the slime costs 11 HP but pays 75
+/// StS1 - World of Goop (Goop Puddle). Fishing the gold out of the slime costs 11 HP but pays 75
 /// Gold; leaving without it costs a random 20-50 Gold (capped at the player's current gold).
 /// </summary>
 public class GoopPuddle : Spire1Event
@@ -37,7 +37,7 @@ public class GoopPuddle : Spire1Event
 
     public override void CalculateVars()
     {
-        // StS1: goldLoss = miscRng.random(20, 50) — 35-75 at Ascension 15+ — clamped to current gold.
+        // StS1: goldLoss = miscRng.random(20, 50) - 35-75 at Ascension 15+ - clamped to current gold.
         bool ascension15 = Owner.RunState.AscensionLevel >= 15;
         int rolled = Rng.NextInt(ascension15 ? _a15MinGoldLoss : _minGoldLoss, (ascension15 ? _a15MaxGoldLoss : _maxGoldLoss) + 1);
         DynamicVars["GoldLoss"].BaseValue = Math.Min(rolled, Owner.Gold);

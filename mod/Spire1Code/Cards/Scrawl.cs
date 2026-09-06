@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Scrawl (Rare Skill, cost 1 / 0 upgraded). Draw cards until your hand is full. Exhaust.
+/// StS1 Watcher - Scrawl (Rare Skill, cost 1 / 0 upgraded). Draw cards until your hand is full. Exhaust.
 /// Hand limit is the game's CardPile.MaxCardsInHand (10); the shipped StS2 Scrawl uses the same expression.
 /// Our own class is required because the shipped Scrawl also gains Retain on upgrade.
 /// </summary>

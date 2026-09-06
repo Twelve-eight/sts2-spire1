@@ -10,7 +10,7 @@ using MegaCrit.Sts2.Core.Models;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 shrine — Purifier. Pray to remove a card from your deck, or leave.
+/// StS1 shrine - Purifier. Pray to remove a card from your deck, or leave.
 /// </summary>
 public class PurificationShrine : Spire1Event
 {

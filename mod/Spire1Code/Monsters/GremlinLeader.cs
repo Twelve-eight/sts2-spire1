@@ -19,24 +19,24 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The City — Gremlin Leader elite (<c>com.megacrit.cardcrawl.monsters.city.GremlinLeader</c>).
+/// StS1 The City - Gremlin Leader elite (<c>com.megacrit.cardcrawl.monsters.city.GremlinLeader</c>).
 /// 官方中文名：地精首领。
 /// <para>
 /// Bytecode: HP 140-148, A8 145-155; STAB_DMG 6, STAB_AMT 3 (fixed); strAmt 3 / blockAmt 6,
 /// A3+ strAmt 4, A18+ strAmt 5 / blockAmt 10. usePreBattleAction fills <c>gremlins[0..1]</c>
-/// with the two encounter-spawned minions and applies MinionPower to each (visual marker —
+/// with the two encounter-spawned minions and applies MinionPower to each (visual marker -
 /// not ported; the engine derives primary-ness itself, see <see cref="TheCollector"/> remarks).
 /// </para>
 /// <para>
-/// getMove is gated on <c>numAliveGremlins()</c> (living non-self monsters): 0 alive → summon
-/// (RALLY); 1 alive → mixed; 2+ → no summoning, encourage/stab only. Recursive rerolls
+/// getMove is gated on <c>numAliveGremlins()</c> (living non-self monsters): 0 alive -> summon
+/// (RALLY); 1 alive -> mixed; 2+ -> no summoning, encourage/stab only. Recursive rerolls
 /// (<c>getMove(aiRng.random(...))</c>) are approximated by falling through to the next band,
 /// the established Darkling/JawWorm precedent.
 /// </para>
 /// <para>
 /// RALLY (byte 2, UNKNOWN intent): two <c>SummonGremlinAction</c> calls, each filling the first
-/// empty gremlin slot with one randomly picked gremlin. The summon pool — Fat / Sneaky /
-/// Shield / Warrior — follows the City gremlin pack (<c>SummonGremlinAction</c> is not in the
+/// empty gremlin slot with one randomly picked gremlin. The summon pool - Fat / Sneaky /
+/// Shield / Warrior - follows the City gremlin pack (<c>SummonGremlinAction</c> is not in the
 /// local dumps; the roll is uniform over 4 types, aiRng.random(3), and Wizard/Tsundere are not
 /// part of the pack). Slot tracking mirrors <see cref="TheCollector"/>'s minion-slot map.
 /// ENCOURAGE (byte 3, DEFEND_BUFF): the leader buffs herself with Strength only, and every
@@ -45,9 +45,9 @@ namespace Spire1.Spire1Code.Monsters;
 /// </para>
 /// <para>
 /// die(): every surviving gremlin escapes (EscapeAction per survivor; the DIALOG shouts are
-/// cosmetic and omitted). Ascension mapping: A8 HP tier → ToughEnemies, A3 str tier →
-/// DeadlyEnemies, A18 tier → DoubleBoss (top tier, TheCollector A19 precedent).
-/// Donor: <c>gremlin_merc</c> — the shipped battle-gremlin rig (idle_loop/attack_single/
+/// cosmetic and omitted). Ascension mapping: A8 HP tier -> ToughEnemies, A3 str tier ->
+/// DeadlyEnemies, A18 tier -> DoubleBoss (top tier, TheCollector A19 precedent).
+/// Donor: <c>gremlin_merc</c> - the shipped battle-gremlin rig (idle_loop/attack_single/
 /// attack_double/hurt/die); the attack trigger is remapped onto attack_single.
 /// </para>
 /// </summary>
@@ -195,7 +195,7 @@ public sealed class GremlinLeader : Spire1Monster
     }
 
     /// <summary>
-    /// takeTurn ENCOURAGE: ShoutAction (quote — cosmetic, omitted); the leader gets Strength,
+    /// takeTurn ENCOURAGE: ShoutAction (quote - cosmetic, omitted); the leader gets Strength,
     /// every other living monster gets Strength + Block.
     /// </summary>
     private async Task EncourageMove(IReadOnlyList<Creature> targets)

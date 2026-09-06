@@ -33,24 +33,24 @@ namespace Spire1.Spire1Code.Monsters;
 /// </para>
 /// <para>
 /// <c>getMove</c> is a priority chain over one 0-99 roll. First: below half HP and not yet
-/// triggered → LIMIT_BREAK (latch <c>thresholdReached</c>). Then, once triggered, EXECUTE on
+/// triggered -> LIMIT_BREAK (latch <c>thresholdReached</c>). Then, once triggered, EXECUTE on
 /// any roll whose last two moves are not EXECUTE (with a death-quote talk). Then, before the
 /// threshold: GLOAT on the 4th turn (<c>numTurns</c> resets). Then DEFENSIVE_STANCE while
-/// <c>forgeTimes &lt; 2</c> and the roll ≤ 15 (A19+ ≤ 30) — the A19 branch also widens the
-/// GLOAT roll band, but GLOAT itself is turn-latched, not rolled. Then ANGER (roll ≤ 30,
-/// not last move, not after stance), FACE_SLAP (roll ≤ 55, not last move), and finally
+/// <c>forgeTimes &lt; 2</c> and the roll <= 15 (A19+ <= 30) - the A19 branch also widens the
+/// GLOAT roll band, but GLOAT itself is turn-latched, not rolled. Then ANGER (roll <= 30,
+/// not last move, not after stance), FACE_SLAP (roll <= 55, not last move), and finally
 /// HEAVY_SLASH unless it was the last move, else FACE_SLAP.
 /// </para>
 /// <para>
-/// Ascension mapping, same scheme as the other ported bosses: A4's damage/Strength tier →
-/// <see cref="AscensionLevel.DeadlyEnemies"/>, A9's HP/forge/block tier →
-/// <see cref="AscensionLevel.ToughEnemies"/>, A19's boss tier → <see cref="AscensionLevel.DoubleBoss"/>
+/// Ascension mapping, same scheme as the other ported bosses: A4's damage/Strength tier ->
+/// <see cref="AscensionLevel.DeadlyEnemies"/>, A9's HP/forge/block tier ->
+/// <see cref="AscensionLevel.ToughEnemies"/>, A19's boss tier -> <see cref="AscensionLevel.DoubleBoss"/>
 /// (topmost, boss-scoped, cumulative with the other two; nested lookups below).
 /// </para>
 /// <para>
 /// Vanilla details intentionally not reproduced: <c>usePreBattleAction</c> (music, BGM
 /// unsilence, <c>markBossAsSeen</c>) and <c>die()</c> (shake, VO, boss-victory/unlock calls)
-/// are scene/audio/unlock plumbing owned by the encounter and act layers — same call as the
+/// are scene/audio/unlock plumbing owned by the encounter and act layers - same call as the
 /// other ported bosses (Deca remarks). The first-turn Champion Belt relic dialog is dropped
 /// (the relic is not ported). The EXECUTE death quote plays at the start of the move body
 /// instead of at roll time, which is the only hook the move state machine exposes.
@@ -90,7 +90,7 @@ public sealed class Champ : Spire1Monster
     private const int DebuffAmount = 2;
 
     /// <summary>
-    /// Shipped <c>FlailKnight</c>: an armored knight swinging a heavy flail — the closest shipped
+    /// Shipped <c>FlailKnight</c>: an armored knight swinging a heavy flail - the closest shipped
     /// rig to the Champ's golden armor, shield and flail silhouette. Its rig ships
     /// <c>idle_loop</c>/<c>buff</c>/<c>attack_flail</c>/<c>attack_ram</c>/<c>hurt</c>/<c>die</c>
     /// (per <c>FlailKnight.GenerateAnimator</c>), so the engine-default trigger set is remapped
@@ -100,8 +100,8 @@ public sealed class Champ : Spire1Monster
 
     /// <summary>
     /// Remaps the engine's default animation triggers onto the tracks this donor rig actually has
-    /// (<c>FlailKnight.GenerateAnimator</c> is the authority for the names): Attack → attack_flail
-    /// (Heavy Slash / Execute / Face Slap swings), Cast → buff (Anger / Gloat / Limit Break).
+    /// (<c>FlailKnight.GenerateAnimator</c> is the authority for the names): Attack -> attack_flail
+    /// (Heavy Slash / Execute / Face Slap swings), Cast -> buff (Anger / Gloat / Limit Break).
     /// </summary>
     public override CreatureAnimator GenerateAnimator(MegaSprite controller) =>
         SetupAnimationState(controller, "idle_loop", "die", hitName: "hurt",
@@ -170,7 +170,7 @@ public sealed class Champ : Spire1Monster
         MoveState gloat = new("GLOAT_MOVE", GloatMove, new DebuffIntent());
         MoveState limitBreak = new("LIMIT_BREAK_MOVE", LimitBreakMove, new BuffIntent());
 
-        // Every move cycles back through the priority chain — bytecode getMove, in order.
+        // Every move cycles back through the priority chain - bytecode getMove, in order.
         ConditionalBranchState branch = new("CHAMP_BRANCH");
         heavySlash.FollowUpState = branch;
         defensiveStance.FollowUpState = branch;
@@ -309,8 +309,8 @@ public sealed class Champ : Spire1Monster
         ("moves.GLOAT_MOVE.taunt2", Tr("Come at me!", "放马过来！")),
         ("moves.GLOAT_MOVE.taunt3", Tr("Do your worst! NL @HAHAHA!@", "尽管出手！NL @哈哈哈！@")),
         ("moves.GLOAT_MOVE.taunt4", Tr("Have a free shot! NL Futile weakling!", "送你一次免费出手的机会！NL 徒劳的弱者！")),
-        ("moves.LIMIT_BREAK_MOVE.limitBreak1", Tr("~You've~ ~done~ ~it~ ~now...~", "你这下闯大祸了……")),
+        ("moves.LIMIT_BREAK_MOVE.limitBreak1", Tr("~You've~ ~done~ ~it~ ~now...~", "你这下闯大祸了......")),
         ("moves.LIMIT_BREAK_MOVE.limitBreak2", Tr("@DEFEAT??@ NL @IMPOSSIBLE!!@", "失败？？NL 不可能！！")),
-        ("moves.EXECUTE_MOVE.deathQuote1", Tr("~DIE~ ~.~ ~.~ ~.~", "去死吧……")),
+        ("moves.EXECUTE_MOVE.deathQuote1", Tr("~DIE~ ~.~ ~.~ ~.~", "去死吧......")),
         ("moves.EXECUTE_MOVE.deathQuote2", Tr("Face my wrath!", "承受我的怒火！")));
 }

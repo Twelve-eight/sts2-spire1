@@ -1,4 +1,4 @@
-# Watcher UNCOMMON part A (17) — StS1 vanilla
+# Watcher UNCOMMON part A (17) - StS1 vanilla
 
 All numbers extracted from the shipped StS1 jar (`desktop-1.0.jar`) bytecode. Use these EXACT values. Pool attribute for every card: `[Pool(typeof(WatcherCardPool))]`.
 
@@ -76,7 +76,7 @@ All numbers extracted from the shipped StS1 jar (`desktop-1.0.jar`) bytecode. Us
 - official description: `Choose 1 of 3 Attacks of any color to add into your hand. NL Exhaust.`
 - official upgraded description: `Choose 1 of 3 Attacks of any color to add into your hand. NL It costs 0 this turn. NL Exhaust.`
 - StS2 name collision: no -> plain title "Foreign Influence"
-- IMPL: Skill cost 0, Exhaust: choose 1 of 3 Attacks OF ANY COLOR to add into your hand (upgraded: the chosen card costs 0 this turn — verify the vanilla upgrade text before implementing). Needs a 3-option card choice from all character pools; use the CardFactory generation the mod's Cards/Distraction.cs uses but across every card pool, then a selection. If a 'choose one of N generated cards' API does not exist, FLAG.
+- IMPL: Skill cost 0, Exhaust: choose 1 of 3 Attacks OF ANY COLOR to add into your hand (upgraded: the chosen card costs 0 this turn - verify the vanilla upgrade text before implementing). Needs a 3-option card choice from all character pools; use the CardFactory generation the mod's Cards/Distraction.cs uses but across every card pool, then a selection. If a 'choose one of N generated cards' API does not exist, FLAG.
 
 ## Foresight  (class `Foresight`, loc key `SPIRE1-FORESIGHT`)
 - StS1 id `Wireheading`, official name `Foresight`

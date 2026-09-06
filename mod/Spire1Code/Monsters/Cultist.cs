@@ -14,7 +14,7 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 Exordium — Cultist (<c>com.megacrit.cardcrawl.monsters.exordium.Cultist</c>).
+/// StS1 Exordium - Cultist (<c>com.megacrit.cardcrawl.monsters.exordium.Cultist</c>).
 /// <para>
 /// Bytecode: HP_MIN 48 / HP_MAX 54, A2 50/56; RITUAL_AMT 3, A_2_RITUAL_AMT 4; ATTACK_DMG 6.
 /// getMove: first turn always INCANTATION (BUFF), then DARK_STRIKE forever.

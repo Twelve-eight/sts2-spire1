@@ -1,4 +1,4 @@
-// pool-audit.mjs — static [Pool] attribution lint for Spire1 card classes.
+// pool-audit.mjs - static [Pool] attribution lint for Spire1 card classes.
 // Catches the GeneticAlgorithm class of bugs (missing [Pool] -> silent pool
 // inheritance -> wrong-color card; see research/kb/pool-architecture.md I2b).
 // Usage: node tools/pool-audit.mjs [cardsDir]
@@ -44,7 +44,7 @@ function resolvePool(name, seen = new Set()) {
 }
 
 // SharedCardReuse twins: Cards/<Name> with base Spire1Card registered explicitly
-// at runtime via ModHelper.AddModelToPool (no [Pool] attribute — by design).
+// at runtime via ModHelper.AddModelToPool (no [Pool] attribute - by design).
 const reuseSrc = fs.readFileSync(path.join(root, 'mod', 'Spire1Code', 'Character', 'SharedCardReuse.cs'), 'utf8');
 const twins = new Set([...reuseSrc.matchAll(/typeof\(Sts2Cards\.([A-Za-z0-9_]+)\)/g)].map(m => m[1]));
 
@@ -71,7 +71,7 @@ if (multi.length) {
   for (const o of multi) console.log(`  ${o.name} [${o.pools.join(', ')}] (${o.file})`);
 }
 if (orphans.length) {
-  console.log(`\n[FAIL] no resolvable [Pool] (${orphans.length}) — silent pool inheritance risk:`);
+  console.log(`\n[FAIL] no resolvable [Pool] (${orphans.length}) - silent pool inheritance risk:`);
   for (const o of orphans) console.log(`  ${o.name} : ${o.base ?? '??'} (${o.file})`);
 } else {
   console.log('\n[ok] every concrete class resolves to a pool');

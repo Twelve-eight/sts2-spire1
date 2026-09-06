@@ -11,7 +11,7 @@ using MegaCrit.Sts2.Core.Models.Acts;
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
-/// StS1 — Living Wall. The wall demands a tribute of one card: remove it, transform it, or upgrade
+/// StS1 - Living Wall. The wall demands a tribute of one card: remove it, transform it, or upgrade
 /// it. The Grow choice is locked while no card in the deck is upgradeable.
 /// </summary>
 public class LivingWall : Spire1Event

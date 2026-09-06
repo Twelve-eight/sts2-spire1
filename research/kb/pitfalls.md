@@ -1,4 +1,4 @@
-# 陷阱模式库（Pitfalls）— sts2-spire1 错误案例知识库
+# 陷阱模式库（Pitfalls）- sts2-spire1 错误案例知识库
 
 > 每条 = 症状 / 根因 / 修复 / 预防。来源：实机暴露 + 双审计报告 + Critic 17 条 + 编译告警普查。
 > 新错误结案后按此模板追加。方法流程见 skill《sts2-spire1-card-audit》。
@@ -8,18 +8,18 @@
 ### P-01 关键词双重渲染
 - **症状**：卡牌描述出现两个"消耗。"（用户实机报告，猎手系 48 张）
 - **根因**：引擎按 `CanonicalKeywords` 自动渲染关键词行；我们照抄官方 StS1 原文（原文自带"消耗。"），叠加成双。
-- **修复**：剥离独立成行的尾部自消耗句（48 张全角色）；**窄规则**——只剥行首独立形态，句中语义（SENTINEL 条件句、CORRUPTION 技能消耗、OMNISCIENCE 打出后消耗）保留。
+- **修复**：剥离独立成行的尾部自消耗句（48 张全角色）；**窄规则**--只剥行首独立形态，句中语义（SENTINEL 条件句、CORRUPTION 技能消耗、OMNISCIENCE 打出后消耗）保留。
 - **预防**：新卡文案若含关键词名，先查该类是否声明同名 CanonicalKeyword。
 
 ### P-02 谓词取反（致命判定）
 - **症状**：LessonLearned 几乎从不触发升级奖励。
 - **根因**：`All(p => !p.ShouldOwnerDeathTriggerFatal())` 多写一个 `!`。引擎默认 true（真死）；MinionPower=false 是唯一例外。官方 Feed/HandOfGreed/TheHunt 均无否定。
 - **修复**：去掉否定，对齐官方三例。
-- **预防**：移植布尔语义时必须找到 ≥1 个官方同构实现做镜像对照。
+- **预防**：移植布尔语义时必须找到 >=1 个官方同构实现做镜像对照。
 
 ### P-03 池归属默认继承
 - **症状**：GA 出现在铁甲池（用户实锤"不该是红色牌"）。
-- **根因**：`[Pool]` 特性漏挂 → 继承基类池。默认继承是隐形行为。
+- **根因**：`[Pool]` 特性漏挂 -> 继承基类池。默认继承是隐形行为。
 - **修复**：显式 `[Pool(typeof(DefectCardPool))]`。
 - **预防**：新卡模板强制携带 Pool 行；PoolCensus 启动探针核对四池计数。
 
@@ -54,7 +54,7 @@
 
 ### P-08 日志轮转吞现场
 - **症状**：火堆黑屏原始 110k 行日志丢失，归因被迫中止。
-- **修复**：SOP 固化——冻结瞬间先 robocopy logs 再杀进程。
+- **修复**：SOP 固化--冻结瞬间先 robocopy logs 再杀进程。
 - **预防**：见 research/kb/debug-protocols.md。
 
 ### P-09 进程检查假阳性
@@ -73,19 +73,19 @@
 | CS8604 | 158 | 可空实参传入非空形参 |
 | CS1998 | 30 | async 无 await |
 | CS8600 | 14 | null 转 non-null |
-| CS4014 | 10 | 已审结：Shuriken/OrnamentalFan/LetterOpener/Kunai 视觉副作用 RunSafely 包装 + Darkling 群杀强制语义，均为有意火忘 ✓ |
+| CS4014 | 10 | 已审结：Shuriken/OrnamentalFan/LetterOpener/Kunai 视觉副作用 RunSafely 包装 + Darkling 群杀强制语义，均为有意火忘 [x] |
 | CS0414 | 2 | 字段赋值未用 |
 
 处理策略：不盲目清零；CS4014 与 CS8602 中位于出牌路径的逐条人审，其余登记为已知噪音。
 
 ### P-11 升级行为无文案差异（用户报告"武装和武装+没区别"）
 - **症状**：升级前后卡面完全一致（仅卡名 + 徽章变），用户以为升级失效。反复出现、历史审计从未发现。
-- **根因**：行为型升级（一张→全部、单体→全体）只改实现分支，description 零升级差异表达。引擎渲染同一条描述；差异必须由 `{IfUpgraded:show:}` / swap `-旧-+新+` / diff 变量承载。历史三波审计维度是"数值/行为保真+双语键齐备"，从未有"升级差异表达完备性"维度；本地化审计只对齐键集不对齐升级语义。
-- **修复**：5 卡（Armaments/Trip/Blind/Burst/Stack）双语补 swap/变量；Burst zhs 顺带修"非攻击牌→技能牌"误译。Trip/Blind eng 的 `.+ ... .+` 残骸证明曾有人修了一半（只删 -旧- 留 +新+）——半途修复即埋雷。
+- **根因**：行为型升级（一张->全部、单体->全体）只改实现分支，description 零升级差异表达。引擎渲染同一条描述；差异必须由 `{IfUpgraded:show:}` / swap `-旧-+新+` / diff 变量承载。历史三波审计维度是"数值/行为保真+双语键齐备"，从未有"升级差异表达完备性"维度；本地化审计只对齐键集不对齐升级语义。
+- **修复**：5 卡（Armaments/Trip/Blind/Burst/Stack）双语补 swap/变量；Burst zhs 顺带修"非攻击牌->技能牌"误译。Trip/Blind eng 的 `.+ ... .+` 残骸证明曾有人修了一半（只删 -旧- 留 +新+）--半途修复即埋雷。
 - **预防**：`.tmp/upgrade-diff-audit.mjs` 四分类扫描（costOnly/keyword/numeric/behavior）纳入冒烟前置；新卡 behavior 型升级必须带 swap；写 swap 时记住**旧段两侧横线、新段两侧加号**（写反不报错、静默不渲染）。
 
 ### P-12 第三方 mod 本地配置门控造成联机分歧（Act4Heart 冒火精英）
 - **症状**：四人联机进精英战瞬间 StateDivergence 被踢；进房前地图上没见冒火特效（用户观察）。
-- **根因**：Act4Heart GreenKeyHooks 的地图标记与进战 buff 都门控在**每端本地** `keys_enable`（dolso.act4_heart.config），MapPoint.Quests 不跨网序列化。本地 false vs host true → host 端怪物多 17 层金属化 → checksum 分歧。
-- **诊断路径**：godot.log 搜 `State divergence` → 读 Local/Remote STATE DUMP 差异字段（本例 POWER.METALLICIZE_POWER_A4H）→ 按 power ID 前缀定位 mod（A4H=Act4Heart）→ 反编译该 mod 找挂载钩子 → 比对本地 config。RitsuLib 诊断包（logs/ritsulib_state_divergence_*.zip）的 state-divergence-report.txt 直接列 differ 字段，首选。
-- **预防**：联机前全队对齐第三方 mod 的本地配置文件（Act4Heart:dolso.act4_heart.config 的 keys_enable）；任何"本地配置门控地图/战斗钩子"的 mod 都是结构性分歧源，见 mechanics-v3 卷七 §3 分歧源族谱。
+- **根因**：Act4Heart GreenKeyHooks 的地图标记与进战 buff 都门控在**每端本地** `keys_enable`（dolso.act4_heart.config），MapPoint.Quests 不跨网序列化。本地 false vs host true -> host 端怪物多 17 层金属化 -> checksum 分歧。
+- **诊断路径**：godot.log 搜 `State divergence` -> 读 Local/Remote STATE DUMP 差异字段（本例 POWER.METALLICIZE_POWER_A4H）-> 按 power ID 前缀定位 mod（A4H=Act4Heart）-> 反编译该 mod 找挂载钩子 -> 比对本地 config。RitsuLib 诊断包（logs/ritsulib_state_divergence_*.zip）的 state-divergence-report.txt 直接列 differ 字段，首选。
+- **预防**：联机前全队对齐第三方 mod 的本地配置文件（Act4Heart:dolso.act4_heart.config 的 keys_enable）；任何"本地配置门控地图/战斗钩子"的 mod 都是结构性分歧源，见 mechanics-v3 卷七 Sec 3 分歧源族谱。

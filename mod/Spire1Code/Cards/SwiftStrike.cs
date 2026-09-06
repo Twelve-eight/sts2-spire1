@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Colorless — Swift Strike (Common Attack). Deal 7 damage (10 upgraded). 0 cost.</summary>
+/// <summary>StS1 Colorless - Swift Strike (Common Attack). Deal 7 damage (10 upgraded). 0 cost.</summary>
 [Pool(typeof(ColorlessCardPool))]
 public class SwiftStrike() : Spire1Card(0, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {

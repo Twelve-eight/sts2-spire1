@@ -7,7 +7,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent — Terror (Uncommon Skill). Apply 99 Vulnerable. Exhaust (cost 0 upgraded).</summary>
+/// <summary>StS1 Silent - Terror (Uncommon Skill). Apply 99 Vulnerable. Exhaust (cost 0 upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class Terror() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetType.AnyEnemy)
 {

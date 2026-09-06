@@ -56,7 +56,7 @@ public sealed class LouseDefensive : Spire1Monster
     public override int MaxInitialHp => AscensionHelper.GetValueIfAscension(AscensionLevel.ToughEnemies, 18, 17);
 
     // Byrdpip is a small critter whose shipped model only overrides SetupSkins to pick a
-    // relic-driven skin — defaulting to "version1" when no owner exists — so the engine's
+    // relic-driven skin - defaulting to "version1" when no owner exists - so the engine's
     // default animator and visuals work for a borrowed scene with no extra overrides.
     protected override string DonorId => "byrdpip";
 
@@ -67,7 +67,7 @@ public sealed class LouseDefensive : Spire1Monster
     public override async Task AfterAddedToRoom()
     {
         await base.AfterAddedToRoom();
-        // StS1 monsterHpRng ≈ StS2 run-level Niche stream (one-off per-monster rolls).
+        // StS1 monsterHpRng ~ StS2 run-level Niche stream (one-off per-monster rolls).
         Rng spawnRng = base.RunRng.Niche;
         _biteDamage = spawnRng.NextInt(BiteMin, BiteMax + 1);
         await PowerCmd.Apply<CurlUpPower>(new ThrowingPlayerChoiceContext(), base.Creature,
@@ -139,7 +139,7 @@ public sealed class LouseDefensive : Spire1Monster
 
     private async Task BiteMove(IReadOnlyList<Creature> targets)
     {
-        // Vanilla: AnimateSlowAttackAction + DamageAction(BLUNT_LIGHT) → blunt hit vfx.
+        // Vanilla: AnimateSlowAttackAction + DamageAction(BLUNT_LIGHT) -> blunt hit vfx.
         await DamageCmd.Attack(_biteDamage).FromMonster(this).WithAttackerAnim("Attack", 0.2f)
             .WithHitFx("vfx/vfx_attack_blunt")
             .Execute(null);

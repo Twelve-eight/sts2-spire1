@@ -6,8 +6,8 @@ namespace Spire1.Spire1Code.Patches;
 
 /// <summary>
 /// Rest-site backgrounds are consumed as scenes
-/// (<c>ActModel.CreateRestSiteBackground → PreloadManager.Cache.GetScene(tscn)</c>), and our pck
-/// pipeline cannot ship .tscn — PckPacker aborts the whole pack when it sees one. So instead of a
+/// (<c>ActModel.CreateRestSiteBackground -> PreloadManager.Cache.GetScene(tscn)</c>), and our pck
+/// pipeline cannot ship .tscn - PckPacker aborts the whole pack when it sees one. So instead of a
 /// custom scene file, this patch replaces the instantiated scene with an equivalent code-built
 /// Control: a full-rect TextureRect over the act's composited StS1 map background
 /// (<c>res://Spire1/images/rest_site/campfire_bg.png</c>, pre-darkened in the asset pipeline).

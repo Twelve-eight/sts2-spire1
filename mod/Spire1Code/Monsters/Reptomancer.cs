@@ -16,7 +16,7 @@ using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 namespace Spire1.Spire1Code.Monsters;
 
 /// <summary>
-/// StS1 The Beyond — Reptomancer elite (<c>com.megacrit.cardcrawl.monsters.beyond.Reptomancer</c>).
+/// StS1 The Beyond - Reptomancer elite (<c>com.megacrit.cardcrawl.monsters.beyond.Reptomancer</c>).
 /// 官方中文名：拜蛇术士。
 /// <para>
 /// Bytecode: HP 180-190, A8 190-200; biteDmg 13 (A3 16), snakeStrikeDmg 30 (A3 34);
@@ -25,10 +25,10 @@ namespace Spire1.Spire1Code.Monsters;
 /// <see cref="SnakeDagger"/>s into the daggers array slots 0,1.
 /// </para>
 /// <para>
-/// getMove: firstMove → SPAWN_DAGGER; else r&lt;33: last(SNAKE_STRIKE) ? reroll 33-99 (approximated
+/// getMove: firstMove -> SPAWN_DAGGER; else r&lt;33: last(SNAKE_STRIKE) ? reroll 33-99 (approximated
 /// by falling through) : SNAKE_STRIKE; 33&lt;=r&lt;66: lastTwo(SPAWN_DAGGER) ? SNAKE_STRIKE :
 /// (canSpawn() ? SPAWN_DAGGER : SNAKE_STRIKE); r&gt;=66: last(BIG_BITE) ? reroll 0-64 (fall
-/// through) : BIG_BITE. <c>canSpawn()</c> returns true when ≤3 non-self enemies are alive.
+/// through) : BIG_BITE. <c>canSpawn()</c> returns true when <=3 non-self enemies are alive.
 /// Recursive rerolls are approximated by falling through to the next band (Darkling precedent).
 /// </para>
 /// <para>
@@ -37,9 +37,9 @@ namespace Spire1.Spire1Code.Monsters;
 /// free slots (4 max). BIG_BITE: single heavy hit of snakeStrikeDmg.
 /// die(): every surviving SnakeDagger is killed (vanilla SuicideAction); the boss is the primary
 /// enemy so combat ends when it dies, but the kill ensures no lingering rewards.
-/// Ascension mapping: A8 HP tier → ToughEnemies, A3 damage tier → DeadlyEnemies, A18 dagger-spawn
-/// tier → DoubleBoss (top tier, TheCollector A19 precedent).
-/// Donor: <c>entomancer</c> — the shipped caster-summoner with full track set (idle_loop/cast/
+/// Ascension mapping: A8 HP tier -> ToughEnemies, A3 damage tier -> DeadlyEnemies, A18 dagger-spawn
+/// tier -> DoubleBoss (top tier, TheCollector A19 precedent).
+/// Donor: <c>entomancer</c> - the shipped caster-summoner with full track set (idle_loop/cast/
 /// attack/hurt/die), a perfect match for a robed mage who summons minions.
 /// </para>
 /// </summary>
@@ -83,7 +83,7 @@ public sealed class Reptomancer : Spire1Monster
                 break;
             }
         }
-        // Vanilla: daggers after self → daggers[0], before → daggers[1] (usePreBattleAction
+        // Vanilla: daggers after self -> daggers[0], before -> daggers[1] (usePreBattleAction
         // indexOf comparison).
         for (int i = 0; i < enemies.Count; i++)
         {
@@ -149,7 +149,7 @@ public sealed class Reptomancer : Spire1Monster
         return true;
     }
 
-    /// <summary>Vanilla canSpawn(): living non-self monsters > 3 → false.</summary>
+    /// <summary>Vanilla canSpawn(): living non-self monsters > 3 -> false.</summary>
     private bool CanSpawn()
     {
         int count = 0;

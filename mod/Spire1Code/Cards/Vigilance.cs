@@ -10,7 +10,7 @@ using Spire1.Spire1Code.Powers;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Vigilance (Basic). Gain 8 Block (12 upgraded) and enter Calm.
+/// StS1 Watcher - Vigilance (Basic). Gain 8 Block (12 upgraded) and enter Calm.
 ///
 /// The stance half is real, not approximated: the mod ships its own stance subsystem
 /// (Powers/StancePower.cs + CalmPower/WrathPower/DivinityPower, driven by Extensions/StanceCmd.cs),

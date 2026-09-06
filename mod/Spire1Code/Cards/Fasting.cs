@@ -8,7 +8,7 @@ using Spire1.Spire1Code.Character;
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
-/// StS1 Watcher — Fasting (Uncommon Power). Gain 3 Strength (4 upgraded), 3 Dexterity (4 upgraded), and gain
+/// StS1 Watcher - Fasting (Uncommon Power). Gain 3 Strength (4 upgraded), 3 Dexterity (4 upgraded), and gain
 /// 1 less Energy at the start of each turn.
 /// StS1 applies a generic "Energy Down" power for the drawback; StS2 ships that exact power as WasteAwayPower
 /// (Debuff/Counter whose ModifyMaxEnergy returns amount - Amount). The per-turn refill is

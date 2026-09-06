@@ -5,7 +5,7 @@ namespace Spire1.Spire1Code.Encounters;
 
 /// <summary>
 /// StS1 "Large Slime" strong encounter (<c>MonsterHelper.getEncounter("Large Slime")</c>).
-/// Bytecode: one <c>miscRng.randomBoolean()</c> — true: single <c>AcidSlime_L</c>;
+/// Bytecode: one <c>miscRng.randomBoolean()</c> - true: single <c>AcidSlime_L</c>;
 /// false: single <c>SpikeSlime_L</c>.
 /// </summary>
 public sealed class LargeSlimeEncounter : Spire1Encounter
