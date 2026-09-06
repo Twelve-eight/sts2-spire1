@@ -1701,22 +1701,41 @@ KB 指南、开发纪律、事故史速查、omp 第一小时清单、禁区。�
 - **P12（部分）** mechanics/README 索引刷新（loot 7→8 补 L12 行、monster-ai 10→11、合计
   254→262 绑定复跑命令）；kb/README 过时"202 规则"→262。
 
-### Subagent 批次（4 切片，3 已回）
+### Subagent 批次（4 切片全部验收合入）
 - **R13**（已验收合入）：Evaluate+ 置入 Insight+ —— `CreateCard` → `CardCmd.Upgrade` →
   `AddGeneratedCardToCombat` 引擎标准链（Begone/PrimalForce 同型）。javap 意外发现：StS1
   原版 Evaluate.use() 本身无升级分支（与官方 UPGRADE_DESCRIPTION 矛盾），按文案承诺实现，
   报告留置信标注。同类风险卡扫描：Pray/ReachHeaven/DeusExMachina/Alpha/Beta/Study 均一致；
   CarveReality/DeceiveReality UNCONFIRMED 留主会话。
-- **R9**（已验收合入）：`ThreeCultistsEncounter`（3×Cultist，坐标 -465/-20、-130/15、200/-5
-  逐字节码）+ `ShelledParasiteAndFungiEncounter`（-260/15 + 120/0）；官方 RunHistory 名
-  （Triple Cultists/三邪教徒、Parasite and Fungi Beast/寄生怪与真菌兽）；gold 与引擎默认
-  10-20 一致免覆写；§7d Act-2 现按 19/19 一一对应。子代理自跑 scoped 编译 0 错 0 警。
-- **R6/R12** 在飞（javap 逐卡核对/重写）。
+- **R9**（已验收合入，`2dab66d`）：`ThreeCultistsEncounter`（3×Cultist，坐标 -465/-20、
+  -130/15、200/-5 逐字节码）+ `ShelledParasiteAndFungiEncounter`（-260/15 + 120/0）；官方
+  RunHistory 名（Triple Cultists/三邪教徒、Parasite and Fungi Beast/寄生怪与真菌兽）；gold
+  与引擎默认 10-20 一致免覆写；§7d Act-2 现按 19/19 一一对应。子代理自跑 scoped 编译 0 错 0 警。
+- **R6**（已验收合入，`10eeb48`）：九卡三方核对判定——Hemokinesis/Offering/PerfectedStrike
+  全字段一致进 IroncladReuse；Shiv=Token 不走池（R6 清单口径误报）；HandOfGreed 已在官方
+  无色池出货（注入=双倍权重，DarkShackles 教训）；Slimed（引擎 OnPlay 抽 1 vs jar 空方法）、
+  Apotheosis（Innate+Ancient 双漂移）、Discovery（候选池=当前角色池 vs jar 全角色三池）、
+  TheBomb（稀有度 Uncommon vs RARE）四张自建我方忠实类。主会话三裁决：怪物侧 Slimed 引用
+  保持引擎版（UI 预览配套）；PerfectedStrike 堆口径视为引擎等价；TheBomb 双版本共存接受。
+  构建期补 4 个缺失 using（worker 遗漏，集中构建抓出）——**"worker 不构建+主会话集中构建"
+  的纪律再次被证明必要**。Offering 审计行确认为工具解析局限（var 白名单缺 HpLossVar/CardsVar，
+  jar magic 3=引擎 CardsVar(3)，人工裁决一致）。
+- **R12**（已验收合入，`616117a`）：Fission 整卡重写——旧实现是 Focus+能量+升级翻倍（全错）。
+  新实现：n=filledOrbCount 快照 →（基础）RemoveSlots(cap)+AddSlots(cap) 清球保槽组合 /
+  （升级）OrbCmd.EvokeNext 循环激发 → 每球 1 能量 + 1 抽牌；升级=Remove→Evoke 纯文案交换
+  （SimpleLoc -x-+y+ 标记）；OrbEvokeType None/All 悬停高亮；全命令 API 零手写移除。
+  引擎无 RemoveAllOrbsAction 等价物的映射理由记入类 doc comment。
+
+### 修复波总账（R1-R15，全部处置完毕）
+实施：R1 R2 R3 R5 R6 R7 R9 R12 R13 R14；决策记录：R10（deferred 待条件真值表）、R15（接受
+偏差）；R6 内含四诅咒裁决（Normality/Writhe=引擎复用，Bell/Pride=无授予面不实现）。R8 圣遗物
+层范围**待用户裁决**（全量移植 vs 精选集）——唯一开放代码项。
 
 ### 验证状态（诚实口径）
-- 构建 Release 0 错误（271 既有 nullable 警告）；部署 dll/pck 与构建产物 md5 一致
-  （`9376b5e1…`/`449f5a8e…`）；ilspycmd 确认部署 dll 含 `Act3BossRewardPatch`。
-- 机械门：pool-audit 0 孤儿、semantics-audit 全绿、audit-card-fidelity 修复行归零、
-  audit-monster-hp 三条既有解析噪声。
-- **未做实机冒烟**：R1 三态、R2 混沌局 Pandora 种子 sweep（交接文档 §5 待验证队列）、
-  R9 新遭遇生成。游戏进程当时未运行，部署已完成；下一局 autoslay/真人局覆盖。
+- 构建 Release 0 错误（275 既有 nullable 警告）；部署 dll/pck 与构建产物 md5 一致
+  （终态 `f50e1dfa…`）；机械门 pool-audit/semantics-audit 全绿；audit-card-fidelity 修复行
+  归零（残余为已知解析噪声：多变量卡 others[0] 白名单局限 + Token/Status/Special 特判）。
+- **未做实机冒烟**：R1 三态（有钥匙/无钥匙/纯三幕）、R2 混沌局 Pandora 种子 sweep（交接
+  文档 §5 待验证队列）、R9 新遭遇生成、R12 Fission 出牌、R6 四新卡。游戏进程当时未运行，
+  部署已完成；下一局 autoslay/真人局覆盖。**玩法语义偏差不在 autoslay 检出域（G4），
+  R1/R12 需真人局 eyeball。**
