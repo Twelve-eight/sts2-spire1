@@ -478,7 +478,7 @@
   "SPIRE1-CORE_SURGE.title": "Core Surge",
   "SPIRE1-CORE_SURGE.description": "Deal !D! damage. Gain !ArtifactPower! Artifact.",
   "SPIRE1-FISSION.title": "Fission",
-  "SPIRE1-FISSION.description": "Remove all your Orbs. Gain 1 *Energy* and draw 1 card for each Orb removed.",
+  "SPIRE1-FISSION.description": "-Remove-+Evoke+ all your Orbs. Gain 1 *Energy* and draw 1 card for each Orb -removed-+Evoked+.",
   "SPIRE1-HYPERBEAM.title": "StS1 - Hyperbeam",
   "SPIRE1-HYPERBEAM.description": "Deal !D! damage to ALL enemies. Lose !FocusPower! Focus.",
   "SPIRE1-SEEK.title": "Seek",

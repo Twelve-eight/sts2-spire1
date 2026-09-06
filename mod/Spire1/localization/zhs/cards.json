@@ -478,7 +478,7 @@
   "SPIRE1-CORE_SURGE.title": "核心电涌",
   "SPIRE1-CORE_SURGE.description": "造成 !D! 点伤害。\n获得 !ArtifactPower! 层 人工制品 。",
   "SPIRE1-FISSION.title": "裂变",
-  "SPIRE1-FISSION.description": "移除你的所有 充能球 ,每移除一个便获得 1 点 能量 并抽 1 张牌。",
+  "SPIRE1-FISSION.description": "-移除-+激发+所有 充能球 ，每-移除-+激发+一个充能球获得 1 点 *能量* 并抽 1 张牌。",
   "SPIRE1-HYPERBEAM.title": "超能光束",
   "SPIRE1-HYPERBEAM.description": "对所有敌人造成 !D! 点伤害。\n失去 !FocusPower! 点 集中 。",
   "SPIRE1-SEEK.title": "搜寻",
