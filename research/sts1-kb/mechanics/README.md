@@ -19,7 +19,7 @@ wiki（slay-the-spire.fandom.com）仅作交叉佐证；HTML 页 403，经 `api.
 |---|---|---|
 | [action-manager.md](action-manager.md) | 20 | GameActionManager 帧循环、五级队列优先级、addToBottom/addToTop/addCardQueueItem 插入语义、shouldCancelAction 取消语义、ActionType 真实用途（无逐类型节拍） |
 | [turn-phase.md](turn-phase.md) | 18 | 战斗开局初始化块、能量发放点、出牌微时序、结束回合三段链（哨兵->自动结算牌->弃牌阶段）、敌方回合、新回合块、首回合特殊点 |
-| [draw-exhaust.md](draw-exhaust.md) | 25 | DrawCardAction 逐帧逻辑、10 张手牌上限钳制、洗牌时机与 onShuffle 触发、triggerWhenDrawn 全量清单、消耗区七步通知链、Retain/Ethereal 结算顺序、**用户三连问裁决（Sec 6）** |
+| [draw-exhaust.md](draw-exhaust.md) | 26 | DrawCardAction 逐帧逻辑、10 张手牌上限钳制、洗牌时机与 onShuffle 触发、triggerWhenDrawn 全量清单、消耗区七步通知链、Retain/Ethereal 结算顺序、**用户三连问裁决（Sec 6）**、R26 开局四类合一矩阵（Innate 与三瓶装同列表无优先级/短路互斥/超量补抽走 addToTurnStart） |
 | [keys-and-final-act.md](keys-and-final-act.md) | 6 | 三钥匙与第四层入口、蓝宝石钥匙宝箱二选一（互斥）、autoslay 不取钥匙的幕切换卡死、StS2 无原生钥匙的对照 |
 | [triggers.md](triggers.md) | 18 | Power/Relic/Card/Monster/Stance 五基类钩子总表、onPlayCard/onUseCard/onAfterUseCard 四时刻对照、死亡链/胜利链、计数遗物取证、同容器获得顺序结论、同步直调 vs 队列化对照 |
 | [damage-pipeline.md](damage-pipeline.md) | 17 | DamageType 三型语义、攻防两端乘区次序（Vulnerable 在攻方侧）、atDamageGive/final 修改器链、多重打击单快照结论、格挡吸收点、LoseHP 分流 |
@@ -38,7 +38,7 @@ wiki（slay-the-spire.fandom.com）仅作交叉佐证；HTML 页 403，经 `api.
 | [card-rewards.md](card-rewards.md) | 11 | 卡牌奖励生成：池构建与角色覆写点、Blizzard 保底计数器（+5/-1/-40 方向实证）、稀有度阈值（普通 3/37 精英 10/40）、去重重试、RARE 不自动升级 |
 | [ascension.md](ascension.md) | 20 | 进阶 A01-A20 全量（英文卷）：A1 精英房x1.6、A5 治疗x0.75、A6 开局x0.9、A10 进阶者灾祸、A11 药水槽-1、A12 cardUpgradedChance 减半、A13 boss金币x0.75、A14 最大生命-5/-4、A15 22个事件各自不利分支+NoteForYourself禁用、A16 商店+10%、A17-A19 怪物三档门律(>=2/3/4伤害,>=7/8/9血量,>=17/18/19技能,附各怪数值表)、A20 双boss(ProceedButton.goToDoubleBoss+bossList队列+onFinalBossVictoryLogic跳过门) |
 
-合计 **284 条编号规则**（2026-09-07 复核：逐卷 `grep -oE '\*\*(R|L|A)[0-9]+' <卷> | sort -u | wc -l` 求和 = 278 + keys 卷 6 知识块 = 284；表内行求和 284 与之一致。注意：老卷存在行首加粗（`**R01 `）与表格行内（`| R01 |`）两种格式，必须用 -o 全文匹配而非行首锚定），每条独立可引用（`文件名 Rnn`），可直接用于移植仲裁。计数复核命令绑定本行--断言半衰期律要求"已验证"附带复跑入口。
+合计 **285 条编号规则**（2026-09-07 复核：逐卷 `grep -oE '\*\*(R|L|A)[0-9]+' <卷> | sort -u | wc -l` 求和 = 279 + keys 卷 6 知识块 = 285；表内行求和 285 与之一致。注意：老卷存在行首加粗（`**R01 `）与表格行内（`| R01 |`）两种格式，必须用 -o 全文匹配而非行首锚定），每条独立可引用（`文件名 Rnn`），可直接用于移植仲裁。计数复核命令绑定本行--断言半衰期律要求"已验证"附带复跑入口。
 
 ## 用户示例问题的确定性答案（验收项）
 

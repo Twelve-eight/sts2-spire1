@@ -36,6 +36,21 @@
 `CardGroup#initializeDeck(masterDeck)`：clear -> 把主牌组拷贝为临时 DRAW_PILE 组并用 `shuffleRng` 洗一次 -> 遍历洗后的临时组：普通卡逐张 `addToTop`（即按遍历序压栈）；**Innate 卡与瓶装卡（inBottleFlame/Lightning/Tornado）单独收集**，最后再逐张 `addToTop`--因此它们位于牌堆顶，且**最后遍历到的那张在最顶上**。若 Innate+瓶製数 > `masterHandSize`，把超出部分以 `addToTurnStart(new DrawCardAction(player, 超出数))` 挂入 preTurnActions 补抽。
 出处：`CardGroup#initializeDeck`（偏移 0-236）。置信度：**高**。
 
+**R26 开局四类合一矩阵（Innate = 三瓶装同列表无优先级）** - 出处 `CardGroup#initializeDeck` 偏移 62-111。置信度：**高**
+```
+遍历洗后临时 DRAW_PILE 组时的单卡判定（if-else 链，命中即 continue）：
+  isInnate                 -> 收集列表 add（偏移 62-77）
+  inBottleFlame            -> 收集列表 add（偏移 80-111 首支）
+  inBottleLightning        -> 同上（同组 ifne 104 汇聚）
+  inBottleTornado          -> 同上
+  全不命中                  -> 立即 addToTop（普通牌路径，偏移 114-152）
+```
+矩阵裁决：
+- **Innate 与 Bottled 无优先级之分**--四类进同一个收集列表（局部 ArrayList，偏移 23-30 创建），保留洗牌后的相对顺序；第二遍逐张 `addToTop`（偏移 155-189）后，收集列表的**遍历序尾**成为牌堆最顶。
+- 一张卡同时 isInnate 且瓶装：只命中第一支（isInnate 分支先判），**不会重复入列**（add 后 goto 下一次迭代）--即"互斥"实为 if-else 顺序短路，不是显式互斥检查。
+- 超量补抽：收集列表 size > player.masterHandSize 时，`DrawCardAction(player, size - masterHandSize)` 经 **addToTurnStart**（非 addToBottom）挂入（偏移 192-232）--进 preTurnActions 缓冲（见 action-manager R02 第 2 级），先于本回合常规动作执行。抽的顺序仍是牌堆顶序（即收集列表的逆序压栈序）。
+- R26 与 1.1 背景段合并阅读：本条目形式化"哪些卡进收集列表"的判定矩阵与短路语义。
+
 ### 1.2 DrawCardAction 构造器族
 
 | 构造器 | 语义 |
