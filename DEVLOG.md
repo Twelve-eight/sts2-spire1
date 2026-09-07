@@ -2077,3 +2077,58 @@ rules; kb/README gained 5 new volume rows. PLAN-2026-09-05 P1-P11 all
 
 Commits this session: 55a7a0c (P3), 0748a1c (P1+P2), 312008b (P4),
 plus this final batch (P5-P11 + index refresh).
+
+## Session 34 - 2026-09-07 - relay 500 root cause: cumulative content filter, NOT illegal chars
+
+Trigger: user reported "哈喽deepseek，有非法字符。找一下哪来的" (GLM relay fell
+back to deepseek; 26 "sensitive words detected" 500s in omp.2026-09-07.10552.log,
+14:24-14:55 +08).
+
+### Diagnosis (evidence-based, not assumed)
+
+1. Session jsonl role-split (pre-scrub backup .bak-illegal): U+2014 x890,
+   U+2192 x193, U+00A7 x3 etc, ALL in assistant thinking/text. Tool results:
+   0 illegal chars (strip-illegal.ts tool_result layer confirmed working:
+   sdk.ts L576 em dash stored as ASCII 0x2d in session). Root producer =
+   model self-output, but that was NOT what 500'd GLM.
+2. Direct relay experiments (ps.air-outer.com/v1, key AGENTROUTER_API_KEY):
+   - 700 em dashes + 180 arrows + CJK in small request: PASS.
+   - 414KB mixed illegal-char payload: PASS (76k tokens).
+   - Full 600-msg session replay (1.4MB, 228k+ tokens): BLOCKED
+     (content-blocked / sensitive words).
+   - Bisect: first 492 msgs PASS, 493 (adding one 5.5KB decompiled-C#
+     tool result, PURE ASCII) BLOCKS. Replacing that one message with
+     benign text of same size: PASSES. Filler "AAAA"/lorem of any size:
+     PASS. Random letters (800+ chars) or extra real code (~1.7KB+):
+     BLOCK. Reversed code: BLOCK.
+   - Same trigger message in a 293-msg (half-size) context: PASSES.
+3. Conclusion: agentrouter relay runs a CUMULATIVE content classifier
+   (likely entropy/density scoring over the whole request). At ~336k
+   stored context tokens, adding ~2k more tokens of code/high-entropy
+   content crosses the threshold. "sensitive words detected" is the
+   relay's generic rejection label, not an actual word list. Illegal
+   Unicode chars are irrelevant to the 500s.
+
+### Fixes applied
+
+- Session scrubbed again (U+2014 x890 etc mapped to ASCII; CJK kept).
+- Mid-run compaction already ran at 15:26 (784 -> 122 messages); current
+  session tail replay to GLM: PASSES. Relay is usable again post-compaction.
+- strip-illegal.ts (G:\omp works\.omp\hooks\pre\) verified loaded and
+  effective on tool_result layer; its context layer covers the outbound
+  request path (extensions runner emitContext, sdk.ts:3084). Hook system
+   wiring traced: hooks/pre/*.ts discovered by native provider -> filtered
+  isExtensionFile -> bound as extension modules -> ExtensionRunner.
+
+### Operational guidance
+
+- When GLM 500s with "sensitive words": compact/shrink context (the real
+  variable), not just scrub chars. Keep stored context well under ~330k
+  tokens for this relay. compaction.thresholdPercent 50 of 1M window
+  allowed drift to 336k+ before triggering; consider manual /compact when
+  stored tokens > 280k on relay models.
+- deepseek 402 INSUFFICIENT_BALANCE errors also present (15:41+) - that
+  fallback key is out of balance.
+
+Next: AutoAnthony - Relics mod design + implementation (research done
+Session 33; this file's todo).
