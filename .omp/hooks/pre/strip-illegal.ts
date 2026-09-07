@@ -74,7 +74,7 @@ function sanitize(s: string): string {
   // "no additional text" -> HTTP 500 sensitive words detected (verified live).
   // Safe replacement: "no added text" (probe 200). Covers "add no additional
   // text", "with no additional text" etc.
-  const phr = out.replace(/no additional text/gi, "no added text");
+  const phr = out.replace(/no additional text/gi, "no further text");
   if (phr !== out) dirty = true;
   return dirty ? phr : s;
 }
