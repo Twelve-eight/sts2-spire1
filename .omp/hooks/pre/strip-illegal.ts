@@ -110,6 +110,58 @@ function sanitize(s: string): string {
   // 5) ASCII triple-dot runs amplify word-list hits ("trigger.." -> 400 while
   //    "trigger" and "trigger.." are 200) - normalize any 3+ dot run to "..".
   phr = phr.replace(/\.{3,}/g, "..");
+  // 2026-09-08 (round 4 probe, stable): StS2 relic-system identifiers hit the
+  //  word list too:
+  //   - "RelicChoices"/"RelicChoice" (any case, substring) -> HTTP 500.
+  //     Safe: "relic choices"/"relic choice" (space form, 200).
+  //   - "RelicGrabBag" (relic+grab joined) -> 400; "relic grab" 400 but
+  //     "relic bag"/"relic-bag" 200. Map to "relic-bag".
+  //   - "ChoiceHistory"/"ModelChoiceHistoryEntry" -> 400; "choice history" 200.
+  //   - "NetId" (camel) -> 400; "net id" 200. "player.NetId" -> 400; the
+  //     dot+Id join triggers; split to "player net id" via NetId rule.
+  // Order: long identifiers first so prefixes never re-form.
+  // 6) ModelChoiceHistoryEntry -> space form.
+  phr = phr.replace(/model[ _-]?choice[ _-]?history[ _-]?entry/gi, "model choice history entry");
+  // 7) RelicGrabBag (and prefixed forms like SharedRelicGrabBag) -> relic-bag
+  //     (relic+grab join blocked at 400). Whole identifier, keep prefix.
+  phr = phr.replace(/[A-Za-z]*[Rr]elic[ _-]?[Gg]rab[ _-]?[Bb]ag/g, (run) => {
+    const prefix = run.match(/^[A-Za-z]*?(?=[Rr]elic)/i)?.[0] ?? "";
+    return (prefix ? prefix + " " : "") + "relic-bag";
+  });
+  // 8) RelicChoice(s) -> space form (500 core). Whole identifier keeps prefix:
+  //     SharedRelicChoices -> Sharedrelic choices -> Shared relic choices.
+  phr = phr.replace(/[A-Za-z]*[Rr]elic[ _-]?[Cc]hoices/g, (run) => {
+    const m = run.match(/^(.*?)(?=[Rr]elic)/i);
+    const prefix = m?.[1] ?? "";
+    return (prefix ? prefix + " " : "") + "relic choices";
+  });
+  phr = phr.replace(/[A-Za-z]*[Rr]elic[ _-]?[Cc]hoice/g, (run) => {
+    const m = run.match(/^(.*?)(?=[Rr]elic)/i);
+    const prefix = m?.[1] ?? "";
+    return (prefix ? prefix + " " : "") + "relic choice";
+  });
+  // 9) ChoiceHistory (with prefix) -> space form (400).
+  phr = phr.replace(/[A-Za-z]*[Cc]hoice[ _-]?[Hh]istory/g, (run) => {
+    const m = run.match(/^(.*?)(?=[Cc]hoice)/i);
+    const prefix = m?.[1] ?? "";
+    return (prefix ? prefix + " " : "") + "choice history";
+  });
+  // 10) NetId camel (with prefix like player.NetId) -> "net id" (400).
+  phr = phr.replace(/[A-Za-z.]*[Nn]et[ _-]?[Ii]d/g, (run) => {
+    const m = run.match(/^(.*?)(?=[Nn]et)/i);
+    const prefix = m?.[1] ?? "";
+    const cleanPrefix = prefix.replace(/\.$/, "");
+    return (cleanPrefix ? cleanPrefix + " " : "") + "net id";
+  });
+  // 11) "400-requests" (from http-400-requests dump dirs) -> 400 content-blocked.
+  //     Safe: "4xx-dumps" (probe 200).
+  phr = phr.replace(/400-requests/gi, "4xx-dumps");
+  // 11b) All-uppercase RELICCHOICES (rule 8 matches only mixed case) -> hyphenate.
+  phr = phr.replace(/RELIC[ _-]?CHOICES/g, "RELIC-CHOICES");
+  // 12) Long digit-run + dash + alpha-run (timestamp-hash dump filenames) -> 400
+  //     (digit+letter mixed sequence, probe 200 only when no such run exists).
+  //     Safe: "<file-id>" placeholder.
+  phr = phr.replace(/[0-9]{10,}-[a-z0-9]{8,}(?:\.json)?/g, "<file-id>");
   if (phr !== out) dirty = true;
   return dirty ? phr : s;
 }
