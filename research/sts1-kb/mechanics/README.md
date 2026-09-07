@@ -36,8 +36,9 @@ wiki（slay-the-spire.fandom.com）仅作交叉佐证；HTML 页 403，经 `api.
 | [turn-control.md](turn-control.md) | 6 | 窥视 ScryAction 全序（triggerOnScry 扫尾）、skipMonsterTurn 消费者全集（Vault 连玩家 debuff 递减一起跳过）、callEndTurnEarlySequence 绕过哨兵链 |
 | [loot-rewards.md](loot-rewards.md) | 8 | 药水掉落 65/25/10（potionRng）、宝箱 treasureRng 滚动（TheEnding 0/100/0 medium-only）、商店定价 =基础价xU(0.9,1.1)（50/75/150/9999 直证）、四 RNG 流分账、L12 五池弹头式遗物发放（remove(0) pop-after-shuffle、三级降级链到 Circlet 占位、商店/boss 池） |
 | [card-rewards.md](card-rewards.md) | 11 | 卡牌奖励生成：池构建与角色覆写点、Blizzard 保底计数器（+5/-1/-40 方向实证）、稀有度阈值（普通 3/37 精英 10/40）、去重重试、RARE 不自动升级 |
+| [ascension.md](ascension.md) | 20 | 进阶 A01-A20 全量（英文卷）：A1 精英房x1.6、A5 治疗x0.75、A6 开局x0.9、A10 进阶者灾祸、A11 药水槽-1、A12 cardUpgradedChance 减半、A13 boss金币x0.75、A14 最大生命-5/-4、A15 22个事件各自不利分支+NoteForYourself禁用、A16 商店+10%、A17-A19 怪物三档门律(>=2/3/4伤害,>=7/8/9血量,>=17/18/19技能,附各怪数值表)、A20 双boss(ProceedButton.goToDoubleBoss+bossList队列+onFinalBossVictoryLogic跳过门) |
 
-合计 **262 条编号规则**（2026-09-06 复核：逐卷 `grep -cE '^\*\*[A-Z][0-9]'` 求和 + keys 卷 6 知识块；表内行求和 262 与之一致），每条独立可引用（`文件名 Rnn`），可直接用于移植仲裁。计数复核命令绑定本行--断言半衰期律要求"已验证"附带复跑入口。
+合计 **282 条编号规则**（2026-09-07 复核：逐卷 `grep -oE '\*\*(R|L|A)[0-9]+' <卷> | sort -u | wc -l` 求和 = 276 + keys 卷 6 知识块 = 282；表内行求和 282 与之一致。注意：老卷存在行首加粗（`**R01 `）与表格行内（`| R01 |`）两种格式，必须用 -o 全文匹配而非行首锚定），每条独立可引用（`文件名 Rnn`），可直接用于移植仲裁。计数复核命令绑定本行--断言半衰期律要求"已验证"附带复跑入口。
 
 ## 用户示例问题的确定性答案（验收项）
 
