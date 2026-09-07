@@ -2021,3 +2021,59 @@ L04-L06 - ShopScreen/StoreRelic/StorePotion/OnSaleTag dumps already
 extracted in javap-asc2), P4 bottled/innate matrix, P5-P9 StS2-side
 volumes, P10 cookbook, P11 SavedProperty lint. R8 awaits user scope
 decision; R10 deferred.
+
+### 6. Full KB backlog completed same session (P1-P11 all done)
+
+Per the same user order, the ENTIRE PLAN-2026-09-05 backlog landed today:
+
+- P1 -> loot-rewards.md L13 (initializeRelicList full chain: 5x
+  relicRng randomLong shuffles in fixed pool order, THEN removal of
+  owned + custom-mod-mutex relics; removals do not consume relicRng).
+- P2 -> loot-rewards.md L14 (shop inventory: 5 colored cards x
+  U(0.9,1.1), 2 colorless x extra 1.2, OnSaleTag random(0,4) half
+  price; 3 relic slots tier roll 48/34/18 with slot 3 always SHOP,
+  relics/potions x U(0.95,1.05); getNewPrice re-roll + Courier x0.8 +
+  Membership x0.5). Open question 2 closed.
+- P4 -> draw-exhaust.md R26 (four-way init matrix: innate and the three
+  bottled flags feed ONE collection list - no priority tiers; if-else
+  short-circuit means a card with both innate+bottle flags is not
+  double-collected; overflow draw goes through addToTurnStart ->
+  preTurnActions).
+- P5 -> pool-architecture.md I0d (relic/potion pool mirror: same
+  AbstractModel+IPoolModel+lazy-cache+ConcatModelsFromMods quartet, all
+  I0b/I0b+ contracts apply verbatim; ONLY structural diff = epoch
+  filtering lives in per-character subclass overrides instead of the
+  base-class FilterThroughEpochs).
+- P6 -> new kb/sts2-osty.md (O01-O08: DieForYouPower redirect with
+  BeforeOsty/AfterOsty dispatch slots, direct call bypassing the
+  combat-ending guard, PetOwner chain, owner-death-kills-pets, the two
+  Should* cleanup virtuals every owner-pet power must answer).
+- P7 -> new kb/sts2-autoslay.md (S01-S09: seed determinism via
+  GetDeterministicHashCode + epoch overrides, 49-floor loop with
+  per-room watchdog 30s / run cap 25min, Room/Screen handler families,
+  boundary ruling: coverage accounting is mod-side inject-queue, engine
+  only detects crash/stall).
+- P8 -> new kb/sts2-unlock-epoch.md (U/E/C rules: UnlockState snapshot,
+  57-epoch registry, None->NoSlot->Revealed->Obtained state machine,
+  ObtainEpochOverride save levers, mod cards always unlocked ruling).
+- P9 -> new kb/sts2-merchant.md (M01-M06: slot population, dual
+  constraint GetUnlockedCards(UnlockState, CardMultiplayerConstraint),
+  ModifyMerchantCardPool hook chain consumed at CardFactory L46/L71
+  BEFORE rarity filtering, engine's only overrider CharacterCards.cs).
+- P10 -> new kb/porting-cookbook.md (C01-C18 mapping table + 6-step
+  porting checklist with incident anchors; every mapping cites live
+  repo code as proof: Accuracy.cs, AngryPower.cs, Cultist.cs).
+- P11 -> tools/semantics-audit.mjs I16 heuristic (growth-word field
+  name + mutation + no [SavedProperty] -> reviewer note). Negative
+  tested: probe file with violating PermCount detected (1 candidate),
+  removal restores baseline. Full audit green.
+
+Method: StS2-side volumes P5-P9 were grounded by a read-only scout
+subagent (Sts2EngineScout) that mapped all file paths + line refs in
+the engine decompile in one pass; main session verified the AutoSlay
+engine paths and wrote the volumes. mechanics/README total now 285
+rules; kb/README gained 5 new volume rows. PLAN-2026-09-05 P1-P11 all
+[x].
+
+Commits this session: 55a7a0c (P3), 0748a1c (P1+P2), 312008b (P4),
+plus this final batch (P5-P11 + index refresh).

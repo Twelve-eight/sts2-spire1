@@ -79,6 +79,43 @@ for (const lang of ['eng', 'zhs']) {
 }
 notes.push(['I7 selection keys', `checked ${users.length} users`]);
 
+// ---- I16: SavedProperty heuristic (PLAN P11) --------------------------------
+// Cross-combat growth fields must be [SavedProperty]; per-combat scratch must NOT be.
+// Heuristic: a class field whose identifier matches growth words (Counter, Count, Amount
+// grown, Permanently, ...) AND appears mutated inside OnPlay/AfterDamage/hook bodies but
+// lacks [SavedProperty] -> reviewer note. False positives allowed (note, not finding).
+const growthWords = /(Counter|PermCount|Growth|Permanent|Forever|TotalDamage|DamageThisRun|StrGained|CardsPlayed|TimesPlayed|Permanently)/;
+const i16notes = [];
+(function walk(d) {
+  for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+    const p = path.join(d, e.name);
+    if (e.isDirectory()) walk(p);
+    else if (e.name.endsWith('.cs')) {
+      const src = fs.readFileSync(p, 'utf8');
+      const rel = path.relative(root, p);
+      // fields declared in this file (incl. property forms)
+      const fieldRe = /(?:private|protected|public)\s+(?:static\s+)?(?:int|decimal|double|long)\s+(\w+)\s*(?:=\s*[^;]+)?;/g;
+      let m;
+      while ((m = fieldRe.exec(src))) {
+        const fname = m[1];
+        if (!growthWords.test(fname)) continue;
+        // is there a [SavedProperty] attribute within 3 lines above the field?
+        const upto = src.slice(0, m.index);
+        const tailLines = upto.slice(Math.max(0, upto.lastIndexOf('\n', upto.length - 200)));
+        const hasSaved = /\[SavedProperty\]/.test(src.slice(Math.max(0, m.index - 300), m.index));
+        // mutated anywhere (assignment or ++/--)? declaration-only init ignored via = in regex above
+        const mutRe = new RegExp('(?:' + fname + '\\s*(?:\\+=|-=|\\*\\*?=|\\+\\+|--)|(?:\\+\\+|--)\\s*' + fname + ')');
+        const mutated = mutRe.test(src);
+        if (mutated && !hasSaved) {
+          i16notes.push(`${rel}: field ${fname} matches growth-word and is mutated but has no [SavedProperty] - verify per-combat vs cross-combat intent`);
+        }
+      }
+    }
+  }
+})(codeRoot);
+if (i16notes.length) for (const n of i16notes) notes.push(['I16 candidate', n]);
+notes.push(['I16 SavedProperty heuristic', i16notes.length ? `${i16notes.length} candidate(s) - reviewer verify` : 'no candidates']);
+
 // ---- verdict ----------------------------------------------------------------
 console.log('== semantics-audit ==');
 for (const [k, v] of notes) console.log(`  [${v === 'ok' ? 'ok' : (v.startsWith('FINDINGS') ? 'FAIL' : 'note')}] ${k}: ${v}`);

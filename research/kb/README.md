@@ -21,9 +21,14 @@
 | debug-protocols.md | 取证 SOP：冻结协议、divergence 对拍、drain 管线、控制台、良性噪音清单 | 协议变化时更新 |
 | aftp-interop.md | AFTP 许可证结论/fork 拓扑/问题清单/验证阻塞 | 上游或 fork 状态变化时更新 |
 | loc-drift-report.md | 本地化 vs 官方原文相似度对账（318 条，A/B/C 分级） | loc_drift.js 可重跑刷新 |
+| sts2-osty.md | StS2 Osty/宠物系统卷 O01-O08（英文）：DieForYouPower 重定向（BeforeOsty/直调绕过 combat-ending 门/AfterOsty）、PetOwner 所有权链、AddPetInternal+Died 订阅、owner 死杀宠物、双 Should* 清理虚方法 | 源码重导出或新结案时追加 |
+| sts2-autoslay.md | StS2 AutoSlay 引擎卷 S01-S09（英文）：AutoSlayer 生命周期、种子确定性+epoch override、49 层循环+房间级 watchdog(30s)/25min 帽、Room/Screen 双 handler 族、覆盖统计归属 mod 侧注入队列的边界裁决 | 源码重导出或新结案时追加 |
+| sts2-unlock-epoch.md | StS2 解锁/纪元卷 U01-U02/E01-E02/C01-C02（英文）：UnlockState 快照、57 epoch 注册表、None->NoSlot->Revealed->Obtained 状态机、ObtainEpochOverride 双落点、CharacterStats 联动、mod 卡恒解锁裁决 | 源码重导出或新结案时追加 |
+| sts2-merchant.md | StS2 商人库存卷 M01-M06（英文）：MerchantInventory 槽位生成（5 彩色+2+1 遗物+药水）、GetUnlockedCards 双约束、ModifyMerchantCardPool 钩子链（CardFactory L46/L71 先于稀有度过滤）、引擎侧唯一覆写者 | 源码重导出或新结案时追加 |
+| porting-cookbook.md | StS1->StS2 移植 Cookbook C01-C18（英文）：use()->OnPlay、DynamicVars、power 虚方法+门重推导、AscensionHelper 档位映射、donor 怪、DamageCmd builder、X 费->CapturedXValue、移植检查单 | 每次移植新类别内容后追加 |
 
 关联卷：
-- 一代数据与机制语义：`../sts1-kb/`（cards/relics/potions/events + mechanics/ 262 规则）
+- 一代数据与机制语义：`../sts1-kb/`（cards/relics/potions/events + mechanics/ 285 规则）
 - 审计报告：`../audits/`（critique / devlog-audit / morning-summary / upstream-issue-draft）
 
 原则：**skill 放方法，KB 放事实**。任何"下次还会用到的事实"进本目录；

@@ -27,6 +27,17 @@ ConcatModelsFromMods(poolModel, pool): 首次访问该池时置 isFrozen=true（
 
 **I2c-note 纪元过滤层**：官方池覆写 `FilterThroughEpochs` 按 Epoch 解锁包做 RemoveAll（Ironclad2/5/7Epoch 示范）；BaseLib CustomCardPoolModel 不覆写 => mod 卡恒可用。详见 invariants.md I11 三层细化。本层独立于联机约束与 blizz 随机。
 
+**I0d 遗物/药水池镜像（2026-09-07 补，P5）** - 出处 `Models/RelicPoolModel.cs`、`Models/PotionPoolModel.cs`、`Models/ModelDb.cs`（L120/L140/L229/L234/L239/L261）、`Models.CardPools/CardPoolModel.cs#GetUnlockedCards`（L101-113）。置信度：**高**
+```
+RelicPoolModel (L10): AllRelics (L23) = GenerateAllRelics() (L47) + ConcatModelsFromMods
+                       AllRelicIds (L39, HashSet) | GetUnlockedRelics(UnlockState) (L54)
+PotionPoolModel (L10): AllPotions (L25) = GenerateAllPotions() (L47) + ConcatModelsFromMods
+                       AllPotionIds (L41) | GetUnlockedPotions(UnlockState) (L54)
+ModelDb: AllCardPools (L120) / AllCharacterCardPools (L140) / AllRelicPools (L229) /
+         AllCharacterPotionPools (L234) / AllCharacterRelicPools (L239) / AllPotionPools (L261)
+```
+同构性裁决：三者（卡/遗物/药水）均为 `AbstractModel, IPoolModel` + 惰性缓存 + `ModHelper.ConcatModelsFromMods` + Generate/GetUnlocked 同构四件套，I0b/I0b+ 的全部时序与冻结契约**逐条适用于遗物/药水池**（AddModelToPool 先于首次 All* 访问；追加序=注册序；冻结后抛异常）。**唯一结构性差异**：卡池的纪元过滤在基类 `GetUnlockedCards -> FilterThroughEpochs`（L101-113）一处收口，而遗物/药水池的纪元过滤下沉到**每角色子类覆写**（`Models.RelicPools/*RelicPool.cs` L34-42、`Models.PotionPools/*PotionPool.cs` L26-30）--给第三方角色建遗物/药水池时，若不覆写 GetUnlocked*，mod 内容恒可用（与 BaseLib CustomCardPoolModel 不覆写 FilterThroughEpochs 的 I11 行为一致）。
+
 **I2c-baseline StS2 官方池容量基线（2026-09-05，GenerateAllCards 数组直证）** - 出处 `Models.CardPools/*.cs`。置信度：**高**
 ```
 角色池：Ironclad 90 / Silent 91 / Regent 91 / Necrobinder 91 / Defect 91
