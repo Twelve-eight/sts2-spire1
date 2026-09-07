@@ -50,13 +50,23 @@ AutoAnthony card algorithm decompile: sts2-spire1/.tmp/autoanthony/.
   CardPileCmd.Draw(choiceContext, count, player). Enemy access:
   creature.CombatState.HittableEnemies (ICombatState on Creature;
   NOT via PlayerCombatState).
-- Entry into run: RelicGrabBag.Populate(Player, Rng) pulls
-  SharedRelicPool.GetUnlockedRelics + character pool, filters to
+- Entry into run: RunManager.InitializeNewRun ->
+  SharedGrabBag.Populate(ModelDb.RelicPool<SharedRelicPool>()
+  .GetUnlockedRelics + character pool), filters to
   Common/Uncommon/Rare/Shop, per-rarity deques + UnstableShuffle.
   RollRarity: <0.5 Common, <0.83 Uncommon, else Rare.
-  => BaseLib CustomRelicPoolModel with IsShared=true reaches
-  Populate with ZERO engine patches; IsAllowed(runState) is the
-  gate for seed-scoping.
+  => The reward path queries ONLY the ENGINE SharedRelicPool singleton.
+  Reach it with [Pool(typeof(SharedRelicPool))] on the model (routes
+  through CustomContentDictionary.AddModel ->
+  ModHelper.AddModelToPool -> ConcatModelsFromMods into
+  SharedRelicPool.AllRelics). BaseLib CustomRelicPoolModel
+  IsShared=true only appends to ModelDb.AllSharedRelicPools (the
+  COMPENDIUM list) and does NOT reach the reward deques - v0.2 bug,
+  zero chaos relics in rewards, fixed 2026-09-08 commit 45b2b5c.
+  IsAllowed(runState) checked at pull time
+  (RemoveDisallowedRelicsFromDeques) - the seed-scoping gate.
+  Seed timing: bag Populate happens in SetUpNew* BEFORE Launch, so
+  capture the seed in a SetUpNew* PREFIX if Rarity depends on it.
 - BaseLib specifics (nuget 3.4.5): CustomRelicModel ctor with
   autoAdd=true REQUIRES [Pool(typeof(XPool))] (else Exception:
   "must be marked with a PoolAttribute"); attribute on the base
