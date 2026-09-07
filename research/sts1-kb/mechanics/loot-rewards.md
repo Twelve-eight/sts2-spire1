@@ -58,9 +58,52 @@ RARE:     rareRelicPool.isEmpty() -> key = "Circlet"（占位遗物兜底）
 ```
 要点：**洗牌一次、按序弹头** => 同一局内遗物不重复（remove 即出池）、且发放顺序由初始化洗牌完全确定（relicRng 流）。空池三级降级链 common->uncommon->rare->Circlet 与社区认知一致且有字节码实锚。返回侧 `returnRandomRelic(tier)` = key -> CardLibrary.getRelic 包装。
 
+## 5.1 池初始化（L13，2026-09-07 补）
+
+**L13 五池初始化全链** - 出处 `AbstractDungeon#initializeRelicList`（javap 行 3687-3900 一带，由各幕 ctor 顺序调用，Exordium ctor offset 12 直证）+ `RelicLibrary#populateRelicPool`（offset 0-480）。置信度：**高**
+```
+1. 清空五池（common/uncommon/rare/shop/bossRelicPool）
+2. 逐池 populateRelicPool(pool, tier, chosenClass)：
+   - sharedRelics 全表扫：tier 匹配 && (!UnlockTracker.isRelicLocked(key)
+     || Settings.treatEverythingAsUnlocked) -> pool.add(key)
+   - tableswitch(chosenClass)：red/green/blue/purpleRelics 色池同规则并入
+     （STARTER/SPECIAL 不入池；色遗物只对对应角色可见）
+3. floorNum >= 1（续局）时：player.relics 的 relicId 全部加入 relicsToRemoveOnStart
+4. 自定义模式互斥遗物追加到 relicsToRemoveOnStart：
+   Flight|Uncertain Future -> WingedGreaves；Diverse -> PrismaticShard；
+   DeadlyEvents -> Juzu Bracelet；Hoarder -> Smiling Mask；
+   Draft|SealedDeck|Shiny|Insanity 任一 -> Pandora's Box
+5. 五池各自 Collections.shuffle(pool, new Random(relicRng.randomLong()))
+   -> 洗牌消费 5 次 randomLong，顺序固定：common -> uncommon -> rare -> shop -> boss
+6. 对每个 toRemove 条目：五池内 equals 匹配则 iterator.remove()（"removed." 日志）
+```
+要点：**已拥有/互斥遗物在洗牌后剔除**（步骤 6 在步骤 5 之后），即剔除不消耗 relicRng；returnRandomRelicKey 的弹头顺序（L12）只由步骤 5 的洗牌决定。ENDLESS 模式下 Exordium ctor 会在 floorNum<=1 时重置 blightPool（Exordium offset 21-44）。复活/续局（floorNum>=1 分支）把已持有遗物全部移出候选，与"同局不重复"双保险。
+
+## 5.2 商店库存全解（L14，2026-09-07 补；开放问题 2/3 结案）
+
+**L14 商店库存与商户 Rng 消费全链** - 出处 `ShopScreen#initCards/initRelics/initPotions/rollRelicTier` + `StoreRelic/StorePotion` ctor + `OnSaleTag`。置信度：**高**
+```
+牌位（initCards）：
+  彩色卡 5 张（ctor 传入的 coloredCards）：price = getPrice(rarity) x merchantRng.random(0.9f,1.1f) 取整
+  无色卡 2 张（colorlessCards）：同式后再 x1.2f（offset 216-223 无色加价 20%）
+  OnSaleTag：彩色卡组 merchantRng.random(0,4) 随机 1 张 price/2（offset 325-363），
+             daily run 不豁免（该 roll 无 isDailyRun 门）
+遗物位（initRelics，3 槽）：
+  槽 0/1：rollRelicTier() = merchantRng.random(99)：<48 COMMON，48-81 UNCOMMON，>=82 RARE
+          -> returnRandomRelicEnd(tier)（走 shopRelicPool/bossRelicPool 之外的常规池体系）
+  槽 2：恒 RelicTier.SHOP -> returnRandomRelicEnd(SHOP)
+  价格：StoreRelic ctor price = relic.getPrice()；非 daily 再 x merchantRng.random(0.95f,1.05f) 取整
+药水位（initPotions，3 槽）：
+  returnRandomPotion()（potionRng 65/25/10，见 L01）
+  价格：StorePotion ctor price = potion.getPrice()；非 daily 再 x U(0.95,1.05) 取整
+重定价（getNewPrice，玩家获折扣遗物后触发刷新）：
+  relic/potion 各自重掷 xU(0.95,1.05)，再叠 Courier x0.8 -> Membership Card x0.5
+```
+要点：卡位/遗物位/药水位的价格浮动区间**不同**（卡 0.9-1.1，遗物/药水 0.95-1.05，均 merchantRng 流）。无色卡固定 +20% 底价乘数。A16 进阶折扣（ascension.md A16）发生在 ctor 最前（applyDiscount(1.1f,false)），先于上述所有定价位。折扣链完整顺序：A16 x1.1 -> 位浮动 -> OnSaleTag/2（卡）或 Courier/Membership（遗物重定价时）。
+
 ## 6. 开放问题 / 低置信项
 
 1. ~~三档宝箱概率字段~~ **全量结案**（2026-09-05 四幕构造器直证）：Exordium/TheCity/TheBeyond = small 50 / medium 33 / large 17；**TheEnding = 0 / 100 / 0**（只出中箱；同 ctor：treasureRoomChance=0、eventRoomChance=0.22、eliteRoomChance=0.08）。置信度：**高**。
-2. 商店遗物/药水位与 OnSaleTag 的完整公式未逐行展开。
+2. ~~商店遗物/药水位与 OnSaleTag 的完整公式~~ **已结案**（2026-09-07，L14）：遗物/药水位 xU(0.95,1.05) 取整；OnSaleTag = 彩色卡组内 merchantRng.random(0,4) 一张半价；无色卡底价 x1.2；遗物槽 tier roll 48/34/18（槽 3 恒 SHOP）。
 3. ~~returnRandomRelic 族~~ **已结案**（L12）。
 4. BASIC 牌 getPrice 位（普通卡组牌不入店，理论 9999 或 50 未终验）。
