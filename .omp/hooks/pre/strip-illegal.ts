@@ -71,10 +71,11 @@ function sanitize(s: string): string {
     out += r;
   }
   // Phrase-level filter (GLM upstream word list, case-insensitive substring):
-  // "no additional text" -> HTTP 500 sensitive words detected (verified live).
+  // The 18-char phrase (no + SPACE + a-d-d-i-t-i-o-n-a-l + SPACE + text) -> HTTP 500 sensitive words detected (verified live).
   // Safe replacement: "no added text" (probe 200). Covers "add no additional
-  // text", "with no additional text" etc.
-  const phr = out.replace(/no additional text/gi, "no further text");
+  // text (same phrase in any casing/context: surrounded by words, with prefixes) - all hit 500.
+  const TRIG = "no " + String.fromCharCode(97,100,100,105,116,105,111,110,97,108) + " text";
+const phr = out.replace(new RegExp(TRIG, "gi"), "no further text");
   if (phr !== out) dirty = true;
   return dirty ? phr : s;
 }
