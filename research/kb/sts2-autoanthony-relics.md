@@ -79,17 +79,29 @@ AutoAnthony card algorithm decompile: sts2-spire1/.tmp/autoanthony/.
 
 ## AR3. AutoAnthonyRelics implementation contracts
 
-- Entry count: 3 x (1 + weighted rank) clamp 3..15 (user order:
-  3x card baseline). Distribution (JS mirror, 3000/rarity):
-  Common 3/6/9/12/15 = 43.5/40.7/12.2/2.7/0.9 %.
+- Entry count (v0.4 band, user 2026-09-08: 3 is the norm; the old
+  3x-card clamp(3*(1+rank),3,15) -> 3/6/9/12/15 read as bloated):
+  entries = clamp(band-1+rank, 3, band+2), band = clamp(multiplier,3,5).
+  Simulated: Common 3@84%/4@12%/5@5%, Uncommon 3@62%, Rare 3@47%.
+- Pool replacement (v0.4, user order: replace everything except
+  ancient relics): Harmony Postfix on BOTH relic-bag.Populate overloads
+  strips non-chaos models from _deques AND _originalRelics
+  (RefreshRarity source). Ancient/Starter/Event never enter the bag.
+  SINGLE-TARGET patch classes only - dual [HarmonyPatch] on one class
+  patches only the LAST target (Harmony 2.4.2, offline-repro verified).
+- Live descriptions: ILocalizationProvider.Localization is evaluated
+  once at ModelDb.Init (BaseLib ModelLocPatch) - per-run text must be
+  written by re-editing LocTable._translations (reflection) on seed
+  capture; the baked startup entries are otherwise stale.
 - Seed: RunRngSet.StringSeed (original input string; numeric hash
   is RunRngSet.Seed). Same string on both MP ends.
 - Registry cache: seed -> 60 definitions, LRU 8.
 - 16 templates x 6 hooks (see ChaosRelicCatalog.cs); passives
   ModifyDamageAdditive sums (player-dealer only),
   ModifyMaxEnergy adds to amount.
-- pck: source folder mod/<ModId>/ must contain images/ +
-  localization/; PckPacker CLI manual step (not in csproj).
+- pck: PckPacker runs in csproj (AfterTargets=Build); csproj
+  CopyToModsFolder deploys dll/pdb/json AND the .pck (v0.4 fix -
+  the mods-dir pck had been stale since v0.2).
 
 ## AR4. Relay phrase root cause (2026-09-07, ops knowledge)
 
