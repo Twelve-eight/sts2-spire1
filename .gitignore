@@ -38,3 +38,8 @@ deprecated/
 research/sts1-kb/.tmp-javap/cls/
 
 research/engine-dllsrc/
+
+research/sts1-javap/
+research/typedump/bin/
+research/sigdump/bin/
+research/sigdump/obj/
