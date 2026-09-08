@@ -2163,3 +2163,27 @@ bare phrase -> HTTP 500 sensitive words detected; byte-variant
 - Byte-level gotcha: terminal/JSON render "additional" and "added"
   identically in some fonts - verify phrase work with hex dumps.
 - Handoff note for parallel sessions: sts2-spire1/.tmp/RELAY-FIX-NOTE.md.
+
+## Session (2026-09-09) - knowledge base / decompile split per user directive
+
+User rule: decompiled content that overlaps original copyrighted source stays LOCAL;
+de-originalized facts (game mechanics any player experiences) + required source indexes
+stay tracked (remote OK).
+
+Executed:
+- `research/engine-dllsrc/` (3539 files, 18MB decompiled StS2 source): untracked,
+  gitignored, PURGED from all git history (git-filter-repo, filter-repo 2.47 installed
+  user-local via pip) and force-pushed. Disk copy fully retained for local research.
+- Generated `research/engine-api-index.md` (1.4MB, 22824 signature lines, bodies removed,
+  class/method/field signatures only, timestamped): replaces decompiled source as the
+  tracked lookup layer.
+- Also purged other decompile dumps: `research/sts1-javap/`, `research/sts1-kb/.tmp-javap/`,
+  `research/sigdump/{bin,obj}`, `research/typedump/{bin,obj}` - all local-only now.
+- `research/kb/` (35 docs) + `docs/` (6) = the de-originalized mechanism knowledge layer:
+  fully retained and tracked.
+- Research tool sources (sigdump/Program.cs, typedump/SigDump.cs, csproj) remain tracked
+  (our own code); only their bin/obj outputs were dropped.
+
+Remote: origin was wiped by filter-repo (it strips remotes) - re-added
+https://github.com/Twelve-eight/sts2-spire1.git, force-pushed. Local disk untouched.
+HEAD e2ac8f1. All clean.
