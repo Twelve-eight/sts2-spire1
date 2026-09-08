@@ -36,3 +36,5 @@ deprecated/
 
 # javap scratch (KB research)
 research/sts1-kb/.tmp-javap/cls/
+
+research/engine-dllsrc/
