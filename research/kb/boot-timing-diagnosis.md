@@ -48,3 +48,23 @@ User question that spawned this (2026-09-11): 启动游戏有一段显著的黑�
 - BootTimer mod: G:/omp works/sts2-boottimer/(TryLoadMod prefix/postfix +
   LocManager.Initialize postfix + NMainMenu._Ready postfix, 全部 Log.Info).
   诊断完删除 mods/BootTimer/.
+
+
+## 最终定位 (2026-09-11 04:24 boot, BootTimer 置顶后全量打点)
+
+mod_list 顺序可直接编辑 settings.save (mod_settings.mod_list 数组顺序 = 手动排序,
+GUI 里无显眼入口). BootTimer 置首后覆盖全部 39 个 mod.
+
+每 mod 装载耗时 Top3(占头部 ~13s 中的 8.3s):
+- **RegentFX(万象辉星) 4.10s** - 初始化里同步预加载 32 个资源(58MB mod)
+- **RitsuLib 2.90s** - 自审: patchAll 1.6s + settingsStore 0.8s
+- **BaseLib 1.31s** - 280 个 Harmony patch
+
+其余 36 个 mod 合计 <2s(我方全部 mod: Spire1 110ms / AutoAnthony 545ms /
+Perfect 16ms / MpConfigSync 6ms / HeartShake 9ms / AutoAnthonyRelics 20ms).
+
+后续固定成本(与 mod 无关): LocManager 合并 112 表 2.8s + 预加载/菜单 3.7s.
+
+结论: '间歇性未响应' = 每个重型 initializer 阻塞主线程的脉冲叠加.
+跨机器复现的合理机制: 通用成本(loc 合并/预加载/重型前置)随 mod 总数增长,
+加装任何 mod 都可能把邻居机器推过感知阈值; 我方 mod 本身均为毫秒级.
