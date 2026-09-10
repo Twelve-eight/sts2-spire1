@@ -55,3 +55,29 @@ research/kb had ZERO coverage of Intangible and the HP-loss hook pipeline before
 question (grep: no 'Intangible', no 'Clockwork'/'TheBoot' hits). The pipeline knowledge
 lived only in the decompile. Lesson: damage/HP-loss modifier phases (BeforeOsty/AfterOsty
 x base/Late) belong in kb/engine-facts.md - this file is that entry.
+
+## Supplement: Doom (灾厄, DOOM_POWER) vs pipeline modifiers - no interaction
+
+User quiz 2026-09-10 (follow-up): 发条靴/无实体优先级之后第二问 - 灾厄 vs 无实体?
+
+**Verdict: 灾厄 completely bypasses 无实体 (and every HP-loss modifier). Doom kills
+outright; there is no priority contest because Doom never enters the damage pipeline.**
+
+Evidence (DoomPower.cs, engine v0.111):
+
+1. Doom triggers at side-turn end: `BeforeSideTurnEnd` (enemy side) / `AfterSideTurnEnd`
+   (player side) -> `ShouldDoomTrigger` -> `IsOwnerDoomed()` = `Owner.CurrentHp <= Amount`.
+2. Kill executes via `DoomKill` -> `CreatureCmd.Kill(creature)` - a DIRECT kill command,
+   not `CreatureCmd.Damage`. Zero HP-loss hooks run.
+3. `IntangiblePower`'s full method surface: `ModifyHpLostAfterOsty`,
+   `AfterModifyingHpLostAfterOsty`, `ModifyDamageCap`, `AfterModifyingDamageAmount`,
+   `AfterSideTurnEnd` (self-decrement). It has NO death/kill hooks - it only shapes
+   numbers that pass through Damage/HpLost, and Doom passes no numbers.
+
+Corollary: the same bypass applies to TungstenRod, BufferPower, TheBoot, and any other
+modifier living in the HP-loss/damage pipeline. Only `CreatureCmd.Kill(force:false)`
+death-prevention (Fairy-in-a-Bottle-style `ShouldDie` effects) can interpose.
+
+Timing note: on the enemy side, Doom fires in the Before phase of side-turn-end, before
+Intangible's own AfterSideTurnEnd decrement - but even stacks remaining are irrelevant
+since the kill is direct.
