@@ -2187,3 +2187,45 @@ Executed:
 Remote: origin was wiped by filter-repo (it strips remotes) - re-added
 https://github.com/Twelve-eight/sts2-spire1.git, force-pushed. Local disk untouched.
 HEAD e2ac8f1. All clean.
+
+## Session 40 (2026-09-10 evening) - Spire1 v1.0.0 workshop release + Perfect/Watcher fixes
+
+### Comparison: AutoAnthonyWatcher (3794876718) vs our approach
+- Their addon: official AA extension API (ComponentPackageApi v3 / ExternalComponentCharacterApi
+  v4), 85 w_ components (stances/mantra/scry/retain), 82 dedicated slots, own purple pool,
+  MP seed carrier, valuation balance. OURS: patch AA internals, fake-Ironclad activation,
+  colorless pool takeover. Theirs is strictly better for Watcher.
+- Fix: bridge detects AutoAnthonyWatcher assembly -> skips third-party Watcher bridging
+  entirely (avoids CardPool getter patch conflict + From() identity fight). SPIRE1-*
+  character bridging unchanged (addon doesn't cover them).
+
+### Spire1 v1.0.0 content removal (user order)
+- Watcher fully removed: char + 3 pools + 77 pool cards + Strike/DefendWatcher + Eruption/
+  Vigilance + PureWater relic + all art + loc keys + Vampires/SpireHeart refs +
+  ArchivedCharacterGatePatch (whole archive mechanism, only purpose was Watcher).
+- StS1 dungeon removed: Acts (5), Encounters (57), Monsters (69), DungeonSelectionPatch,
+  RestSiteBackgroundPatch, map_bgs + rest_site art, config flags (EnableSts1Dungeon/
+  UseSts1Dungeon/DungeonEnabled/Sts1DungeonSelected), LegacyActSharedEventFilter now
+  AFTP-only.
+- 16738 lines deleted total. Old saves with SPIRE1-WATCHER/dungeon content: WATCHER IDs
+  break (models gone); LegacySaveCompatPatch already strips the 8 LEAN relics. Dungeon
+  saves: act IDs unresolvable -> Deprecated placeholders (engine-safe).
+
+### Localization fixes (the user-reported unlocalized strings)
+- ROOT CAUSE: relic descriptions authored with '#b\n' broken markup instead of '!Var!'
+  dynamic vars. Cards used correct '!D!' style and rendered fine; relics didn't.
+- Fixed 28 relic descriptions (both langs): semantic slot order from code fallbacks
+  (Kunai !Cards!+!DexterityPower!, Shuriken !Cards!+!StrengthPower!, MutagenicStrength
+  2x !StrengthPower!, Necronomicon !Energy!, RingOfTheSnake literal 2, SsserpentHead
+  literal 50, CrackedCore '#b1' literal was already correct).
+- Orphan/dead keys purged: 8 LEAN relics + 6 LEAN potions + watcher/act keys + relic
+  strays in cards.json (wrong table). Potion zhs translated (Explosive/Fear).
+- Lesson: git checkout to undo a bad edit silently reverts prior cleanups in the same
+  files - re-run the full audit after any checkout of loc files.
+
+### Workshop publish
+- Spire1: StS1 Characters = 3799031900 (v1.0.0, full zhs+eng). Publish needed 2 attempts
+  (manifest upload timeout, retry succeeded).
+- Perfect v0.2.1: settings hover key format fixed (BaseLib wants '<MOD>-<KEY>.hover.desc',
+  not 'hoverTip'), version bumped. Staged for next publish.
+- AutoAnthonyRelics: same hover key migration applied.
