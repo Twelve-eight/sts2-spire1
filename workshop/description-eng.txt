@@ -1,0 +1,36 @@
+[h1]Spire1: The Original Three Characters[/h1]
+
+The three original Slay the Spire characters - Ironclad, Silent, and Defect - faithfully ported to Slay the Spire 2.
+
+[hr]
+
+[h2]Content[/h2]
+
+[list]
+[*][b]3 playable characters[/b]: Ironclad, Silent, and Defect, each with their original mechanic (Rage / Poison / Charge) intact
+[*][b]233 cards[/b]: the full StS1 card pools (basic / common / uncommon / rare / status / curse)
+[*][b]28 exclusive relics[/b]: Burning Blood, Ring of the Snake, Cracked Core and the other signature relics, numerically adapted to StS2 engine semantics
+[*][b]53 StS1 events[/b]: every "?" room event from the original (act-specific events plus shrine-type shared events), routed into StS2's four regions following the original act mapping
+[*][b]3 potions[/b]
+[*][b]Full English localization[/b]: card / relic / event descriptions all support dynamic values
+[/list]
+
+[h2]Card pools[/h2]
+
+Each character's cards join that character's own pool (they appear when you pick the character) and flow into the shared colorless / event-reward pools by the normal rules. Everything coexists with native StS2 content - no vanilla card is replaced.
+
+[hr]
+
+[h2]Requirements[/h2]
+
+[list]
+[*][b]Required[/b]: [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3737335127]BaseLib[/url]
+[/list]
+
+[b]Important - BaseLib version note[/b]
+
+The Workshop BaseLib often lags behind the official GitHub. If BaseLib errors after a game update or this mod fails to load, get the latest version from GitHub:
+[list]
+[*][url=https://github.com/Alchyr/BaseLib-StS2/releases]GitHub Releases (recommended)[/url] - latest official build
+[*]Install: download the zip, extract into [code]Slay the Spire 2/mods/[/code], and [b]unsubscribe from the Workshop BaseLib[/b] (avoids double-loading)
+[/list]
