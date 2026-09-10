@@ -10,9 +10,5 @@
   "THE_ARCHITECT.talk.SPIRE1-DEFECT.0-0r.char": "So the Defect powers up once more.",
   "THE_ARCHITECT.talk.SPIRE1-DEFECT.0-0r.next": "The Spire has counted your orbs before.",
   "THE_ARCHITECT.talk.SPIRE1-DEFECT.0-1r.ancient": "Old circuits, new lightning.",
-  "THE_ARCHITECT.talk.SPIRE1-DEFECT.0-attack": "Then burn your way upward.",
-  "THE_ARCHITECT.talk.SPIRE1-WATCHER.0-0r.char": "So the Watcher walks the tower again.",
-  "THE_ARCHITECT.talk.SPIRE1-WATCHER.0-0r.next": "The Spire has watched you watching it.",
-  "THE_ARCHITECT.talk.SPIRE1-WATCHER.0-1r.ancient": "Old devotion, new trial.",
-  "THE_ARCHITECT.talk.SPIRE1-WATCHER.0-attack": "Then strike with a clear mind."
+  "THE_ARCHITECT.talk.SPIRE1-DEFECT.0-attack": "Then burn your way upward."
 }

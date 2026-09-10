@@ -40,20 +40,5 @@
   "SPIRE1-DEFECT.cardsModifierTitle": "一代故障机器人",
   "SPIRE1-DEFECT.cardsModifierDescription": "在卡牌奖励与商店中加入故障机器人的卡牌。",
   "SPIRE1-DEFECT.banter.alive.endTurnPing": "处理中。",
-  "SPIRE1-DEFECT.banter.dead.endTurnPing": "...",
-  "SPIRE1-WATCHER.title": "StS1 - 观者",
-  "SPIRE1-WATCHER.titleObject": "观者",
-  "SPIRE1-WATCHER.description": "来自《杀戮尖塔》一代的观者。深居简出的苦修者,洞悉战斗的流转,并将其扭转为自己所用。(她的姿态机制--平静、愤怒、神性--在此移植版本中尚未实装。)",
-  "SPIRE1-WATCHER.pronounSubject": "她",
-  "SPIRE1-WATCHER.pronounObject": "她",
-  "SPIRE1-WATCHER.pronounPossessive": "她的",
-  "SPIRE1-WATCHER.possessiveAdjective": "她的",
-  "SPIRE1-WATCHER.aromaPrinciple": "熏香与虔诚",
-  "SPIRE1-WATCHER.goldMonologue": "黄金买不到觉悟,却买得起通往觉悟的路。",
-  "SPIRE1-WATCHER.eventDeathPrevention": "观者拒绝倒下。",
-  "SPIRE1-WATCHER.cardsModifierTitle": "一代观者",
-  "SPIRE1-WATCHER.cardsModifierDescription": "在卡牌奖励与商店中加入观者的卡牌。",
-  "SPIRE1-WATCHER.banter.alive.endTurnPing": "保持专注。",
-  "SPIRE1-WATCHER.banter.dead.endTurnPing": "...",
-  "SPIRE1-WATCHER.blockers": "不存在 StS2 观者的视觉资源:使用 StS2 摄政王的视觉作为已有记录的替代方案(PlaceholderID 'regent')。StS2 v0.111.0 中不存在平静/愤怒/神性/真言的姿态 API:爆发与警戒仅实现其伤害/格挡效果,并在描述中说明被省略的姿态效果,绝不伪造姿态。"
+  "SPIRE1-DEFECT.banter.dead.endTurnPing": "..."
 }

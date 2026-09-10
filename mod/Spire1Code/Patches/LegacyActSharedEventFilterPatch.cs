@@ -69,9 +69,8 @@ internal static class LegacyActSharedEventFilterPatch
     [HarmonyPostfix]
     private static void RemoveGen2SharedEvents(ActModel __instance)
     {
-        // 仅一代幕：我们的四幕（Spire1Act 子类）或 AFTP 三幕（命名空间前缀判定）
-        bool isLegacyAct = __instance is Spire1.Spire1Code.Acts.Spire1Act
-            || __instance.GetType().FullName?.StartsWith("ActsFromThePast.Acts.", StringComparison.Ordinal) == true;
+        // 仅一代幕:AFTP 三幕(命名空间前缀判定).本仓自建幕已随一代地牢移除(2026-09-10).
+        bool isLegacyAct = __instance.GetType().FullName?.StartsWith("ActsFromThePast.Acts.", StringComparison.Ordinal) == true;
         if (!isLegacyAct || OfficialSharedEventIds.Count == 0)
         {
             return;

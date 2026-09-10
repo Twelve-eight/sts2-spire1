@@ -48,7 +48,6 @@ public class SpireHeart : Spire1Event
         {
             Silent => "MIDDLE_DAGGERS",
             Defect => "MIDDLE_CORE",
-            Watcher => "MIDDLE_STAFF",
             _ => "MIDDLE_BLADE", // Ironclad; also the fallback for characters without a specific line
         };
         SetEventState(PageDescription(page), [Option(Attack, "MIDDLE")]);

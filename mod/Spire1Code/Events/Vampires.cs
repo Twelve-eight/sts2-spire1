@@ -44,7 +44,7 @@ public class Vampires : Spire1Event
     private string InitialPageKey => Owner?.Character switch
     {
         Character.Ironclad => "INITIAL",      // "brother" (StS1 Ironclad)
-        Character.Silent or Character.Watcher => "INITIAL_F", // "sister" (StS1 Silent / Watcher)
+        Character.Silent => "INITIAL_F",     // "sister" (StS1 Silent)
         _ => "INITIAL_N",                     // "broken one" (StS1 Defect / others)
     };
 

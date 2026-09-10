@@ -1,0 +1,33 @@
+[h1]Spire1: 杀戮尖塔一代三角色[/h1]
+
+将《杀戮尖塔》一代的三位初始角色完整移植到《杀戮尖塔 2》:铁甲战士(战士),寂静猎手(猎人),故障机器人(机器人).
+
+[h2]内容[/h2]
+[list]
+[*]3 个可玩角色,原版数值/机制忠实移植
+[*]233 张一代卡牌(基础牌/普通/罕见/稀有/诅咒/状态)
+[*]28 件一代遗物(含角色专属初始遗物)
+[*]一代事件,力量(power),药水
+[*]完整中英双语(简体中文 + English)
+[/list]
+
+[h2]机制保真要点[/h2]
+[list]
+[*]卡牌数值按一代原版逐张对齐(升级差异,固有,虚无,消耗全部保留)
+[*]跨池复用卡(如飞踢/冰冻/黑暗)按一代实际数值单独实现,不偷用二代同名卡
+[*]初始遗物:燃烧之血/蛇之戒指/破损核心,效果与一代一致
+[/list]
+
+[h2]兼容[/h2]
+[list]
+[*]需要 BaseLib 3.4.5+
+[*]支持与 Auto-Anthonyology(东尼算法)联用:三角色接入每局随机卡池生成
+[*]支持 Acts from the Past 等生态 mod;一代事件纯净性过滤(二代共享事件不乱入)
+[*]联机:与安装相同构建的朋友可正常联机
+[/list]
+
+[h2]设置[/h2]
+设置 -> Mod 设置 -> Spire1:内容开关(卡牌/遗物注入,纯一代池模式,联机容错等).
+
+[h2]English[/h1]
+The three original Slay the Spire characters - Ironclad, Silent, Defect - faithfully ported to Slay the Spire 2: 233 cards, 28 relics, StS1 events, powers and potions, with full Chinese and English localization. Requires BaseLib 3.4.5+. Auto-Anthonyology compatible (per-run chaos generation works for all three characters).

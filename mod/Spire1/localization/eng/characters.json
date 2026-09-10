@@ -40,20 +40,5 @@
   "SPIRE1-DEFECT.cardsModifierTitle": "StS1 Defect",
   "SPIRE1-DEFECT.cardsModifierDescription": "Adds Defect cards to card rewards and shops.",
   "SPIRE1-DEFECT.banter.alive.endTurnPing": "Processing.",
-  "SPIRE1-DEFECT.banter.dead.endTurnPing": "...",
-  "SPIRE1-WATCHER.title": "StS1 - Watcher",
-  "SPIRE1-WATCHER.titleObject": "the Watcher",
-  "SPIRE1-WATCHER.description": "The Watcher from Slay the Spire 1. A cloistered ascetic who reads the flow of combat and bends it to her will. (Her stance mechanics - Calm, Wrath, Divinity - are not yet available in this port.)",
-  "SPIRE1-WATCHER.pronounSubject": "she",
-  "SPIRE1-WATCHER.pronounObject": "her",
-  "SPIRE1-WATCHER.pronounPossessive": "hers",
-  "SPIRE1-WATCHER.possessiveAdjective": "her",
-  "SPIRE1-WATCHER.aromaPrinciple": "incense and devotion",
-  "SPIRE1-WATCHER.goldMonologue": "Gold cannot buy enlightenment, but it can buy the road to it.",
-  "SPIRE1-WATCHER.eventDeathPrevention": "The Watcher refuses to fall.",
-  "SPIRE1-WATCHER.cardsModifierTitle": "StS1 Watcher",
-  "SPIRE1-WATCHER.cardsModifierDescription": "Adds Watcher cards to card rewards and shops.",
-  "SPIRE1-WATCHER.banter.alive.endTurnPing": "Stay focused.",
-  "SPIRE1-WATCHER.banter.dead.endTurnPing": "...",
-  "SPIRE1-WATCHER.blockers": "No StS2 Watcher visual exists: the StS2 Regent visual is used as a documented substitute (PlaceholderID 'regent'). No Calm/Wrath/Divinity/Mantra stance API exists in StS2 v0.111.0: Eruption and Vigilance implement only their damage/Block, disclose the omitted stance effect in their descriptions, and never fake stances."
+  "SPIRE1-DEFECT.banter.dead.endTurnPing": "..."
 }
