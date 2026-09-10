@@ -145,18 +145,33 @@ internal static class AutoAnthonyCompatBridge
     }
 
     /// <summary>
-    /// 第三方角色注册：工坊观者（Boninall）-> 无色池。Watcher mod 缺席时静默跳过。
+    /// 第三方角色注册:工坊观者(Boninall).观者 mod 缺席时静默跳过.
     ///
-    /// 激活映射故意返回 Ironclad 而非 Colorless：AA 的 NormalizeCharacters 会剥掉
-    /// Colorless（ChaosRunDefinitions.cs:1262），From->Colorless 会让激活链直接
-    /// DeactivateRun()。伪 Ironclad 让激活/快照/MP 契约全通；观者的实际卡池由
-    /// ThirdPartyPoolPrefix 单独指向 ColorlessCardPool--其内容被 AA 的
-    /// ColorlessPoolContentsPatch 替换为 GetCards(Colorless) 的混沌卡
-    /// （GetCards 按需 Build,Chaos run 激活时用 ActiveSeed--种子一致,MP 确定）。
-    /// 起手保留观者原生 10 张（BasicCountFor(Colorless)=0,无伪造槽位）。
+    /// 2026-09-10 让位:AutoAnthony 核心 v0.3.7x 起提供官方扩展 API
+    /// (ComponentPackageApi/ExternalComponentCharacterApi, ApiVersion 3/4),同作者的
+    /// 工坊扩展 "Auto-Anthonyology: Watcher"(AutoAnthonyWatcher, 3794876718)用它注册了
+    /// 完整的观者生成体系(85 个 w_ 词条:姿态/真言/占卜/保留;82 个专属卡槽与紫色池;
+    /// 起手替换;多人种子与快照载体).本桥的观者部分(伪 Ironclad 激活 + 无色池接管)
+    /// 在该扩展在场时是冗余且冲突的(双方都 patch Watcher.CardPool getter;伪 Ironclad
+    /// 映射会令 From() 与扩展注册的外部 profile 打架).检测到该程序集时本方法返回 0,
+    /// 观者完全交给扩展;StS1 自有角色(SPIRE1-*)的桥接不受影响--扩展不覆盖它们.
+    ///
+    /// 扩展缺席时的旧行为保留:激活映射故意返回 Ironclad 而非 Colorless(AA 的
+    /// NormalizeCharacters 会剥掉 Colorless,From->Colorless 会让激活链直接
+    /// DeactivateRun);观者的实际卡池由 ThirdPartyPoolPrefix 指向 ColorlessCardPool
+    /// (其内容被 AA 的 ColorlessPoolContentsPatch 替换为 GetCards(Colorless) 的混沌卡,
+    /// GetCards 按需 Build,Chaos run 激活时用 ActiveSeed--种子一致,MP 确定);起手保留
+    /// 观者原生 10 张(BasicCountFor(Colorless)=0,无伪造槽位).
     /// </summary>
     private static int PatchThirdPartyEntries(Harmony harmony)
     {
+        if (AppDomain.CurrentDomain.GetAssemblies()
+            .Any(a => a.GetName().Name == "AutoAnthonyWatcher"))
+        {
+            MainFile.Logger.Info("[Spire1] AutoAnthony bridge: AutoAnthonyWatcher addon present - Watcher handed over to the official extension API, no third-party bridging.");
+            return 0;
+        }
+
         Assembly? watcherAssembly = AppDomain.CurrentDomain.GetAssemblies()
             .FirstOrDefault(a => a.GetName().Name == WatcherModAssembly);
         if (watcherAssembly == null)
