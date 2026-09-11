@@ -16,16 +16,16 @@
 
 [list]
 [*][b]3 名可玩角色[/b]:铁甲战士(Ironclad)/ 静默猎手(Silent)/ 故障机器人(Defect),各自的角色机制(怒气 / 毒素 / 充能)原样还原
-[*][b]233 张卡牌[/b]:三代卡池完整移植(基础牌 / 普通 / 罕见 / 稀有 / 状态 / 诅咒)
-[*][b]28 件专属遗物[/b]:燃血 / 蛇之戒指 / 破裂核心 等角色核心遗物,数值按二代引擎语义适配
-[*][b]53 个一代事件[/b]:仅在世界事件池中投放(通过事件偏好设置选择注入哪一幕),不改动二代原生事件
+[*][b]230 张卡牌[/b]:一代卡池完整移植(基础牌 / 普通 / 罕见 / 稀有 / 状态 / 诅咒)
+[*][b]22 件专属遗物[/b]:燃血 / 蛇之戒指 / 破裂核心 等角色核心遗物,数值按二代引擎语义适配
+[*][b]6 个独有事件[/b]:瘾君子 / 返璞归真 / 药贩子 / 祛咒之泉 / 写给自己的便条 / 尖塔之心(其余一代事件由 Acts from the Past 提供,自动接入,无需重复)
 [*][b]3 种药水[/b]
 [*][b]完整双语本地化[/b]:简体中文 + English,遗物/卡牌描述均支持动态数值
 [/list]
 
 [h2]卡池说明 / Card pools[/h2]
 
-三代角色的卡牌加入各自角色的卡池(仅当选择对应角色时出现),并进入无色/事件奖励等通用池的按规则投放.与二代原生内容并存,不替换任何二代卡牌.
+一代角色的卡牌加入各自角色的卡池(选择对应角色时出现),并按规则进入无色/事件奖励等通用池.与二代原生内容并存,不替换任何二代卡牌.
 
 [h2]旧存档兼容 / Save compatibility[/h2]
 
@@ -48,6 +48,6 @@
 [/list]
 
 [i]The Workshop BaseLib often lags behind the official GitHub. If BaseLib errors after a game update, grab the latest release from GitHub (link above), unzip into the mods folder, and unsubscribe from the Workshop copy to avoid double-loading.[/i]"
-	"changenote"		"v1.0.0 first public release: 3 characters, 233 cards, 28 relics, full zhs localization fixes."
+	"changenote"		"v1.1.0: Acts from the Past ecosystem integration - removed 46 duplicated events and their orphan card/relic grants so AFTP owns the shared StS1 event pool; 230 cards, 22 relics, 6 exclusive events remain."
 	"publishedfileid"		"3799031900"
 }
