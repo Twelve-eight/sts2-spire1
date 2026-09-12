@@ -2229,3 +2229,23 @@ HEAD e2ac8f1. All clean.
 - Perfect v0.2.1: settings hover key format fixed (BaseLib wants '<MOD>-<KEY>.hover.desc',
   not 'hoverTip'), version bumped. Staged for next publish.
 - AutoAnthonyRelics: same hover key migration applied.
+
+---
+
+## 2026-09-12 (夜) astra-advice 项 2 修复: ModMismatch 分支不再绕过哈希闸门
+
+- **缺陷** (astra-advice 2026-09-12 优先清单 2): 引擎握手 (dllsrc
+  `HandshakeManager.cs:100-137`) 在玩法 mod 清单不符时**提前返回 ModMismatch**,
+  永远到不了第三道哈希闸门。本补丁的 ModMismatch 分支直接改 Success,
+  等于把"清单差异"升级成"清单+模型哈希双差异全放行"——
+  `IgnoreMpHashMismatch=false` 被架空 (证据包探针: 输入 hash 111/222 → Success)。
+- **修复**: ModMismatch 分支内先复刻引擎的哈希比较
+  (`local.idDatabaseHash == remote.idDatabaseHash`, uint):
+  - 哈希一致 → 放行 (本补丁的本意场景: 清单假阳性);
+  - 哈希不一致且 `IgnoreMpHashMismatch=true` → 放行 (显式授权, 日志记录双方哈希);
+  - 哈希不一致且 `IgnoreMpHashMismatch=false` → **不修改结果**, 引擎拒绝保持,
+    日志写明拒绝原因与双方哈希。
+- **不变量**: 关闭哈希放行时, 任何清单差异路径都不能绕过哈希检查。
+- **验证**: 隔离构建 0 错误, 已部署实机。行为探针未对修复后源码重建快照重跑
+  (证据包 snapshotRoot 是修复前源); 修复为对引擎闸门 3 的逐行复刻,
+  真实双端联机验收场景: 双方装不同玩法 mod 且哈希不同 + 默认配置 → 应拒绝。

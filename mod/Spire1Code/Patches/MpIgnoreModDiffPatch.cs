@@ -41,11 +41,33 @@ internal static class MpIgnoreModDiffPatch
 
         if (__result.status == HandshakeStatus.ModMismatch)
         {
+            // ENGINE FACT (dllsrc HandshakeManager.cs:100-137): the engine
+            // returns ModMismatch BEFORE reaching the model-id hash gate, so a
+            // list mismatch used to let this patch force Success with the
+            // hashes never compared - even with IgnoreMpHashMismatch=false
+            // (astra-advice item 2; probe: hashes 111/222 -> Success). Replicate
+            // the engine's hash gate here before any forcing:
+            // - hashes equal  -> list-only mismatch, the case this patch exists for;
+            // - hashes differ -> forcing requires the EXPLICIT hash switch;
+            //   otherwise the engine's rejection stands untouched.
+            bool hashesMatch = local.idDatabaseHash == remote.idDatabaseHash;
+            if (!hashesMatch && !Spire1Config.IgnoreMpHashMismatch)
+            {
+                MainFile.Logger.Warn(
+                    $"[Spire1] MP handshake: mod-list mismatch AND model-id hash mismatch "
+                    + $"(local hash={local.idDatabaseHash}, remote hash={remote.idDatabaseHash}) - "
+                    + $"NOT forced through: IgnoreMpHashMismatch=false. "
+                    + $"Serialization safety cannot be guaranteed across different model-id databases.");
+                return; // keep the engine's ModMismatch result
+            }
             MainFile.Logger.Warn(
-                $"[Spire1] MP handshake: mod-list mismatch forced through "
-                + $"(local={local.gameplayAffectingMods?.Count ?? -1} gameplay mods, "
-                + $"remote={remote.gameplayAffectingMods?.Count ?? -1}). "
-                + $"Serialization safety relies on identical gameplay-mod binaries.");
+                hashesMatch
+                    ? $"[Spire1] MP handshake: mod-list mismatch forced through with MATCHING model-id hash "
+                      + $"(hash={local.idDatabaseHash}; local={local.gameplayAffectingMods?.Count ?? -1} gameplay mods, "
+                      + $"remote={remote.gameplayAffectingMods?.Count ?? -1})."
+                    : $"[Spire1] MP handshake: mod-list mismatch AND model-id hash mismatch forced through "
+                      + $"by explicit IgnoreMpHashMismatch=true (local hash={local.idDatabaseHash}, "
+                      + $"remote hash={remote.idDatabaseHash}).");
             __result.status = HandshakeStatus.Success;
             return;
         }
