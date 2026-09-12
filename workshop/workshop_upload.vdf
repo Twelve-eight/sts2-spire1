@@ -48,6 +48,6 @@
 [/list]
 
 [i]The Workshop BaseLib often lags behind the official GitHub. If BaseLib errors after a game update, grab the latest release from GitHub (link above), unzip into the mods folder, and unsubscribe from the Workshop copy to avoid double-loading.[/i]"
-	"changenote"		"v1.1.0: Acts from the Past ecosystem integration - removed 46 duplicated events and their orphan card/relic grants so AFTP owns the shared StS1 event pool; 230 cards, 22 relics, 6 exclusive events remain."
+	"changenote"		"v1.1.1: multiplayer handshake hardening (2026-09-12 review) - a mod-list mismatch is only forced through when model-id hashes match, or when the explicit hash-mismatch switch is on; with the default settings a mod-list + hash double mismatch is now rejected, closing a serialization-safety hole."
 	"publishedfileid"		"3799031900"
 }
