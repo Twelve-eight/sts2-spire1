@@ -30,5 +30,5 @@
   "SPIRE1-ENABLE_SKIP_NODE_BUTTON.hover.title": "Map Skip-Node Button",
   "SPIRE1-ENABLE_SKIP_NODE_BUTTON.hover.desc": "Show a rescue button on the map screen: if you are stuck in a room, unlock map travel and click your next node. Uses the native vote pipeline - no desync risk.",
   "SPIRE1-ENABLE_STS1_EVENTS.title": "Inject StS1 events into event pools",
-  "SPIRE1-ENABLE_STS1_EVENTS.hover.desc": "When on: StS1 story events (Addict, Drug Dealer, Back to Basics) can appear in Act 2 event pools of any run. When off: they are removed from the event pools at startup (StS1 character runs keep their scripted flows)."
+  "SPIRE1-ENABLE_STS1_EVENTS.hover.desc": "Player option, decides directly. When on: StS1 events (Fountain of Curse Removal, Note For Yourself, Addict, Drug Dealer, Back to Basics) are registered into the shared/act event pools and can appear in any run. When off: they are removed from all event pools at startup and never roll. (SpireHeart is never auto-registered.)"
 }

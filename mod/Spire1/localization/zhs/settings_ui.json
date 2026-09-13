@@ -30,5 +30,5 @@
   "SPIRE1-ENABLE_SKIP_NODE_BUTTON.hover.title": "地图跳过节点按钮",
   "SPIRE1-ENABLE_SKIP_NODE_BUTTON.hover.desc": "在地图页显示救援按钮:卡死在房间时解锁选点,直接点击下一节点。走原生投票管线,无失同步风险。",
   "SPIRE1-ENABLE_STS1_EVENTS.title": "注入一代事件到事件池",
-  "SPIRE1-ENABLE_STS1_EVENTS.hover.desc": "开启时：一代剧情事件（瘾君子、毒品贩子、重返基础）可出现在任意局的第二幕事件池。关闭时：启动时将其从事件池移除（一代角色局的自定义流程不受影响）。"
+  "SPIRE1-ENABLE_STS1_EVENTS.hover.desc": "玩家选项，直接决定。开启时：一代事件（驱邪泉、给自己的便条、瘾君子、毒品贩子、重返基础）注册进共享/幕事件池，可在任意局出现。关闭时：启动时从全部事件池移除，永不出现。（尖塔之心从不自动注册。）"
 }
