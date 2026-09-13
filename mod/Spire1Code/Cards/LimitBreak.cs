@@ -24,5 +24,11 @@ public class LimitBreak() : Spire1Card(1, CardType.Skill, CardRarity.Rare, Targe
             await PowerCmd.Apply<StrengthPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, str, Owner.Creature, this);
     }
 
-    protected override void OnUpgrade() => ResetKeywordCache();
+    protected override void OnUpgrade()
+    {
+        // SP1-2 fix (astra-advice 2026-09-12): the upgrade only removes Exhaust.
+        // The old ResetKeywordCache() nulled CardModel._keywords, wiping keywords
+        // other systems added (Retain/Ethereal survive upgrade in StS1/StS2).
+        RemoveKeyword(CardKeyword.Exhaust);
+    }
 }

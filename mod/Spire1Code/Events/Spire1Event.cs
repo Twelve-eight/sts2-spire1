@@ -23,6 +23,18 @@ namespace Spire1.Spire1Code.Events;
 /// </summary>
 public abstract class Spire1Event : CustomEventModel
 {
+
+    protected Spire1Event()
+    {
+    }
+
+    /// <summary>Opt-out of normal event-pool auto-registration (SP1-3):
+    /// lethal endgame stories must not roll in the regular pool.</summary>
+    protected Spire1Event(bool autoAdd)
+        : base(autoAdd)
+    {
+    }
+
     /// <summary>
     /// File-name stem of a portrait that ships with StS2 under <c>res://images/events/</c>,
     /// for example <c>lost_wisp</c>. Verified to exist in <c>SlayTheSpire2.pck</c>.

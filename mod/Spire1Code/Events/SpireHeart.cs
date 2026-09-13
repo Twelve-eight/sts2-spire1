@@ -22,8 +22,18 @@ namespace Spire1.Spire1Code.Events;
 /// NOTE: this jar's SpireHeart has no blessing (max HP / upgrade / relic) choices - the bytecode only
 /// contains the Continue / Attack / Continue / (Sleep | Approach Door) cinematic flow.
 /// </summary>
+/// <summary>
+/// SP1-3 fix (astra-advice 2026-09-12): this lethal endgame story was
+/// auto-added to the normal Act 3 event pool (CustomEventModel autoAdd=true
+/// default) with no key gate - rolling it randomly kills the owner. It is no
+/// longer auto-added; reachability goes through an explicit endgame flow
+/// (real-machine verification pending).
+/// </summary>
 public class SpireHeart : Spire1Event
 {
+    public SpireHeart() : base(autoAdd: false) { }
+
+
     protected override string ShippedPortrait => "the_legends_were_true";
 
     public override ActModel[] Acts => Act3;
