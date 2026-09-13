@@ -22,6 +22,12 @@ internal class Spire1Config : SimpleModConfig
     /// <summary>Inject StS1 relics into the shared reward pools.</summary>
     public static bool EnableSts1Relics { get; set; } = true;
 
+    /// <summary>Inject StS1 events into the shared event pools (Act2 story events).
+    /// When false, they are removed from BaseLib's ActCustomEvents at init and
+    /// never roll in base-game runs (user request 2026-09-13: gen-1 events should
+    /// be toggleable out of gen-2 dungeons).</summary>
+    public static bool EnableSts1Events { get; set; } = true;
+
     // 2026-09-10: 一代地牢(4 幕自建内容)已按用户指令整体移除;EnableSts1Dungeon/
     // UseSts1Dungeon 配置项与幕选择器一并删除.
 
@@ -65,5 +71,6 @@ internal class Spire1Config : SimpleModConfig
     [ConfigIgnore] public static bool CharactersEnabled => EnableSts1Content && EnableSts1Characters;
     [ConfigIgnore] public static bool CardsEnabled => EnableSts1Content && EnableSts1Cards;
     [ConfigIgnore] public static bool RelicsEnabled => EnableSts1Content && EnableSts1Relics;
+    [ConfigIgnore] public static bool EventsEnabled => EnableSts1Content && EnableSts1Events;
     [ConfigIgnore] public static bool LocDebug => EnableSts1Content && DebugShowLocKeys;
 }

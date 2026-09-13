@@ -2249,3 +2249,26 @@ HEAD e2ac8f1. All clean.
 - **验证**: 隔离构建 0 错误, 已部署实机。行为探针未对修复后源码重建快照重跑
   (证据包 snapshotRoot 是修复前源); 修复为对引擎闸门 3 的逐行复刻,
   真实双端联机验收场景: 双方装不同玩法 mod 且哈希不同 + 默认配置 → 应拒绝。
+
+## 2026-09-13: 全体池注册开关接线 + 事件排查 (用户问询轮)
+
+- **排查结论 (用户留讯: 「这个事件该出现在这局游戏吗？」)**: Spire1 的一代事件
+  (Addict/DrugDealer/BackToBasics, 均 Acts=>Act2) 以 CustomEventModel 默认
+  autoAdd=true 注册进 BaseLib ActCustomEvents → **会出现在二代地牢第二幕事件池**。
+  是否应该出现属产品决策 → 已加开关 (见下)。SpireHeart 已在前轮 autoAdd:false。
+- **死开关复活**: `EnableSts1Cards`/`EnableSts1Relics` 两个开关从 M1 起就存在但
+  零消费者 (CardsEnabled/RelicsEnabled 计算属性无人读)。本轮接线:
+  - 卡片: 新 `Spire1SharedPoolGatePatch` —— CardPoolModel.GetUnlockedCards 后缀,
+    开关关时从无色池结果中过滤 11 张一代无色卡 ([Pool(ColorlessCardPool)] 反射缓存)。
+    与 Perfect 的同类后缀独立组合。
+  - 遗物: CrackedCore (DefectRelicPool) / RingOfTheSnake (SilentRelicPool) 注册进
+    引擎角色遗物池 → 各自覆盖 IsAllowed 加 RelicsEnabled 门 (新手直接赠送流程不受影响)。
+    Spire1RelicPool 自家池不受门控 (一代角色局自管)。
+  - 事件: 新 `EnableSts1Events` 开关, 关闭时 Initialize 阶段从
+    CustomContentDictionary.ActCustomEvents/SharedCustomEvents 移除全部 Spire1Event
+    (RegisterType 一次性守卫保证不会被重新注册)。SpireHeart 的 autoAdd:false 独立于本开关。
+- **配置下发兼容**: 三开关均为 BaseLib SimpleModConfig 静态属性, 经 ModConfigRegistry
+  注册后被 MpConfigSync 自动扫描同步 (无需 MCS 侧改动); 卡片门在出牌/商店 offer 期
+  过滤, 两端同配置结果确定。
+- loc: SPIRE1-ENABLE_STS1_EVENTS 双语键补齐; 部署因游戏运行 DLL 锁定转为
+  **后台延迟部署** (进程退出后自动补做, 工作区规范 §11)。

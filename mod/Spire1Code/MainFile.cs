@@ -30,6 +30,20 @@ public partial class MainFile : Node
         // Runtime content toggles (Settings -> Mod Settings).
         ModConfigRegistry.Register(ModId, new Spire1Config());
 
+        // Events gate (user request 2026-09-13): gen-1 story events must be
+        // toggleable out of base-game event pools. CustomEventModel ctors run
+        // at ModelDb init (before config load), so the gate is applied HERE by
+        // removing them from BaseLib's registration lists; RegisterType's
+        // once-guard prevents re-adds. SpireHeart was already autoAdd:false.
+        if (!Spire1Config.EventsEnabled)
+        {
+            BaseLib.Patches.Content.CustomContentDictionary.ActCustomEvents
+                .RemoveAll(e => e is Spire1.Spire1Code.Events.Spire1Event);
+            BaseLib.Patches.Content.CustomContentDictionary.SharedCustomEvents
+                .RemoveAll(e => e is Spire1.Spire1Code.Events.Spire1Event);
+            Logger.Info("[Spire1] StS1 events removed from shared event pools (EnableSts1Events=false)");
+        }
+
         // LEAN-CODE RULE (DEVELOP.md 7a): shipped StS2 cards that are identical to their StS1
         // counterparts are added to our pools instead of being reimplemented. Must run before the
         // game generates any pool, because ModHelper freezes modded pool content on first use.

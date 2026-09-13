@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using Spire1.Spire1Code.Character;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Relics;
 
@@ -14,6 +15,14 @@ namespace Spire1.Spire1Code.Relics;
 [Pool(typeof(SilentRelicPool))]
 public class RingOfTheSnake : Spire1Relic
 {
+
+    /// <summary>RelicsEnabled gate (astra-advice SP1 findings): this relic is
+    /// registered into an ENGINE character relic pool, so base-game runs could
+    /// roll it. Starter-grant flow (direct grant) bypasses IsAllowed and is
+    /// unaffected.</summary>
+    public override bool IsAllowed(global::MegaCrit.Sts2.Core.Runs.IRunState runState)
+        => base.IsAllowed(runState) && Spire1Config.RelicsEnabled;
+
     public override RelicRarity Rarity => RelicRarity.Starter;
 
     public override List<(string, string)>? Localization =>

@@ -1,4 +1,5 @@
 using BaseLib.Abstracts;
+using Spire1.Spire1Code.Config;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Combat;
@@ -19,6 +20,14 @@ namespace Spire1.Spire1Code.Relics;
 [Pool(typeof(DefectRelicPool))]
 public class CrackedCore : Spire1Relic
 {
+
+    /// <summary>RelicsEnabled gate (astra-advice SP1 findings): this relic is
+    /// registered into an ENGINE character relic pool, so base-game runs could
+    /// roll it. Starter-grant flow (direct grant) bypasses IsAllowed and is
+    /// unaffected.</summary>
+    public override bool IsAllowed(global::MegaCrit.Sts2.Core.Runs.IRunState runState)
+        => base.IsAllowed(runState) && Spire1Config.RelicsEnabled;
+
     public override RelicRarity Rarity => RelicRarity.Starter;
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Lightning", 1m)];
