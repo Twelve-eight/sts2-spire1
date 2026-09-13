@@ -1,3 +1,15 @@
+## 第二轮复审 (2026-09-13)
+
+当前 Spire1 隔离构建 exit 0, 61 warning/0 error. 旧 hash-gate 问题已经通过当前源码控制流修复: `MpIgnoreModDiffPatch.cs:42-71` 在清单 mismatch 时先比较 model-id hash, `IgnoreMpHashMismatch=false` 不再被清单放行覆盖. 这只证明源码/构建路径, 没有新一轮真实 handshake 双端.
+
+### P2 SP1-2 仍开放
+
+当前 binary probe 仍以实际 `LimitBreak.OnUpgrade` 调用验证: 升级前人工加入的 `Retain` 在升级后消失. `Spire1Card` 仍通过清空私有 `_keywords` 重建 canonical 集合. 这会删掉其他系统附加关键词, 不能以普通升级成功替代. 只移除本次升级负责的关键词并覆盖 clone/save-load.
+
+### 仍开放/未完成验证
+
+SpireHeart 的普通事件注册可达性, 设置开关实际消费者, 初始化期池冻结和三角色玩法仍未在本轮真实游戏中复验. 当前 evidence 只支持 hash gate 已局部修复, 不支持三角色全量实机验收.
+
 # Astra advice - Spire1
 
 日期: 2026-09-12. 主会话单线. 本轮审查当前互操作, 状态/升级, 配置, 发布契约, 并抽查玩法路径. 不是对全部 230 张卡逐张完成实机验证.
