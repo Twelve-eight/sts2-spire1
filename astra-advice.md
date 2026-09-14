@@ -1,14 +1,12 @@
-## 第二轮复审 (2026-09-13)
+## 第四轮复核与 AFTP 下游边界 (2026-09-14)
 
-当前 Spire1 隔离构建 exit 0, 61 warning/0 error. 旧 hash-gate 问题已经通过当前源码控制流修复: `MpIgnoreModDiffPatch.cs:42-71` 在清单 mismatch 时先比较 model-id hash, `IgnoreMpHashMismatch=false` 不再被清单放行覆盖. 这只证明源码/构建路径, 没有新一轮真实 handshake 双端.
+当前 HEAD `0a12be8`, 产品源码相对第三轮无差异. 纠正旧头部: 第三轮 `binary-recheck.json` 实际是外部 Retain 在 LimitBreak.OnUpgrade 前后均保留, 不是仍被删除. 该局部回归已关闭; 真实升级 UI/序列化/角色玩法仍未由本轮重跑.
 
-### P2 SP1-2 仍开放
+用户要求评估 AFTP 以便下游补丁优化. 按现有 `DEVELOP.md:11` 的生态兼容职责, 建议 Spire1 承接 AFTP 的可选状态/生命周期补丁, 不 fork 覆盖主包/PCK, 不恢复自建幕/观者. 具体证据与契约见 [AFTP 第四轮评估](../aftp-upstream/astra-advice.md).
 
-当前 binary probe 仍以实际 `LimitBreak.OnUpgrade` 调用验证: 升级前人工加入的 `Retain` 在升级后消失. `Spire1Card` 仍通过清空私有 `_keywords` 重建 canonical 集合. 这会删掉其他系统附加关键词, 不能以普通升级成功替代. 只移除本次升级负责的关键词并覆盖 clone/save-load.
+优先: Burn+ 序列化重建权限, Classic Slimed 的克隆/保存 marker; 然后特效退树解绑和奖励完成链. Balance 数值/复活问题仍在 Balance, Perfect optional scanner 在 Perfect. 先识别 AFTP 版本/目标签名, 加载顺序安全且缺席不影响基础功能. 本轮仅建议, 未新增这些产品补丁.
 
-### 仍开放/未完成验证
-
-SpireHeart 的普通事件注册可达性, 设置开关实际消费者, 初始化期池冻结和三角色玩法仍未在本轮真实游戏中复验. 当前 evidence 只支持 hash gate 已局部修复, 不支持三角色全量实机验收.
+SpireHeart 事件池, 真实 handshake, 配置首消费者与多人组合仍未验证. 不用 AFTP 参考源构建的 619 warnings 替代逐路径评估, 也不把源码未变当实机无风险. 以下为历史记录.
 
 # Astra advice - Spire1
 

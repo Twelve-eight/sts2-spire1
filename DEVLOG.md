@@ -2272,3 +2272,17 @@ HEAD e2ac8f1. All clean.
   过滤, 两端同配置结果确定。
 - loc: SPIRE1-ENABLE_STS1_EVENTS 双语键补齐; 部署因游戏运行 DLL 锁定转为
   **后台延迟部署** (进程退出后自动补做, 工作区规范 §11)。
+
+## 2026-09-14 astra 第三轮审查交接记录
+
+第三轮隔离构建 exit 0, 61 warnings. 使用当前第三轮构建 DLL 的 binary recheck 调用 `LimitBreak.OnUpgrade`: 外部 Retain 在升级前后均存在, 关闭上一轮 `_keywords` 清空回归的隔离证据. 当前仍未跑真实升级 UI, MP 序列化, event pool, handshake 或 SpireHeart 终局.
+
+证据: `G:\\omp works\\astra-advice-evidence\\2026-09-14\\binary-recheck.json`, `third-review-summary.json`. 当前 advice 修改未提交; 不清理用户已有生成物或未归属文件.
+
+## 2026-09-14 astra 第四轮 AFTP 下游评估
+
+当前 0a12be8 产品源码 hash 与第三轮相同. 纠正 advice 旧头部的 Retain 失败声明: 第三轮 binary-recheck 已是 upgrade 前后保留, 仅 UI/序列化/真实角色场景未跑.
+
+用户要求审查 aftp-upstream 以便下游优化. 本轮在当前工坊 DLL 隔离复现 Burn+ 窗口外重建异常和 Classic Slimed clone/save 丢行为 marker. 建议按现有 DEVELOP.md:11 由 Spire1 的可选生态兼容层承接, 不覆盖 AFTP/PCK, 不恢复自建幕/观者. 特效退树和 minigame 奖励等待为 SOURCE, FireFly trail 优化未测性能.
+
+完整目标/边界/验收见 ../aftp-upstream/astra-advice.md; 证据 ../astra-advice-evidence/2026-09-14/round4/review-results.json. 本轮未实现补丁, 未改产品源码/部署/游戏/push.
