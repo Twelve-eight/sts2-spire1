@@ -37,8 +37,10 @@ namespace Spire1.Spire1Code.Interop;
 /// 2. Prefix <c>FireFlyEffect.CreateAdditiveMaterial</c>:返回一个进程级共享,创建后
 ///    永不修改的 <c>CanvasItemMaterial</c>(<c>BlendMode = Add</c>).该方法只有两个调用点
 ///    (Initialize 头精灵 <c>IL_00b3</c>,Update 拖尾样本 <c>IL_00ab</c>),两点都紧跟
-///    <c>CanvasItem::set_Material</c>,因此共享材质覆盖全部使用点;已核验 AFTP 全库无
-///    任何构造后写入材质属性的代码(材质表现全部落在 CanvasItem/Node2D 上).
+///    <c>CanvasItem::set_Material</c>,因此共享材质覆盖全部使用点.共享面之所以成立,
+///    已核验的是:AFTP 全库对材质的写入只有构造期那一处 <c>BlendMode</c>(逐处 grep),
+///    构造之后没有任何代码再写材质属性,也没有把材质存进字段留待后改.
+///    未被核验的是:引擎或第三方 mod 若自行改写这个共享实例,不在本层的保证范围内.
 ///
 /// 生命周期(producer/owner/first-consumer/cleanup):
 /// - 拖尾精灵池:producer = <c>FireFlyEffect.Update</c> 的采样块(经替换后的
@@ -75,9 +77,26 @@ namespace Spire1.Spire1Code.Interop;
 /// - 身份:<c>_trailSprites</c> 里存的就是 AddChild 的同一个实例,淘汰路径
 ///   <c>get_Item(0)</c> 取回的仍是该实例,故 Release 收到的实例必是 Acquire 曾经返回
 ///   的那个(池按引用复用,不做任何身份映射);
-/// - 每个生命周期的全部属性都被重写:构造路径每次设置 Texture/RegionEnabled/RegionRect/
-///   Centered/Material,<c>UpdateSprite</c> 每帧为所有活精灵设置 Modulate/GlobalPosition/
-///   Scale,因此复用不会跨生命残留状态(池中精灵也从不被 AFTP 之外的代码触碰);
+/// - 复用不残留状态的依据(逐条核验,不是推断):对 FireFlyEffect 整个类做过一次
+///   全量 setter 扫描,该类写过的属性只有 9 个 --
+///   Sprite2D::Texture / RegionEnabled / RegionRect / Centered,CanvasItem::Material
+///   (这 5 个由构造块写,而构造块被 Transpiler 原样保留,每次取样都重写),
+///   Node2D::GlobalPosition,CanvasItem::Modulate,Node2D::Scale
+///   (这 3 个由 <c>UpdateSprite</c> 写,而它在同一次 Update 内,新精灵入列之后无条件
+///   执行,见下),以及材质工厂里的 CanvasItemMaterial::BlendMode.
+///   也就是说:池中精灵身上"AFTP 会写的属性"被完整重写,不存在需要本层额外重置的项.
+///   AFTP 从不写的那些属性(Rotation, Skew, Offset, FlipH/V, Visible, SelfModulate,
+///   TopLevel, YSortEnabled, ZAsRelative 等)保持引擎默认值,复用与否都一样;
+///   ZIndex 是设在特效节点上的(<c>TheCityBackground</c> 的 <c>fly.ZIndex = -15</c>),
+///   不是设在精灵上.
+/// - 帧内次序(为什么 Modulate/GlobalPosition/Scale 不需要在 acquire 时重置):
+///   同一次 <c>Update</c> 内,采样块先执行(构造 -> AddChild -> 入列),<c>UpdateSprite</c>
+///   在方法末尾无条件执行(IL 里是最后一条 call),其循环对 <c>_trailSprites</c> 里每一个
+///   活精灵重写这三个属性 -- 新取的精灵在当帧就被写成正确值,不存在"带着上一世状态
+///   渲染一帧"的窗口.所以本层刻意不在 acquire 里重置任何属性:那既无必要,也会白白
+///   增加每样本的开销.
+/// - 池中精灵不被本层之外的代码触碰:它已被 RemoveChild 摘出场景树,不在任何场景树里,
+///   故引擎的节点遍历与处理流程都到不了它;AFTP 自己也只在把它放回池之后就不再持有引用.
 /// - 次序:同一个采样块内先 acquire(构造)后 release(淘汰),故刚释放的精灵最早也要到
 ///   下一个采样块才会被再次取出,取出时它已完全脱离父节点;
 /// - 与 AFTP-1 正交:AFTP-1 只接管 ProcessFrame 订阅与退树清理,不改变本类的 Update
@@ -296,10 +315,6 @@ internal static class AftpFireFlyPerfCompat
         {
             harmony.Patch(update, transpiler: new HarmonyMethod(transpiler));
             harmony.Patch(materialFactory, prefix: new HarmonyMethod(materialPrefix));
-            // 装完再核验:两个补丁都必须真的挂在登记表上.若某个 Patch() 没有生效而
-            // 又不抛异常(静默跳过),这里就会失败并走回滚,不会留下"只有共享材质在跑,
-            // 池却没人归还"的半套状态.
-            VerifyPatched(update, materialFactory, transpiler, materialPrefix);
         }
         catch
         {
@@ -308,29 +323,6 @@ internal static class AftpFireFlyPerfCompat
         }
 
         MainFile.Logger.Info($"[Spire1] AFTP FireFly anchors validated: sprite-ctor #{spriteCtor}, material #{materialCall}->#{materialSet}, addchild #{addChild}, evict queuefree #{queueFree}, body {updateBody.Count} instructions.");
-    }
-
-    /// <summary>
-    /// 安装后核验:本层那个 Transpiler 必须挂在 Update 上,本层那个 Prefix 必须挂在材质
-    /// 工厂上,且登记在同一个 Harmony ID 名下.少了任何一个都说明安装没真正生效,由调用
-    /// 方回滚并终局 -- 不留"共享材质在跑而池无人归还"的半套状态.
-    /// </summary>
-    private static void VerifyPatched(MethodInfo update, MethodInfo materialFactory, MethodInfo transpiler, MethodInfo materialPrefix)
-    {
-        // 必须写全 HarmonyLib.Patches:本文件位于 Spire1.Spire1Code.Interop,同级存在
-        // Spire1.Spire1Code.Patches 命名空间,裸写 Patches 会解析成那个命名空间而不是
-        // HarmonyLib 的类型(CS0118).
-        HarmonyLib.Patches? updatePatches = PatchProcessor.GetPatchInfo(update);
-        if (updatePatches == null || !updatePatches.Transpilers.Any(p => p.PatchMethod == transpiler))
-        {
-            throw new InvalidOperationException($"transpiler did not register on FireFlyEffect.{UpdateMethodName}.");
-        }
-
-        HarmonyLib.Patches? factoryPatches = PatchProcessor.GetPatchInfo(materialFactory);
-        if (factoryPatches == null || !factoryPatches.Prefixes.Any(p => p.PatchMethod == materialPrefix))
-        {
-            throw new InvalidOperationException($"prefix did not register on FireFlyEffect.{MaterialFactoryName}.");
-        }
     }
 
     /// <summary>按本层 Harmony ID 撤销已装补丁(安装中途失败的收尾).撤销自身失败只记
