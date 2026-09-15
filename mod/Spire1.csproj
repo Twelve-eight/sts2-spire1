@@ -79,18 +79,22 @@
          guarantee real: "held back" means NOT COMPILED INTO THE PAYLOAD, so the class cannot run
          even if something later invokes it by reflection, and a rebuild cannot silently pull it in.
 
-         The SDK default glob would otherwise compile every .cs under mod/, so without these lines a
-         routine rebuild would embed the held-back classes and the release notes would become false
-         with nothing failing.
+         GATED, not unconditional. An unconditional Remove would fail silently in the worst way for
+         the person writing one of these layers: their build would go green WITHOUT COMPILING THEIR
+         FILE, and a probe against the built DLL would only report the type missing - so they could
+         conclude their work was broken, or worse, verified, on evidence that never contained it.
+         A verification build therefore opts in:
+             dotnet build mod/Spire1.csproj -c Release -p:IncludeHeldBackLayers=true \
+                 -p:CopyToModsFolderOnBuild=false -p:ModsPath="G:/omp works/.tmp/mods-scratch/"
+         Default (release) build keeps them excluded.
 
          TO RELEASE A LAYER: delete its Remove line here AND wire its TryApply call in MainFile.cs
-         in the same commit, then update docs/PUSH-INSTRUCTIONS-2026-09-15.md. Removing the Remove
-         line without wiring is harmless (dead code, flagged by the payload marker check). Wiring
-         without removing the line fails loudly at compile time with CS0103, because the type will
-         not exist - which is the intended failure direction.
-         The refresh script (.tooling/refresh-workshop-payloads.ps1) asserts the same list against
-         the compiled bytes, so the two checks agree. -->
-    <ItemGroup>
+         in the same commit, then update docs/PUSH-INSTRUCTIONS-2026-09-15.md. Wiring without
+         removing the line fails loudly at compile time with CS0103 (the type will not exist) - the
+         intended failure direction. The refresh script asserts the same list against the compiled
+         bytes, so the two checks agree; a build made with IncludeHeldBackLayers=true will trip that
+         assertion if anyone stages its output for release. -->
+    <ItemGroup Condition="'$(IncludeHeldBackLayers)' != 'true'">
         <Compile Remove="Spire1Code/Interop/AftpFireFlyPerfCompat.cs" />
         <Compile Remove="Spire1Code/Interop/AftpCardStateCompat.cs" />
     </ItemGroup>
