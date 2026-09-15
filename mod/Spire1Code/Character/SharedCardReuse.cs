@@ -1,4 +1,3 @@
-using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Modding;
 using Sts2Cards = MegaCrit.Sts2.Core.Models.Cards;
 
@@ -163,6 +162,15 @@ internal static class SharedCardReuse
     /// <summary>
     /// Adds every reused shipped card to the matching custom pool. Call from MainFile.Initialize().
     /// PureSts1Pools=true 时跳过全部二代官方卡注入，改为注入自有 StS1 实现类。
+    ///
+    /// SP1-1 (2026-09-15): this method is SEMANTIC REGISTRATION ONLY - it feeds pools via
+    /// ModHelper.AddModelToPool (which only appends to ModHelper's registration lists and
+    /// never reads a pool, so it cannot freeze anything) and must run BEFORE the first pool
+    /// consumer. The old startup LogPoolCensus was REMOVED from here: reading a pool's
+    /// AllCards freezes that pool (ModHelper.ConcatModelsFromMods) and locked later-loaded
+    /// mods out of AddModelToPool for it. Observation moved to Diagnostics/PoolCensus.cs,
+    /// which runs post-registration only (config-gated first menu entry, default OFF, or the
+    /// "poolcensus" console command) and consumes InjectionLedger below for origin data.
     /// </summary>
     public static void Register()
     {
@@ -187,41 +195,25 @@ internal static class SharedCardReuse
         foreach (var cardType in DefectReuse) InjectTwin(typeof(DefectCardPool), cardType);
         foreach (var cardType in SilentReuse) InjectTwin(typeof(SilentCardPool), cardType);
 
-        LogPoolCensus("ColorlessCardPool", typeof(ColorlessCardPool));
-        LogPoolCensus("Spire1CardPool", typeof(Spire1CardPool));
-        LogPoolCensus("SilentCardPool", typeof(SilentCardPool));
-        LogPoolCensus("DefectCardPool", typeof(DefectCardPool));
+        // SP1-1: no diagnostic pool reads here (was LogPoolCensus x4). The ordered census
+        // runs on demand AFTER all mods registered - see Diagnostics/PoolCensus.cs.
     }
 
-    /// <summary>终态直证：打印三池最终成员的稀有度分布，用于核对复用注入是否生效。</summary>
-    private static void LogPoolCensus(string name, System.Type poolType)
-    {
-        try
-        {
-            var pool = (MegaCrit.Sts2.Core.Models.CardPoolModel)typeof(MegaCrit.Sts2.Core.Models.ModelDb)
-                .GetMethod("CardPool", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
-                ?.MakeGenericMethod(poolType)
-                ?.Invoke(null, null);
-            if (pool == null) { MainFile.Logger.Error($"[Spire1] PoolCensus {name}: CardPool<T> returned null"); return; }
-            var hist = new System.Collections.Generic.SortedDictionary<string, int>();
-            int total = 0;
-            foreach (var c in pool.AllCards)
-            {
-                hist[c.Rarity.ToString()] = hist.GetValueOrDefault(c.Rarity.ToString()) + 1;
-                total++;
-            }
-            var parts = new List<string>();
-            foreach (var kv in hist) parts.Add(kv.Key + "=" + kv.Value);
-            MainFile.Logger.Info($"[Spire1] PoolCensus {name}: total={total} ({string.Join(", ", parts)})");
-        }
-        catch (System.Exception e)
-        {
-            MainFile.Logger.Error($"[Spire1] PoolCensus {name} failed: {e.Message}");
-        }
-    }
+    /// <summary>
+    /// Ordered record of every model this class injected into a pool (SP1-1 2026-09-15),
+    /// consumed by Diagnostics/PoolCensus.cs for "registration origin where reachable".
+    /// Pure bookkeeping: entries are appended AFTER ModHelper.AddModelToPool succeeded and
+    /// never touch a pool instance, so recording here cannot freeze or materialize anything.
+    /// Origin values: "shipped-twin" (engine card injected as-is), "drift-own" (StS2-rebalanced
+    /// twin replaced by our StS1-faithful class), "shipped-fallback" (drift twin whose own
+    /// implementation could not be resolved - flagged as an error by InjectTwin), "pure-own"
+    /// (PureSts1Pools mode: our own implementation injected instead of the shipped card).
+    /// </summary>
+    internal static readonly List<(string PoolName, string ModelTypeName, string Origin)> InjectionLedger = new();
 
     /// <summary>非 pure 模式：官方孪生默认注入 shipped 版；漂移条目（StS2 改过稀有度
-    /// 或任意数值/升级字段）改注入自研 StS1 忠实版，防止二代平衡改动渗入一代层。</summary>
+    /// 或任意数值/升级字段）改注入自研 StS1 忠实版，防止二代平衡改动渗入一代层。
+    /// 注入语义与调用顺序逐字保留（SP1-1）；仅新增 InjectionLedger 记账（成功后追加）。</summary>
     private static void InjectTwin(System.Type pool, System.Type twin)
     {
         if (RarityDriftTwins.Contains(twin.Name) || FieldDriftTwins.Contains(twin.Name))
@@ -230,12 +222,17 @@ internal static class SharedCardReuse
             if (own != null)
             {
                 ModHelper.AddModelToPool(pool, own);
+                InjectionLedger.Add((pool.Name, own.Name, "drift-own"));
                 return;
             }
             // 漂移条目解析不到我方实现类 = 静默注入漂移版，不可接受--显式报错。
             MainFile.Logger.Error($"[Spire1] SharedCardReuse: drift twin {twin.Name} has no own implementation - injecting shipped (drifted) version. THIS IS A BUG.");
         }
         ModHelper.AddModelToPool(pool, twin);
+        InjectionLedger.Add((pool.Name, twin.Name,
+            RarityDriftTwins.Contains(twin.Name) || FieldDriftTwins.Contains(twin.Name)
+                ? "shipped-fallback"
+                : "shipped-twin"));
     }
 
     /// <summary>官方二代改过稀有度（vs StS1）的孪生条目--注入我方忠实版。</summary>
@@ -272,6 +269,7 @@ internal static class SharedCardReuse
             if (own != null)
             {
                 ModHelper.AddModelToPool(pool, own);
+                InjectionLedger.Add((pool.Name, own.Name, "pure-own"));
             }
         }
     }

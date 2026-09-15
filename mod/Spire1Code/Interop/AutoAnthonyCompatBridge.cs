@@ -136,12 +136,33 @@ internal static class AutoAnthonyCompatBridge
         }
 
         int patched = 0;
-        patched += PatchFrom(harmony);
-        patched += PatchPoolsAndDecks(harmony);
-        patched += PatchThirdPartyEntries(harmony);
+        // SP1-1 (2026-09-15) capability-level failure boundary: each patch group runs in
+        // its own try/catch so one group throwing (e.g. the third-party Watcher pool
+        // resolution) cannot abort the others - and cannot leave _applied=false after
+        // some groups already patched, which would let the AutoAnthonyLoadHook retry
+        // re-apply the successful groups as duplicate Harmony patches.
+        patched += ApplyPatchGroup("From overloads", () => PatchFrom(harmony));
+        patched += ApplyPatchGroup("pool/deck getters", () => PatchPoolsAndDecks(harmony));
+        patched += ApplyPatchGroup("third-party entries", () => PatchThirdPartyEntries(harmony));
         _applied = patched > 0;
         MainFile.Logger.Info($"[Spire1] AutoAnthony bridge applied ({patched} patch groups).");
         return _applied;
+    }
+
+    /// <summary>Runs one interop patch group in isolation: a thrown group is logged and
+    /// counted as 0, the remaining groups still apply. Individual patch-level try/catch
+    /// handling inside each group is unchanged.</summary>
+    private static int ApplyPatchGroup(string name, Func<int> group)
+    {
+        try
+        {
+            return group();
+        }
+        catch (Exception e)
+        {
+            MainFile.Logger.Error($"[Spire1] AutoAnthony bridge: patch group '{name}' failed: {e.Message} (other groups unaffected)");
+            return 0;
+        }
     }
 
     /// <summary>

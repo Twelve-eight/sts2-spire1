@@ -46,6 +46,18 @@ internal class Spire1Config : SimpleModConfig
     public static bool DebugShowLocKeys { get; set; } = false;
 
     /// <summary>
+    /// SP1-1 (2026-09-15) pool-materialization diagnostics: OPT-IN, default OFF.
+    /// When true, the ordered pool census (Diagnostics/PoolCensus.cs) runs ONCE at the
+    /// first main menu entry after this setting is on. It must never run at mod-initializer
+    /// time: reading a pool's AllCards freezes that pool (ModHelper.ConcatModelsFromMods)
+    /// and would lock any later-loaded mod out of ModHelper.AddModelToPool for it. Menu
+    /// entry is post-registration by construction (every mod initializer has finished).
+    /// Toggling it ON mid-session fires on the NEXT main menu entry (e.g. after leaving a run).
+    /// The "poolcensus" console command runs the same report on demand without this flag.
+    /// </summary>
+    public static bool PoolCensusOnMenuEnter { get; set; } = false;
+
+    /// <summary>
     /// 联机容错（清单级）：握手时忽略双方 mod 清单差异强制放行。
     /// 今晚实测（divergence zip #563/#249）清单差异几乎全是"本地目录 vs 工坊来源"
     /// 假阳性；玩法安全仍依赖相同玩法 mod 二进制（哈希级另见下方开关）。
