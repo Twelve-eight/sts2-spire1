@@ -1,4 +1,17 @@
 #!/usr/bin/env node
+// ARCHIVED 2026-09-15. NOT RUNNABLE, NOT A GATE.
+// ---------------------------------------------------------------------------
+// This tool compared `mod/Spire1Code/Monsters/*.cs` HP ranges against StS1 jar
+// bytecode. The StS1 dungeon was deliberately removed from the mod in commit
+// 5f2bff0 ("remove deprecated Watcher ... and StS1 dungeon (5 acts, 57 encounters,
+// 69 monsters ...)"), so the directory it reads no longer exists and running it
+// fails with ENOENT (reproduced 2026-09-15: errno -4058, scandir on
+// mod/Spire1Code/Monsters).
+// It is kept only as the historical record of the 66-monster HP audit referenced
+// by DEVLOG.md:1657 and docs/CODE-REVIEW-20260904.md:6. If StS1 monsters are ever
+// restored, un-archive this file and point DIR at the restored directory; until
+// then it must not be listed as a working verification entry point.
+// ---------------------------------------------------------------------------
 // audit-monster-hp.mjs - compare monster HP ranges: Spire1 mod vs StS1 jar bytecode.
 // Mod side: MinInitialHp/MaxInitialHp expression literals (incl. AscensionHelperGetValueIfAscension(base, alt)).
 // Jar side: setHp(X, Y) constants in <init> + ascension branch (A7 pattern setHp(50,56)).
@@ -8,11 +21,18 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
-const ROOT = path.resolve(import.meta.dirname, "..");
+// NOTE: this file lives in tools/archived/, one level deeper than the other tools,
+// so ROOT needs two levels up (a single ".." would resolve to tools/ and make the
+// guard below report a path that never existed).
+const ROOT = path.resolve(import.meta.dirname, "..", "..");
 const JAR = "G:/steam/steamapps/common/SlayTheSpire/desktop-1.0.jar";
 const JAVAP = "C:/Program Files/Zulu/zulu-21/bin/javap.exe";
 const CACHE = path.join(ROOT, ".tmp/audit/javap-mon");
 const DIR = path.join(ROOT, "mod/Spire1Code/Monsters");
+if (!fs.existsSync(DIR)) {
+  console.error(`audit-monster-hp is ARCHIVED and cannot run: ${DIR} does not exist (StS1 monsters were removed in 5f2bff0). See the header comment.`);
+  process.exit(2);
+}
 fs.mkdirSync(CACHE, { recursive: true });
 
 const PKGS = ["exordium", "city", "beyond", "ending", "broodmother", "gremlin", "slime", "helper", ""];

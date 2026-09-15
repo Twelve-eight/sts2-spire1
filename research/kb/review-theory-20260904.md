@@ -24,7 +24,7 @@
 实证:本项目三轮人工 critic 全做了方向一;方向二第一次执行(2026-09-04)即产出
 ~40 张卡覆盖缺口 + 155 遗物缺口 + 10 张稀有度错。
 **推论**:任何"内容移植完成"断言之前,必须存在并运行过全集->实现的覆盖矩阵;
-`tools/audit-card-fidelity.mjs` 与 `tools/audit-monster-hp.mjs` 是本仓的复跑入口。
+`tools/audit-card-fidelity.mjs` 与 `tools/archived/audit-monster-hp.mjs` 是本仓的复跑入口。
 
 ## 定律 3:补丁作用域 = 目标解析结果的声明域
 
@@ -78,5 +78,5 @@ session 26 的 "bridge path CLOSED" 未能覆盖 R2(签名全对,但目标钉错
   已知解析局限:多变量卡的"magic"取 others[0] 有误报(Concentrate/
   Perseverance/WindmillStrike/Wish 已人工裁决为误报);诅咒卡(Spire1Curse
   基类形态)不参与数值对比;X 费卡 jar=-1 vs 引擎 0 为编码差异已特判。
-- `tools/audit-monster-hp.mjs` - 66 怪 HP vs jar setHp(含 Ascension 分支)。
+- `tools/archived/audit-monster-hp.mjs` - 66 怪 HP vs jar setHp(含 Ascension 分支)。
   已知局限:定值怪 `MaxInitialHp => MinInitialHp` 形态、单参 setHp(int) 需人工。

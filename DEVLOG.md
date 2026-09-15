@@ -1654,7 +1654,7 @@ ModelDb.AllCards 与 AllCharacters 的补丁注入点全景（BaseLib/ChaosBridg
   零奖励根因链全程实证,修复设计已写明;R5 复用通道五卡违规;R6/R8 覆盖缺口;
   R7 十处稀有度)。**修复均未实施**。
 - 可复跑工具 `tools/audit-card-fidelity.mjs`(304 卡三方数值审计)+ 
-  `tools/audit-monster-hp.mjs`(66 怪 HP,全对)。
+  `tools/archived/audit-monster-hp.mjs`(66 怪 HP,全对)。
 - 理论 KB `research/kb/review-theory-20260904.md`(六定律)。
 
 KB 深化代理(sessions 28-29)被用户终止;其未提交的交接草稿(HANDOVER-20260906.md,

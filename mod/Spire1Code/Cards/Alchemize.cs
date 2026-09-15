@@ -12,9 +12,13 @@ namespace Spire1.Spire1Code.Cards;
 public class Alchemize() : Spire1Card(1, CardType.Skill, CardRarity.Rare, TargetType.Self)
 {
     /// <summary>
-    /// 与引擎自带 Alchemize 一致(engine-dllsrc/.../Cards/Alchemize.cs):基类默认
-    /// CanBeGeneratedInCombat=true,而本卡在战斗中被随机生成会诱导"刷药水"最优解,
-    /// 因此显式关闭.原版同卡同样不进入战斗内生成池.
+    /// 原版排除机制(jar 权威):`green.Alchemize` 构造器写入 `CardTags.HEALING`
+    /// (javap: getfield tags + getstatic AbstractCard$CardTags.HEALING + ArrayList.add),
+    /// 而 StS1 的战斗内随机生成(`AbstractDungeon.returnTrulyRandomCardInCombat`)对
+    /// common/uncommon/rare 三池一律 `hasTag(HEALING)` 过滤 —— 带该 tag 的卡不会被
+    /// 战斗内随机生成.引擎侧对应物是 CardModel.CanBeGeneratedInCombat(默认 true),
+    /// 引擎自带 Alchemize 亦覆写为 false.两者结论一致,故此处显式关闭.
+    /// 注:本卡移植的是 green(Silent)Alchemize;blue(Defect)同名类不带该 tag.
     /// </summary>
     public override bool CanBeGeneratedInCombat => false;
 

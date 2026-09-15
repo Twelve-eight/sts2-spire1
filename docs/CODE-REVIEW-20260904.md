@@ -3,7 +3,7 @@
 > 审阅方式:两片由子代理完成(interop-patches、cards A-F),其余主会话单线完成;
 > 子代理高危发现均经主会话独立复核。审阅中产出两个可复跑工具:
 > `tools/audit-card-fidelity.mjs`(304 卡三方数值对比:一代 jar javap <-> 引擎反编译 <-> 我方实现)
-> 与 `tools/audit-monster-hp.mjs`(66 怪 HP 对比)。
+> 与 `tools/archived/audit-monster-hp.mjs`(66 怪 HP 对比)。
 > HEAD 9453ebc。发现均带 文件:行 证据;不确定值标 UNCONFIRMED。
 
 ## 总评
@@ -242,5 +242,5 @@ jar+KB 双源确认(与 cards A-F 代理发现合并):
 2. R7 十行稀有度修复 + 审计工具回归归零;R5 五张卡出池决策。
 3. R6/R8 覆盖批次:先做"引擎已有孪生"的 9 卡核对(工具现成),再排自建批次。
 4. R9/R10 遭遇与事件门控小批补齐;R14 联机哈希开关拆分。
-5. 把 `tools/audit-card-fidelity.mjs --scope=all` 与 `tools/audit-monster-hp.mjs`
+5. 把 `tools/audit-card-fidelity.mjs --scope=all` 与 `tools/archived/audit-monster-hp.mjs`
    纳入每次内容批次后的标准回归(替换"逐字段核对"口头断言)。

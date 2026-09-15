@@ -39,7 +39,7 @@
   治理卷(pool-architecture、invariants I4-I15、semantics-review-checklist、
   research-methods M1-M19)+ loot-rewards L12/宝箱概率结案。KB 规则总数 119->254+。
   其交接草稿(未提交)已合并进本文。
-- **审计工具(已提交)**:`tools/audit-card-fidelity.mjs`、`tools/audit-monster-hp.mjs`
+- **审计工具(已提交)**:`tools/audit-card-fidelity.mjs`、`tools/archived/audit-monster-hp.mjs`
   (Sec 6)。此前已存在的 `tools/pool-audit.mjs`、`tools/semantics-audit.mjs` 等照旧。
 
 ## 4. 优先队列(按此顺序执行)
@@ -103,7 +103,7 @@
   magic 取 others[0] 有误报(Concentrate/Perseverance/WindmillStrike/Wish 四张已
   人工裁决为误报);Spire1Curse 基类形态卡跳过;X 费 jar=-1 vs 引擎 0 已特判。
   需要 `JAVA_HOME=C:\Program Files\Zulu\zulu-21`;javap 缓存在 `.tmp/audit/javap/`。
-- `node tools/audit-monster-hp.mjs` - 66 怪 HP vs jar(含升天分支);定值怪
+- `node tools/archived/audit-monster-hp.mjs`(已归档,运行即报错退出)- 66 怪 HP vs jar(含升天分支);定值怪
   `MaxInitialHp => MinInitialHp` 与单参 `setHp(int)` 形态需人眼(审阅时 66/66 全对)。
 - `node tools/pool-audit.mjs`([Pool] 归属 lint,应 0 孤儿)与
   `node tools/semantics-audit.mjs`(P4+P1+I7 一键门,应全绿)--基线自检。
