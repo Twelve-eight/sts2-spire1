@@ -245,10 +245,18 @@ internal static class AftpEffectLifecycleCompat
         }
         catch (Exception e)
         {
+            // A1 fix (P2, 2026-09-15 review): hand the instance to AFTP's original body PERMANENTLY.
+            // The original OnTreeEntered calls Initialize() again and installs its own
+            // OnProcessFrame, so this class must never subscribe the same instance afterwards -
+            // otherwise both handlers run and the effect advances twice per frame. Marking the
+            // binding sticky is what makes that impossible; a throw here can happen AFTER the
+            // Initialize latch was set (the latch is set before the call on purpose, to keep
+            // Initialize at-most-once), so without this flag a later re-entry would subscribe.
+            GetOrCreateBinding(__instance).OriginalOwned = true;
             if (!_fallbackLogged)
             {
                 _fallbackLogged = true;
-                MainFile.Logger.Error($"[Spire1] AFTP effect-lifecycle: managed subscribe failed ({e.GetType().Name}: {e.Message}) - affected nodes fall back to AFTP's original subscription (original lifecycle semantics).");
+                MainFile.Logger.Error($"[Spire1] AFTP effect-lifecycle: managed subscribe failed ({e.GetType().Name}: {e.Message}) - affected nodes fall back to AFTP's original subscription (original lifecycle semantics) for the rest of their lifetime.");
             }
             return true;
         }
@@ -258,9 +266,14 @@ internal static class AftpEffectLifecycleCompat
     /// <summary>
     /// 受管订阅绑定（producer：TreeEntered 信号；owner：本类；first consumer：
     /// <see cref="EffectBinding.Tick"/>；cleanup：<see cref="EffectBinding.Detach"/>）。
-    /// 订阅是本方法最后一步副作用：即使后续出现异常也不存在半挂状态，回退路径
-    /// 不会与本类产生双重订阅。Initialize 锁存先置位再调用：即便它抛出，托管路径
-    /// 也绝不对同一实例调用第二次（回退路径交给原体的行为等同 AFTP 自身失败模式）。
+    /// 订阅是本方法最后一步副作用:即使后续出现异常也不存在半挂状态.
+    ///
+    /// 回退路径(A1 修正,2026-09-15 复核):原体 <c>OnTreeEntered</c> 会再调一次 Initialize 并挂上
+    /// 它自己的 <c>OnProcessFrame</c>.因此回退必须把该实例**永久**交给原体:
+    /// <see cref="EffectBinding.OriginalOwned"/> 置位后本类不再订阅它,否则同一节点会同时挂着
+    /// 原体的处理器与本类的 Tick,每帧各推进一次 Update.原实现声称回退不会造成双重订阅,那只在
+    /// Initialize **确定性**失败时成立(原体自己的 Initialize 同样抛,什么都没挂上);瞬时失败会
+    /// 破坏该前提,所以现在靠标志位而非推理来保证.
     /// </summary>
     private static void BindNode(object instance)
     {
@@ -271,7 +284,17 @@ internal static class AftpEffectLifecycleCompat
         }
 
         EffectBinding binding = Bindings.GetOrCreateValue(instance);
-        SceneTree tree = node.GetTree(); // 合法时刻：TreeEntered 触发时节点已在树内（原体同样依赖这一点）
+
+        if (binding.OriginalOwned)
+        {
+            // A1 fix: this instance was handed to AFTP's original body on an earlier failure, so
+            // the original already called Initialize() and installed its own OnProcessFrame.
+            // Subscribing here as well would double-advance the effect and give QueueFree two
+            // reachable paths. Return WITHOUT touching the node: the original owns it now.
+            return;
+        }
+
+        SceneTree tree = node.GetTree(); // 合法时刻:TreeEntered 触发时节点已在树内(原体同样依赖这一点)
 
         if (!binding.Initialized)
         {
@@ -294,7 +317,12 @@ internal static class AftpEffectLifecycleCompat
         tree.ProcessFrame += binding.FrameHandler;
     }
 
-    /// <summary>每实例帧回调（事件类型为游戏 GodotSharp 4.5.1 的
+    /// <summary>取(或建)某实例的绑定状态.与 <c>Bindings.GetOrCreateValue</c> 同一语义,
+    /// 单独包一层是为了让回退路径也能拿到绑定(它可能在 BindNode 抛点之后才执行).</summary>
+    private static EffectBinding GetOrCreateBinding(object instance)
+        => Bindings.GetOrCreateValue(instance);
+
+    /// <summary>每实例帧回调(事件类型为游戏 GodotSharp 4.5.1 的
     /// <c>SceneTree.ProcessFrame : Action</c>）。次序与原 <c>OnProcessFrame</c> 严格一致；
     /// 唯一差别是退树分支不再调 <c>GetTree()</c>，改用订阅时缓存的树引用退订。</summary>
     private sealed class EffectBinding
@@ -302,9 +330,26 @@ internal static class AftpEffectLifecycleCompat
         // 仅在已挂载期间持强引用（树 -> delegate -> binding -> node，与原体同形）；
         // Detach 后三者清空，不保留任何已脱离节点的引用图。
         public Godot.Node? Node;
-        public SceneTree? Tree; // 订阅瞬间缓存；Detach 即清空——此后不存在 GetTree 调用
+        public SceneTree? Tree; // 订阅瞬间缓存;Detach 即清空--此后不存在 GetTree 调用
         public Action? FrameHandler; // 挂在 Tree.ProcessFrame 上的精确 delegate 实例
         public bool Initialized; // Initialize 每实例至多一次
+        /// <summary>
+        /// 该实例已交回 AFTP 原体接管(回退路径).置位后本类永不再为该实例订阅,
+        /// 否则会出现双重订阅:A1(P2,2026-09-15 复核发现).
+        ///
+        /// 缺口机制:原体 <c>OnTreeEntered</c> = <c>Initialize(); GetTree().ProcessFrame += OnProcessFrame;</c>
+        /// (反编译 :15737-15741).若 <c>Initialize</c> 抛瞬时异常(非确定性失败),前缀的 catch
+        /// 会 <c>return true</c> 放行原体:原体再调一次 Initialize 并挂上自己的 OnProcessFrame,
+        /// 而本实例的 <c>Initialized</c> 锁存已在抛点之前置位、Node/Tree/FrameHandler 三者仍为 null.
+        /// 此后该节点若再次进树,BindNode 会跳过 Initialize(锁存生效)却走到尾部订阅,于是同一节点
+        /// 同时挂着原体的 OnProcessFrame 与本类的 Tick--两者每帧各调一次 Update、各自测 IsDone,
+        /// 特效推进速度翻倍且 QueueFree 有两条路径可达.
+        ///
+        /// 因此回退必须是"粘性"的:一旦放行给原体,该实例的整个生命周期都归原体所有.
+        /// 确定性失败(Initialize 每次都抛)本来就不会走到订阅,与本标志一致,所以这不改变
+        /// 文档里描述的那种情形,只堵住瞬时失败这一条.
+        /// </summary>
+        public bool OriginalOwned;
 
         public void Tick()
         {
