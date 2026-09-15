@@ -41,6 +41,13 @@ public class GeneticAlgorithm : Spire1Card
         {
             AssertMutable();
             _extraGain = value;
+            // 写回必须放在 setter 里,不能只放在 OnPlay:CardModel.FromSerializable 与
+            // DeepCloneFields 都是先把 CanonicalVars 物化成 BaseBlock(=1),再逐个
+            // Fill/拷贝 [SavedProperty].只在 OnPlay 刷新 BaseValue 会让"存读档后的
+            // 首张牌"和"克隆后未出牌的首张牌"按 1 给格挡.
+            // 引擎自带的 GeneticAlgorithm 同样把 DynamicVars.Block.BaseValue 的写入
+            // 放在 [SavedProperty] CurrentBlock 的 setter 内(UpdateBlock -> CurrentBlock).
+            DynamicVars.Block.BaseValue = CurrentBlock;
         }
     }
 
@@ -59,17 +66,11 @@ public class GeneticAlgorithm : Spire1Card
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         await CommonActions.CardBlock(this, DynamicVars.Block, play);
-        int inc = DynamicVars["Increase"].IntValue;
-        ExtraGain += inc;
-        DynamicVars.Block.BaseValue = CurrentBlock;
+        // 单点成长入口:自身与牌库母本走同一条路径,ExtraGain 的 setter 负责写回 Block.
+        ApplyGrowth(DynamicVars["Increase"].IntValue);
         if (DeckVersion is GeneticAlgorithm master)
         {
-            master.ExtraGain += inc;
-            // 母本的 DynamicVars 在第一场战斗开始时就已物化,下场战斗的克隆复制的是
-            // 物化值而非 CanonicalVars(DeepCloneFields -> DynamicVars.Clone)。只加
-            // ExtraGain 不刷新 BaseValue,会让下一场战斗的首张牌仍按旧值给格挡
-            // (引擎自带的 GeneticAlgorithm 同样在 BuffFromPlay 后写回 Block)。
-            master.DynamicVars.Block.BaseValue = master.CurrentBlock;
+            master.ApplyGrowth(DynamicVars["Increase"].IntValue);
         }
         else if (!_deckVersionWarned)
         {
@@ -79,6 +80,9 @@ public class GeneticAlgorithm : Spire1Card
             MainFile.Logger.Error("[Spire1] GA: DeckVersion missing/typed wrong - growth won't persist (logged once per process)");
         }
     }
+
+    /// <summary>永久成长 +<paramref name="increase"/>;Block 的写回由 ExtraGain 的 setter 完成.</summary>
+    private void ApplyGrowth(int increase) => ExtraGain += increase;
 
     protected override void OnUpgrade() => DynamicVars["Increase"].UpgradeValueBy(1m);
 
