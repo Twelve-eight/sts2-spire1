@@ -120,7 +120,7 @@
         <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/" />
     </Target>
 
-    <Target Name="CopyQuickPck" AfterTargets="PackPck" Condition="Exists('$(PckPackerOutputPath)') And '$(PckPackerSkipped)' != 'true'">
+    <Target Name="CopyQuickPck" AfterTargets="PackPck" Condition="'$(CopyToModsFolderOnBuild)' != 'false' And Exists('$(PckPackerOutputPath)') And '$(PckPackerSkipped)' != 'true'">
         <Message Text="Copying quick .pck to mods folder." Importance="high"/>
         <Copy SourceFiles="$(PckPackerOutputPath)"
               DestinationFolder="$(ModsPath)/$(MSBuildProjectName)" />
@@ -131,7 +131,7 @@
                Condition="'$(GodotPath)' == '' or !Exists('$(GodotPath)')"/>
     </Target>
     
-    <Target Name="GodotPublish" AfterTargets="Publish" Condition="'$(GodotPath)' != '' and Exists('$(GodotPath)') and '$(IsInnerGodotExport)' != 'true'">
+    <Target Name="GodotPublish" AfterTargets="Publish" Condition="'$(CopyToModsFolderOnBuild)' != 'false' and '$(GodotPath)' != '' and Exists('$(GodotPath)') and '$(IsInnerGodotExport)' != 'true'">
         <Message Text="Exporting Godot .pck to mods folder" Importance="high"/>
         <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;BasicExport&quot; &quot;$(ModsPath)$(MSBuildProjectName)/$(MSBuildProjectName).pck&quot;"
               EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"
