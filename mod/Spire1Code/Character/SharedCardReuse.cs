@@ -235,12 +235,17 @@ internal static class SharedCardReuse
                 : "shipped-twin"));
     }
 
-    /// <summary>官方二代改过稀有度（vs StS1）的孪生条目--注入我方忠实版。</summary>
+    /// <summary>官方二代改过稀有度(vs StS1)的孪生条目--注入我方忠实版.</summary>
     private static readonly HashSet<string> RarityDriftTwins =
     [
         "Bludgeon",    // StS1 RARE -> StS2 Uncommon
         "Acrobatics",  // StS1 COMMON -> StS2 Uncommon
         "Predator",    // StS1 UNCOMMON -> StS2 Common
+        // DarkEmbrace 原先只登记在 IroncladReuse 里,漏在本表--于是漂移版(StS2 Rare)被
+        // 注入,我方忠实的 Uncommon 版(Cards/DarkEmbrace.cs,Spire1LegacyPool)从未上池.
+        // 由 tools/audit-card-fidelity.mjs 的 reuse: 比对报出(rarity: jar=Uncommon impl=Rare),
+        // 并经 StS1 字节码复核(AbstractCard$CardRarity.UNCOMMON)。
+        "DarkEmbrace", // StS1 UNCOMMON -> StS2 Rare
     ];
 
     /// <summary>R5（2026-09-06 审阅，docs/CODE-REVIEW-20260904.md Sec R5）：经 jar<->引擎

@@ -9,7 +9,7 @@ using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
 
-/// <summary>StS1 Silent - Poisoned Stab (Common). Deal 6 damage, apply 3 Poison (8 / 5 upgraded).</summary>
+/// <summary>StS1 Silent - Poisoned Stab (Common). Deal 6 damage, apply 3 Poison (8 / 4 upgraded).</summary>
 [Pool(typeof(SilentCardPool))]
 public class PoisonedStab() : Spire1Card(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
@@ -25,6 +25,10 @@ public class PoisonedStab() : Spire1Card(1, CardType.Attack, CardRarity.Common, 
     protected override void OnUpgrade()
     {
         DynamicVars.Damage.UpgradeValueBy(2m);
-        DynamicVars.Power<PoisonPower>().UpgradeValueBy(2m);
+        // StS1: upgradeMagicNumber(1) -> poison 3 -> 4 (NOT +2). Verified against the StS1
+        // bytecode: PoisonedStab.<init> sets baseDamage 6 / baseMagicNumber 3, and upgrade()
+        // calls upgradeDamage(2) then upgradeMagicNumber(1). This mod had +2, which produced
+        // Poisoned Stab+ = 8 dmg / 5 poison instead of the correct 8 / 4.
+        DynamicVars.Power<PoisonPower>().UpgradeValueBy(1m);
     }
 }
