@@ -434,11 +434,16 @@ function fieldValue(cs) {
 }
 
 // R3: the magic channel rule (see header). Returns a list of problems.
-function magicProblems(src, jarBase, maxUpgradeLevel) {
+// R3: the magic channel rule (see header). Returns a list of problems.
+//
+// This checks the BASE value only. The upgrade half is magicUpgradeProblem below, which applies the
+// MaxUpgradeLevel===0 exemption for its own (genuinely unreachable) channel. The two used to be
+// entangled: this function returned early for MaxUpgradeLevel===0 cards, which skipped the base
+// value as well and left Burn (jar baseMagicNumber 2 vs mod DamageVar 2) and Decay unverified on
+// the magic channel entirely. That is the same shape of blind spot that let the Poisoned Stab
+// upgrade defect ship - a value that was simply never compared.
+function magicProblems(src, jarBase) {
   if (jarBase.magic === undefined) return [];
-  // A card pinned to MaxUpgradeLevel 0 mirrors the base game's unupgradable variant, so the jar's
-  // upgrade-only magic path is unreachable (Burn/Decay).
-  if (maxUpgradeLevel === 0) return [];
   let code = src.replace(/\/\/[^\n]*/g, "").replace(/\/\*[\s\S]*?\*\//g, "");
   // blank only the slots the jar actually has, so a coincidental DamageVar cannot mask a wrong magic
   if (jarBase.damage !== undefined) code = code.replace(/new DamageVar\(\s*-?[\d.]+m?/g, "new __SLOT__");
@@ -529,7 +534,7 @@ function cmp(scopeName, cls, jarInfo, cs, kbInfo) {
   push("blk", implBlk, jarBase.block, implBlk !== undefined && jarBase.block !== undefined ? (implBlk === jarBase.block ? "direct" : false) : undefined);
 
   // R3 magic
-  for (const p of magicProblems(cs._src, jarBase, cs.maxUpgradeLevel)) issues.push(`magic: ${p}`);
+  for (const p of magicProblems(cs._src, jarBase)) issues.push(`magic: ${p}`);
   const muProblem = magicUpgradeProblem(cs, jarUpg, jarBase);
   if (muProblem) issues.push(`magic: ${muProblem}`);
 
