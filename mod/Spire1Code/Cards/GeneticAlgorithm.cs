@@ -19,7 +19,10 @@ namespace Spire1.Spire1Code.Cards;
 public class GeneticAlgorithm : Spire1Card
 {
     private const int BaseBlock = 1;
-    private const int BaseBlockUpgraded = 2;
+    private const int BaseIncrease = 2;
+
+    /// <summary>DeckVersion 缺失警告的全进程一次性闩锁(有界日志).</summary>
+    private static bool _deckVersionWarned;
 
     private int _extraGain;
 
@@ -29,7 +32,7 @@ public class GeneticAlgorithm : Spire1Card
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 
-    /// <summary>本场战斗实际提供的敏捷值（随永久成长增长）。</summary>
+    /// <summary>本场战斗实际提供的格挡(随永久成长增长).</summary>
     [SavedProperty]
     public int ExtraGain
     {
@@ -41,17 +44,20 @@ public class GeneticAlgorithm : Spire1Card
         }
     }
 
+    // jar 权威(cards/blue/GeneticAlgorithm.class):
+    //   构造器 misc=1 -> baseBlock=1;baseMagicNumber=2 -> magicNumber=2(成长量);
+    //   upgrade() 仅 upgradeMagicNumber(1) -> 成长 2->3.基础格挡 1 升级后仍为 1.
+    // 因此 Block 走 ExtraGain 累积(不随升级变化),Increase 才是升级通道.
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new BlockVar(CurrentBlock, ValueProp.Move),
-        new IntVar("Increase", 1),
+        new IntVar("Increase", BaseIncrease),
     ];
 
-    private int CurrentBlock => (IsUpgraded ? BaseBlockUpgraded : BaseBlock) + ExtraGain;
+    private int CurrentBlock => BaseBlock + ExtraGain;
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        MainFile.Logger.Info($"[Spire1] GA play: extra={ExtraGain} block={CurrentBlock} deck={(DeckVersion != null ? "ok" : "null")}");
         await CommonActions.CardBlock(this, DynamicVars.Block, play);
         int inc = DynamicVars["Increase"].IntValue;
         ExtraGain += inc;
@@ -59,17 +65,21 @@ public class GeneticAlgorithm : Spire1Card
         if (DeckVersion is GeneticAlgorithm master)
         {
             master.ExtraGain += inc;
-            MainFile.Logger.Info($"[Spire1] GA master buffed -> extra={master.ExtraGain}");
         }
-        else
+        else if (!_deckVersionWarned)
         {
-            MainFile.Logger.Error("[Spire1] GA: DeckVersion missing/typed wrong - growth won't persist");
+            // 战斗内副本无 DeckVersion(如 Discovery 生成):成长不跨战斗.
+            // 原实现每次出牌刷一条 Error;改为全进程一次,不掩盖问题也不刷屏.
+            _deckVersionWarned = true;
+            MainFile.Logger.Error("[Spire1] GA: DeckVersion missing/typed wrong - growth won't persist (logged once per process)");
         }
     }
 
+    protected override void OnUpgrade() => DynamicVars["Increase"].UpgradeValueBy(1m);
+
     protected override void AfterDowngraded()
     {
-        // 降级时基值回落，保留永久成长
+        // 降级时成长量回落 1,已累积的永久成长保留
         DynamicVars.Block.BaseValue = CurrentBlock;
     }
 }

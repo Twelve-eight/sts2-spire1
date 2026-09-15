@@ -3713,7 +3713,7 @@
   "base": {
    "baseMagicNumber": 2,
    "magicNumber": 2,
-   "baseBlock": 2
+   "baseBlock": 1
   },
   "flags": {
    "exhaust": true

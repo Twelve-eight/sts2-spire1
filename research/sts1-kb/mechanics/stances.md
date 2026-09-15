@@ -38,13 +38,13 @@
 
 ## 2. 四姿态钩子清单
 
-**R04 姿态进出钩子语义表** - 出处：`CalmStance#onExitStance` offset 0-20（`addToBottom(GainEnergyAction(2))`）；`DivinityStance#atStartOfTurn` offset 0-15（`addToBottom(ChangeStanceAction("Neutral"))`）；`WrathStance#onEnter/onExitStance`（仅停音效）；`NeutralStance`（无钩子）。置信度：**高**
+**R04 姿态进出钩子语义表** - 出处：`CalmStance#onExitStance` offset 0-20（`addToBottom(GainEnergyAction(2))`）；`DivinityStance#onEnterStance` offset 89-100(`addToBottom(new GainEnergyAction(3))`,先于此);`DivinityStance#atStartOfTurn` offset 0-15（`addToBottom(ChangeStanceAction("Neutral"))`）；`WrathStance#onEnter/onExitStance`（仅停音效）；`NeutralStance`（无钩子）。置信度：**高**
 
 | 姿态 | onEnterStance | onExitStance | atStartOfTurn | onEndOfTurn | 伤害面 |
 |---|---|---|---|---|---|
 | Wrath | 停音效 | 停音效 | - | - | 给伤 x2（give 层）；受伤 x2（DamageInfo.applyPowers 步骤3)） |
 | Calm | 停音效 | **+2 能量（addToBottom）** | - | - | - |
-| Divinity | 停音效 | 停音效 | **自退 Neutral（addToBottom）** | - | 给伤 x3（give 层） |
+| Divinity | 停音效 + **+3 能量(addToBottom)** | 停音效 | **自退 Neutral（addToBottom）** | - | 给伤 x3（give 层） |
 | Neutral | 空 | 空 | 空 | 空 | - |
 
 - Calm 的能量在**离场**时发且走队列（addToBottom）=> 排在同动作链后续位置，非瞬发。

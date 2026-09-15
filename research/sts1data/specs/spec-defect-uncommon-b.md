@@ -28,11 +28,12 @@ All numbers were extracted from the shipped StS1 jar (`desktop-1.0.jar`) bytecod
 
 ## GeneticAlgorithm  (class name = `GeneticAlgorithm`, loc key `SPIRE1-GENETIC_ALGORITHM`)
 - StS1 id `Genetic Algorithm`, official name `Genetic Algorithm`
-- type=SKILL, rarity=UNCOMMON, cost=1, target=SELF, base: MagicNumber=2, Block=2, StS1 flags: exhaust
+- type=SKILL, rarity=UNCOMMON, cost=1, target=SELF, base: MagicNumber=2, Block=1, StS1 flags: exhaust
 - upgrade deltas: upgradeMagicNumber=1
 - official description: `Gain !B! Block. Permanently increase this card's Block by !M!. NL Exhaust.`
 - StS2 name collision: YES -> localization title MUST be "StS1 - Genetic Algorithm"
-- IMPL: Skill cost 1, Exhaust: gain 2 Block and PERMANENTLY (for the whole run, StS1 semantics) increase this card's Block by 2 (3 upgraded). If a run-persistent per-card value change is not supported by the engine, implement the combat-scoped version and FLAG the deviation explicitly; do not silently claim permanence.
+- jar bytecode (desktop-1.0.jar javap, authoritative): ctor sets `misc=1`, `baseMagicNumber=2`, then `baseBlock=misc` (=1); `upgrade()` only calls `upgradeMagicNumber(1)`. So Block is 1 and is NOT upgraded; the upgrade channel is the growth amount 2 -> 3. `IncreaseMiscAction(uuid, misc, magicNumber)` adds its third argument, i.e. magicNumber, to the card's `misc` and syncs `baseBlock`.
+- IMPL: Skill cost 1, Exhaust: gain 1 Block (+0 upgraded) and PERMANENTLY (for the whole run, StS1 semantics) increase this card's Block by 2 (3 upgraded). If a run-persistent per-card value change is not supported by the engine, implement the combat-scoped version and FLAG the deviation explicitly; do not silently claim permanence.
 
 ## Glacier  (class name = `Glacier`, loc key `SPIRE1-GLACIER`)
 - StS1 id `Glacier`, official name `Glacier`
