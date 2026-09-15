@@ -2295,6 +2295,11 @@ WIP dbc9db2 的构建欠账已结清. `dotnet build mod/Spire1.csproj -c Release
 sha256 `70001d0784f0f40dfce292a8a1797456f1c149bc224dfe3055535b963d33cec1`, 元数据含
 `AftpEffectLifecycleCompat` 类型与 `TryApply` 方法(字节串计数 1/3).
 
+> **哈希时效说明(2026-09-15 追加)**: 上条 sha256 是 AFTP-1 提交 `8ac4650` 当次的快照.
+> 之后同一 DLL 因 P1-x1/P1-x3 修复重建多次(当前 `20168070c3dc9694...`), 数字不再匹配是
+> 预期现象, 不是回归. `mod/Spire1Code/Interop/AftpEffectLifecycleCompat.cs` 自 `dbc9db2`
+> 起未再改动(`git log -1 --` 该文件 = `dbc9db2`), AFTP-1 的结论不受后续改动影响.
+
 **工坊 DLL 侧独立核验(本次新增, 不依赖任何源码树)**: ilspycmd 反编译
 `G:/steam/steamapps/workshop/content/2868840/3746969593/ActsFromThePast.dll`
 (sha256 `57362376a48c47209b013dfdacc185b34eec854a12f8549bc4b8174ebf4b40f0`)到
