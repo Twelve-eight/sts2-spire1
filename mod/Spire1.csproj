@@ -73,8 +73,9 @@
          unverified change on the Workshop through a one-way door:
            - AftpFireFlyPerfCompat: rewrites third-party IL inside AFTP's render path; its own
              acceptance requires a native before/after A/B that has not been run.
-           - AftpCardStateCompat: fixes reproduced AFTP defects (R4-01/R4-02); the implementation
-             was still being written at release time.
+           - AftpCardStateCompat: fixes reproduced AFTP defects (R4-01/R4-02). Implemented and
+             probe-verified (probe12 covers both hook paths, including the throwing exit), but its
+             acceptance needs an in-game run that this release cannot produce.
          Excluding them here (rather than merely not calling their TryApply) is what makes the
          guarantee real: "held back" means NOT COMPILED INTO THE PAYLOAD, so the class cannot run
          even if something later invokes it by reflection, and a rebuild cannot silently pull it in.
