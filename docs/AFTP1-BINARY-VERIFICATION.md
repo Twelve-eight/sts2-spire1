@@ -69,20 +69,42 @@ The built DLL `mod/.godot/mono/temp/bin/Release/Spire1.dll` contains the compat 
 compat source itself is unchanged since `dbc9db2`, so the AFTP-1 conclusions are unaffected by
 the later rebuilds.
 
+## Claim 5 - reflection shape contract against the real DLL: HOLDS
+
+Probe `docs/workspace-state-evidence/2026-09-15/fixtures/aftp-shape/` (Program.cs + csproj +
+`probe-output.txt`), run against the workshop DLL with GodotSharp 4.5.1 and 0Harmony:
+**25/25 PASS, PROBE OK**.
+
+It mirrors `AccessTools.Method`/`AccessTools.Field` (the exact lookups `InstallCapability`
+performs, including the base-class search) and asserts every shape the install path validates:
+
+- `NSts1Effect` exists, base `Godot.Node2D`.
+- `OnTreeEntered`: resolved by AccessTools, **private**, instance, non-abstract, `void`, 0 args,
+  and declared on `NSts1Effect` itself rather than inherited - which is what makes it a valid
+  prefix target for the whole family.
+- `Initialize`: **protected**, instance, `void`, 0 args, `IsVirtual=True` (so the 46 subclasses
+  genuinely override it, and the compiled open-instance delegate dispatches to them).
+- `Update`: **protected**, instance, `void`, exactly 1 `float` parameter, `IsAbstract=True`.
+- `IsDone`: resolves as a **field** of type `bool`, instance, and no same-named property exists
+  (so the `AccessTools.Field` lookup cannot silently change meaning).
+- Family: exactly **46** direct subclasses; **none** declares its own `OnTreeEntered`; every one
+  overrides `Update(float)`.
+
 ## Not verified (deferred to GATE-1)
 
 - **No runtime probe exists for AFTP-1.** `aftp1-verify/` contains decompile and static analysis
   only; every `probe*/` project in `.tmp/` belongs to PERFECT-1. The card's native SceneTree
   create/attach/detach/reenter/free/room-exit stress, and paused/menu/combat fidelity, are
   therefore **UNVERIFIED** - no artifact behind them.
-- Reflection-level shape assertions against the workshop DLL (`OnTreeEntered` private instance
-  void no-args, `Initialize` protected virtual void no-args, `Update` protected abstract
-  void(float), `IsDone` public bool **field**, and `AccessTools.Method` base-class search
-  semantics) were drafted by a review slice that was cut off by API quota before producing its
-  probe. The decompile supports all five shapes, but a reflection probe on the DLL has not run.
 - Exception/reentrancy paths of the prefix (`Initialize` throwing, nested `TreeEntered` during
-  `Initialize`, the fallback returning true after a partial bind) are unreviewed: the slice
-  assigned to them was also cut off by quota.
+  `Initialize`, the fallback returning true after a partial bind) are unreviewed by a second
+  party: the slice assigned to them was cut off by API quota. The code's own comments assert
+  these are safe (latch-before-call, subscription as last side effect); that assertion is
+  reasoned, not independently reproduced.
 - `Callable` delegate identity for the cached handler's `-=` (whether the unsubscribe actually
-  disconnects for delegate-marshaled callables) was being investigated when that slice was cut
-  off; unresolved.
+  disconnects for delegate-marshaled callables) was being investigated when a slice was cut off;
+  unresolved. The decompile shows the original body uses the same `+=`/`-=` pattern with a
+  method-group delegate, which is suggestive but not proof of identity semantics.
+- The `_fallbackLogged` path is process-wide (a single bool), so after one node falls back,
+  subsequent failures log nothing. Bounded-logging intent, but it means a systematic failure
+  would appear as exactly one log line.

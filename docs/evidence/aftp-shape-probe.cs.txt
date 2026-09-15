@@ -1,0 +1,121 @@
+using System.Reflection;
+using System.Runtime.Loader;
+using HarmonyLib;
+
+// AFTP-1 shape-contract probe: assert, against the REAL workshop ActsFromThePast.dll, every
+// member shape the compat layer's InstallCapability() validates before patching, and mirror
+// AccessTools.Method's base-class search so the probe checks what the code actually resolves.
+// Reflection only: no Godot host, no game session.
+
+const string AfTpDll = "G:/steam/steamapps/workshop/content/2868840/3746969593/ActsFromThePast.dll";
+const string EngineDir = "G:/steam/steamapps/common/Slay the Spire 2/data_sts2_windows_x86_64";
+
+AssemblyLoadContext.Default.Resolving += (_, name) =>
+{
+    foreach (var dir in new[]
+    {
+        EngineDir,
+        "G:/steam/steamapps/workshop/content/2868840/3737335127/BaseLib",
+    })
+    {
+        var p = Path.Combine(dir, name.Name + ".dll");
+        if (File.Exists(p)) return AssemblyLoadContext.Default.LoadFromAssemblyPath(p);
+    }
+    return null;
+};
+
+var aftp = Assembly.LoadFrom(AfTpDll);
+var failures = new List<string>();
+void Check(string label, bool ok, string detail = "")
+{
+    Console.WriteLine($"{(ok ? "PASS" : "FAIL")} {label}{(detail.Length > 0 ? " - " + detail : "")}");
+    if (!ok) failures.Add(label);
+}
+
+var effectType = aftp.GetType("ActsFromThePast.NSts1Effect", throwOnError: false);
+Check("type ActsFromThePast.NSts1Effect exists", effectType != null);
+if (effectType == null) { Console.WriteLine("PROBE FAILED (type missing)"); return 1; }
+Console.WriteLine($"     base chain: {effectType.BaseType?.FullName}");
+
+// 1. OnTreeEntered - the prefix target. The compat code uses AccessTools.Method, which walks
+//    base classes, so resolve the same way and then assert the shape it validates.
+var subscribe = AccessTools.Method(effectType, "OnTreeEntered");
+Check("AccessTools.Method resolves NSts1Effect.OnTreeEntered", subscribe != null);
+if (subscribe != null)
+{
+    Check("  not static", !subscribe.IsStatic);
+    Check("  not abstract", !subscribe.IsAbstract);
+    Check("  returns void", subscribe.ReturnType == typeof(void), $"actual={subscribe.ReturnType}");
+    Check("  takes 0 parameters", subscribe.GetParameters().Length == 0);
+    Check("  declared on NSts1Effect itself (not inherited)",
+        subscribe.DeclaringType == effectType, $"declaring={subscribe.DeclaringType?.Name}");
+    Console.WriteLine($"     access: {(subscribe.IsPrivate ? "private" : subscribe.IsFamily ? "protected" : subscribe.IsPublic ? "public" : "other")}");
+}
+
+// 2. Initialize - invoked via the compiled open-instance delegate.
+var initialize = AccessTools.Method(effectType, "Initialize");
+Check("AccessTools.Method resolves NSts1Effect.Initialize", initialize != null);
+if (initialize != null)
+{
+    Check("  not static", !initialize.IsStatic);
+    Check("  returns void", initialize.ReturnType == typeof(void), $"actual={initialize.ReturnType}");
+    Check("  takes 0 parameters", initialize.GetParameters().Length == 0);
+    Check("  virtual (subclasses override it)", initialize.IsVirtual, $"IsVirtual={initialize.IsVirtual}");
+    Console.WriteLine($"     access: {(initialize.IsPrivate ? "private" : initialize.IsFamily ? "protected" : initialize.IsPublic ? "public" : "other")}, abstract={initialize.IsAbstract}");
+}
+
+// 3. Update(float) - the per-frame tick.
+var update = AccessTools.Method(effectType, "Update");
+Check("AccessTools.Method resolves NSts1Effect.Update", update != null);
+if (update != null)
+{
+    var ps = update.GetParameters();
+    Check("  not static", !update.IsStatic);
+    Check("  returns void", update.ReturnType == typeof(void), $"actual={update.ReturnType}");
+    Check("  takes exactly 1 parameter", ps.Length == 1, $"actual={ps.Length}");
+    Check("  parameter is float", ps.Length == 1 && ps[0].ParameterType == typeof(float),
+        ps.Length == 1 ? $"actual={ps[0].ParameterType}" : "n/a");
+    Check("  abstract (every subclass must override)", update.IsAbstract, $"IsAbstract={update.IsAbstract}");
+    Console.WriteLine($"     access: {(update.IsPrivate ? "private" : update.IsFamily ? "protected" : update.IsPublic ? "public" : "other")}");
+}
+
+// 4. IsDone - read as a FIELD via AccessTools.Field.
+var isDone = AccessTools.Field(effectType, "IsDone");
+Check("AccessTools.Field resolves NSts1Effect.IsDone as a field", isDone != null);
+if (isDone != null)
+{
+    Check("  not static", !isDone.IsStatic);
+    Check("  type is bool", isDone.FieldType == typeof(bool), $"actual={isDone.FieldType}");
+    Check("  NOT a property of the same name", effectType.GetProperty("IsDone") == null);
+}
+else
+{
+    // If this ever becomes a property, the compat code's Field lookup returns null and the
+    // install path throws -> terminal, so record what it looks like instead.
+    var prop = effectType.GetProperty("IsDone");
+    Check("  (no field) property fallback also absent", prop == null, prop != null ? $"found property {prop.PropertyType}" : "");
+}
+
+// 5. Family: every direct subclass must derive from the base and must NOT declare OnTreeEntered
+//    (otherwise it would subscribe independently and escape the prefix).
+var subclasses = aftp.GetTypes()
+    .Where(t => t.IsClass && t.BaseType == effectType)
+    .OrderBy(t => t.Name)
+    .ToList();
+Check("direct subclass count is 46", subclasses.Count == 46, $"actual={subclasses.Count}");
+var offenders = subclasses
+    .Where(t => t.GetMethod("OnTreeEntered", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly) != null)
+    .Select(t => t.Name)
+    .ToList();
+Check("no subclass declares its own OnTreeEntered", offenders.Count == 0,
+    offenders.Count == 0 ? "" : "offenders=" + string.Join(",", offenders));
+var nonOverriders = subclasses
+    .Where(t => t.GetMethod("Update", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly) == null)
+    .Select(t => t.Name)
+    .ToList();
+Check("every subclass overrides Update(float)", nonOverriders.Count == 0,
+    nonOverriders.Count == 0 ? "" : "missing=" + string.Join(",", nonOverriders));
+
+Console.WriteLine($"     family: 1 base + {subclasses.Count} direct subclasses");
+Console.WriteLine(failures.Count == 0 ? "PROBE OK" : $"PROBE FAILED ({failures.Count})");
+return failures.Count == 0 ? 0 : 1;

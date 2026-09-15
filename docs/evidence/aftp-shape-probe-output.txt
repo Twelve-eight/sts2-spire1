@@ -1,0 +1,31 @@
+PASS type ActsFromThePast.NSts1Effect exists
+     base chain: Godot.Node2D
+PASS AccessTools.Method resolves NSts1Effect.OnTreeEntered
+PASS   not static
+PASS   not abstract
+PASS   returns void - actual=System.Void
+PASS   takes 0 parameters
+PASS   declared on NSts1Effect itself (not inherited) - declaring=NSts1Effect
+     access: private
+PASS AccessTools.Method resolves NSts1Effect.Initialize
+PASS   not static
+PASS   returns void - actual=System.Void
+PASS   takes 0 parameters
+PASS   virtual (subclasses override it) - IsVirtual=True
+     access: protected, abstract=False
+PASS AccessTools.Method resolves NSts1Effect.Update
+PASS   not static
+PASS   returns void - actual=System.Void
+PASS   takes exactly 1 parameter - actual=1
+PASS   parameter is float - actual=System.Single
+PASS   abstract (every subclass must override) - IsAbstract=True
+     access: protected
+PASS AccessTools.Field resolves NSts1Effect.IsDone as a field
+PASS   not static
+PASS   type is bool - actual=System.Boolean
+PASS   NOT a property of the same name
+PASS direct subclass count is 46 - actual=46
+PASS no subclass declares its own OnTreeEntered
+PASS every subclass overrides Update(float)
+     family: 1 base + 46 direct subclasses
+PROBE OK
