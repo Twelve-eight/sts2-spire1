@@ -11,3 +11,20 @@ PASS fully blocked damage does NOT strip a stack: expected=BLOCKED actual=BLOCKE
 PASS damage to another creature does NOT strip a stack: expected=BLOCKED actual=BLOCKED (gate predicate evaluated directly (decrement is unobservable without a live combat state))
 INFO null dealer: PASSED (gate predicate evaluated directly (decrement is unobservable without a live combat state)) - jar requires non-null owner; an engine-side null dealer reaching here would strip a stack, recorded not asserted
 PROBE OK
+
+--- rebuild equivalence note (2026-09-15, added after the workshop payload refresh) ---
+The sha above (1B49AE17) is the DLL this probe ran against. A later clean rebuild from the same
+source produced 72D30D5BBA101171, which is what the staged workshop payload now carries.
+Equivalence was verified, not assumed:
+  - two consecutive --no-incremental Release builds are byte-identical (deterministic build);
+  - `ilspycmd -il` output for the whole assembly diffs to ZERO lines between 1B49AE17 and
+    72D30D5B, so the two binaries are semantically the same code (the PlatedArmorPower IL is
+    byte-identical, and both reference ValuePropExtensions.IsPoweredAttack 8 times);
+  - the only byte differences are build metadata: the COFF timestamp, the debug GUID, and the
+    SourceLink string `.1.0.0+<sha>`.
+Why the embedded sha is not a usable freshness signal here: it records `git rev-parse HEAD` at
+build time, so a build from a DIRTY tree embeds the last commit rather than the working state.
+1B49AE17 embedded 6f359d4, which is an ANCESTOR of the gate commit d14b9af, yet it already
+contains the gate - i.e. it was built with the gate edit uncommitted. Do not treat an embedded
+sha that differs from HEAD as staleness; compare IL or rebuild and byte-compare with the
+SourceLink string masked.
