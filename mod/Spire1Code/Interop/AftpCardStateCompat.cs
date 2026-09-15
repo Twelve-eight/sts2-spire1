@@ -328,34 +328,36 @@ internal static class AftpCardStateCompat
     /// <summary>按本层 Harmony ID 撤销已装补丁(安装中途失败的收尾).撤销自身失败只记
     /// Error,不再抛出--终局原因保留最初的那个.
     ///
-    /// 次序是有意的:**终结器先撤,前缀后撤**(P3 复核发现,2026-09-15).两次 Unpatch 里
-    /// 第一次成功,第二次抛,会留下半套状态,两种半套的后果不对称:
-    /// - 先撤前缀(原实现):终留终结器,而 <c>__state</c> 已随前缀消失退化为默认
-    ///   <c>false</c>,终结器于是**无条件写 false**--正好在嵌套调用里关掉 AFTP 自己
-    ///   打开的窗口(复核实测 finalizerOnly_outerWindowPreserved=false),即 F3 故障模式,
-    ///   会打断 AFTP 自己的 UpgradeAllBurnsAndAddMore.
-    /// - 先撤终结器(现实现):终留前缀,门控继续放行且无人还原,退化为"泄漏 true".
-    ///   而 AFTP 自己的 finally 块在窗口结束时显式写回 false(:3282/:3316),
-    ///   下一次 Hexaghost 窗口关闭即自愈.
-    /// 两者都不好,但泄漏可自愈,关掉别人的窗口不可.触发需要 Unpatch 抛异常,复核与
-    /// 本层都未能复现,故为纵深防御而非已观测缺陷.
+    /// 次序与依赖都是有意设计的(P3 复核 F13,2026-09-15):
     ///
-    /// 每一步各自 try(复核 F13 的收尾建议):原先两次 Unpatch 共用一个 try,第一步抛就会
-    /// **跳过第二步**,于是"先撤终结器"的次序反而失效,直接落到上面那个不可自愈的半套.
-    /// 分开之后,任一步失败都不再阻止另一步执行,半套状态才真的只剩"无法自愈的那一半
-    /// 是理论上可能、实际被次序挡住的"这一种.</summary>
+    /// **终结器先撤;只有终结器撤成功,才去撤前缀.** 两种半套状态后果不对称:
+    /// - 终留终结器而前缀已撤:前缀消失后 <c>__state</c> 退化为默认 <c>false</c>,终结器
+    ///   于是**无条件写 false**--正好在嵌套调用里关掉 AFTP 自己打开的窗口(复核实测
+    ///   finalizerOnly_outerWindowPreserved=false),即 F3 故障模式,会打断 AFTP 自己的
+    ///   UpgradeAllBurnsAndAddMore. **不可自愈.**
+    /// - 终留前缀而终结器已撤:门控继续放行且无人还原,退化为"泄漏 true".AFTP 自己的
+    ///   finally 块在窗口结束时显式写回 false(:3282/:3316),下一次 Hexaghost 窗口关闭
+    ///   即自愈. **可自愈.**
+    /// - 两者都留着:前缀与终结器仍成对,这一层照常工作,只是没被撤下. 最无害.
+    ///
+    /// 所以本实现**不允许**出现第一种:终结器撤销失败时直接返回,不碰前缀.两次 Unpatch
+    /// 各自 try 且**顺序依赖**--若照 F13 建议的"各自 try 互不影响"去写,终结器撤失败后
+    /// 仍会去撤前缀,反而把不可自愈的那一种重新变成可达状态.触发需要 Unpatch 抛异常,
+    /// 复核与本层都未能复现,故为纵深防御而非已观测缺陷.</summary>
     private static void Rollback(Harmony harmony, MethodInfo fromSerializable)
     {
-        // Finalizer first: a leftover finalizer writes a stale `false` and closes windows AFTP
-        // itself opened, which cannot self-heal. A leftover prefix only leaks `true`, and AFTP's
-        // own finally (:3282/:3316) writes false again when the window closes.
         try
         {
             harmony.Unpatch(fromSerializable, HarmonyPatchType.Finalizer, harmony.Id);
         }
         catch (Exception e)
         {
-            MainFile.Logger.Error($"[Spire1] AFTP card-state compat rollback: unpatching the Finalizer failed ({e.GetType().Name}: {e.Message}) - it may still write a stale value.");
+            // Do NOT remove the Prefix here. Finalizer-without-Prefix is the one half-state that
+            // cannot self-heal: __state degrades to its default false, so the surviving finalizer
+            // writes a constant and closes windows AFTP itself opened. Leaving BOTH installed keeps
+            // the producer/cleanup pair intact, which merely means the layer was not rolled back.
+            MainFile.Logger.Error($"[Spire1] AFTP card-state compat rollback: unpatching the Finalizer failed ({e.GetType().Name}: {e.Message}) - leaving the Prefix installed too, so the pair stays consistent (the layer remains active rather than half-removed).");
+            return;
         }
 
         try
@@ -364,7 +366,9 @@ internal static class AftpCardStateCompat
         }
         catch (Exception e)
         {
-            MainFile.Logger.Error($"[Spire1] AFTP card-state compat rollback: unpatching the Prefix failed ({e.GetType().Name}: {e.Message}) - the gate may still widen.");
+            // Benign: a prefix without its finalizer only leaks `true`, and AFTP's own finally
+            // (:3282/:3316) writes false again when the window closes.
+            MainFile.Logger.Error($"[Spire1] AFTP card-state compat rollback: unpatching the Prefix failed ({e.GetType().Name}: {e.Message}) - the gate may still widen until AFTP closes its own window.");
         }
     }
 
