@@ -65,6 +65,11 @@ public class GeneticAlgorithm : Spire1Card
         if (DeckVersion is GeneticAlgorithm master)
         {
             master.ExtraGain += inc;
+            // 母本的 DynamicVars 在第一场战斗开始时就已物化,下场战斗的克隆复制的是
+            // 物化值而非 CanonicalVars(DeepCloneFields -> DynamicVars.Clone)。只加
+            // ExtraGain 不刷新 BaseValue,会让下一场战斗的首张牌仍按旧值给格挡
+            // (引擎自带的 GeneticAlgorithm 同样在 BuffFromPlay 后写回 Block)。
+            master.DynamicVars.Block.BaseValue = master.CurrentBlock;
         }
         else if (!_deckVersionWarned)
         {
