@@ -2286,3 +2286,27 @@ HEAD e2ac8f1. All clean.
 用户要求审查 aftp-upstream 以便下游优化. 本轮在当前工坊 DLL 隔离复现 Burn+ 窗口外重建异常和 Classic Slimed clone/save 丢行为 marker. 建议按现有 DEVELOP.md:11 由 Spire1 的可选生态兼容层承接, 不覆盖 AFTP/PCK, 不恢复自建幕/观者. 特效退树和 minigame 奖励等待为 SOURCE, FireFly trail 优化未测性能.
 
 完整目标/边界/验收见 ../aftp-upstream/astra-advice.md; 证据 ../astra-advice-evidence/2026-09-14/round4/review-results.json. 本轮未实现补丁, 未改产品源码/部署/游戏/push.
+
+## 2026-09-15 AFTP-1 集成构建验证(主会话)
+
+WIP dbc9db2 的构建欠账已结清. `dotnet build mod/Spire1.csproj -c Release`(G 盘环境变量)
+-> **60 个警告 / 0 个错误**; 警告全部是树内既有 CS86xx 可空性噪音, `AftpEffectLifecycleCompat.cs`
+自身零警告(构建输出按文件名过滤为空). 产物 `mod/.godot/mono/temp/bin/Release/Spire1.dll`
+sha256 `70001d0784f0f40dfce292a8a1797456f1c149bc224dfe3055535b963d33cec1`, 元数据含
+`AftpEffectLifecycleCompat` 类型与 `TryApply` 方法(字节串计数 1/3).
+
+**工坊 DLL 侧独立核验(本次新增, 不依赖任何源码树)**: ilspycmd 反编译
+`G:/steam/steamapps/workshop/content/2868840/3746969593/ActsFromThePast.dll`
+(sha256 `57362376a48c47209b013dfdacc185b34eec854a12f8549bc4b8174ebf4b40f0`)到
+`.tmp/aftp-decomp-20260915/`. 全量 21 处 `ProcessFrame` 归属: `NSts1Effect`(15740/15747/15753)
++ `InteractableTorchEffect`(14901/14909) + `TheCityBackground` + `TheBeyondBackground` +
+`ExordiumBackground` + `HexaghostVisuals` 一处 `ToSignal`. 三个 Background 与
+InteractableTorchEffect 均**不是** NSts1Effect 子类(分别继承 `NCombatBackground` / `Control`),
+且各自有 `_ExitTree` 配对退订; ExordiumBackground 的 `OnTreeEntered` 自带
+`TreeEntered -= OnTreeEntered` 一次性守卫. 因此本层"OnTreeEntered 是 NSts1Effect 家族唯一
+ProcessFrame 订阅点"的声明在真实二进制上成立; 46 个直接子类全部经 `NSts1Effect.OnTreeEntered`
+订阅, 无子类自行订阅 ProcessFrame.
+
+**未验证(诚实标注)**: 未运行游戏, 未部署, 未做原生 SceneTree create/attach/detach/reenter/
+free/room-exit 压力测试, 未验证暂停/菜单/战斗中的表现语义与时长保真, 未验证 AFTP 缺席与
+版本漂移两条失败路径的实机行为. 这些属 GATE-1 集中验收项. AFTP-1 审查者本轮已派.
