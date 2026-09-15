@@ -133,6 +133,11 @@ public partial class MainFile : Node
         // 顺序；AutoAnthony 无依赖、按用户 mod 列表序可能在本 mod 之前或之后。若此刻
         // 尚未加载，由 AutoAnthonyLoadHook 的 AssemblyLoad 事件兜底重试）。
         AutoAnthonyLoadHook.TryApplyBridge(harmony);
+        // AFTP-1 (SpireAftpCompat): optional AFTP effect-lifecycle compat — replaces the
+        // NSts1Effect family's ProcessFrame subscription with a symmetric detach/reentry
+        // binding (astra AFTP-R4-03: GetTree outside the tree). Absent AFTP = no-op;
+        // all outcomes logged by the compat layer itself.
+        Interop.AftpEffectLifecycleCompat.TryApply(harmony);
 
         // 第三方（RitsuLib）弹窗抑制不能进上面的属性扫描--目标类型缺失时 AccessTools
         // 解析会抛异常，会让注册循环每次启动都记一条失败。显式调用、内部自兜底。
