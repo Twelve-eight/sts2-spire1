@@ -338,17 +338,33 @@ internal static class AftpCardStateCompat
     ///   而 AFTP 自己的 finally 块在窗口结束时显式写回 false(:3282/:3316),
     ///   下一次 Hexaghost 窗口关闭即自愈.
     /// 两者都不好,但泄漏可自愈,关掉别人的窗口不可.触发需要 Unpatch 抛异常,复核与
-    /// 本层都未能复现,故为纵深防御而非已观测缺陷.</summary>
+    /// 本层都未能复现,故为纵深防御而非已观测缺陷.
+    ///
+    /// 每一步各自 try(复核 F13 的收尾建议):原先两次 Unpatch 共用一个 try,第一步抛就会
+    /// **跳过第二步**,于是"先撤终结器"的次序反而失效,直接落到上面那个不可自愈的半套.
+    /// 分开之后,任一步失败都不再阻止另一步执行,半套状态才真的只剩"无法自愈的那一半
+    /// 是理论上可能、实际被次序挡住的"这一种.</summary>
     private static void Rollback(Harmony harmony, MethodInfo fromSerializable)
     {
+        // Finalizer first: a leftover finalizer writes a stale `false` and closes windows AFTP
+        // itself opened, which cannot self-heal. A leftover prefix only leaks `true`, and AFTP's
+        // own finally (:3282/:3316) writes false again when the window closes.
         try
         {
             harmony.Unpatch(fromSerializable, HarmonyPatchType.Finalizer, harmony.Id);
+        }
+        catch (Exception e)
+        {
+            MainFile.Logger.Error($"[Spire1] AFTP card-state compat rollback: unpatching the Finalizer failed ({e.GetType().Name}: {e.Message}) - it may still write a stale value.");
+        }
+
+        try
+        {
             harmony.Unpatch(fromSerializable, HarmonyPatchType.Prefix, harmony.Id);
         }
         catch (Exception e)
         {
-            MainFile.Logger.Error($"[Spire1] AFTP card-state compat rollback failed ({e.GetType().Name}: {e.Message}) - a patch may be partially installed.");
+            MainFile.Logger.Error($"[Spire1] AFTP card-state compat rollback: unpatching the Prefix failed ({e.GetType().Name}: {e.Message}) - the gate may still widen.");
         }
     }
 
