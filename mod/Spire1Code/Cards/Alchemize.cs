@@ -11,6 +11,13 @@ namespace Spire1.Spire1Code.Cards;
 [Pool(typeof(Spire1LegacyPool))]
 public class Alchemize() : Spire1Card(1, CardType.Skill, CardRarity.Rare, TargetType.Self)
 {
+    /// <summary>
+    /// 与引擎自带 Alchemize 一致(engine-dllsrc/.../Cards/Alchemize.cs):基类默认
+    /// CanBeGeneratedInCombat=true,而本卡在战斗中被随机生成会诱导"刷药水"最优解,
+    /// 因此显式关闭.原版同卡同样不进入战斗内生成池.
+    /// </summary>
+    public override bool CanBeGeneratedInCombat => false;
+
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
