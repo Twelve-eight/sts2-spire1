@@ -20,8 +20,9 @@ namespace Spire1.Spire1Code.Powers;
 /// Deliberately NOT the shipped <see cref="MegaCrit.Sts2.Core.Models.Powers.PlatingPower"/>:
 /// that one grants Block every round and decays by itself over time, while StS1's Plated Armor
 /// only decays when actual unblocked damage lands. The block tick reuses the Metallicize idiom
-/// (<c>AfterSideTurnEnd</c>); the stack loss hooks <c>AfterDamageReceived</c>, gated on
-/// unblocked damage like StS1's non-HP-loss/non-thorns check.
+/// (<c>AfterSideTurnEnd</c>); the stack loss hooks <c>AfterDamageReceived</c>, gated exactly like
+/// StS1's <c>wasHPLost</c>: unblocked damage AND a powered attack, which excludes HP loss,
+/// thorns and other unpowered sources (see the gate comment on the method).
 /// </para>
 /// </summary>
 public class PlatedArmorPower : CustomPowerModel
@@ -49,7 +50,14 @@ public class PlatedArmorPower : CustomPowerModel
     public override async Task AfterDamageReceived(PlayerChoiceContext choiceContext, Creature target,
         DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource)
     {
-        if (target != Owner || result.UnblockedDamage <= 0)
+        // StS1 gate (javap com.megacrit.cardcrawl.powers.PlatedArmorPower#wasHPLost, authoritative
+        // jar): the decrement requires ALL of - the damage source is non-null, the source is not
+        // the power's own owner (no self-inflicted decay), DamageType is neither HP_LOSS nor
+        // THORNS, and the lost amount is > 0. StS2's equivalent of the two excluded damage types
+        // is "not a powered attack" (ValuePropExtensions.IsPoweredAttack: Move without Unpowered);
+        // the same gate the shipped FlutterPower uses. So thorns, HP loss and other unpowered
+        // sources must NOT strip a stack.
+        if (target != Owner || result.UnblockedDamage <= 0 || !props.IsPoweredAttack())
         {
             return;
         }

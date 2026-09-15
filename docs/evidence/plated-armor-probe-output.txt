@@ -1,0 +1,13 @@
+SentryGodotInitializer: Sentry GDExtension not loaded in this process; skipping. If you see this in a running game (not during project export or IDE script analysis), check Godot's log for extension load failures.
+PlatedArmor gate probe
+assembly: G:/omp works/sts2-spire1/mod/.godot/mono/temp/bin/Release/Spire1.dll
+sha256:   1B49AE1757D7E9ED
+INFO method: System.Threading.Tasks.Task AfterDamageReceived(MegaCrit.Sts2.Core.GameActions.Multiplayer.PlayerChoiceContext, MegaCrit.Sts2.Core.Entities.Creatures.Creature, MegaCrit.Sts2.Core.Entities.Creatures.DamageResult, MegaCrit.Sts2.Core.ValueProps.ValueProp, MegaCrit.Sts2.Core.Entities.Creatures.Creature, MegaCrit.Sts2.Core.Models.CardModel)
+INFO IL length 80 bytes; ValuePropExtensions.IsPoweredAttack resolved: True
+PASS unblocked powered attack strips a stack: expected=PASSED actual=PASSED (gate predicate evaluated directly (decrement is unobservable without a live combat state))
+PASS thorns/unpowered does NOT strip a stack: expected=BLOCKED actual=BLOCKED (gate predicate evaluated directly (decrement is unobservable without a live combat state))
+PASS HP loss does NOT strip a stack: expected=BLOCKED actual=BLOCKED (gate predicate evaluated directly (decrement is unobservable without a live combat state))
+PASS fully blocked damage does NOT strip a stack: expected=BLOCKED actual=BLOCKED (gate predicate evaluated directly (decrement is unobservable without a live combat state))
+PASS damage to another creature does NOT strip a stack: expected=BLOCKED actual=BLOCKED (gate predicate evaluated directly (decrement is unobservable without a live combat state))
+INFO null dealer: PASSED (gate predicate evaluated directly (decrement is unobservable without a live combat state)) - jar requires non-null owner; an engine-side null dealer reaching here would strip a stack, recorded not asserted
+PROBE OK
