@@ -31,6 +31,15 @@ public sealed class DivinityPower : StancePower
         CardModel? cardSource,
         CardPlay? cardPlay)
     {
+        // StS1 gate (javap com.megacrit.cardcrawl.stances.DivinityStance, authoritative jar):
+        // atDamageGive only multiplies when DamageType == NORMAL. Divinity has no
+        // atDamageReceive override, so incoming damage is never multiplied.
+        // StS2 equivalent: props.IsPoweredAttack().
+        if (!props.IsPoweredAttack())
+        {
+            return 1m;
+        }
+
         return dealer == Owner ? 3m : 1m;
     }
 

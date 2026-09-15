@@ -27,6 +27,17 @@ public sealed class WrathPower : StancePower
         CardModel? cardSource,
         CardPlay? cardPlay)
     {
+        // StS1 gate (javap com.megacrit.cardcrawl.stances.WrathStance, authoritative jar):
+        // both atDamageGive and atDamageReceive only multiply when
+        // DamageType == NORMAL, returning the amount unchanged otherwise. HP_LOSS and
+        // THORNS therefore pass through untouched in either direction.
+        // StS2 equivalent: props.IsPoweredAttack() (ValueProp.Move without Unpowered),
+        // the same gate the shipped VulnerablePower/DoubleDamagePower use.
+        if (!props.IsPoweredAttack())
+        {
+            return 1m;
+        }
+
         decimal multiplier = 1m;
         if (dealer == Owner)
         {
