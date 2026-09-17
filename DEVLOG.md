@@ -2422,11 +2422,22 @@ neutral: 其余 -> 不检查(证据不足以立规则)
 
 ### 3. 移除 9 张不可达一代卡(用户批准范围)
 `BecomeAlmighty` `Beta` `Expunger` `FameAndFortune` `LiveForever` `Safety` `ThroughViolence`
-(7 张观者 token -- Spire1 无观者角色也无生成者) + `ShrugItOff` `DarkShackles`
-(引擎 `IroncladCardPool` / `ColorlessCardPool` 已出货同效果卡, 源码逐字相同).
+(7 张观者 token -- Spire1 无观者角色也无生成者).
 级联: `Beta` 是 `Omega` 的唯一生成者, 故 `Omega` + `OmegaPower` 一并移除.
 另删每语言 23 条本地化 + 对应卡面美术.
-> 收敛说明: 用户最初批准 12 张; 逐条核查后另 3 张**可由 Power 生成器抵达**, 故保留, 实际删 9 张.
+> 收敛说明: 用户最初批准 12 张; 逐条核查后另 3 张**可由 Power 生成器抵达**, 故保留.
+>
+> **自我更正(同日)**: `ShrugItOff` / `DarkShackles` **不应删**, 已恢复(提交 `096457b`).
+> 我原把它们与 7 张 token 归为同一类("引擎已有同效果卡"), 这是错的 -- 两者**退休原因不同**:
+> - 这两张由 `d0d2390`(去重批)进入 `Spire1LegacyPool`, 在 `.tmp/dupcards-A.json`(105 张)清单内.
+>   `Spire1LegacyPool` 的**存在理由**就是老存档兼容, 其文档原文: "their model ids remain
+>   loadable for old saves"; `LegacySaveCompatPatch` 至今仍在生效. 删掉它们会让老存档里的
+>   `SPIRE1-SHRUG_IT_OFF` / `SPIRE1-DARK_SHACKLES` 解析失败, 与契约相反, 而**保留成本为零**.
+> - 7 张 token 由 `a1ab2cb` 归档(原文: "11 Token cards archived to Spire1LegacyPool
+>   (Omega leaking into rewards)"), **不在** dup 清单内, 确属真不可达, 删除成立.
+>
+> 教训: **"引擎已有等价卡" 与 "不可达" 是两个不同的退休理由, 不可合并判断**; 判断某张卡
+> 能否删, 要看它**因何退休**(查进入 LegacyPool 的提交), 而不是看它是否还有用.
 
 ### 4. RitsuLib 0.6.2 兼容核实(重要, 含一次自我更正)
 工坊 RitsuLib 已是 **0.6.2**(item 3747602295), 本地 E: 副本装的是 0.5.20.
