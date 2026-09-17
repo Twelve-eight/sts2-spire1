@@ -1,8 +1,8 @@
 "workshopitem"
 {
 	"appid"		"2868840"
-	"contentfolder"		"G:\\omp works\\sts2-spire1\\workshop\\content"
-	"previewfile"		"G:\\omp works\\sts2-spire1\\workshop\\preview.png"
+	"contentfolder"		"G:\\omp works\\Sts\\sts2-spire1\\workshop\\content"
+	"previewfile"		"G:\\omp works\\Sts\\sts2-spire1\\workshop\\preview.png"
 	"visibility"		"0"
 	"title"		"Spire1: StS1 Characters (一代三角色)"
 	"description"		"[h1]Spire1: StS1 Characters(一代三角色)[/h1]
@@ -16,8 +16,8 @@
 
 [list]
 [*][b]3 名可玩角色[/b]:铁甲战士(Ironclad)/ 静默猎手(Silent)/ 故障机器人(Defect),各自的角色机制(怒气 / 毒素 / 充能)原样还原
-[*][b]230 张卡牌[/b]:一代卡池完整移植(基础牌 / 普通 / 罕见 / 稀有 / 状态 / 诅咒)
-[*][b]22 件专属遗物[/b]:燃血 / 蛇之戒指 / 破裂核心 等角色核心遗物,数值按二代引擎语义适配
+[*][b]222 张卡牌[/b]:一代卡池完整移植(基础牌 / 普通 / 罕见 / 稀有 / 状态 / 诅咒)
+[*][b]24 件专属遗物[/b]:燃血 / 蛇之戒指 / 破裂核心 等角色核心遗物,数值按二代引擎语义适配
 [*][b]6 个独有事件[/b]:瘾君子 / 返璞归真 / 药贩子 / 祛咒之泉 / 写给自己的便条 / 尖塔之心(其余一代事件由 Acts from the Past 提供,自动接入,无需重复)
 [*][b]3 种药水[/b]
 [*][b]完整双语本地化[/b]:简体中文 + English,遗物/卡牌描述均支持动态数值
@@ -48,6 +48,6 @@
 [/list]
 
 [i]The Workshop BaseLib often lags behind the official GitHub. If BaseLib errors after a game update, grab the latest release from GitHub (link above), unzip into the mods folder, and unsubscribe from the Workshop copy to avoid double-loading.[/i]"
-	"changenote"		"v1.1.1: multiplayer handshake hardening (2026-09-12 review) - a mod-list mismatch is only forced through when model-id hashes match, or when the explicit hash-mismatch switch is on; with the default settings a mod-list + hash double mismatch is now rejected, closing a serialization-safety hole. Also in this build: Acts from the Past compatibility layer (2026-09-15) - AFTP's effect family subscribes its per-frame callback from a tree-enter hook and unsubscribes through GetTree(), which throws once the node has left the tree; this layer takes over that subscription so the teardown path no longer dereferences a detached node, and a transient failure hands the effect back to AFTP's own lifecycle permanently so the two never both drive it. Plus P1 card fixes verified against the StS1 jar bytecode: GeneticAlgorithm growth/Block/upgrade channel, the Wrath/Divinity damage gate, HEALING-tagged cards excluded from in-combat generation, and the PlatedArmor loss condition. Also: the compatibility layer's fallback is now permanent per effect - if the managed subscription fails transiently, the effect is handed back to AFTP's own lifecycle for good, so the two can never both drive the same effect (which would advance it twice per frame). Card-fidelity audit fixes: Poisoned Stab+ now applies the correct upgrade delta (8 damage / 4 Poison; the poison upgrade was +2, which made it 5), and Dark Embrace is now injected as the StS1-faithful Uncommon version instead of reusing the rebalanced Rare one."
+	"changenote"		"v1.2.0: 中文文本全面校正 + 欧罗巴斯遗物升级 + 卡池收敛. (1) 中文描述的关键字高亮此前时有时无(同一句里有的关键字是金色、有的是白色),已统一为引擎判定的高亮单元;同时修正 11 处星号错位(会渲染出字面星号)、44 处转义串内的无效标记、32 处一代颜色码(会原样显示 #r/#y)、4 处 NL 换行标记、能量符号 [R](非引擎标签,会原样显示,现改用官方图标)、12 处嵌套颜色标签与 2 处句尾重复从句;中文标点/标签旁的多余空格一并清除(权威文本无此类空格).(2) 术语更正:Frail=脆弱(原误作\"柔弱\")、Smite=惩恶(原误作\"惩戒\")、Plating=覆甲(原误作\"多层护甲\").(3) 先古之民\"欧罗巴斯\"的初始遗物升级此前会变成占位符\"头环\";现在铁甲战士/静默猎手/故障机器人分别正确升级为黑暗之血 / 长蛇戒指(新) / 注能核心(新).(4) 移除 7 张无法获得的一代观者衍生物卡(及其级联的欧米伽与欧米伽之力)与相应文本;耸肩无视、黑暗镣铐**保留**(仍属旧存档兼容池,老存档中的这两张牌可正常解析).(5) 已核实与 RitsuLib 0.6.2 兼容.\n"
 	"publishedfileid"		"3799031900"
 }
