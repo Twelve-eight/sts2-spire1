@@ -31,6 +31,16 @@ public class RingOfTheSnake : Spire1Relic
             "#At the start of each combat, draw 2 additional cards.",
             "A fanged ring.");
 
+    /// <summary>
+    /// Touch of Orobas (and the relic-collection "upgraded starter" row) resolves the upgrade
+    /// through BaseLib's sanctioned hook: <c>StarterUpgradePatches</c> prefixes
+    /// <c>TouchOfOrobas.GetUpgradedStarterRelic</c> and returns <c>GetUpgradeReplacement()</c>
+    /// whenever it is non-null (BaseLib 3.4.5, shipped). Without this override the engine's
+    /// hardcoded <c>RefinementUpgrades</c> dictionary - keyed on the BASE-GAME RingOfTheSnake id -
+    /// misses our SPIRE1-* id and falls back to the placeholder <c>Circlet</c> ("头环").
+    /// </summary>
+    public override RelicModel? GetUpgradeReplacement() => ModelDb.Relic<RingOfTheDrake>();
+
     public override async Task BeforeCombatStart()
     {
         Flash();

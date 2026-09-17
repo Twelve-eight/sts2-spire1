@@ -38,6 +38,16 @@ public class CrackedCore : Spire1Relic
             "#At the start of combat, Channel 1 Lightning.",
             "The remains of the Defect's heart.");
 
+    /// <summary>
+    /// Touch of Orobas (and the relic-collection "upgraded starter" row) resolves the upgrade
+    /// through BaseLib's sanctioned hook: <c>StarterUpgradePatches</c> prefixes
+    /// <c>TouchOfOrobas.GetUpgradedStarterRelic</c> and returns <c>GetUpgradeReplacement()</c>
+    /// whenever it is non-null (BaseLib 3.4.5, shipped). Without this override the engine's
+    /// hardcoded <c>RefinementUpgrades</c> dictionary - keyed on the BASE-GAME CrackedCore id -
+    /// misses our SPIRE1-* id and falls back to the placeholder <c>Circlet</c> ("头环").
+    /// </summary>
+    public override RelicModel? GetUpgradeReplacement() => ModelDb.Relic<InfusedCore>();
+
     public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
     {
         if (participants.Contains(Owner.Creature) && Owner.PlayerCombatState.TurnNumber <= 1)
