@@ -2391,3 +2391,70 @@ Spire1 走 **BaseLib SimpleLoc**(`mod/Spire1Code/MainFile.cs:53` `SimpleLoc.Enab
 **未验证(诚实标注)**: 未做视觉确认(截图比对黄字实际像素颜色). 本机前台被用户占用于
 CS:GO, 未抢焦点. 转换链的**输出文本**已由真引擎逐串证明, 但"该文本在卡片上确实渲染成
 金色"属渲染层, 需目视. 另外两个新遗物的 PNG 美术缺失.
+
+---
+
+## 2026-09-17(续) 高亮状态改为"主导性"派生 + 移除 9 张不可达卡 + RitsuLib 0.6.2 兼容核实
+
+### 1. 高亮状态:从"绝对计数"改为"主导性"(修正我自己的错误)
+
+第一版派生规则用**绝对计数阈值**(权威里被 `[gold]` 包裹 >= 11 次即判为需高亮). **这个规则是错的**:
+它把我自己先前**过度包裹**的结果当成了证据. 实证 `攻击牌`: 权威 **gold 2 / bare 63**,
+计数阈值却让它被包裹了 12 处; 而引擎对卡牌类型词(攻击牌/技能牌/能力牌)一律**裸写**
+(裸 63/22/28, gold 2/1/0).
+
+现行规则(主导性):
+```
+gold  : 包裹 >= 2 且 包裹 >= 2 x 裸
+bare  : 裸   >= 2 且 裸   >= 2 x 包裹
+neutral: 其余 -> 不检查(证据不足以立规则)
+```
+引擎语料有 >= 2 次出现时**以引擎为准**; 只有引擎完全不用的词(平静/真言/惩恶)才回退到
+本 mod 自身多数. `tools/derive-gold-terms.mjs` 重生成两份表, 且**幂等**(候选集从守卫当前
+列表播种, 否则一个"已正确去包裹"的词会因为不再作为单元出现而静默掉出规则).
+
+### 2. 守卫补上两类此前看不见的检查
+- **反向检查**: 引擎判为裸写的词**不得**被包裹(此前 `BARE_BY_DESIGN` 是手写排除表,
+  排除项一赢, 守卫就放过了症状本身).
+- **过宽 [red]/[green]/[purple] span**: Mark of Pain 的 zhs 红span 覆盖了
+  "伤口放入你的抽牌堆", 而英文权威只标 "Wounds".
+两类均已用注入缺陷的方式证明会触发.
+
+### 3. 移除 9 张不可达一代卡(用户批准范围)
+`BecomeAlmighty` `Beta` `Expunger` `FameAndFortune` `LiveForever` `Safety` `ThroughViolence`
+(7 张观者 token -- Spire1 无观者角色也无生成者) + `ShrugItOff` `DarkShackles`
+(引擎 `IroncladCardPool` / `ColorlessCardPool` 已出货同效果卡, 源码逐字相同).
+级联: `Beta` 是 `Omega` 的唯一生成者, 故 `Omega` + `OmegaPower` 一并移除.
+另删每语言 23 条本地化 + 对应卡面美术.
+> 收敛说明: 用户最初批准 12 张; 逐条核查后另 3 张**可由 Power 生成器抵达**, 故保留, 实际删 9 张.
+
+### 4. RitsuLib 0.6.2 兼容核实(重要, 含一次自我更正)
+工坊 RitsuLib 已是 **0.6.2**(item 3747602295), 本地 E: 副本装的是 0.5.20.
+
+**我中途得出过两个错误结论, 均已撤回**:
+- 误判 1: "0.6.2 把 `StateDivergenceDiagnosticsPopup` 改名为 `Panel`". 原因是 grep 被
+  "Searched only the first 4MB of large files" 截断, 且我把截断输出当成了新旧对比.
+- 误判 2: 由误判 1 推出"Spire1 的抑制补丁在 0.6.2 下失效".
+
+**核实方法(结论)**: ilspycmd 直接反编译两版的该类型 --
+`0.5.20` 与 `0.6.2` **都存在** `STS2RitsuLib.Networking.StateDivergence.StateDivergenceDiagnosticsPopup`,
+且 `ShowDeferred(StateDivergenceDiagnosticReport)` 签名**逐字相同**.
+
+**实机验证**: 把 0.6.2 装进 `E:\Slay the Spire 2\mods\STS2-RitsuLib` 启动:
+- `Version: 0.6.2 [compat branch: 0.111.0]`
+- `[Spire1] MP ignore-mod-diff: RitsuLib divergence popup suppressed`(**补丁生效**, 非 "type not found")
+- 0 崩溃; 1698 行 SimplifiedLoc; 5 类标记残留全 0; 两个新遗物正常注册
+- 唯一 ERROR 来自 AutoAnthony(`Expected 65 complete v111 Colorless cards, found 77`), **既有且与本轮无关**
+
+**安装注意(踩到的坑)**: 0.6.2 的目录布局与 0.5.20 不同 --
+`0.5.20` 用 `lib/<ver>/` + `STS2-RitsuLib.json`; `0.6.2` 用 `compat/<ver>/` + `shared/` + `mod_manifest.json`.
+若**同时**保留 `STS2-RitsuLib.json` 与 `mod_manifest.json`, 引擎会报
+`Tried to load mod with id STS2-RitsuLib, but a mod is already loaded with that name!`.
+安装 0.6.2 时**不要**另建 `STS2-RitsuLib.json`.
+
+**0.6.2 新增**: `RitsuLib.References.props` -- 供下游 mod 编译期引用的 MSBuild 属性表
+(`RitsuLibReferenceTarget` 选择 `compat/<ver>` 变体, 并校验 5 个必需程序集存在).
+Spire1 与 RegentFXFastBoot 目前都**不编译期引用** RitsuLib(Spire1 走反射 + 字符串类型名,
+`RitsuLibPopupSuppressionPatch`), 故无需导入; 若将来要静态引用, 应导入该 props 而非硬编码路径.
+
+**未验证**: 未做多人模式实机(失同步弹窗路径本身需要 MP 会话才会触发).
