@@ -447,5 +447,9 @@
   "SPIRE1-EXPLOSIVE_POTION.title": "Explosive Potion",
   "SPIRE1-EXPLOSIVE_POTION.description": "Deal !D! damage to ALL enemies.",
   "SPIRE1-FEAR_POTION.title": "Fear Potion",
-  "SPIRE1-FEAR_POTION.description": "Apply !VulnerablePower! *Vulnerable*."
+  "SPIRE1-FEAR_POTION.description": "Apply !VulnerablePower! *Vulnerable*.",
+  "SPIRE1-SHRUG_IT_OFF.title": "StS1 - Shrug It Off",
+  "SPIRE1-SHRUG_IT_OFF.description": "Gain !B! *Block*. Draw 1 card.",
+  "SPIRE1-DARK_SHACKLES.title": "StS1 - Dark Shackles",
+  "SPIRE1-DARK_SHACKLES.description": "Lose !DarkShacklesPower! *Strength* this turn."
 }

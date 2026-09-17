@@ -447,5 +447,9 @@
   "SPIRE1-EXPLOSIVE_POTION.title": "爆炸药水",
   "SPIRE1-EXPLOSIVE_POTION.description": "对所有敌人造成!D!点伤害.",
   "SPIRE1-FEAR_POTION.title": "恐惧药水",
-  "SPIRE1-FEAR_POTION.description": "给予!VulnerablePower!层*易伤*."
+  "SPIRE1-FEAR_POTION.description": "给予!VulnerablePower!层*易伤*.",
+  "SPIRE1-SHRUG_IT_OFF.title": "耸肩无视",
+  "SPIRE1-SHRUG_IT_OFF.description": "获得!B!点*格挡*。\n抽1张牌。",
+  "SPIRE1-DARK_SHACKLES.title": "黑暗镣铐",
+  "SPIRE1-DARK_SHACKLES.description": "让一名敌人在本回合内失去!DarkShacklesPower!点*力量*。"
 }
