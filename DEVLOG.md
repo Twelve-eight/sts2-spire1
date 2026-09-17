@@ -2315,3 +2315,79 @@ ProcessFrame 订阅点"的声明在真实二进制上成立; 46 个直接子类�
 **未验证(诚实标注)**: 未运行游戏, 未部署, 未做原生 SceneTree create/attach/detach/reenter/
 free/room-exit 压力测试, 未验证暂停/菜单/战斗中的表现语义与时长保真, 未验证 AFTP 缺席与
 版本漂移两条失败路径的实机行为. 这些属 GATE-1 集中验收项. AFTP-1 审查者本轮已派.
+
+---
+
+## 2026-09-17 本地化缺陷根治 + 欧罗巴斯初始遗物升级
+
+### 用户报告
+1. pure 模式下卡牌描述的中文有莫名其妙的空格;
+2. 黄字(引擎关键字)与白字(纯文本)混淆.
+
+### 根因(定论, 非推断)
+Spire1 走 **BaseLib SimpleLoc**(`mod/Spire1Code/MainFile.cs:53` `SimpleLoc.EnableSimpleLoc(ModId)`),
+转换链在 `research/baselib-dll/BaseLib.Patches.Localization/SimpleLoc.cs` 的 `Simplify()`:
+`*w*`->`[gold]w[/gold]`, `$w$`->`[blue]`, `{V}`, `!V!`->`{V:diff()}`, `@V@`, `[E]`, `-a-+b+`.
+**没有 `#` 规则**; `#` 是**转义**(剥掉 `#` 后整串**不转换**).
+
+| 缺陷 | 规模 | 说明 |
+|---|---|---|
+| zhs 关键字裸写 | 多 | 同一串里 `*格挡*`(金)与裸 `集中`(白)并存 -- 即用户看到的黄白混淆 |
+| 奇数个 `*` | 11 | SimpleLoc 产出**字面星号**且高亮跨错(`*伤口放入你的*抽牌堆*中.`) |
+| `#` 转义串内含 `*X*` | 44 | 转义禁用转换 -> 星号字面渲染 |
+| StS1 颜色码 `#r/#y/#b` | 32 | 无对应规则 -> 字面渲染 |
+| `NL` 换行标记 | 4 | StS2 不认 -> 渲染 "NL" |
+| `*` 嵌在已有 `[colour]` 内 | 12 | 产出 `[gold][gold]` 嵌套 |
+| `[R]` 能量标记 | 2 | **不是**已注册引擎标签 -> 字面渲染; 权威用 `{Energy:energyIcons()}` |
+| 尾段悬挂重复 | 2 | Necronomicon 句尾多出一段重复从句(标记层看不出来) |
+| CJK/标签旁空格 | 53 | 权威 zhs **641 条含 [colour] 的条目里 0 条**有空格 |
+
+### 术语修正(查权威, 不凭记忆)
+- `Frail` 柔弱 -> **脆弱**(术语表 `Frail=脆弱`; StS1 官方中文 `Shame` 用"脆弱")
+- `Smite` 惩戒 -> **惩恶**(本仓 `SPIRE1-SMITE.title` 与 StS1 官方中文均为"惩恶")
+- `Plating` 多层护甲 -> **覆甲**(术语表 `Plating=覆甲`)
+
+### 关键教训(已写进守卫头部)
+**不要手写"必须高亮的关键词表"** -- 它就是第一、二轮修复都漏掉 `集中`(Focus, 5 张卡)
+的原因, 而 `集中` 正是用户报告的症状本身. 正确做法是**跑真转换链, 断言输出干净**,
+关键词集从权威**派生**: `tools/derive-gold-terms.mjs` = (权威 dump 里被 `[gold]` 包裹
+>= 11 次的词) U (本 mod 自己已写成 `*X*`/`[gold]X[/gold]` 的词). 阈值 11 是承重的:
+`打击`/`防御` 恰好在 10(它们是卡名片段), 必须保持裸写.
+
+第二条教训: **判定"某标记是否有效"不能只数官方 dump 里的出现次数**. 官方文本直写
+`[gold]` 是因为它**不经过** SimpleLoc. 顺序必须是: 先查 mod 是否启用了转换器, 再查
+转换器源码, 最后才看数据.
+
+### 欧罗巴斯(Touch of Orobas)初始遗物升级
+三个 Spire1 初始遗物此前被替换成占位符"头环"(Circlet): 引擎 `TouchOfOrobas.RefinementUpgrades`
+是**按基础游戏 id 硬编码**的字典, 查不到 `SPIRE1-*` 就回退 Circlet.
+
+改用 BaseLib **官方钩子** `CustomRelicModel.GetUpgradeReplacement()`
+(`StarterUpgradePatches` 以 HarmonyPrefix 打在 `TouchOfOrobas.GetUpgradedStarterRelic` 上,
+返回非 null 时 BaseLib 自己就采用该结果). 自建补丁已删除, 不留死代码.
+
+| 初始遗物 | 升级为 | Rarity |
+|---|---|---|
+| `BurningBlood` | `BlackBlood`(既有) | Ancient(既有, 按 StS1 BOSS 级) |
+| `RingOfTheSnake` | `RingOfTheDrake`(**新增**) | Starter |
+| `CrackedCore` | `InfusedCore`(**新增**) | Starter |
+
+两个新遗物**逐字段对齐引擎原生实现**(已对照 `research/engine-dllsrc/.../RingOfTheDrake.cs`
+与 `InfusedCore.cs`), 本地化文本取自引擎 pck, **未臆造**. 已知缺口: 无 PNG 美术
+(引擎记 INFO 后回退, 不影响功能).
+
+### 验证(实机)
+游戏以 `E:\Slay the Spire 2\SlayTheSpire2.exe --rendering-driver d3d12 -log Generic VeryDebug`
+启动(vulkan 在 Neow 事件处 `swap_chain_resize` 崩溃, **与本次改动无关**). BaseLib 的
+`SimplifiedLoc:` 逐串打出真转换结果, 共 **1743 行**:
+- 字面 `*`: **0**; 颜色码: **0**; `NL`: **0**; `[gold][gold]`: **0**; `[R]`: **0**
+- 修复条目实测渲染正确, 例: `获得{FocusPower:diff()}点[gold]集中[/gold].`,
+  `回合结束时获得1层[gold]脆弱[/gold].`, `每回合开始获得{Energy:energyIcons()}.`
+
+守卫 `tools/check-loc-markup.mjs` 现**跑真转换链**并对全量 1430 条断言输出干净;
+对修复前文本报 **531 个问题**, 修复后 **0**. 新增检查均已证明会触发(临时注入 `[R]`
+与尾段重复后分别报错).
+
+**未验证(诚实标注)**: 未做视觉确认(截图比对黄字实际像素颜色). 本机前台被用户占用于
+CS:GO, 未抢焦点. 转换链的**输出文本**已由真引擎逐串证明, 但"该文本在卡片上确实渲染成
+金色"属渲染层, 需目视. 另外两个新遗物的 PNG 美术缺失.
