@@ -1,26 +1,29 @@
 #!/usr/bin/env node
 /**
- * derive-gold-terms.mjs - regenerate the GOLD_TERMS list embedded in check-loc-markup.mjs.
+ * derive-gold-terms.mjs - regenerate the GOLD_TERMS / BARE_BY_DESIGN lists embedded in
+ * check-loc-markup.mjs.
  *
- * WHY: a hand-maintained keyword list is a guess that rots silently. The first two repair
- * passes used one and both missed 集中 (Focus), which is bare in five Spire1 cards and is
- * exactly the "yellow next to white" defect the user reported. Derive the set instead.
+ * WHY THIS EXISTS
+ * A hand-maintained keyword list is a guess that rots silently. The first two repair
+ * passes used one and BOTH missed 集中 (Focus) - bare in five Spire1 cards, and exactly
+ * the "yellow next to white" defect the user reported. Derive the list instead.
  *
- * SOURCES (authoritative only):
- *   (a) .tmp/f05-verify/zhs-{relics,powers,card_keywords}.json - engine text. A term the
- *       engine wraps in [gold] at least THRESHOLD times is one the engine treats as a
- *       highlighted unit.
- *   (b) the mod's own zhs tables - any term already written as *X* or [gold]X[/gold] is
- *       by definition intended as a unit here; leaving it bare elsewhere is an internal
- *       inconsistency regardless of what the engine does.
+ * THE RULE (dominance, not an absolute count)
+ * For each candidate term, count occurrences wrapped as a unit ([gold]X[/gold] or *X*)
+ * versus bare, in the engine corpus and in the mod's own text. A term is GOLD when
+ * wrapped >= 2 and >= 2x bare; BARE when bare >= 2 and >= 2x wrapped; otherwise NEUTRAL
+ * (not checked - the evidence does not support a rule).
  *
- * THRESHOLD = 11 is load-bearing: 打击 / 防御 (card-NAME fragments, e.g. the cards "打击"
- * and "防御") sit at exactly 10 and must stay bare. Verify that before lowering it.
+ * An absolute-count threshold was tried first and was WRONG: it read my own earlier
+ * over-wrapping as evidence. 攻击牌 has authority gold=2, bare=63 - an absolute
+ * threshold wrapped it 12 times, and the engine in fact leaves card-type words bare.
  *
- * BARE_BY_DESIGN / NEVER are measured exclusions, not guesses: the engine leaves 充能球
- * bare in 22 of 24 occurrences, and 平静 / 真言 appear unwrapped.
+ * SOURCE PRECEDENCE
+ * The engine corpus wins wherever it has an opinion (>= 2 occurrences), because it is
+ * the authority. Only for terms the engine does not use at all (StS1-only, e.g. 平静 /
+ * 真言 / 惩恶) does the mod's own majority decide.
  *
- * Usage: node tools/derive-gold-terms.mjs        (prints the array to paste into the guard)
+ * Usage: node tools/derive-gold-terms.mjs   (prints both arrays to paste into the guard)
  */
 import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
@@ -30,40 +33,73 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const VERIFY = join(ROOT, "..", "..", ".tmp", "f05-verify");
 const LOC = join(ROOT, "mod", "Spire1", "localization", "zhs");
 
-const THRESHOLD = 11;
-// Bare by design in the engine (measured): wrapping these renders wrong.
-const BARE_BY_DESIGN = new Set(["充能球", "平静", "真言", "充能球栏位", "闪电充能球", "未被格挡", "覆甲"]);
-// Card-name fragments, never keywords.
-const NEVER = new Set(["打击", "防御"]);
+const usable = (w) => w.length >= 2 && w.length <= 6 && !/[{}[\]?%]/.test(w);
+const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-// (a) authority gold counts
-const counts = {};
+const engine = [];
 for (const f of ["zhs-relics.json", "zhs-powers.json", "zhs-card_keywords.json"]) {
   const d = JSON.parse(readFileSync(join(VERIFY, f), "utf8"));
+  for (const [k, v] of Object.entries(d)) if (typeof v === "string" && !k.endsWith(".title")) engine.push(v);
+}
+const mod = [];
+for (const n of ["cards", "relics", "powers"]) {
+  const d = JSON.parse(readFileSync(join(LOC, `${n}.json`), "utf8"));
   for (const [k, v] of Object.entries(d)) {
-    if (typeof v !== "string" || k.endsWith(".title")) continue;
-    for (const m of v.matchAll(/\[gold\]([^[\]]+?)\[\/gold\]/g)) counts[m[1]] = (counts[m[1]] || 0) + 1;
+    if (typeof v === "string" && !k.endsWith(".title") && !k.endsWith(".flavor")) mod.push(v);
   }
 }
 
-// (b) the mod's own units
-const units = new Set();
-for (const name of ["cards", "relics", "powers"]) {
-  const d = JSON.parse(readFileSync(join(LOC, `${name}.json`), "utf8"));
-  for (const [k, v] of Object.entries(d)) {
-    if (typeof v !== "string" || k.endsWith(".title") || k.endsWith(".flavor")) continue;
-    for (const m of v.matchAll(/\*([^*]+)\*/g)) units.add(m[1]);
-    for (const m of v.matchAll(/\[gold\]([^[\]]+?)\[\/gold\]/g)) units.add(m[1]);
+/** {g, b} = occurrences wrapped as a unit vs bare. */
+function tally(corpus, t) {
+  const re = new RegExp(esc(t), "g");
+  let g = 0, b = 0;
+  for (const v of corpus) {
+    const covered = [];
+    for (const m of v.matchAll(new RegExp(`(\\[gold\\]|\\*)${esc(t)}(\\[/gold\\]|\\*)`, "g"))) {
+      covered.push([m.index, m.index + m[0].length]);
+    }
+    for (const m of v.matchAll(re)) {
+      if (covered.some(([a, z]) => m.index >= a && m.index + t.length <= z)) g++;
+      else b++;
+    }
+  }
+  return { g, b };
+}
+
+const cands = new Set();
+for (const corpus of [engine, mod]) {
+  for (const v of corpus) for (const m of v.matchAll(/\[gold\]([^[\]]+?)\[\/gold\]/g)) cands.add(m[1]);
+}
+// Seed from the guard's CURRENT lists. Without this the generator is not idempotent:
+// a term that is (correctly) unwrapped everywhere no longer appears as a [gold] unit in
+// any corpus, so it would drop out of the candidate set and vanish from the list -
+// losing the rule that keeps it unwrapped. Seeding makes regeneration stable.
+{
+  const guard = readFileSync(join(ROOT, "tools", "check-loc-markup.mjs"), "utf8");
+  for (const arr of ["GOLD_TERMS", "BARE_BY_DESIGN"]) {
+    const m = guard.match(new RegExp(`const ${arr} = \\[([\\s\\S]*?)\\n\\];`));
+    if (m) for (const w of m[1].matchAll(/"([^"]+)"/g)) cands.add(w[1]);
   }
 }
 
-const usable = (w) => w.length >= 2 && w.length <= 6 && !/[{}[\]?%]/.test(w) && !BARE_BY_DESIGN.has(w) && !NEVER.has(w);
-const derived = Object.entries(counts).filter(([w, c]) => c >= THRESHOLD && usable(w)).map(([w]) => w);
-let terms = Array.from(new Set([...derived, ...[...units].filter(usable)]));
-// Drop any term that merely contains a shorter one (e.g. 金币时 -> keep 金币).
-terms = terms.filter((w) => !terms.some((o) => o !== w && o.length < w.length && w.includes(o)));
-terms.sort();
+const gold = [], bare = [];
+for (const t of cands) {
+  if (!usable(t)) continue;
+  const e = tally(engine, t);
+  const m = tally(mod, t);
+  const src = e.g + e.b >= 2 ? e : m; // engine wins where it has an opinion
+  if (src.g + src.b === 0) continue;
+  if (src.g >= 2 && src.g >= 2 * Math.max(src.b, 1)) gold.push(t);
+  else if (src.b >= 2 && src.b >= 2 * Math.max(src.g, 1)) bare.push(t);
+}
+gold.sort(); bare.sort();
 
-console.log(`// authority(>=${THRESHOLD}): ${derived.length}, mod units: ${[...units].filter(usable).length} -> ${terms.length} terms`);
-console.log(`// near-threshold (must stay bare): ${Object.entries(counts).filter(([w, c]) => c === THRESHOLD - 1 && usable(w)).map(([w, c]) => `${w}:${c}`).join(" ") || "(none)"}`);
-console.log(JSON.stringify(terms, null, 2));
+const fmt = (a) => {
+  const lines = [];
+  for (let i = 0; i < a.length; i += 10) lines.push("  " + a.slice(i, i + 10).map((w) => `"${w}"`).join(", ") + ",");
+  return lines.join("\n");
+};
+console.log(`// GOLD_TERMS (${gold.length})`);
+console.log(fmt(gold));
+console.log(`\n// BARE_BY_DESIGN (${bare.length})`);
+console.log(fmt(bare));

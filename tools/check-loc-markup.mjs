@@ -99,13 +99,19 @@ function effective(value) {
  *  The threshold of 11 is load-bearing: 打击 / 防御 are card-NAME fragments at exactly
  *  10 and must stay bare. */
 const GOLD_TERMS = [
-  "中毒", "伤口", "保留", "击晕", "力量", "升级", "变化", "召唤", "奇迹+", "小刀",
-  "弃牌堆", "惩恶", "手牌", "抽牌堆", "攻击牌", "敏捷", "无实体", "易伤", "晕眩", "格挡",
-  "消耗", "灼伤", "灾厄", "牌组", "生成", "能力牌", "能量", "脆弱", "药水", "虚弱",
-  "虚无", "遗物", "金币", "闪电", "附魔", "集中",
+    "中毒", "休息处", "伤口", "保留", "先古牌", "免疫", "再生", "冰霜", "凋萎", "击晕",
+    "力量", "升级", "变化", "召唤", "吊杀", "君王之剑", "吹哨", "多人游戏牌", "奇迹+", "奥斯提",
+    "小刀", "平静", "弃牌堆", "惩恶", "手牌", "打击", "扫荡凝视", "抽牌堆", "探寻", "撕咬",
+    "放松", "敏捷", "无实体", "易伤", "晕眩", "格挡", "污染", "活力", "涅奥之怒", "消耗",
+    "灵体", "灵魂", "灾厄", "煤灰", "牌组", "玻璃充能球", "真言", "神化", "精英", "能量",
+    "至亮之焰", "虚弱", "虚无", "蜡制遗物", "覆甲", "重放", "金币", "铸造", "闪电充能球", "防御",
+    "附魔", "集中", "魂缚", "龙涎香",
 ];
 /** Bare BY DESIGN in the engine (measured, not assumed): wrapping these is wrong. */
-const BARE_BY_DESIGN = ["充能球", "平静", "真言", "充能球栏位", "闪电充能球", "未被格挡", "覆甲", "打击", "防御"];
+const BARE_BY_DESIGN = [
+    "休息", "充能球", "先古", "商人", "复制", "技能", "技能牌", "攻击牌", "普通", "最大生命",
+    "稀有", "能力牌", "负面状态", "遗物", "高塔", "黑暗",
+];
 /** Longer phrases containing a GOLD_TERM that are themselves distinct, unhighlighted units. */
 const GOLD_TERM_EXCEPTIONS = ["未被格挡", "格挡值", "抽牌堆顶部", "抽牌堆顶部的", "闪电充能球", "充能球栏位", "最大生命"];
 
@@ -179,6 +185,25 @@ for (const lang of ["eng", "zhs"]) {
         if (!key.endsWith(".title") && !key.endsWith(".flavor")) {
           const bare = bareGoldTerms(out);
           if (bare.length) report(`bare keyword(s) ${bare.join("/")} - the engine highlights these, so they render white here while gold elsewhere`);
+          // The inverse: a term the engine leaves BARE must not be wrapped here.
+          // Wrapping it is the same inconsistency seen from the other side, and it
+          // was invisible while BARE_BY_DESIGN was a hand-written exclusion list.
+          for (const w of BARE_BY_DESIGN) {
+            if (new RegExp(`\\[gold\\]${w}\\[/gold\\]`).test(out)) {
+              report(`"${w}" is wrapped as a highlight, but the engine leaves it bare - drop the wrapper`);
+              break;
+            }
+          }
+          // A [colour] span whose content is not a unit the engine colours is an
+          // over-wide span: the emphasis covers the wrong words (the same class of
+          // bug as a misplaced '*'). Only non-gold colours are checked, because
+          // [gold] legitimately spans multi-word phrases.
+          for (const m of out.matchAll(/\[(red|green|purple)\]([\s\S]*?)\[\/\1\]/g)) {
+            if (/[\u4e00-\u9fff]/.test(m[2]) && m[2].length > 4) {
+              report(`over-wide [${m[1]}] span "${m[2]}" - the engine colours a short unit (usually a card name), not a whole clause`);
+              break;
+            }
+          }
         }
       }
     }
