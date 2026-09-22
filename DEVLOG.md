@@ -2534,3 +2534,35 @@ Spire1 与 RegentFXFastBoot 目前都**不编译期引用** RitsuLib(Spire1 走�
 - 本地测试副本未同步(同版本号重传后本地旧副本继续生效); 要本地测 1.2.2 需跑
   `.tooling/sync-live-mods-from-payload.ps1`
 - 1.2.0 的历史截断条目**无法修复**(追加式), 仅作为历史保留
+
+## 2026-09-22 设置行 loc 键缺口修复 (主动审查轮, 用户指令)
+
+### 缺陷 (源码 + 独立核对)
+
+`Spire1Config.PoolCensusOnMenuEnter` 与 `Spire1Config.IgnoreMpHashMismatch` 在
+`mod/Spire1/localization/{eng,zhs}/settings_ui.json` 里**完全没有键**.
+
+权威依据 (本仓 `research/BaseLib-StS2`):
+- `Config/ModConfig.cs:495-504` - 行标签 = `{ModPrefix}{StringHelper.Slugify(propertyName)}.title`,
+  查不到就**回退显示原始属性名**;
+- `Config/UI/NConfigOptionRow.cs:65-73` - 悬浮 = `{ModPrefix}{Slugify(propertyName)}.hover.desc`,
+  查不到就 `Warn` 并跳过 HoverTip.
+
+两个属性都是 `public static bool`, 未加 `[ConfigIgnore]`/`[ConfigHideInUI]`, 因此两行在
+Mod Settings 里是可见的: 修复前显示 `PoolCensusOnMenuEnter` / `IgnoreMpHashMismatch` 原文且无悬浮说明.
+这属**复发模式**: `65a858f` 已为当时四个开关补齐过同类文案, 之后新增的两个开关又漏了.
+
+### 修复
+
+eng / zhs 各 +6 行: `POOL_CENSUS_ON_MENU_ENTER` 与 `IGNORE_MP_HASH_MISMATCH` 的
+`.title` / `.hover.title` / `.hover.desc`, 文案取自 config 的 XML 注释 (含"进菜单时执行普查"的
+冻结卡池理由与"哈希放行削弱序列化安全"的默认关说明). 未改动任何既有键.
+
+### 验证
+
+- JSON 合法且键数 32 -> 38 (两种语言一致); `git diff --numstat` = 每文件 `6 0` (纯新增, 无行尾改写).
+- 隔离 Release 构建 (`-p:CopyToModsFolderOnBuild=false`, `Sts2Path=E:/Slay the Spire 2`):
+  **0 错误, 57 个既有可空警告** (警告全部来自 Cards/*, 与本改动无关); 未部署, 未启动游戏.
+- 同规则复查四个活跃 mod 的 `title` 与 `hover.desc` 覆盖率: spire1 / perfect / heartshake / mpconfigsync 全部 0 缺失.
+- 未验证: 实机设置页渲染 (需启动游戏). 本改动为纯 loc 数据, 无法离线证明 UI 外观.
+- 提交: `83766a4` (loc) + 本日志提交.
