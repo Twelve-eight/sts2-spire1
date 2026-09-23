@@ -13,7 +13,7 @@ namespace Spire1.Spire1Code.Diagnostics;
 /// <summary>
 /// SP1-1 (2026-09-15): ordered pool census - the tool the later pool-census correctness
 /// task runs before any deduplication/removal decision (plan change 3: distinguish
-/// code-class duplication, resource duplication, and duplicate reward weight). Enumerates
+/// code-class duplication, resource duplication, and raw pool duplication). Enumerates
 /// the FINAL pool contents under the active pool mode, covering both shared and
 /// PureSts1Pools modes: the pool set is identical, the contents differ because
 /// SharedCardReuse.Register behaved differently at initializer time.
@@ -35,8 +35,10 @@ namespace Spire1.Spire1Code.Diagnostics;
 /// OUTPUT, per pool (Colorless / Spire1 / Silent / Defect / Spire1Legacy):
 ///   - one ordered line per member: idx, model id entry + category, rarity, concrete
 ///     class name, best-effort registration origin;
-///   - DUP summary: a model id appearing more than once in one pool = duplicate reward
-///     weight (ConcatModelsFromMods concatenates blindly without deduplication);
+///   - DUP summary: a model id entry appearing more than once in the raw pool; this
+///     count alone does not establish reward weight. Trace each consumer through its
+///     filters and Except/Distinct operations; their equality semantics need not match
+///     this model id entry count (ConcatModelsFromMods itself does not deduplicate);
 ///   - ID-MIX summary: one model id served by multiple code classes = code-class
 ///     duplication candidate (duplicate class names are NOT proof of dead content - the
 ///     census task decides; Spire1LegacyPool retired ids are expected to coexist with
@@ -189,7 +191,7 @@ internal static class PoolCensus
             {
                 sb.AppendLine("[Spire1] PoolCensus " + name + " DUP id=" + kv.Key + " count=" + kv.Value
                     + " classes=" + FormatClasses(classesPerId[kv.Key])
-                    + " (same model id twice in one pool = duplicate reward weight; ConcatModelsFromMods does not deduplicate)");
+                    + " (raw pool duplicate id entries, not proven reward weight; verify each consumer after filtering/Except/Distinct and its equality semantics)");
             }
             foreach (var kv in classesPerId.Where(kv => kv.Value.Count > 1).OrderBy(kv => kv.Key, StringComparer.Ordinal))
             {

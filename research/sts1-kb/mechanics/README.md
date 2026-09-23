@@ -50,12 +50,18 @@ wiki（slay-the-spire.fandom.com）仅作交叉佐证；HTML 页 403，经 `api.
 
 1. **不存在 `actionTypePhase` 枚举 / BEFORE-DEBUFF-DRAW 排序**。真实排序 = 五级容器优先级 + FIFO（action-manager.md R02/R13）。若设计文档源自旧 mod 文档需校正。
 2. **`AbstractCreature.damage` 是抽象方法**，实际逻辑分置于 `AbstractMonster#damage` 与 `AbstractPlayer#damage`，两侧钩子次序不同（damage-pipeline.md R03/R04）。
-3. **Havoc 是打出即结算的 POWER**（`use() -> PlayTopCardAction`），Mayhem 走 power 的 `atStartOfTurn`；真正的 `triggerWhenDrawn` 只有 Doubt/EndlessAgony/Eviscerate/DeusExMachina/Void 五类（draw-exhaust.md Sec 3）。
-4. **能量跨回合保留**，基础能量只在战斗开始发一次；不存在"每回合重置为 3"（turn-phase.md R02）。
+3. **Havoc 是 SKILL,在打出时由 use() 入队 PlayTopCardAction**,Mayhem 走 power 的 atStartOfTurn;真正的 triggerWhenDrawn 只有 Doubt/EndlessAgony/Eviscerate/DeusExMachina/Void 五类(draw-exhaust.md Sec 3).
+4. **普通回合开始时能量重置为当前基础能量,并非固定为 3**:PlayerTurnEffect 构造器调用 EnergyManager.recharge(),普通分支 setEnergy(energy);仅 Ice Cream / Conserve 分支保留剩余能量并 addEnergy(energy)(energy-cost.md R03,turn-phase.md R02 勘误).
 5. **PostDraw 钩子名不符实**：`atTurnStartPostDraw`/`atStartOfTurnPostDraw` 在抽牌动作入队后立即直调，卡尚未到手（turn-phase.md R04）。
 6. **玩家与怪物掉格挡时机不对称**：玩家在新回合块内、怪物在其自身回合开始前（turn-phase.md R11）。
 7. `applyPreCombatLogic`（relic.atPreBattle 分发器）、`ReApplyPowersAction`、`RemoveAllPowersAction` 为死代码（全量调用者扫描为零）；相关遗物实际走其他钩子。
 8. InstantKillAction 仅 Judgement 使用；常规胜利由 `monster.updateDeathAnimation` 延迟触发 `room.endBattle`（triggers.md Sec 5）。
+
+### 第 3/4 条的本轮重验证据(2026-09-23)
+
+- Havoc: 原版 desktop-1.0.jar 的本轮 javap 转储 G:\omp works\.tmp\workspace-audit-20260923-01a0cbfd\evidence\sts1-knowledge-current-jar.javap.txt:17,24-38 直接显示构造器传入 CardType.SKILL, use() 将 PlayTopCardAction 入队.
+- 能量: 同转储 :92-138 对应 EnergyManager#recharge 的 Ice Cream / Conserve / 普通分支, :268-270 证明 PlayerTurnEffect 构造器调用 recharge(). 主会话已实际 JVM 执行原样提取的 EnergyManager.class, 仅协作者使用可控桩; G:\omp works\.tmp\workspace-audit-20260923-01a0cbfd\evidence\energy-bytecode-probe\result.log:1-4 记录起始剩余 7, 基础 3 时, 普通分支为 after=3/setCalls=1/addCalls=0, Ice Cream 与 Conserve 分支均为 after=10/setCalls=0/addCalls=1. 这是隔离字节码运行证据, 不是整局时序实机验收.
+- 本轮原版 JAR SHA256: CFAD868AC8D65A88E71A0BF096FB09F78811E553EFFE0787C5309A655E081673; 原样提取的 EnergyManager.class SHA256: A2BF2D866B0D678C1D9107B4443CC31898AB4C1C5994B16095779B664253508A. 身份记录及修订契约见 [KNOWLEDGE-RECHECK-20260923.md](../../../docs/KNOWLEDGE-RECHECK-20260923.md).
 
 ## 与 StS2 引擎差异速记（我方移植已知约束）
 

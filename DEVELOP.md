@@ -212,3 +212,7 @@ Most of the original list is now closed - resolved in session 5 and documented i
 - **AFTP-family reference binaries (NOT in repo)**: `G:\steam\steamapps\workshop\content\2868840\{3746969593,3747537811,3785039319,3787796638}` - decompile with `%USERPROFILE%\.dotnet\tools\ilspycmd.exe`; AFTP source at github.com/Cany0udance/ActsFromThePast (reuse permitted).
 
 **Sources:** `research/BaseLib-StS2/` (BaseLib source, tag v3.4.5), `research/ModTemplate-StS2/`, `.tmp/dllsrc/` (decompiled StS2 engine), `sts2.xml` (game API doc, `data_sts2_windows_x86_64/sts2.xml`), `.tmp/ritsu/` + `.tmp/jmc/` (library dumps and source). Wiki: alchyr.github.io/BaseLib-Wiki. `agent://Sts1DataScout` - StS1 Ironclad + Act-1 vanilla data.
+
+## 2026-09-23 事件移除与默认注入新契约
+
+用户本轮要求, 原版字节码证据与隔离失败复现见 G:\omp works\Sts\sts2-spire1\docs\DEVELOP-events-20260923.md. 本段不覆盖已有 staged/unstaged 设计记录. 事件默认关闭, 永恒卡牌遵循二代 IsRemovable, 不操作共享配置或 Steam 安装.

@@ -2566,3 +2566,18 @@ eng / zhs 各 +6 行: `POOL_CENSUS_ON_MENU_ENTER` 与 `IGNORE_MP_HASH_MISMATCH` 
 - 同规则复查四个活跃 mod 的 `title` 与 `hover.desc` 覆盖率: spire1 / perfect / heartshake / mpconfigsync 全部 0 缺失.
 - 未验证: 实机设置页渲染 (需启动游戏). 本改动为纯 loc 数据, 无法离线证明 UI 外观.
 - 提交: `83766a4` (loc) + 本日志提交.
+
+## 2026-09-23 事件安全与知识证据纠错, 当晚收尾
+
+本段是本轮已验证核心改动的恢复锚点, 不覆盖历史 STATUS. 用户指定 astra via agentrouter, Codex 原生子代理;实际实现与监督的会话元数据为 gpt-6-astra-ar / gateway, 注册表映射为 agentrouter / gpt-6-astra, 无模型 fallback. 元数据证据为 G:\omp works\.tmp\workspace-audit-20260923-01a0cbfd\evidence\agent-routes-incremental.json 及 routes-recovered-1923.json. 主会话最新可读历史模型字段出现 gpt-6-astra-an, 该字段时间为 2026-09-23T03:27:07.716Z, 不是当前恢复时点的路由实测;本轮未修改模型或收费路线, 不据旧字段声称主会话最新请求已由 agentrouter 验证.
+
+- NoteForYourself 确为当前一代 JAR 中存在的事件, 原版选择来源使用 getPurgeableCards. 移植现改用二代 FromDeckForRemoval, 删除前再次检查 IsRemovable, 阻止永恒等不可移除卡绕过限制. 仍缺 NOTE_CARD/NOTE_UPGRADE 跨局持久化, 不称完整复刻.
+- EnableSts1Events 默认 false, 保留用户已有显式值. 主内容开关关系及 eng/zhs 说明同步, 不改共享 mod_configs. 联机主容错开关的说明不再声称自动绕过独立 ModelID 哈希门禁, 逻辑未放宽.
+- 可提交源码链接探针位于 G:\omp works\Sts\sts2-spire1\tools\event-removal-probe. 中央运行日志 G:\omp works\.tmp\workspace-audit-20260923-01a0cbfd\evidence\event-removal-committable-run.log 为 6 个场景, 失败 0. 链接真实事件与配置源码, 选择器/牌堆为受控桩, 不覆盖游戏 UI 或 BaseLib 配置持久化.
+- 最终隔离 Release 日志 G:\omp works\.tmp\workspace-audit-20260923-01a0cbfd\evidence\spire1-release-final.log 为 57 个警告, 0 个错误. 产物不等于实机验收, 未部署, 未启动游戏, 未修改 Steam 或共享配置.
+- mechanics README 修正 Havoc 类型和能量重置断言. 原样 EnergyManager.class 的隔离 JVM 实验使用协作者桩;普通分支 7 重置到 3, Ice Cream/Conserve 分支累加至 10. 详见 G:\omp works\Sts\sts2-spire1\docs\KNOWLEDGE-RECHECK-20260923.md. PoolCensus 仅修正 raw duplicate 与奖励概率的说明, 未改变统计算法.
+- 原样生成器重提取 13 份 JSON, 721 条记录;11 份逐字节一致, events/relics 存在实际字符串差异. 限定有损标点映射后对象一致, 不等于原文照录或独立语义认证. 没有覆盖 JSON. 14 份根目录清点另含 monsters-scan, 其 73 个类含抽象基类, 不等于可遇见怪物数. 历史来源链仍未知, scan-hooks 的 .mjs 顶层 require 失败尚未修复.
+- 数据来源 README 和 REVALIDATION-2026-09-23.md 已获原同批监督通过. 门禁为 G:\omp works\.tmp\workspace-audit-20260923-01a0cbfd\evidence\knowledge-provenance-supervision-gate-1933.json, 监督结论为同轮 reports\knowledge-provenance-fix-review.md. 只批准文档忠实表达证据, 不批准全库已逐句重验.
+- 选人掉帧另开实验兼容层, 见 G:\omp works\Sts\sts2-spire1\docs\DEVELOP-menu-performance-20260923.md. 新补丁按 SPIRE1_MENU_PERFORMANCE_PROBE 编译门禁隔离, 不混入本段已通过的事件交付. 新局 SetCurrentScene 会释放旧主菜单, 因而旧报告的整个游戏生命周期常驻宣称过度;帧时间 A/B 仍缺.
+
+Git 仅提交本轮拥有的文件与 DEVELOP.md 末尾追加契约. DEVELOP.md 原有 staged 与未暂存路径修改通过临时 index 保留, 不整体暂存或发布. 中央证据与精确提交清单见 G:\omp works\docs\WORKSPACE-AUDIT-2026-09-23.md 和该轮 evidence 目录.

@@ -28,7 +28,7 @@
   "SPIRE1-POOL_CENSUS_ON_MENU_ENTER.hover.desc": "下一次进入主菜单时执行一次有序卡池普查,仅用于诊断.刻意不在模组初始化期执行:读取卡池的 AllCards 会冻结该池,导致后加载的模组无法再向其添加内容.控制台命令 poolcensus 可随时运行同一份报告.",
   "SPIRE1-IGNORE_MP_MOD_DIFFERENCES.title": "联机忽略mod差异",
   "SPIRE1-IGNORE_MP_MOD_DIFFERENCES.hover.title": "联机忽略mod差异",
-  "SPIRE1-IGNORE_MP_MOD_DIFFERENCES.hover.desc": "握手时忽略双方mod清单与ModelID哈希差异强制放行(真实游戏版本不符仍拦截),并抑制失同步诊断弹窗。仅双方都安装本构建时完整生效;诊断包仍写入logs目录。",
+  "SPIRE1-IGNORE_MP_MOD_DIFFERENCES.hover.desc": "握手时忽略双方mod清单差异,但本开关本身不放行ModelID哈希差异.哈希不符还需另行显式开启独立的[联机忽略ModelID哈希差异]开关(默认关闭,强制放行会削弱序列化安全).真实游戏版本不符仍拦截.并抑制失同步诊断弹窗.仅双方都安装本构建时完整生效;诊断包仍写入logs目录.",
   "SPIRE1-IGNORE_MP_HASH_MISMATCH.title": "联机忽略ModelID哈希差异",
   "SPIRE1-IGNORE_MP_HASH_MISMATCH.hover.title": "联机忽略ModelID哈希差异",
   "SPIRE1-IGNORE_MP_HASH_MISMATCH.hover.desc": "哈希级联机容错:游戏版本相同但 ModelID 哈希不符时放行.哈希是玩法内容的指纹,强制放行会削弱序列化安全.除非双方确实在跑不同构建,否则保持关闭.",
@@ -36,5 +36,5 @@
   "SPIRE1-ENABLE_SKIP_NODE_BUTTON.hover.title": "地图跳过节点按钮",
   "SPIRE1-ENABLE_SKIP_NODE_BUTTON.hover.desc": "在地图页显示救援按钮:卡死在房间时解锁选点,直接点击下一节点。走原生投票管线,无失同步风险。",
   "SPIRE1-ENABLE_STS1_EVENTS.title": "注入一代事件到事件池",
-  "SPIRE1-ENABLE_STS1_EVENTS.hover.desc": "玩家选项，直接决定。开启时：一代事件（驱邪泉、给自己的便条、瘾君子、毒品贩子、重返基础）注册进共享/幕事件池，可在任意局出现。关闭时：启动时从全部事件池移除，永不出现。（尖塔之心从不自动注册。）"
+  "SPIRE1-ENABLE_STS1_EVENTS.hover.desc": "默认关闭,保留已有的显式设置.需同时开启一代内容总开关.开启时：一代事件（驱邪泉、给自己的便条、瘾君子、毒品贩子、重返基础）注册进共享/幕事件池，可在任意局出现。关闭时：启动时从全部事件池移除，永不出现。（尖塔之心从不自动注册。）"
 }

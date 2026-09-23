@@ -4,7 +4,7 @@ namespace Spire1.Spire1Code.Config;
 
 /// <summary>
 /// Runtime toggles for this mod, shown in Settings -> Mod Settings (auto-generated UI).
-/// All default ON. Read at run / act / pool generation time to gate content, so a run can
+/// Event injection defaults OFF. Read at run / act / pool generation time to gate content, so a run can
 /// use none of this mod's content while it stays installed (no uninstall needed).
 /// </summary>
 [ConfigHoverTipsByDefault]
@@ -23,10 +23,11 @@ internal class Spire1Config : SimpleModConfig
     public static bool EnableSts1Relics { get; set; } = true;
 
     /// <summary>Inject StS1 events into the shared event pools (Act2 story events).
+    /// Default OFF; explicit user values are preserved.
     /// When false, they are removed from BaseLib's ActCustomEvents at init and
     /// never roll in base-game runs (user request 2026-09-13: gen-1 events should
     /// be toggleable out of gen-2 dungeons).</summary>
-    public static bool EnableSts1Events { get; set; } = true;
+    public static bool EnableSts1Events { get; set; } = false;
 
     // 2026-09-10: 一代地牢(4 幕自建内容)已按用户指令整体移除;EnableSts1Dungeon/
     // UseSts1Dungeon 配置项与幕选择器一并删除.

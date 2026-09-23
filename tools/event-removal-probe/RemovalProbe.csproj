@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EventSource Condition="'$(EventSource)' == ''">$(MSBuildThisFileDirectory)../../mod/Spire1Code/Events/NoteForYourself.cs</EventSource>
+    <ConfigSource Condition="'$(ConfigSource)' == ''">$(MSBuildThisFileDirectory)../../mod/Spire1Code/Config/Spire1Config.cs</ConfigSource>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="ContractStubs.cs" />
+    <Compile Include="$(EventSource)" Link="NoteForYourself.cs" />
+    <Compile Include="$(ConfigSource)" Link="Spire1Config.cs" />
+  </ItemGroup>
+</Project>

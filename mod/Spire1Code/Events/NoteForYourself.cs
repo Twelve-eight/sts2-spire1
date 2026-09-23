@@ -56,8 +56,9 @@ public class NoteForYourself : Spire1Event
         // the stored card is not persisted.
         CardModel received = Owner.RunState.CreateCard<MegaCrit.Sts2.Core.Models.Cards.IronWave>(Owner);
         await CardPileCmd.Add(received, PileType.Deck);
-        List<CardModel> stored = (await CardSelectCmd.FromDeckGeneric(Owner,
-            new CardSelectorPrefs(new LocString("events", "SPIRE1-NOTE_FOR_YOURSELF.selectionScreenPrompt"), 1))).ToList();
+        List<CardModel> stored = (await CardSelectCmd.FromDeckForRemoval(Owner,
+            new CardSelectorPrefs(new LocString("events", "SPIRE1-NOTE_FOR_YOURSELF.selectionScreenPrompt"), 1)))
+            .Where(card => card.IsRemovable).ToList();
         await CardPileCmd.RemoveFromDeck(stored);
         SetEventFinished(PageDescription("DONE"));
     }
