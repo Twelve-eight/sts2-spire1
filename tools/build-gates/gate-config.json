@@ -1,0 +1,65 @@
+{
+  "_comment": "Spire1 发布门禁配置 - 单一事实源。所有断言都对编译后字节做结构解析(ECMA-335 元数据表),不做字符串 contains。修改此表即修改门禁,无需改代码。",
+  "assemblyName": "Spire1",
+  "manifestRelativePath": "../../mod/Spire1.json",
+  "forbiddenAssemblyRefs": {
+    "_comment": "门禁#1: Spire1.dll 的 AssemblyRef 表(0x23)中禁止出现的运行期可选 mod 程序集。命中即失败。BaseLib 是允许的硬依赖,不在此表。",
+    "names": [
+      "AutoAnthony",
+      "AutoAnthonyWatcher",
+      "Watcher",
+      "DirectConnectIP",
+      "ActsFromThePast"
+    ]
+  },
+  "manifestConsistency": {
+    "_comment": "门禁#2: 从 AssemblyRef 中挑出'mod 程序集'(排除下列前缀/精确名后剩余的),断言它们都在 Spire1.json 的 dependencies[].id 里声明。反之 manifest 声明的依赖也可选校验产物确实引用。",
+    "nonModExactNames": [
+      "sts2",
+      "0Harmony",
+      "HarmonyLib",
+      "GodotSharp",
+      "GodotPlugins"
+    ],
+    "nonModPrefixes": [
+      "System.",
+      "System",
+      "Microsoft.",
+      "mscorlib",
+      "netstandard",
+      "Godot",
+      "Mono.",
+      "Newtonsoft."
+    ],
+    "manifestOptionalIds": {
+      "_comment": "manifest 里允许出现、但不强制对应一个 AssemblyRef 的依赖 id(例如纯运行期软依赖)。BaseLib 是硬依赖,通常两边都在。",
+      "ids": []
+    }
+  },
+  "forbiddenTypeDefs": {
+    "_comment": "门禁#3: Spire1.dll 的 TypeDef 表(0x02)中禁止出现的类型,按 命名空间.类名 精确匹配(不做子串扫描 -- Powers.DevaFormPower/WraithFormPower/StancePower 是合法类型,子串扫描会误伤)。命中即失败。",
+    "fullNames": [
+      "Spire1.Spire1Code.Experimental.MenuPerformance.CharacterSelectBackgroundPause",
+      "Spire1.Spire1Code.Experimental.MenuPerformance.ViolaPortraitLogCompat",
+      "Spire1.Spire1Code.Interop.AftpFireFlyPerfCompat",
+      "Spire1.Spire1Code.Interop.AftpCardStateCompat",
+      "Spire1.Spire1Code.Patches.DebugCardInjectPatch",
+      "Spire1.Spire1Code.Patches.DebugRelicInjectPatch",
+      "Spire1.Spire1Code.Forms.CelestialFormPower",
+      "Spire1.Spire1Code.Forms.DemonFormPower",
+      "Spire1.Spire1Code.Forms.DemonReaperStancePower",
+      "Spire1.Spire1Code.Forms.EchoCelestialStancePower",
+      "Spire1.Spire1Code.Forms.EchoFormEffectPower",
+      "Spire1.Spire1Code.Forms.FormStanceCmd",
+      "Spire1.Spire1Code.Forms.ReaperFormEffectPower",
+      "Spire1.Spire1Code.Forms.SerpentFormPower",
+      "Spire1.Spire1Code.Forms.VoidFormEffectPower",
+      "Spire1.Spire1Code.Forms.VoidSerpentStancePower"
+    ],
+    "_forbiddenNamespaces_comment": "整命名空间禁含(前缀匹配,以 . 收尾避免同前缀命名空间误伤)。这样将来往 Forms/Experimental 里新增类型也会被自动拦截,无需逐个登记。",
+    "forbiddenNamespaces": [
+      "Spire1.Spire1Code.Forms",
+      "Spire1.Spire1Code.Experimental"
+    ]
+  }
+}

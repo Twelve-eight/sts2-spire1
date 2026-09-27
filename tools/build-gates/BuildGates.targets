@@ -1,0 +1,53 @@
+<Project>
+  <!-- BuildGates.targets -- 可选接线: 让 Spire1.csproj 在**显式发布校验**时自动跑门禁。
+       默认不介入日常构建 (Condition 见下), 不拖慢开发。
+
+       主会话若决定接线, 只需在 Spire1.csproj 顶部加一行 (本 worker 只授权加这一行):
+         <Import Project="$(MSBuildThisFileDirectory)../tools/build-gates/BuildGates.targets"
+                 Condition="'\$(RunReleaseGates)' == 'true'" />
+       (路径按 csproj 位于 mod/ 目录、本文件位于 tools/build-gates/ 计算。)
+
+       触发方式: 构建时传 /p:RunReleaseGates=true, 例如
+         dotnet build mod/Spire1.csproj -c Release /p:RunReleaseGates=true /p:CopyToModsFolderOnBuild=false
+       不传则本 targets 内的 Target 不挂 (因为 AfterTargets 仍在, 但内部 Condition 关闭)。
+
+       为什么用两层保护 (Import 的 Condition + Target 的 Condition):
+         - Import 的 Condition 让默认构建根本不加载本文件, 零开销;
+         - Target 的 Condition 是二次保险, 万一被无条件 Import 也不会误触发。
+
+       门禁工具需先构建一次 (dotnet build 本目录 csproj); 本 targets 会在缺失时先构建它。
+       零 NuGet 依赖, 不写 C: (缓存走已配置的 NUGET_PACKAGES / DOTNET_CLI_HOME 环境变量)。 -->
+
+  <PropertyGroup>
+    <_GateDir>$(MSBuildThisFileDirectory)</_GateDir>
+    <_GateProj>$(_GateDir)Spire1ReleaseGate.csproj</_GateProj>
+    <_GateDll>$(_GateDir)bin\Release\net9.0\Spire1ReleaseGate.dll</_GateDll>
+    <_GateConfig>$(_GateDir)gate-config.json</_GateConfig>
+  </PropertyGroup>
+
+  <!-- 发布件产出后跑门禁。绑定到 CopyToModsFolderOnBuild 之前, 这样门禁失败能在
+       部署到测试副本之前拦下。仅在 RunReleaseGates=true 时执行。 -->
+  <Target Name="Spire1RunReleaseGates"
+          AfterTargets="Build"
+          BeforeTargets="CopyToModsFolderOnBuild"
+          Condition="'$(RunReleaseGates)' == 'true'">
+
+    <Message Importance="high" Text="[gate] RunReleaseGates=true -> 校验发布件结构门禁 ..." />
+
+    <!-- 门禁工具未构建时先构建它 (独立进程, 不影响本项目图)。 -->
+    <Exec Condition="!Exists('$(_GateDll)')"
+          Command="dotnet build &quot;$(_GateProj)&quot; -c Release -v quiet"
+          WorkingDirectory="$(_GateDir)" />
+
+    <!-- 目标 DLL = 本项目刚产出的程序集。 -->
+    <PropertyGroup>
+      <_GateTargetDll Condition="'$(_GateTargetDll)' == ''">$(TargetPath)</_GateTargetDll>
+    </PropertyGroup>
+
+    <Exec Command="dotnet &quot;$(_GateDll)&quot; --dll &quot;$(_GateTargetDll)&quot; --config &quot;$(_GateConfig)&quot;"
+          WorkingDirectory="$(_GateDir)" />
+    <!-- <Exec> 默认 ContinueOnError=false: 门禁工具非零退出码 (2/3) 会让 MSBuild 目标失败,
+         从而在部署前中止构建。 -->
+  </Target>
+
+</Project>

@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Spire1 发布门禁工具 (release-gate)。独立控制台程序,不属于 Spire1 mod 本体。
+       刻意放在 tools/build-gates/ (仓库根下),不在 mod/ 树内,因此不会被 Spire1.csproj
+       的默认 glob 编进 Spire1.dll。零 NuGet 依赖:只用 BCL 手写 ECMA-335 元数据解析,
+       不依赖 System.Reflection.Metadata 包也不依赖 ilspycmd,离线可构建。
+
+       非零退出码约定 (供 CI / 发布脚本判定):
+         0 = 全部门禁通过
+         2 = 门禁失败 (命中禁止的 AssemblyRef / TypeDef,或 manifest 不一致)
+         3 = 用法/输入错误 (DLL 或 config 找不到、无法解析)
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Spire1ReleaseGate</AssemblyName>
+    <RootNamespace>Spire1.BuildGates</RootNamespace>
+    <!-- 缓存重定向到 G: (AGENTS.md Sec3: 绝不写 C:)。这些也可由环境变量提供;
+         此处显式声明以防某些调用环境未设。 -->
+    <RestorePackagesPath Condition="'$(NUGET_PACKAGES)' != ''">$(NUGET_PACKAGES)</RestorePackagesPath>
+    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
+  </PropertyGroup>
+
+</Project>

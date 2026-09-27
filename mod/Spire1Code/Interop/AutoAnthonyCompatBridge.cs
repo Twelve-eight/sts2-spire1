@@ -4,15 +4,9 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
 using Spire1.Spire1Code.Character;
-#if SPIRE1_AUTOANTHONY
-using AutoAnthony;
-using AutoAnthony.Patches;
-using ChaosCardGenerator;
-#endif
 
 namespace Spire1.Spire1Code.Interop;
 
-#if SPIRE1_AUTOANTHONY
 /// <summary>
 /// AutoAnthony（创意工坊 3786611028，"Auto-Anthonyology"）桥接层：让它的每局随机卡池
 /// 覆盖本 mod 的 StS1 角色（SPIRE1-IRONCLAD / SPIRE1-SILENT / SPIRE1-DEFECT）。
@@ -33,33 +27,48 @@ namespace Spire1.Spire1Code.Interop;
 /// 4. Prefix 本 mod 三角色的 <c>StartingDeck</c> getter：<c>ReplaceStartingCards</c>
 ///    开启时返回 <c>ChaosCardRegistry.Canonical(character, slot)</c> 起手。
 ///
+/// (2026-09-27 纯反射化) 本层过去经条件编译符号 SPIRE1_AUTOANTHONY 强类型引用
+/// AutoAnthony / ChaosCardGenerator 的公开类型（GeneratedCharacter 枚举、ChaosXxxCardPool、
+/// ChaosRunDefinitions、ChaosCardRegistry）。那会在 Spire1.dll 的 CLI 元数据 AssemblyRef
+/// 表里写入对 AutoAnthony 的编译期硬引用，令未装 AutoAnthony 的用户在桥接方法被 JIT 时
+/// 抛 TypeLoad/FileNotFound——与 Spire1.json 只声明 BaseLib 依赖的设计意图相反。
+/// 现改为单一实现、永远编译，对 AutoAnthony 的一切引用走反射：类型经 <see cref="AaType"/>
+/// 从已加载程序集解析，枚举值以 int 存储、用点再 <c>Enum.ToObject</c> 还原，方法/属性经
+/// MethodInfo/PropertyInfo 调用。AutoAnthony 缺席时 Apply 返回 false、补丁不挂、StS1 角色
+/// 用原版池，且 Spire1.dll 不再引用 AutoAnthony 程序集。
+///
 /// 多人：AutoAnthony 多人路径（SeedBeforeMultiplayerPatch）同样经
 /// <c>From(player.character)</c>，对桥接透明；host 快照经 ChaosPoolSnapshotModifier 分发。
-/// 双端都装这两个 mod 即可，MP 一致性是 AutoAnthony 自身契约（快照 authoritative、
-/// 需重生成即抛），不属本层职责。
-///
-/// 版本耦合：本文件直接引用 AutoAnthony 公开 API（ChaosRunDefinitions / ChaosCardRegistry /
-/// ChaosCharacterMapping 均为 public/internal--internal 经 Publicizer 不可用，只用 public 面）。
-/// AutoAnthony 大版本更新若改这些 API，构建会当场失败（好事：强制重新审计），
-/// 运行时缺席则 Apply 返回 false、全部补丁不挂、StS1 角色用原版池。
 /// </summary>
 internal static class AutoAnthonyCompatBridge
 {
     private static bool _applied;
 
-    // (2026-09-01 CodeQualityCritic blocker fix) 类型初始化器绝不能引用 AutoAnthony 类型:
-    // beforefieldinit 下首次触碰本类任何静态字段即运行 cctor,若 Map/EntryMap 直接以
-    // GeneratedCharacter 为值类型,会在 Apply 的程序集探测(以及一切更早的触碰)之前强制
-    // 解析 AutoAnthony.dll -- 未装该 mod 或加载顺序靠后时抛 FileNotFoundException,
-    // .NET 永久缓存 TypeInitializationException,整个 Spire1 initializer 被 ModManager
-    // 标记失败(经离仓 CLR 双程序集复现实锤)。枚举常量在编译期折叠为 int,故以 int 为
-    // 值不产生任何外部类型引用;使用点在方法体内再强转。
+    // GeneratedCharacter 枚举的 int 常量（2026-09-27 ilspycmd 反编译实锤枚举定义顺序：
+    // Ironclad=0, Silent=1, Defect=2, Necrobinder=3, Regent=4, Colorless=5）。
+    // 以 int 常量存储是 cctor 安全的关键：类型初始化器绝不能触碰 AutoAnthony 类型，否则
+    // beforefieldinit 下首次访问本类任何静态字段就会强制解析 AutoAnthony.dll，未装该 mod
+    // 时抛 FileNotFoundException 并被 .NET 永久缓存为 TypeInitializationException，整个
+    // Spire1 initializer 被 ModManager 标记失败。Apply 期用 VerifyEnumConstants 做名对齐
+    // 校验（不抛，仅日志），防 AutoAnthony 改枚举顺序时静默错位。
+    private const int GcIronclad = 0;
+    private const int GcSilent = 1;
+    private const int GcDefect = 2;
+    private const int GcColorless = 5;
+
     private static readonly Dictionary<Type, int> Map = new()
     {
-        [typeof(Ironclad)] = (int)GeneratedCharacter.Ironclad,
-        [typeof(Silent)] = (int)GeneratedCharacter.Silent,
-        [typeof(Defect)] = (int)GeneratedCharacter.Defect,
+        [typeof(Ironclad)] = GcIronclad,
+        [typeof(Silent)] = GcSilent,
+        [typeof(Defect)] = GcDefect,
         // 本仓的 Watcher（观者）已归档且无 StS2 同名原型，不参与。
+    };
+
+    private static readonly Dictionary<string, int> EntryMap = new(StringComparer.Ordinal)
+    {
+        ["SPIRE1-IRONCLAD"] = GcIronclad,
+        ["SPIRE1-SILENT"] = GcSilent,
+        ["SPIRE1-DEFECT"] = GcDefect,
     };
 
     /// <summary>
@@ -76,48 +85,116 @@ internal static class AutoAnthonyCompatBridge
     private const string WatcherPoolType = "WatcherMod.WatcherCardPool";
     private const string WatcherEntry = "WATCHER";
 
-    /// <summary>工坊观者池的 canonical 实例（Apply 期由 ModelDb 解析）。R2 守卫用：
-    /// WatcherCardPool 未重声明 AllCards/AllCardIds，我们的补丁经继承链落在基类
-    /// getter 上（声明域=全部卡池），必须用实例比对把作用域收回观者池本身。
-    /// null = 观者 mod 缺席或池未注册（Apply 没跑过），补丁守卫一律放行。</summary>
-    private static CardPoolModel? ThirdPartyPoolInstance;
+    // ---- AutoAnthony 反射解析缓存（Apply 期一次性解析；补丁体只读） ----
 
-    internal static bool TryMap(Type spire1Character, out GeneratedCharacter generated)
+    private static Assembly? _aaAssembly;
+    private static Type? _generatedCharacterType;
+    private static MethodInfo? _isRunActiveGetter;
+    private static MethodInfo? _isCharacterRunActive;
+    private static MethodInfo? _activeReplaceStartingGetter;
+    private static MethodInfo? _activePreserveOriginalGetter;
+    private static MethodInfo? _basicCountFor;
+    private static MethodInfo? _originalCardsForPreservedPool;
+    private static MethodInfo? _canonicalCharacterSlot;
+    private static MethodInfo? _colorlessTypesGetter;
+    private static MethodInfo? _modelDbCardPoolGeneric;
+    private static bool _reflectionReady;
+
+    /// <summary>工坊观者池的 canonical 类型（Apply 期记住），实例惰性解析（见
+    /// <see cref="ResolveThirdPartyPoolInstance"/>）。R2 守卫用：WatcherCardPool 未重声明
+    /// AllCards/AllCardIds，我们的补丁经继承链落在基类 getter 上（声明域=全部卡池），
+    /// 必须用实例比对把作用域收回观者池本身。</summary>
+    private static Type? _thirdPartyPoolType;
+    private static CardPoolModel? _thirdPartyPoolInstance;
+    private static bool _thirdPartyPoolResolved;
+
+    private static Assembly? AaAssembly
+        => _aaAssembly ??= AppDomain.CurrentDomain.GetAssemblies()
+            .FirstOrDefault(a => a.GetName().Name == "AutoAnthony");
+
+    private static Type? AaType(string fullName) => AaAssembly?.GetType(fullName);
+
+    private static Type GeneratedCharacterType
+        => _generatedCharacterType ??= AaType("ChaosCardGenerator.GeneratedCharacter")
+           ?? throw new InvalidOperationException("ChaosCardGenerator.GeneratedCharacter not resolvable");
+
+    private static object ToGenerated(int value) => Enum.ToObject(GeneratedCharacterType, value);
+
+    // ---- 反射基元（补丁体调用；假定 ResolveReflection 已成功） ----
+
+    private static bool IsRunActive()
+        => _isRunActiveGetter != null && (bool)_isRunActiveGetter.Invoke(null, null)!;
+
+    private static bool IsCharacterRunActive(int generated)
+        => _isCharacterRunActive != null
+           && (bool)_isCharacterRunActive.Invoke(null, new[] { ToGenerated(generated) })!;
+
+    private static bool ActiveReplaceStartingCards()
+        => _activeReplaceStartingGetter != null && (bool)_activeReplaceStartingGetter.Invoke(null, null)!;
+
+    private static bool ActivePreserveOriginalCards()
+        => _activePreserveOriginalGetter != null && (bool)_activePreserveOriginalGetter.Invoke(null, null)!;
+
+    private static int BasicCountFor(int generated)
+        => _basicCountFor != null ? (int)_basicCountFor.Invoke(null, new[] { ToGenerated(generated) })! : 0;
+
+    private static CardModel Canonical(int generated, int slot)
+        => (CardModel)_canonicalCharacterSlot!.Invoke(null, new object[] { ToGenerated(generated), slot })!;
+
+    private static IEnumerable<Type> ColorlessTypes()
     {
-        if (Map.TryGetValue(spire1Character, out int value)
-            || ThirdPartyMap.TryGetValue(spire1Character, out value))
-        {
-            generated = (GeneratedCharacter)value;
-            return true;
-        }
-        generated = default;
-        return false;
+        object? raw = _colorlessTypesGetter?.Invoke(null, null);
+        return raw is IEnumerable<Type> types ? types : Enumerable.Empty<Type>();
     }
 
-    internal static bool TryMap(string characterIdEntry, out GeneratedCharacter generated)
+    private static IEnumerable<CardModel>? OriginalCardsForPreservedPool(int generated)
+        => _originalCardsForPreservedPool?.Invoke(null, new[] { ToGenerated(generated) })
+            as IEnumerable<CardModel>;
+
+    /// <summary>反射调用 ModelDb.CardPool&lt;T&gt;()（泛型方法，MakeGenericMethod）。</summary>
+    private static CardPoolModel? ChaosPoolByTypeName(string chaosPoolTypeName)
     {
-        if (EntryMap.TryGetValue(characterIdEntry, out int value)
-            || ThirdPartyEntryMap.TryGetValue(characterIdEntry, out value))
+        Type? poolType = AaType(chaosPoolTypeName);
+        if (poolType == null || _modelDbCardPoolGeneric == null)
         {
-            generated = (GeneratedCharacter)value;
-            return true;
+            return null;
         }
-        generated = default;
-        return false;
+        return _modelDbCardPoolGeneric.MakeGenericMethod(poolType).Invoke(null, null) as CardPoolModel;
     }
-    private static readonly Dictionary<string, int> EntryMap = new(StringComparer.Ordinal)
+
+    private static CardPoolModel? ChaosPoolFor(int generated) => generated switch
     {
-        ["SPIRE1-IRONCLAD"] = (int)GeneratedCharacter.Ironclad,
-        ["SPIRE1-SILENT"] = (int)GeneratedCharacter.Silent,
-        ["SPIRE1-DEFECT"] = (int)GeneratedCharacter.Defect,
+        GcIronclad => ChaosPoolByTypeName("AutoAnthony.ChaosIroncladCardPool"),
+        GcSilent => ChaosPoolByTypeName("AutoAnthony.ChaosSilentCardPool"),
+        GcDefect => ChaosPoolByTypeName("AutoAnthony.ChaosDefectCardPool"),
+        _ => null,
     };
 
+    internal static bool TryMap(Type spire1Character, out int generated)
+    {
+        if (Map.TryGetValue(spire1Character, out generated)
+            || ThirdPartyMap.TryGetValue(spire1Character, out generated))
+        {
+            return true;
+        }
+        generated = default;
+        return false;
+    }
+
+    internal static bool TryMap(string characterIdEntry, out int generated)
+    {
+        if (EntryMap.TryGetValue(characterIdEntry, out generated)
+            || ThirdPartyEntryMap.TryGetValue(characterIdEntry, out generated))
+        {
+            return true;
+        }
+        generated = default;
+        return false;
+    }
 
     /// <summary>
-    /// 挂全部桥接补丁。必须在 ModManager 加载完 AutoAnthony 之后调用（晚于其 initializer），
-    /// 否则 patch 目标方法虽可解析（类型在引用程序集里），但 AutoAnthony 自己的 Harmony
-    /// 补丁尚未挂上--先后顺序对本层无影响（我们 patch 的是它的静态方法本体，不与其补丁交互）。
-    /// 返回 false = AutoAnthony 未加载，静默跳过。
+    /// 挂全部桥接补丁。必须在 ModManager 加载完 AutoAnthony 之后调用（晚于其 initializer）。
+    /// 返回 false = AutoAnthony 未加载或反射解析失败，静默跳过。
     /// </summary>
     internal static bool Apply(Harmony harmony)
     {
@@ -127,20 +204,23 @@ internal static class AutoAnthonyCompatBridge
         }
 
         // 探测：AutoAnthony 程序集必须已在 AppDomain（ModManager 装载）。
-        bool present = AppDomain.CurrentDomain.GetAssemblies()
-            .Any(a => a.GetName().Name == "AutoAnthony");
-        if (!present)
+        if (AaAssembly == null)
         {
             MainFile.Logger.Info("[Spire1] AutoAnthony absent - StS1 characters keep their normal card pools.");
             return false;
         }
 
+        if (!ResolveReflection())
+        {
+            MainFile.Logger.Error("[Spire1] AutoAnthony bridge: reflection resolution failed - bridge disabled (no patches applied).");
+            return false;
+        }
+
         int patched = 0;
         // SP1-1 (2026-09-15) capability-level failure boundary: each patch group runs in
-        // its own try/catch so one group throwing (e.g. the third-party Watcher pool
-        // resolution) cannot abort the others - and cannot leave _applied=false after
-        // some groups already patched, which would let the AutoAnthonyLoadHook retry
-        // re-apply the successful groups as duplicate Harmony patches.
+        // its own try/catch so one group throwing cannot abort the others - and cannot leave
+        // _applied=false after some groups already patched, which would let the
+        // AutoAnthonyLoadHook retry re-apply the successful groups as duplicate Harmony patches.
         patched += ApplyPatchGroup("From overloads", () => PatchFrom(harmony));
         patched += ApplyPatchGroup("pool/deck getters", () => PatchPoolsAndDecks(harmony));
         patched += ApplyPatchGroup("third-party entries", () => PatchThirdPartyEntries(harmony));
@@ -149,9 +229,77 @@ internal static class AutoAnthonyCompatBridge
         return _applied;
     }
 
+    /// <summary>Apply 期一次性解析 AutoAnthony 的类型与成员到静态缓存；任一必需成员缺失
+    /// 返回 false（Apply 据此整体放弃并禁用桥接，绝不半挂）。</summary>
+    private static bool ResolveReflection()
+    {
+        if (_reflectionReady)
+        {
+            return true;
+        }
+        try
+        {
+            _ = GeneratedCharacterType; // 解析枚举类型（失败即抛）
+            VerifyEnumConstants();
+
+            Type? crd = AaType("AutoAnthony.ChaosRunDefinitions");
+            Type? registry = AaType("AutoAnthony.ChaosCardRegistry");
+            if (crd == null || registry == null)
+            {
+                MainFile.Logger.Error("[Spire1] AutoAnthony bridge: ChaosRunDefinitions/ChaosCardRegistry not resolvable.");
+                return false;
+            }
+
+            _isRunActiveGetter = AccessTools.PropertyGetter(crd, "IsRunActive");
+            _activeReplaceStartingGetter = AccessTools.PropertyGetter(crd, "ActiveReplaceStartingCards");
+            _activePreserveOriginalGetter = AccessTools.PropertyGetter(crd, "ActivePreserveOriginalCards");
+            _isCharacterRunActive = AccessTools.Method(crd, "IsCharacterRunActive", new[] { GeneratedCharacterType });
+            _basicCountFor = AccessTools.Method(crd, "BasicCountFor", new[] { GeneratedCharacterType });
+            _originalCardsForPreservedPool = AccessTools.Method(crd, "OriginalCardsForPreservedPool", new[] { GeneratedCharacterType });
+            _colorlessTypesGetter = AccessTools.PropertyGetter(registry, "ColorlessTypes");
+            _canonicalCharacterSlot = AccessTools.Method(registry, "Canonical", new[] { GeneratedCharacterType, typeof(int) });
+            _modelDbCardPoolGeneric = AccessTools.Method(typeof(ModelDb), "CardPool");
+
+            if (_isRunActiveGetter == null || _activeReplaceStartingGetter == null
+                || _activePreserveOriginalGetter == null || _isCharacterRunActive == null
+                || _basicCountFor == null || _colorlessTypesGetter == null
+                || _canonicalCharacterSlot == null || _modelDbCardPoolGeneric == null)
+            {
+                MainFile.Logger.Error("[Spire1] AutoAnthony bridge: one or more AutoAnthony members not resolvable - bridge disabled.");
+                return false;
+            }
+            // _originalCardsForPreservedPool 为可选（PreserveOriginalCards 附加用），缺失只降级不禁用。
+
+            _reflectionReady = true;
+            return true;
+        }
+        catch (Exception e)
+        {
+            MainFile.Logger.Error($"[Spire1] AutoAnthony bridge: reflection resolution threw: {e.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>校验硬编码枚举 int 常量与 AutoAnthony 当前枚举定义名对齐；不抛，仅在错位时
+    /// 记 Error（防 AutoAnthony 大版本改枚举顺序时静默把 Ironclad 当成别的角色）。</summary>
+    private static void VerifyEnumConstants()
+    {
+        void Check(int value, string expected)
+        {
+            string? actual = Enum.GetName(GeneratedCharacterType, value);
+            if (!string.Equals(actual, expected, StringComparison.Ordinal))
+            {
+                MainFile.Logger.Error($"[Spire1] AutoAnthony bridge: GeneratedCharacter constant drift - value {value} expected '{expected}' but AutoAnthony defines '{actual}'. Mapping may be wrong.");
+            }
+        }
+        Check(GcIronclad, "Ironclad");
+        Check(GcSilent, "Silent");
+        Check(GcDefect, "Defect");
+        Check(GcColorless, "Colorless");
+    }
+
     /// <summary>Runs one interop patch group in isolation: a thrown group is logged and
-    /// counted as 0, the remaining groups still apply. Individual patch-level try/catch
-    /// handling inside each group is unchanged.</summary>
+    /// counted as 0, the remaining groups still apply.</summary>
     private static int ApplyPatchGroup(string name, Func<int> group)
     {
         try
@@ -168,21 +316,20 @@ internal static class AutoAnthonyCompatBridge
     /// <summary>
     /// 第三方角色注册:工坊观者(Boninall).观者 mod 缺席时静默跳过.
     ///
-    /// 2026-09-10 让位:AutoAnthony 核心 v0.3.7x 起提供官方扩展 API
-    /// (ComponentPackageApi/ExternalComponentCharacterApi, ApiVersion 3/4),同作者的
-    /// 工坊扩展 "Auto-Anthonyology: Watcher"(AutoAnthonyWatcher, 3794876718)用它注册了
-    /// 完整的观者生成体系(85 个 w_ 词条:姿态/真言/占卜/保留;82 个专属卡槽与紫色池;
-    /// 起手替换;多人种子与快照载体).本桥的观者部分(伪 Ironclad 激活 + 无色池接管)
-    /// 在该扩展在场时是冗余且冲突的(双方都 patch Watcher.CardPool getter;伪 Ironclad
-    /// 映射会令 From() 与扩展注册的外部 profile 打架).检测到该程序集时本方法返回 0,
-    /// 观者完全交给扩展;StS1 自有角色(SPIRE1-*)的桥接不受影响--扩展不覆盖它们.
+    /// 2026-09-10 让位:AutoAnthony 核心 v0.3.7x 起提供官方扩展 API,同作者的工坊扩展
+    /// "Auto-Anthonyology: Watcher"(AutoAnthonyWatcher, 3794876718)用它注册了完整的观者
+    /// 生成体系.本桥的观者部分在该扩展在场时冗余且冲突,检测到该程序集时本方法返回 0,
+    /// 观者完全交给扩展;StS1 自有角色(SPIRE1-*)的桥接不受影响.
     ///
     /// 扩展缺席时的旧行为保留:激活映射故意返回 Ironclad 而非 Colorless(AA 的
-    /// NormalizeCharacters 会剥掉 Colorless,From->Colorless 会让激活链直接
-    /// DeactivateRun);观者的实际卡池由 ThirdPartyPoolPrefix 指向 ColorlessCardPool
-    /// (其内容被 AA 的 ColorlessPoolContentsPatch 替换为 GetCards(Colorless) 的混沌卡,
-    /// GetCards 按需 Build,Chaos run 激活时用 ActiveSeed--种子一致,MP 确定);起手保留
+    /// NormalizeCharacters 会剥掉 Colorless);观者的实际卡池由 ThirdPartyPoolPrefix 指向
+    /// ColorlessCardPool(其内容被 AA 的 ColorlessPoolContentsPatch 替换为混沌卡);起手保留
     /// 观者原生 10 张(BasicCountFor(Colorless)=0,无伪造槽位).
+    ///
+    /// (2026-09-27 时序修复) 过去这里在 AssemblyLoad 早期即 ModelDb.GetById 解析观者池实例,
+    /// 而此刻 ModelDb 尚未注册该池 -> GetById 抛 ModelNotFoundException
+    /// (Model id=CARD_POOL.WATCHER_CARD_POOL not found).现只记住 poolType,实例改由三个补丁
+    /// 守卫首次真正需要时经 ResolveThirdPartyPoolInstance 惰性 GetByIdOrNull 解析并缓存.
     /// </summary>
     private static int PatchThirdPartyEntries(Harmony harmony)
     {
@@ -208,30 +355,23 @@ internal static class AutoAnthonyCompatBridge
         }
 
         // 激活身份 = Ironclad（见方法注释）；池身份 = Colorless（ThirdPartyPoolPrefix）。
-        ThirdPartyMap[watcherType] = (int)GeneratedCharacter.Ironclad;
-        ThirdPartyEntryMap[WatcherEntry] = (int)GeneratedCharacter.Ironclad;
+        ThirdPartyMap[watcherType] = GcIronclad;
+        ThirdPartyEntryMap[WatcherEntry] = GcIronclad;
 
         int count = PatchGetter(harmony, watcherType, "CardPool",
             new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(ThirdPartyPoolPrefix)));
 
-        // 潘多拉魔盒类转换补丁：AA 的 PandorasBoxChaosPatch 对整副牌做 CreateRandom-
-        // CardForTransform，候选来自 original.Pool。混沌无色卡会落到被 AA 换过内容的
-        // ColorlessCardPool（仍是混沌卡），但我们保留的观者原生卡会落到 WatcherCardPool
-        // --AA 不认识观者，该池内容未被替换，转出来的是原版紫色观者卡（用户实测报告，
-        // 2026-09-02）。同构修复：混沌局把 WatcherCardPool.AllCards 也换成混沌无色内容；
-        // AllCardIds 用并集保住原生卡的池身份解析（CardModel.Pool 经 AllCardIds 反查，
-        // 若原生卡 ID 消失会在第一次访问 Pool 时抛 InvalidProgramException）。
-        //
-        // R2（2026-09-06 审阅）：WatcherCardPool 未重声明这两个属性，PatchGetter 经
-        // 继承链把补丁钉在基类 CardPoolModel 的 getter 上（声明域=全部卡池），守卫
-        // 靠 ThirdPartyPoolInstance 实例比对收回作用域--见两个补丁方法处的注释。
-        Type? poolType = watcherAssembly.GetType(WatcherPoolType);
-        if (poolType != null)
+        // 潘多拉魔盒类转换补丁修复：混沌局把 WatcherCardPool.AllCards 也换成混沌无色内容；
+        // AllCardIds 用并集保住原生卡的池身份解析（CardModel.Pool 经 AllCardIds 反查）。
+        // R2（2026-09-06 审阅）：WatcherCardPool 未重声明这两个属性，PatchGetter 经继承链把
+        // 补丁钉在基类 CardPoolModel 的 getter 上（声明域=全部卡池），守卫靠实例比对收回作用域。
+        // (2026-09-27) 池实例改惰性解析，这里只记住 poolType。
+        _thirdPartyPoolType = watcherAssembly.GetType(WatcherPoolType);
+        if (_thirdPartyPoolType != null)
         {
-            ThirdPartyPoolInstance = (CardPoolModel?)ModelDb.GetById<CardPoolModel>(ModelDb.GetId(poolType));
-            count += PatchGetter(harmony, poolType, "AllCards",
+            count += PatchGetter(harmony, _thirdPartyPoolType, "AllCards",
                 new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(ThirdPartyPoolContentsPrefix)));
-            count += PatchGetter(harmony, poolType, "AllCardIds",
+            count += PatchGetter(harmony, _thirdPartyPoolType, "AllCardIds",
                 new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(ThirdPartyPoolIdsPostfix)));
         }
         if (count > 0)
@@ -241,46 +381,65 @@ internal static class AutoAnthonyCompatBridge
         return count;
     }
 
+    /// <summary>惰性解析工坊观者池实例：首次在补丁守卫里用到时才 ModelDb.GetByIdOrNull
+    /// （GetId 是纯函数永不抛；GetByIdOrNull 池未注册返回 null）。解析到非空才缓存并停止
+    /// 重试，因此 AssemblyLoad 早期（池未注册）返回 null、守卫放行，池注册后自动解析成功。</summary>
+    private static CardPoolModel? ResolveThirdPartyPoolInstance()
+    {
+        if (_thirdPartyPoolResolved || _thirdPartyPoolType == null)
+        {
+            return _thirdPartyPoolInstance;
+        }
+        try
+        {
+            CardPoolModel? pool = ModelDb.GetByIdOrNull<CardPoolModel>(ModelDb.GetId(_thirdPartyPoolType));
+            if (pool != null)
+            {
+                _thirdPartyPoolInstance = pool;
+                _thirdPartyPoolResolved = true;
+            }
+        }
+        catch (Exception e)
+        {
+            MainFile.Logger.Error($"[Spire1] AutoAnthony bridge: third-party pool instance resolution failed: {e.Message} (guard passes through).");
+        }
+        return _thirdPartyPoolInstance;
+    }
+
     private static bool ThirdPartyPoolPrefix(ref CardPoolModel __result)
     {
-        if (!ChaosRunDefinitions.IsRunActive)
+        if (!IsRunActive())
         {
             return true; // 非混沌局:观者原版紫色池
         }
         // ColorlessCardPool 的内容已被 AA 的 ColorlessPoolContentsPatch 在 AllCards 层
         // 替换为混沌卡;这里把池身份指过去(奖励/商店/PrismaticGem 枚举随之全通)。
-        __result = ModelDb.CardPool<MegaCrit.Sts2.Core.Models.CardPools.ColorlessCardPool>();
+        CardPoolModel? colorless = ModelDb.CardPool<MegaCrit.Sts2.Core.Models.CardPools.ColorlessCardPool>();
+        if (colorless == null)
+        {
+            return true;
+        }
+        __result = colorless;
         return false;
     }
-    /// <summary>WatcherCardPool.AllCards 前缀：混沌局返回混沌无色内容
-    /// （与 AA ColorlessPoolContentsPatch 对 ColorlessCardPool 的语义对齐。
-    /// PreserveOriginalCards 开启时附加原生无色卡而非原生观者卡--观者原生
-    /// 卡不是任何 Chaos 池的合法成员，拼接它们会漏回紫色卡）。
-    ///
-    /// R2 守卫（2026-09-06 审阅）：工坊 WatcherCardPool 未重声明 AllCards/AllCardIds，
-    /// Harmony 沿继承链把本补丁解析到基类 CardPoolModel.get_AllCards（声明域=基类，
-    /// 对全部卡池生效）。必须镜像 AA ColorlessPoolContentsPatch 的 __instance 类型
-    /// 守卫--与 PatchThirdPartyEntries 捕获的 poolType（即 WatcherCardPool）比对；
-    /// 其他池实例直接放行原方法。</summary>
+
+    /// <summary>WatcherCardPool.AllCards 前缀：混沌局返回混沌无色内容。
+    /// R2 守卫（2026-09-06 审阅）：基类 getter 全局解析，只对观者池实例生效。</summary>
     private static bool ThirdPartyPoolContentsPrefix(CardPoolModel __instance, ref IEnumerable<CardModel> __result)
     {
-        if (!ReferenceEquals(__instance, ThirdPartyPoolInstance))
+        if (!ReferenceEquals(__instance, ResolveThirdPartyPoolInstance()))
         {
             return true; // R2：基类 getter 全局解析下的其他池--不干涉
         }
-        if (!ChaosRunDefinitions.IsRunActive)
+        if (!IsRunActive())
         {
             return true; // 非混沌局:观者原版 83 张
         }
-        IEnumerable<CardModel> chaosCards = ChaosCardRegistry.ColorlessTypes
+        IEnumerable<CardModel> chaosCards = ColorlessTypes()
             .Select(t => ModelDb.GetById<CardModel>(ModelDb.GetId(t)));
-        if (ChaosRunDefinitions.ActivePreserveOriginalCards)
+        if (ActivePreserveOriginalCards())
         {
-            // AA 的 OriginalCardsForPreservedPool 是 internal（引用 dll 未 Publicize），
-            // 反射调用，签名 IReadOnlyList<CardModel> OriginalCardsForPreservedPool(GeneratedCharacter)。
-            MethodInfo? preserved = AccessTools.Method(typeof(ChaosRunDefinitions), "OriginalCardsForPreservedPool");
-            IEnumerable<CardModel>? original = preserved?.Invoke(null, new object[] { GeneratedCharacter.Colorless })
-                as IEnumerable<CardModel>;
+            IEnumerable<CardModel>? original = OriginalCardsForPreservedPool(GcColorless);
             if (original != null)
             {
                 chaosCards = chaosCards.Concat(original);
@@ -291,37 +450,31 @@ internal static class AutoAnthonyCompatBridge
     }
 
     /// <summary>WatcherCardPool.AllCardIds 后缀：并上混沌无色卡 ID。
-    /// CardModel.Pool 用 AllCardIds 反查身份；若前缀把内容全换成混沌卡后
-    /// ID 集合丢失原生卡，手中原生观者卡第一次访问 Pool 时会抛
-    /// InvalidProgramException（"Card ... is not in any card pool!"）。
-    /// getter 声明返回 IEnumerable&lt;ModelId&gt;，后缀签名与之严格一致。
     /// R2 守卫同上：基类 getter 全局解析，只对观者池实例生效。</summary>
     private static void ThirdPartyPoolIdsPostfix(CardPoolModel __instance, ref IEnumerable<ModelId> __result)
     {
-        if (!ReferenceEquals(__instance, ThirdPartyPoolInstance))
+        if (!ReferenceEquals(__instance, ResolveThirdPartyPoolInstance()))
         {
             return; // R2：其他池--不干涉
         }
-        if (!ChaosRunDefinitions.IsRunActive)
+        if (!IsRunActive())
         {
             return;
         }
         List<ModelId> merged = new(__result);
-        foreach (Type chaosType in ChaosCardRegistry.ColorlessTypes)
+        foreach (Type chaosType in ColorlessTypes())
         {
             merged.Add(ModelDb.GetId(chaosType));
         }
         __result = merged.Distinct().ToList();
     }
 
-
-
     // ---- 1+2. ChaosCharacterMapping.From 三个重载的 Postfix ----
 
     private static int PatchFrom(Harmony harmony)
     {
         int count = 0;
-        Type? mappingType = Type.GetType("AutoAnthony.Patches.ChaosCharacterMapping, AutoAnthony");
+        Type? mappingType = AaType("AutoAnthony.Patches.ChaosCharacterMapping");
         if (mappingType == null)
         {
             MainFile.Logger.Error("[Spire1] AutoAnthony bridge: ChaosCharacterMapping type not found - From overloads not patched.");
@@ -364,29 +517,36 @@ internal static class AutoAnthonyCompatBridge
     internal static HarmonyMethod PostfixFromHistory()
         => new(typeof(AutoAnthonyCompatBridge), nameof(FromHistoryPostfix));
 
-    // Postfix 签名与目标严格对齐（Harmony 要求 __result 与目标返回类型一致）。
-    private static void FromCharacterPostfix(CharacterModel character, ref GeneratedCharacter? __result)
+    // (2026-09-27 纯反射) Postfix 不能再写出 GeneratedCharacter?/GeneratedCharacter[] 的
+    // 强类型 __result 签名。改用 Harmony 2.4.2 支持的弱类型 ref object __result：
+    // - 目标返回 Nullable<GeneratedCharacter>（值类型）：Harmony 生成 Box[returnType] 入参、
+    //   写回 Unbox_Any(returnType)，装箱/拆箱往返无损（EmitCallParameter/MethodCreator 反编译实锤）。
+    //   AA 返回 null -> boxed 为 null 引用；我们写入 boxed GeneratedCharacter -> Unbox_Any 到
+    //   Nullable HasValue=true；我们不写(留 null) -> 空 Nullable。
+    // - 目标返回 GeneratedCharacter[]（引用类型）：object 可赋值，写回真正的 GeneratedCharacter[]
+    //   （Array.CreateInstance(枚举类型,n) 构造），引用存储合法。
+
+    private static void FromCharacterPostfix(CharacterModel character, ref object? __result)
     {
         if (__result != null || character == null)
         {
-            return; // AutoAnthony 已认出（引擎角色）或入参为空（原方法对 null 也返回 null）--不干涉
+            return; // AutoAnthony 已认出（引擎角色，boxed 非空）或入参为空--不干涉
         }
-        if (TryMap(character.GetType(), out GeneratedCharacter generated))
+        if (TryMap(character.GetType(), out int generated))
         {
-            __result = generated;
-            MainFile.Logger.Info($"[Spire1] AutoAnthony bridge: {character.GetType().Name} -> {generated} generated pool.");
+            __result = ToGenerated(generated); // boxed GeneratedCharacter -> Unbox_Any 到 Nullable<GeneratedCharacter>
+            MainFile.Logger.Info($"[Spire1] AutoAnthony bridge: {character.GetType().Name} -> generated pool #{generated}.");
         }
     }
 
-    private static void FromSavePostfix(SerializableRun save, ref GeneratedCharacter[] __result)
+    private static void FromSavePostfix(SerializableRun save, ref object __result)
     {
-        // R3（2026-09-06 审阅）：原实现 .Where(TryMap) 过滤后回查 EntryMap[e]，而
-        // "WATCHER" 只在 ThirdPartyEntryMap 注册--含观者条目的存档加载必抛
-        // KeyNotFoundException。改用 TryMap 的 out 值，映射来源保持与其一致。
-        List<GeneratedCharacter> extra = new();
+        // R3（2026-09-06 审阅）：用 TryMap 的 out 值，映射来源与其一致（"WATCHER" 只在
+        // ThirdPartyEntryMap，回查单一字典会 KeyNotFound）。
+        List<int> extra = new();
         foreach (string? entry in save.Players.Select(p => p.CharacterId?.Entry))
         {
-            if (entry != null && TryMap(entry, out GeneratedCharacter generated))
+            if (entry != null && TryMap(entry, out int generated))
             {
                 extra.Add(generated);
             }
@@ -394,13 +554,12 @@ internal static class AutoAnthonyCompatBridge
         MergeInto(ref __result, extra);
     }
 
-    private static void FromHistoryPostfix(RunHistory history, ref GeneratedCharacter[] __result)
+    private static void FromHistoryPostfix(RunHistory history, ref object __result)
     {
-        // R3 同上：历史页同样以 TryMap out 值取结果，不回查单一字典。
-        List<GeneratedCharacter> extra = new();
+        List<int> extra = new();
         foreach (string? entry in history.Players.Select(p => p.Character?.Entry))
         {
-            if (entry != null && TryMap(entry, out GeneratedCharacter generated))
+            if (entry != null && TryMap(entry, out int generated))
             {
                 extra.Add(generated);
             }
@@ -408,14 +567,34 @@ internal static class AutoAnthonyCompatBridge
         MergeInto(ref __result, extra);
     }
 
-
-    private static void MergeInto(ref GeneratedCharacter[] result, List<GeneratedCharacter> extra)
+    /// <summary>合并混沌角色数组（弱类型）：读现有 GeneratedCharacter[]（boxed 元素转 int），
+    /// 并入 extra，去重、按 int 升序（与原 OrderBy(c=>c) 同序，枚举底层即 int），
+    /// 用 Array.CreateInstance(枚举类型,n) 构造回真正的 GeneratedCharacter[]。</summary>
+    private static void MergeInto(ref object result, List<int> extra)
     {
         if (extra.Count == 0)
         {
             return;
         }
-        result = result.Concat(extra).Distinct().OrderBy(c => c).ToArray();
+        List<int> values = new();
+        if (result is Array existing)
+        {
+            foreach (object? item in existing)
+            {
+                if (item != null)
+                {
+                    values.Add(Convert.ToInt32(item));
+                }
+            }
+        }
+        values.AddRange(extra);
+        int[] ordered = values.Distinct().OrderBy(v => v).ToArray();
+        Array merged = Array.CreateInstance(GeneratedCharacterType, ordered.Length);
+        for (int i = 0; i < ordered.Length; i++)
+        {
+            merged.SetValue(ToGenerated(ordered[i]), i);
+        }
+        result = merged;
     }
 
     // ---- 3+4. 本 mod 角色 CardPool / StartingDeck getter 的 Prefix ----
@@ -458,38 +637,24 @@ internal static class AutoAnthonyCompatBridge
         }
     }
 
-    // Prefix 签名：CardPoolModel / IEnumerable<CardModel> 与 CharacterModel 对应 getter 的
-    // 返回类型严格一致（public virtual，Spire1 角色以 override 属性重写）。
-
     private static bool IroncladPoolPrefix(ref CardPoolModel __result)
-        => ReplacePool(typeof(Ironclad), GeneratedCharacter.Ironclad, ref __result);
+        => ReplacePool(GcIronclad, ref __result);
 
     private static bool SilentPoolPrefix(ref CardPoolModel __result)
-        => ReplacePool(typeof(Silent), GeneratedCharacter.Silent, ref __result);
+        => ReplacePool(GcSilent, ref __result);
 
     private static bool DefectPoolPrefix(ref CardPoolModel __result)
-        => ReplacePool(typeof(Defect), GeneratedCharacter.Defect, ref __result);
+        => ReplacePool(GcDefect, ref __result);
 
-    private static bool ReplacePool(Type spire1Character, GeneratedCharacter generated, ref CardPoolModel __result)
+    private static bool ReplacePool(int generated, ref CardPoolModel __result)
     {
         // 只查 IsRunActive，不查 IsCharacterRunActive--与 AutoAnthony 对引擎角色的
-        // ReplacePool 语义对齐：池替换必须是全局的。全池枚举者（PrismaticGem、
-        // ColorfulPhilosophers、UnlockState.CharacterCardPools）会把所有角色的池拉进来，
-        // 若只替换本局角色的池，未游玩的 Spire1 角色会漏出原版一代卡（对照：引擎
-        // 五角色的池在 Chaos run 中全部无条件替换）。起手替换保持 per-character
-        // （见 ReplaceDeck），与它的 ReplaceStartingDeck 同构。
-        if (!ChaosRunDefinitions.IsRunActive)
+        // ReplacePool 语义对齐：池替换必须是全局的。起手替换保持 per-character（见 ReplaceDeck）。
+        if (!IsRunActive())
         {
             return true; // 原版池
         }
-
-        CardPoolModel? pool = generated switch
-        {
-            GeneratedCharacter.Ironclad => ModelDb.CardPool<ChaosIroncladCardPool>(),
-            GeneratedCharacter.Silent => ModelDb.CardPool<ChaosSilentCardPool>(),
-            GeneratedCharacter.Defect => ModelDb.CardPool<ChaosDefectCardPool>(),
-            _ => null,
-        };
+        CardPoolModel? pool = ChaosPoolFor(generated);
         if (pool == null)
         {
             return true;
@@ -499,45 +664,29 @@ internal static class AutoAnthonyCompatBridge
     }
 
     private static bool IroncladDeckPrefix(ref IEnumerable<CardModel> __result)
-        => ReplaceDeck(GeneratedCharacter.Ironclad, ref __result);
+        => ReplaceDeck(GcIronclad, ref __result);
 
     private static bool SilentDeckPrefix(ref IEnumerable<CardModel> __result)
-        => ReplaceDeck(GeneratedCharacter.Silent, ref __result);
+        => ReplaceDeck(GcSilent, ref __result);
 
     private static bool DefectDeckPrefix(ref IEnumerable<CardModel> __result)
-        => ReplaceDeck(GeneratedCharacter.Defect, ref __result);
+        => ReplaceDeck(GcDefect, ref __result);
 
-    private static bool ReplaceDeck(GeneratedCharacter generated, ref IEnumerable<CardModel> __result)
+    private static bool ReplaceDeck(int generated, ref IEnumerable<CardModel> __result)
     {
         // 与 AutoAnthony 的 CharacterPoolPatchRouting.ReplaceStartingDeck 同构：
         // 仅当 Chaos run 激活、该角色在激活集、且 ReplaceStartingCards 开启时替换。
-        if (!ChaosRunDefinitions.IsRunActive || !ChaosRunDefinitions.IsCharacterRunActive(generated)
-            || !ChaosRunDefinitions.ActiveReplaceStartingCards)
+        if (!IsRunActive() || !IsCharacterRunActive(generated) || !ActiveReplaceStartingCards())
         {
             return true; // 我方 StS1 起手牌组
         }
-
-        int count = ChaosRunDefinitions.BasicCountFor(generated);
+        int count = BasicCountFor(generated);
         CardModel[] deck = new CardModel[count];
         for (int slot = 0; slot < count; slot++)
         {
-            deck[slot] = ChaosCardRegistry.Canonical(generated, slot);
+            deck[slot] = Canonical(generated, slot);
         }
         __result = deck;
         return false;
     }
 }
-#else
-/// <summary>
-/// 编译机无 AutoAnthony 引用（.tmp/interop-refs 缺失）时的空壳：保持 MainFile 调用点
-/// 无条件编译。构建环境缺 dll 不应改变源码，只应降级桥接能力。
-/// </summary>
-internal static class AutoAnthonyCompatBridge
-{
-    internal static bool Apply(Harmony _)
-    {
-        MainFile.Logger.Info("[Spire1] AutoAnthony interop not compiled in (reference dll absent) - bridge disabled.");
-        return false;
-    }
-}
-#endif

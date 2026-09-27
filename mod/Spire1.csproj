@@ -29,20 +29,14 @@
         </Reference>
     </ItemGroup>
 
-    <!-- AutoAnthony interop (workshop 3786611028 "Auto-Anthonyology"): compile-time reference
-         only. Runtime resolves to the workshop-loaded assembly of the same name (same pattern
-         as BaseLib: NuGet/compile copy vs. game-dir runtime copy). Absent on a machine ->
-         condition false -> Spire1 builds without the bridge types referenced from
-         Interop/AutoAnthonyCompatBridge.cs (guarded by the same symbol). -->
-    <ItemGroup Condition="Exists('$(MSBuildThisFileDirectory)../.tmp/interop-refs/AutoAnthony.dll')">
-        <Reference Include="AutoAnthony">
-            <HintPath>$(MSBuildThisFileDirectory)../.tmp/interop-refs/AutoAnthony.dll</HintPath>
-            <Private>false</Private>
-        </Reference>
-    </ItemGroup>
-    <PropertyGroup Condition="Exists('$(MSBuildThisFileDirectory)../.tmp/interop-refs/AutoAnthony.dll')">
-        <DefineConstants>$(DefineConstants);SPIRE1_AUTOANTHONY</DefineConstants>
-    </PropertyGroup>
+    <!-- AutoAnthony interop (workshop 3786611028 "Auto-Anthonyology"): NO compile-time reference.
+         (2026-09-27) Interop/AutoAnthonyCompatBridge.cs is now a single pure-reflection implementation
+         that never typed-references the AutoAnthony assembly, so Spire1.dll's AssemblyRef table no
+         longer names AutoAnthony and the mod carries no compile-time hard dependency on it (matches
+         Spire1.json declaring only BaseLib). AutoAnthony absent at runtime -> bridge disables itself.
+         The old conditional <Reference Include="AutoAnthony"> + SPIRE1_AUTOANTHONY DefineConstants
+         block was removed here. -->
+
 
     <ItemGroup Condition="$(Publicize)">
         <PackageReference Include="Krafs.Publicizer" Version="2.3.0" PrivateAssets="All"/>
@@ -143,6 +137,99 @@
         <Message Condition="'$(OldContent)' != '$(NewContent)'"
                  Text="Updated BaseLib dependency version in mod manifest json to version $(BaseLibVersion)"
                  Importance="high" />
+    </Target>
+    
+
+    <!-- ===================== ModsPath identity guard (R03-01) =====================
+         Sts2PathDiscovery.props derives $(ModsPath) from $(Sts2Path) without checking the result,
+         and /p:Sts2Path= or /p:ModsPath= arrive as global properties that win over that file. The
+         copy and export targets below are ON by default, so a mistyped override would write into
+         the user's Steam install. This target re-checks the FINAL resolved value before any write.
+
+         Three independent deny reasons:
+           1. outside-allowlist - the resolved path is not under a known test or scratch root. This
+              is what rejects C:, a bare G:/mods, and the Steam install itself.
+           2. steam-install - the directory we would write into (the game root) holds
+              steam_appid.txt, the marker measured to exist ONLY at the Steam copy's root.
+           3. reparse - the mods path or one of its five ancestors is a junction or symlink, so a
+              path that merely LOOKS allowlisted could still resolve somewhere else.
+
+         steam_api64.dll is deliberately NOT the discriminator: it sits under
+         data_sts2_windows_x86_64 in the Steam copy AND in both local test copies, so it cannot
+         tell them apart. Opting out is unchanged: /p:CopyToModsFolderOnBuild=false skips this
+         target exactly like the copy targets it guards.
+         ============================================================================== -->
+    <Target Name="AssertModsPathIdentity"
+            BeforeTargets="CopyToModsFolderOnBuild;CopyQuickPck;GodotPublish"
+            Condition="'$(CopyToModsFolderOnBuild)' != 'false'">
+        <!-- Resolve once: GetFullPath collapses '..' and mixed separators, and the lowercase form
+             makes the prefix test below case-insensitive. Every check reads this one value. -->
+        <PropertyGroup>
+            <_ModsPathGuardNorm>$([System.IO.Path]::GetFullPath('$(ModsPath)').TrimEnd('\').TrimEnd('/').ToLowerInvariant())</_ModsPathGuardNorm>
+        </PropertyGroup>
+
+        <!-- Deny reason 1: allowlist. Each root is matched as a WHOLE PATH SEGMENT: the resolved
+             value must be exactly the root or a descendant of it, never a SIBLING that merely
+             shares a prefix of characters. A bare StartsWith on the root text also admits
+             "E:/Slay the Spire 2/mods_backup", "E:/Slay the Spire 2/mods-old" and the
+             separator-swallowing artifact "mods-sinkSpire1" that ModsPath produces at the copy
+             site when the caller omits a trailing separator. Requiring the separator (or exact
+             equality) closes all of those. The .tmp root is matched the same way so a sibling
+             like "G:/omp works/.tmpX" cannot pass either.
+             Keep the letter case and the separators exactly as shown: the resolved value this
+             compares against is lowercased and backslash-normalised first. -->
+        <PropertyGroup>
+            <_ModsPathGuardAllowed>false</_ModsPathGuardAllowed>
+            <_ModsPathGuardAllowed Condition="$(_ModsPathGuardNorm) == 'e:\slay the spire 2\mods' Or $(_ModsPathGuardNorm.StartsWith('e:\slay the spire 2\mods\'))">true</_ModsPathGuardAllowed>
+            <_ModsPathGuardAllowed Condition="$(_ModsPathGuardNorm) == 'g:\omp works\sts\_runtime\sts2-test-client-b\mods' Or $(_ModsPathGuardNorm.StartsWith('g:\omp works\sts\_runtime\sts2-test-client-b\mods\'))">true</_ModsPathGuardAllowed>
+            <_ModsPathGuardAllowed Condition="$(_ModsPathGuardNorm) == 'g:\omp works\.tmp' Or $(_ModsPathGuardNorm.StartsWith('g:\omp works\.tmp\'))">true</_ModsPathGuardAllowed>
+        </PropertyGroup>
+
+        <!-- Deny reason 2: the Steam marker. The game root is the mods path's first ancestor. -->
+        <PropertyGroup>
+            <_ModsPathGuardGameRoot>$([System.IO.Path]::GetDirectoryName('$(_ModsPathGuardNorm)'))</_ModsPathGuardGameRoot>
+            <_ModsPathGuardSteamMarker>false</_ModsPathGuardSteamMarker>
+            <_ModsPathGuardSteamMarker Condition="Exists('$(_ModsPathGuardGameRoot)\steam_appid.txt')">true</_ModsPathGuardSteamMarker>
+        </PropertyGroup>
+
+        <!-- Deny reason 3: junction or symlink in the mods path or its five ancestors. Every
+             GetAttributes call is gated on Exists(), which is what keeps a missing path from
+             raising MSB4184; an ancestor that does not exist cannot be a link target anyway. -->
+        <PropertyGroup>
+            <_ModsPathGuardNormReparse>false</_ModsPathGuardNormReparse>
+            <_ModsPathGuardNormReparse Condition="Exists('$(_ModsPathGuardNorm)')">$([System.IO.File]::GetAttributes('$(_ModsPathGuardNorm)').ToString().Contains('ReparsePoint'))</_ModsPathGuardNormReparse>
+            <_ModsPathGuardGameRootReparse>false</_ModsPathGuardGameRootReparse>
+            <_ModsPathGuardGameRootReparse Condition="Exists('$(_ModsPathGuardGameRoot)')">$([System.IO.File]::GetAttributes('$(_ModsPathGuardGameRoot)').ToString().Contains('ReparsePoint'))</_ModsPathGuardGameRootReparse>
+            <_ModsPathGuardAnc2 Condition="Exists('$(_ModsPathGuardGameRoot)')">$([System.IO.Path]::GetDirectoryName('$(_ModsPathGuardGameRoot)'))</_ModsPathGuardAnc2>
+            <_ModsPathGuardAnc2Reparse>false</_ModsPathGuardAnc2Reparse>
+            <_ModsPathGuardAnc2Reparse Condition="Exists('$(_ModsPathGuardAnc2)')">$([System.IO.File]::GetAttributes('$(_ModsPathGuardAnc2)').ToString().Contains('ReparsePoint'))</_ModsPathGuardAnc2Reparse>
+            <_ModsPathGuardAnc3 Condition="Exists('$(_ModsPathGuardAnc2)')">$([System.IO.Path]::GetDirectoryName('$(_ModsPathGuardAnc2)'))</_ModsPathGuardAnc3>
+            <_ModsPathGuardAnc3Reparse>false</_ModsPathGuardAnc3Reparse>
+            <_ModsPathGuardAnc3Reparse Condition="Exists('$(_ModsPathGuardAnc3)')">$([System.IO.File]::GetAttributes('$(_ModsPathGuardAnc3)').ToString().Contains('ReparsePoint'))</_ModsPathGuardAnc3Reparse>
+            <_ModsPathGuardAnc4 Condition="Exists('$(_ModsPathGuardAnc3)')">$([System.IO.Path]::GetDirectoryName('$(_ModsPathGuardAnc3)'))</_ModsPathGuardAnc4>
+            <_ModsPathGuardAnc4Reparse>false</_ModsPathGuardAnc4Reparse>
+            <_ModsPathGuardAnc4Reparse Condition="Exists('$(_ModsPathGuardAnc4)')">$([System.IO.File]::GetAttributes('$(_ModsPathGuardAnc4)').ToString().Contains('ReparsePoint'))</_ModsPathGuardAnc4Reparse>
+            <_ModsPathGuardAnc5 Condition="Exists('$(_ModsPathGuardAnc4)')">$([System.IO.Path]::GetDirectoryName('$(_ModsPathGuardAnc4)'))</_ModsPathGuardAnc5>
+            <_ModsPathGuardAnc5Reparse>false</_ModsPathGuardAnc5Reparse>
+            <_ModsPathGuardAnc5Reparse Condition="Exists('$(_ModsPathGuardAnc5)')">$([System.IO.File]::GetAttributes('$(_ModsPathGuardAnc5)').ToString().Contains('ReparsePoint'))</_ModsPathGuardAnc5Reparse>
+            <_ModsPathGuardAnyReparse>false</_ModsPathGuardAnyReparse>
+            <_ModsPathGuardAnyReparse Condition="$(_ModsPathGuardNormReparse) == 'true' Or $(_ModsPathGuardGameRootReparse) == 'true' Or $(_ModsPathGuardAnc2Reparse) == 'true' Or $(_ModsPathGuardAnc3Reparse) == 'true' Or $(_ModsPathGuardAnc4Reparse) == 'true' Or $(_ModsPathGuardAnc5Reparse) == 'true'">true</_ModsPathGuardAnyReparse>
+        </PropertyGroup>
+
+        <!-- Verdict: the last matching reason names the failure. Both messages print every input, so
+             a denial is diagnosable from the build log alone, without reproducing it by hand. -->
+        <PropertyGroup>
+            <_ModsPathGuardVerdict>ALLOW</_ModsPathGuardVerdict>
+            <_ModsPathGuardVerdict Condition="$(_ModsPathGuardAllowed) != 'true'">DENY-outside-allowlist</_ModsPathGuardVerdict>
+            <_ModsPathGuardVerdict Condition="$(_ModsPathGuardSteamMarker) == 'true'">DENY-steam-install</_ModsPathGuardVerdict>
+            <_ModsPathGuardVerdict Condition="$(_ModsPathGuardAnyReparse) == 'true'">DENY-reparse</_ModsPathGuardVerdict>
+        </PropertyGroup>
+
+        <Message Importance="high"
+                 Condition="'$(_ModsPathGuardVerdict)' == 'ALLOW'"
+                 Text="MODSPATH-GUARD-ALLOW: resolved '$(_ModsPathGuardNorm)' (raw '$(ModsPath)') allowlist=$(_ModsPathGuardAllowed) steamMarker=$(_ModsPathGuardSteamMarker) at gameRoot '$(_ModsPathGuardGameRoot)' reparse=[mods=$(_ModsPathGuardNormReparse) gameRoot=$(_ModsPathGuardGameRootReparse) anc2=$(_ModsPathGuardAnc2Reparse) anc3=$(_ModsPathGuardAnc3Reparse) anc4=$(_ModsPathGuardAnc4Reparse) anc5=$(_ModsPathGuardAnc5Reparse)]" />
+        <Error Condition="'$(_ModsPathGuardVerdict)' != 'ALLOW'"
+               Text="MODSPATH-GUARD-DENY [$(_ModsPathGuardVerdict)]: ModsPath resolves to '$(_ModsPathGuardNorm)' (raw '$(ModsPath)'). allowlist=$(_ModsPathGuardAllowed) - allowed roots are E:/Slay the Spire 2/mods, G:/omp works/Sts/_runtime/sts2-test-client-B/mods and G:/omp works/.tmp/. steamMarker=$(_ModsPathGuardSteamMarker) at gameRoot '$(_ModsPathGuardGameRoot)'. reparse=[mods=$(_ModsPathGuardNormReparse) gameRoot=$(_ModsPathGuardGameRootReparse) anc2=$(_ModsPathGuardAnc2Reparse) anc3=$(_ModsPathGuardAnc3Reparse) anc4=$(_ModsPathGuardAnc4Reparse) anc5=$(_ModsPathGuardAnc5Reparse)]. The Steam install is never a valid build target. If this build really must write there, pass /p:CopyToModsFolderOnBuild=false and deploy by hand." />
     </Target>
     
     <Target Name="CopyToModsFolderOnBuild" AfterTargets="PostBuildEvent"
