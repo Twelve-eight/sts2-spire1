@@ -2581,3 +2581,59 @@ eng / zhs 各 +6 行: `POOL_CENSUS_ON_MENU_ENTER` 与 `IGNORE_MP_HASH_MISMATCH` 
 - 选人掉帧另开实验兼容层, 见 G:\omp works\Sts\sts2-spire1\docs\DEVELOP-menu-performance-20260923.md. 新补丁按 SPIRE1_MENU_PERFORMANCE_PROBE 编译门禁隔离, 不混入本段已通过的事件交付. 新局 SetCurrentScene 会释放旧主菜单, 因而旧报告的整个游戏生命周期常驻宣称过度;帧时间 A/B 仍缺.
 
 Git 仅提交本轮拥有的文件与 DEVELOP.md 末尾追加契约. DEVELOP.md 原有 staged 与未暂存路径修改通过临时 index 保留, 不整体暂存或发布. 中央证据与精确提交清单见 G:\omp works\docs\WORKSPACE-AUDIT-2026-09-23.md 和该轮 evidence 目录.
+
+## 2026-09-28 姿态形态可玩化开工
+
+- 用户要求继续做至可玩, 全部子代理使用 Astra via agentrouter, 额外独立审查最近代码. 用户前台玩 CS, 禁止抢焦点.
+- 当前契约 docs/DEVELOP-form-playable-20260928.md. 基线源码和构建日志保留于 G:\omp works\.tmp\form-playable-20260928-01a0e7ad.
+- 独立审查 Codex 原生 multi_agent_v1, id 01a0e7b1-3859-70a1-a475-8667ddee771b. 实际 session_meta provider=gateway, turn_context model=gpt-6-astra-ar; providers.json 精确映射 p=agentrouter,m=gpt-6-astra, 未见该模型 fallback. 证据 route-preflight.json, 不是从提示文字推断.
+- 实施前发现研究文件确实存在, 姿态基类在本仓. 显式定义 SPIRE1_FORM_MOD 的编译阶段已经生成 DLL, 完整构建/测试未在本段冒称通过.
+- 原工作树有已知迁移修改和其它会话源码, master 相对缓存 origin/master ahead 2. 保留所有既有修改, 不自动整体提交或推送这两条既有提交.
+
+- 中央已完成显式开启旧形态的 Release 基线构建, before-build.log 为 58 个警告/0 个错误, baseline-form-types.txt 确认10个顶层形态类型. 因此独立审查 F7 已根据真实反证撤回. baseline-gates.json 的唯一失败面为旧门禁禁止这10个形态, 非外部硬依赖; gate 修订只释放 Forms, 不释放 Experimental/AFTP.
+- effects 生产代码已完成并经过原生 wait_agent 门禁, 详见 effects-gate.json; 原配对监督已恢复审查. 为遵守十分钟拆分, 探针交新独立 probe 批次, 两者不共享写集.
+- 所有8个已派原生代理均已从实际会话元数据确认 gpt-6-astra-ar / gateway, 见 agent-routes.json. 运行研究已落盘原生路径风险和无键鼠驱动API, 没有把研究当实机通过. BaseLib 测试安装为3.4.7, 编译包为3.4.5, 指纹见 dependency-fingerprints.json.
+
+## 2026-09-30 发布 1.2.3 与完整实机冒烟 (恢复锚点)
+
+本段补记 2026-09-30 凌晨会话已完成但未落盘的工作, 以及本会话 (01a0eef7) 的完整 1.2.3 实机冒烟.
+不覆盖历史 STATUS. 本轮子代理统一 global:deepseek-v4.1-flash / provider gateway (wb2api), 元数据证据见
+G:\omp works\.tmp\workspace-audit-20260930\agent-routes.json 与 agent-routes-p1.json.
+
+### 1.2.3 版本提升与重建 (2026-09-30 01:44-02:04)
+
+- Spire1.json 1.2.2 -> 1.2.3; MpConfigSync.json 0.1.1 -> 0.1.2; ChaosBridge.json 0.2.1 -> 0.2.2. 三个 VDF 的 changenote 已前置本轮说明.
+- Release 重建 (改版本号后强制 -t:Rebuild 刷新产物时间戳): 57 警告, 0 错误.
+- 发布门禁三道 (assemblyref / manifest / typedef) 全 PASS; AssemblyRef 12 个, TypeDef 820 个. 门禁 JSON: G:\omp works\.tmp\spire1-gates-20260930.json.
+- 暂存刷新: refresh OK (0 refreshed, 8 already current); staged == build 哈希一致. 证据: G:\omp works\.tmp\workshop-push-round-20260930.md.
+
+### 1.2.3 完整实机冒烟 (本会话 2026-09-30 07:38, 修正 01:44 那次缺口)
+
+凌晨那次冒烟加载的是 1.2.3 DLL/PCK 配 1.2.2 清单, 不能算完整发布件验收. 本会话补齐:
+
+- 部署到 E:\Slay the Spire 2 测试副本 (非 Steam; Steam 副本 mods\Spire1 不存在, 全程未触碰).
+- 部署内容: Spire1.dll FE7935928273A313 (502784 B), Spire1.json CDBD57D543742855 (548 B, 1.2.3), Spire1.pck C8F718AB73F3C054 (28865174 B), Spire1.pdb 62703EF8EB45D03F (179332 B).
+- 启动: Start-Process 'E:\Slay the Spire 2\SlayTheSpire2.exe' -ArgumentList '--rendering-driver','opengl3' -WorkingDirectory 'E:\Slay the Spire 2' -WindowStyle Minimized, 进程存活超过 60 秒后由主会话关闭.
+- 日志第 876 行: Spire1: StS1 Characters [Spire1] (1.2.3).
+- 日志第 1163 行: Spire1 Forms: Watcher bridge bound; custom-run modifier available. Targets: ... 13 个 Harmony 目标全部绑定 (WatcherMod 12 个 + NCustomRunModifiersList.GetAllModifiers).
+- 日志第 1372 行: [BootTimer] (utc 23:38:29.606) NMainMenu._Ready = MAIN MENU VISIBLE; 首次 BootTimer 23:38:20.604 -> 主菜单 23:38:29.606, 约 9.0 秒.
+- 唯一 ERROR (第 1204 行) 是 AutoAnthony 既有问题 Expected 65 complete v111 Colorless cards, found 77, 自身声明不阻塞启动, 与本轮改动无关.
+- 共享 mod_configs 处理: 冒烟前备份 18 个 cfg; 游戏改写 IntentGraph2.cfg (303 到 268) 与 Spire1.cfg (369 到 406, 新增 RegisterContentNextRun); 冒烟后 robocopy /MIR 还原, 逐文件 SHA256 比对 18/18 一致.
+- 证据: G:\omp works\.tmp\p0-spire1-smoke-20260930-2\ (EVIDENCE.md 与 godot-1.2.3-full-smoke.log).
+
+### 工坊推送状态 (2026-09-30)
+
+- 已推送: MpConfigSync 0.1.2 (publishedfileid 3799210379, ManifestID 6729292487544552613, 上传 02:30:50-02:30:56, 脚本校验 1/1, push_exit=0).
+- 未推送: Spire1 1.2.3 与 ChaosBridge 0.2.2 已备好 (staged == build), 需要新的 Steam 2FA 码. 推送前守卫全部通过 (held-back 层 / VDF 引号反斜杠 / 字节上限 / 描述漂移 / Markdown 星号).
+
+### 仍未关闭的监督项 (不因本次冒烟关闭)
+
+- F2 (P1): 恶魔力量账本在授予前 hook 重入时可能吞掉其它来源力量. 源码定位 mod\Spire1Code\Forms\DemonFormPower.cs:107-113 与 :191-229. 详见 docs\reports\form-playable-20260928\effects-review.md:45-53.
+- F1 (P2): 虚空免费额度在费用支付重入窗口. 源码定位 mod\Spire1Code\Forms\VoidFormEffectPower.cs:76-90. 详见 effects-review.md:31-39.
+- 两项均为源码控制流结论, 不是实机复现; 本次冒烟只证明 1.2.3 能正常加载与进入主菜单, 不构成对战行为验收.
+- form-playable 十份报告无一份达到 COMPLETE/HELD_BACK 终态; tools/form-native-smoke 目标目录不存在.
+
+### 本轮边界
+
+- 只读审查加一次加载冒烟; 未做完整对战, 未验证多人联机形态同步, 未验证帧时间.
+- 未提交任何文件, 未推送工坊, 未重启网关.
