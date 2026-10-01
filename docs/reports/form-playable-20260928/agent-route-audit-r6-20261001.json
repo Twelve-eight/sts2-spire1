@@ -1,0 +1,10 @@
+{
+  "id": "01a0f582-4f49-7030-8999-af88f9d7d2f2",
+  "harness": "Codex Desktop multi_agent_v1",
+  "model": "gpt-6-astra-ar",
+  "session_provider": "gateway",
+  "turn_timestamp": "2026-10-01T03:29:13.264Z",
+  "metadata_path": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\01\\rollout-2026-10-01T11-29-13-01a0f582-4f49-7030-8999-af88f9d7d2f2.jsonl",
+  "checked_at": "2026-10-01T11:29:49.7342456+08:00",
+  "registry_path": "G:\\omp works\\.tmp\\form-playable-20260928-01a0e7ad\\registry-current-r6-20261001.json"
+}

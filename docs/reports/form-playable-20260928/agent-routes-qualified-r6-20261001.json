@@ -1,0 +1,42 @@
+[
+  {
+    "id": "01a0f585-0434-7121-9a11-c7a8ea2c6eac",
+    "harness": "Codex Desktop multi_agent_v1",
+    "model": "gpt-6-astra-ar",
+    "session_provider": "gateway",
+    "turn_timestamp": "2026-10-01T03:32:10.552Z",
+    "metadata_path": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\01\\rollout-2026-10-01T11-32-10-01a0f585-0434-7121-9a11-c7a8ea2c6eac.jsonl",
+    "checked_at": "2026-10-01T11:33:58.1285945+08:00",
+    "registry_evidence": "registry-current-r6-20261001.json"
+  },
+  {
+    "id": "01a0f585-04a7-78b0-9d47-a8acd4aee34d",
+    "harness": "Codex Desktop multi_agent_v1",
+    "model": "gpt-6-astra-ar",
+    "session_provider": "gateway",
+    "turn_timestamp": "2026-10-01T03:32:10.661Z",
+    "metadata_path": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\01\\rollout-2026-10-01T11-32-10-01a0f585-04a7-78b0-9d47-a8acd4aee34d.jsonl",
+    "checked_at": "2026-10-01T11:33:58.1391373+08:00",
+    "registry_evidence": "registry-current-r6-20261001.json"
+  },
+  {
+    "id": "01a0f585-0513-72f0-8b36-90ce0611cff7",
+    "harness": "Codex Desktop multi_agent_v1",
+    "model": "gpt-6-astra-ar",
+    "session_provider": "gateway",
+    "turn_timestamp": "2026-10-01T03:32:10.758Z",
+    "metadata_path": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\01\\rollout-2026-10-01T11-32-10-01a0f585-0513-72f0-8b36-90ce0611cff7.jsonl",
+    "checked_at": "2026-10-01T11:33:58.1434862+08:00",
+    "registry_evidence": "registry-current-r6-20261001.json"
+  },
+  {
+    "id": "01a0f585-058d-7f92-99ee-253b9bb02dd2",
+    "harness": "Codex Desktop multi_agent_v1",
+    "model": "gpt-6-astra-ar",
+    "session_provider": "gateway",
+    "turn_timestamp": "2026-10-01T03:32:10.909Z",
+    "metadata_path": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\01\\rollout-2026-10-01T11-32-10-01a0f585-058d-7f92-99ee-253b9bb02dd2.jsonl",
+    "checked_at": "2026-10-01T11:33:58.1478179+08:00",
+    "registry_evidence": "registry-current-r6-20261001.json"
+  }
+]

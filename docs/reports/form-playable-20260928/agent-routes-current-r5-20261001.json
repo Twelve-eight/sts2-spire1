@@ -1,0 +1,29 @@
+[
+  {
+    "id": "01a0f51e-b0ba-7502-8691-c7ed048a5b8f",
+    "harness": "Codex Desktop multi_agent_v1",
+    "session_provider": "gateway",
+    "model": "ovoapi:6.1sol",
+    "last_context": "2026-10-01T02:56:48.085Z",
+    "metadata_path": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\01\\rollout-2026-10-01T09-40-24-01a0f51e-b0ba-7502-8691-c7ed048a5b8f.jsonl",
+    "checked_at": "2026-10-01T11:27:19.4812732+08:00"
+  },
+  {
+    "id": "01a0f51e-e211-7eb3-bc85-f729a66dd119",
+    "harness": "Codex Desktop multi_agent_v1",
+    "session_provider": "gateway",
+    "model": "ovoapi:6.1sol",
+    "last_context": "2026-10-01T02:57:04.901Z",
+    "metadata_path": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\01\\rollout-2026-10-01T09-40-37-01a0f51e-e211-7eb3-bc85-f729a66dd119.jsonl",
+    "checked_at": "2026-10-01T11:27:19.5076329+08:00"
+  },
+  {
+    "id": "01a0f57d-5a44-7f22-a298-d6c2550aca37",
+    "harness": "Codex Desktop multi_agent_v1",
+    "session_provider": "gateway",
+    "model": "ovoapi:6.1sol",
+    "last_context": "2026-10-01T03:23:48.293Z",
+    "metadata_path": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\01\\rollout-2026-10-01T11-23-48-01a0f57d-5a44-7f22-a298-d6c2550aca37.jsonl",
+    "checked_at": "2026-10-01T11:27:19.5136084+08:00"
+  }
+]

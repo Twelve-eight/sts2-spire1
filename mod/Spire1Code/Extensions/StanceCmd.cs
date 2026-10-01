@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using Spire1.Spire1Code.Powers;
+using Spire1.Spire1Code.Forms;
 using MegaCrit.Sts2.Core.Models;
 
 namespace Spire1.Spire1Code.Extensions;
@@ -17,6 +18,12 @@ public static class StanceCmd
 
     public static bool IsIn<TStance>(Player player) where TStance : StancePower
     {
+        if (FormStanceMode.IsEnabled(player))
+        {
+            FormStanceKind kind = FormStanceMode.KindOf(typeof(TStance));
+            if (kind != FormStanceKind.None)
+                return FormStanceWatcherBridge.CurrentKind(player) == kind;
+        }
         return player.Creature.GetPower<TStance>() != null;
     }
 
@@ -28,6 +35,17 @@ public static class StanceCmd
     public static async Task Enter<TStance>(PlayerChoiceContext ctx, Player player, CardModel? source)
         where TStance : StancePower
     {
+        if (FormStanceMode.IsEnabled(player))
+        {
+            FormStanceKind kind = FormStanceMode.KindOf(typeof(TStance));
+            if (kind == FormStanceKind.None)
+                throw new System.NotSupportedException("This stance has no form-mode mapping: " + typeof(TStance).FullName);
+            await FormStanceWatcherBridge.Enter(player, kind, source);
+            return;
+        }
+        if (typeof(WatcherFormStancePower).IsAssignableFrom(typeof(TStance)))
+            throw new System.InvalidOperationException("Form stances require the custom-run modifier");
+
         StancePower? current = Current(player);
         if (current is TStance)
         {
@@ -55,6 +73,11 @@ public static class StanceCmd
 
     public static async Task Exit(PlayerChoiceContext ctx, Player player, CardModel? source)
     {
+        if (FormStanceMode.IsEnabled(player))
+        {
+            await FormStanceWatcherBridge.Exit(player);
+            return;
+        }
         StancePower? current = Current(player);
         if (current == null)
         {
@@ -96,7 +119,7 @@ public static class StanceCmd
         }
     }
 
-    private static async Task Dispatch(
+    internal static async Task Dispatch(
         Player player,
         PlayerChoiceContext ctx,
         StancePower? from,

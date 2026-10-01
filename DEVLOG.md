@@ -2637,3 +2637,97 @@ G:\omp works\.tmp\workspace-audit-20260930\agent-routes.json 与 agent-routes-p1
 
 - 只读审查加一次加载冒烟; 未做完整对战, 未验证多人联机形态同步, 未验证帧时间.
 - 未提交任何文件, 未推送工坊, 未重启网关.
+
+## 2026-09-30 姿态形态中断恢复
+
+- 从 09-28 的增量报告和原生 session 恢复. 部分子代理在当前 app-server 中 not found, 使用原生 resume_agent 恢复原 id, 不更换 harness 或模型. 当前主会话最新 turn_context 为 gpt-6-astra-ar, 路由表仍为 agentrouter/gpt-6-astra.
+- 另一个用户授权的工作区整理会话在 09-30 补写了 VoidFormPlayTransactionPatch.cs 与 DemonFormStrengthTransactionPatch.cs, 修改了对应两 Power. 保留其工作, 接收快照为 recovered-20260930/Forms; 这些变更不是本会话在中断期间完成的, 不沿用其未闭合监督作为本轮验收.
+- 当前 HEAD 为 b7076f8, 既有两条 ahead 已由其它会话推送, 本轮不回滚. 1.2.3 的其它会话启动记录不覆盖当前六形态战斗语义.
+- 本轮全工程默认 Release 构建 release-20260930-first.log 为 57 个警告, 0 个错误. 本轮未写 Steam/共享配置, 未启动可见游戏. 仍需源码监督, 探针, 原生隔离目录预检与战斗验证.
+
+## 2026-10-01 11:27 后台可玩化续作: 路由漂移隔离与重审
+
+- 约束不变: 用户前台玩 CS,不抢焦点,不键鼠,不操作用户进程,不写 Steam 安装或共享 mod_configs,不写 C:.
+- 发现恢复后的 Boole/Tesla 返工及新 Bacon 审核实际模型为 ovoapi:6.1sol,不是指定 Astra via agentrouter.已关闭受影响代理,落盘源码保留但错路由实现/监督不计有效交付.原生无 model 参数继承不能保证路由;之后统一显式 pin gpt-6-astra-ar.
+- 新独立审核及两组实现/监督元数据已确认 gpt-6-astra-ar / gateway,本地 registry 映射 agentrouter / gpt-6-astra,未配置模型 fallback.请求文字和配置映射不冒充上游计费证据.实际会话 metadata 和门禁记录已复制到本仓 docs/reports/form-playable-20260928.
+- 同批白名单互不重叠: SerpentFormPower.cs;form-effects-probe 的 ContractStubs.cs/ProbeSupport.cs/SerpentScenarios.cs.实现者不构建,主会话集中诊断,正式构建须待有效监督.超过10分钟未有首条落盘后已收窄每项,不无限等待空跑.
+- 中央冻结快照诊断正在进行.最初快照漏 Spire1.json 与 GlobalUsings.cs 的失败属于快照准备问题,已保留新日志并补齐重跑;未改产品源码绕过错误.禁自动部署,显式 E: 测试路径,单节点低优先级,全部缓存位于 G:.
+- 恢复入口: G:\omp works\Sts\sts2-spire1\docs\reports\form-playable-20260928\route-incident-and-central-r6-20261001.md.在该报告和新监督未收束前,不得写当前版本已可玩.旧121/121,10/10和主菜单日志不覆盖新代码.
+
+### 2026-10-01 12:08 恢复核对与存储隔离边界
+
+- 基础 headless 运行的 run.json 返回 exitCode=0,无主窗口句柄采样,且共享配置前后哈希一致.但 stderr 明确包含 Sentry crashpad 缺失,Invalid Task ID 和退出资源泄漏.不能宣称无错误,也不证明 Mods 或 Forms 的战斗行为.
+- 独立副本的 steam_settings/configs.user.ini 实际仅59字节,包含 account_name=GAMER520 和 language=schinese,没有 local_save_path.日志实际账号为76561199478895791,与先前预置设置账号76561199520000001不一致.不能宣称 FMOD 静音已被应用,不能用仅 APPDATA 重定向认定 GSE 云存储隔离.
+- 在 GSE 原生存储位置和真实账号隔离核验前,停止追加游戏启动.不修改 Steam,共享 mod_configs 或 C: 中既有 GSE Saves.
+- 恢复时 r7 的3份报告都不存在,3个会话 JSONL 均未在11:59启动记录后产生新工具事件.实际最新 turn model=gpt-6-astra-ar,provider=gateway,effort=low.12:07后的原生 wait_agent 对 Pascal 返回 status为空,timed_out=true;未过完成门禁,不授权 Kuhn 提前监督.
+- 核对时间:2026-10-01T12:09:47.2524756+08:00.模型日志停滞只证明本轮没有可收割工具产出,尚不能认定具体服务故障或上游收费状态.
+
+### 2026-10-01 20:36 模型授权切换与 GSE 存储隔离通过
+
+- 用户更新硬约束:后续只允许 6.1sol 或 opus5.5 (0.05).此前 r8 的 gpt-6-astra-ar 代理不再作为有效交付证据,已停止;未采信其未完成产出.
+- 本轮新派发将显式使用 ovoapi:6.1sol 或 ovo05:opus5.5,并在 spawn 后核验 session metadata 的实际模型和 provider.
+- native-gse-storage-r8-20261001-01:真实复制 GSE API 通过 isolated GseSavePath,ccount=76561199520000001,初始 file count 0,写读 marker 成功,marker 仅位于 G:\omp works\.tmp\form-playable-20260928-01a0e7ad\native-gse-storage-r8-20261001-01\gse\2963800\remote.结果 PASS.这是 GSE 存储隔离证据,不等于游戏或 Forms 验收.
+- 探针构建修复前的1个编译错误是主会话新建隔离夹具中的变量命名冲突,已改为 markerName;native harness 当前0 warnings,0 errors,exitCode=0.
+- 尚未启动真实游戏;仍不写 Steam 安装、共享 mod_configs 或 C:.
+
+### 2026-10-01 20:39 r9 派发与当前证据
+
+- r9 原生路由已核验: Anscombe `01a0f779-5d14-7983-891e-db4ea39e4f67` 实际 `ovoapi:6.1sol`, Plato `01a0f779-5e40-7933-b5dd-cc6d76dc15b6` 实际 `ovo05:opus5.5`, Hegel `01a0f779-605c-7262-8869-d273d3ce1ab3` 实际 `ovo05:opus5.5`.三者 session provider 均为 `gateway`; route evidence 为 `agent-routes-r9-20261001.json`.
+- 实现与监督同批.监督 Plato 已收到 Anscombe id,必须等待 hub 实际 wait_agent 返回 completed 且 timed_out=false 后才开始审.
+- 全量隔离探针当前输出为 `TOTAL 123 PASS 122 FAIL 1 SELECTED 123`.唯一失败仍是 completion bridge 空桥清理回归;不把旧的 `121/121` 或 `10/10` 计数带入.
+- GSE 原生存储夹具 `native-gse-storage-r8-20261001-01` 的 `native-events.jsonl` 结果为 `PASS`;真实 API account `76561199520000001`,初始 file count 0,marker 写读成功,仅落入隔离 G: 存储.该结果不证明游戏启动或形态行为.
+
+### 2026-10-01 20:45 监督完成门禁
+
+- 对实现者 Anscombe `01a0f779-5d14-7983-891e-db4ea39e4f67` 已实际调用 `multi_agent_v1.wait_agent`.
+- 返回状态: `completed`, `timed_out=false`.
+- 返回摘要确认只修改 `mod\Spire1Code\Forms\SerpentFormPower.cs`,并写出 `CODE_COMPLETE`;实现者未构建、未测试、未部署、未启动游戏.
+- 现在才向同批监督者 Plato 发送开始审核通知.本证据只打开监督门禁,不表示监督已通过.
+
+### 2026-10-01 20:53 r9 审核代理空转收割
+
+- Plato `01a0f779-5e40-7933-b5dd-cc6d76dc15b6` 和 Hegel `01a0f779-605c-7262-8869-d273d3ce1ab3` 由原生工具启动后超过10分钟没有新的会话事件,各自唯一报告不存在.关闭前先检查了报告路径,没有可收割证据.
+- 两者实际模型均为获准 `ovo05:opus5.5`,provider=gateway;没有模型漂移.但无报告不等于通过,不采信监督或独立审核.
+- 实现者 Anscombe 已过真实 wait_agent 门禁;当前中央 release r9 为57 warnings/0 errors,central probe r9 为123 PASS/0 FAIL.审核缺口仍只限代码监督和独立短审.
+- 按 Sec 11 超时拆分规则停止空转代理,以更窄的 6.1sol 审核重派.旧会话不作为交付证据.
+
+### 2026-10-01 20:55 r10 审核重派
+
+- r9 的两个 opus5.5 审核代理空转后已关闭,不计证据.
+- r10 重派两个窄审核,均实际 `ovoapi:6.1sol`,provider=gateway: Wegener `01a0f787-6b19-7530-b7e5-63897f1ec7df` 负责配对监督,Euler `01a0f787-6b83-7e11-af07-5ddcec01e0ee` 负责独立审核.路由证据为 agent-routes-r10-20261001.json.
+- 实现者 Anscombe 的完成门禁仍有效.监督目标仅审已经完成的 Serpent 修复,独立审核只读 AutoAnthony 和探针短切片.
+
+### 2026-10-01 21:40 真实 Mod 初始化证据
+
+- 证据目录: `G:\omp works\.tmp\form-playable-20260928-01a0e7ad\native-form-smoke-r10-20261001-03`.
+- 启动脚本: `G:\omp works\.tmp\form-playable-20260928-01a0e7ad\run-form-smoke-r10.ps1`.
+- 运行窗口: 2026-10-01T21:40:23.4622317+08:00 到 2026-10-01T21:40:45.1586434+08:00. `exitCode=0`, `timedOut=false`, `windowObservations=21`, `nonzeroWindowHandleObserved=false`.
+- 隔离边界: `sharedConfigSha256Unchanged=true`, `steamSettingsRestored=true`, `modsRestored=true`, `cleanupCompleted=true`, `modConsentSeeded=true`. 运行报告列出的真实加载 mod 为 `BaseLib`, `Watcher`, `Spire1`.
+- 真实日志证据: `[BaseLib] Applied 282 patches successfully, 0 failed`; `RUNNING MODDED! Loaded 3 mods (3 total)`; `Spire1 Forms: Watcher bridge bound; custom-run modifier available`; `Finished mod initialization for 'Spire1: StS1 Characters' (Spire1)`.
+- 证据边界: 这只证明真实游戏加载了当前 Spire1 DLL/PCK, Watcher 反射桥绑定且自定义对局修正注册. 它不证明自定义修正被选入一局, 不证明原卡进姿态, 不证明手动出牌, 六形态效果, 视觉, 存档或多人.
+- 已知噪声: Sentry crash handler 缺失, Dummy 渲染器 `Parameter "t" is null`,退出时 Godot RID/resource 泄漏,以及多项 `Could not find ... image path` 日志. 这些不能记为无错误,视觉资源另行审查.
+
+### 2026-10-01 22:07 代理路由纠偏
+
+- r11 初次派发曾解析为 `gpt-6-astra-ar` 基础 turn,不符合用户最新的 6.1sol 或 opus5.5 约束. 该批在写入产品代码前关闭,其空白报告不作交付证据.
+- r12 重新使用 Codex 原生 `multi_agent_v1` 并显式请求 `ovoapi:6.1sol`. 会话 turn_context 实际核验为 `ovoapi:6.1sol`, provider `gateway`,路由请求为 `agentrouter`. 证据: `G:\omp works\.tmp\form-playable-20260928-01a0e7ad\agent-routes-r12-20261001.json`.
+- r12 实现者 Dewey,视觉审查 Meitner,监督者 Lovelace. 实现者未完成前监督者只等待 `START REVIEW`,不得提前审查.
+
+## 2026-10-02 姿态形态 P0 三形态真实出牌闭环
+
+- 继续沿用用户边界: 前台玩 CS, 不抢焦点, 不启动可见游戏, 不写 Steam 安装, 不改共享 `mod_configs`, 只写 G: 测试目录。
+- 用户指定只允许 `6.1sol` 或 `opus5.5 (0.05)`；本轮最终独立审查和监督审查实际落盘为 `6.1sol` / `agentrouter`。原生审查报告: `docs/reports/form-playable-20260928/generic-nested-task-fix-final-review-20261001.md`、`generic-nested-task-fix-supervisor-20261001.md`，结论均为 `PASS（仅限静态审查）`。
+- 中央 Release 构建日志 `G:\omp works\.tmp\form-playable-20260928-01a0e7ad\central-build-generic-fix-20261001.log`: `58 warnings, 0 errors`。最终产物哈希: DLL `7418C03435ECF22A4669037D4684E5BFD05665DC2BAF517DE8B2EF56255AE000`，PCK `C8F718AB73F3C054FC3434F1CE0277E6C7E7E76DBF96A23104CF940231EC63BD`，PDB `425384C464B8027FABC21B3442853F155F73CA5C9C0FAF0BC65A9FB8BBA8ED59`。
+- 先修正 staging: 从测试副本 B 复制完整 `BaseLib`、`Watcher`、`Spire1` 顶层目录，写入 `native-form-smoke-r17-ftue-20261001/staging-latest.json`。旧的 `Loaded 2 mods (4 total)` 运行因嵌套目录和缺 manifest 作废。
+- 最新真实隔离 headless 运行脚本 `G:\omp works\.tmp\form-playable-20260928-01a0e7ad\native-form-smoke-r17-ftue-20261001\run-native-form-smoke.ps1` 于 `2026-10-02T04:55:35.0674498+08:00` 启动，`2026-10-02T04:56:25.1038242+08:00` 结束。`run-final.json`: `exitCode=0`、`timedOut=false`、49 次窗口句柄采样为零、日志排空、`sharedConfigSha256Unchanged=true`、`cleanupCompleted=true`；运行后隔离 mods 已清理且无残留游戏进程。
+- stdout 确认真实加载 3 个 mod、Watcher bridge 绑定，以及三张真实 Watcher 卡: `WATCHER_VIGILANCE`、`WATCHER_ERUPTION_P`、`WATCHER_BLASPHEMY`。
+- 三场景 JSON 均为本次新时间戳，`status=passed`、`cardPlay.status=completed`、`formGateAfter.passed=true`、`unobservedFaults=[]`: Calm=`VoidSerpentStancePower` + `VoidFormEffectPower`/`SerpentFormPower`；Wrath=`DemonReaperStancePower` + `DemonFormPower`/`ReaperFormEffectPower`；Divinity=`EchoCelestialStancePower` + `EchoFormEffectPower`/`CelestialFormPower`。
+- `form-native-smoke-final.json`: `status=completed`、`exitCode=0`、`quitStatus=executed-main-thread`、`quitDrainSettled=true`、`quitDrainOutcome=settled`；未将场景前置 `formGateBefore.passed=false` 误写为失败，它只是出牌前无姿态基线。
+- 已知 stderr 噪声仍单列: Sentry crashpad 缺失、Dummy renderer/Godot RID 和资源泄漏、headless 资源缓存提示。图片文件实际存在；未据 headless 日志声称视觉通过。
+- 新增完整证据报告 `docs/reports/form-playable-20260928/form-native-smoke-r17-final-20261002.md`，明确本次关闭的是 P0 三形态真实出牌闭环，未关闭可见 UI、完整数值边界、存档/重连和多人同步。
+
+### 效果事务审查边界
+
+- 旧 `effects-review.md` 中的 F1/F3 结论来自较早快照，不能直接套到当前源码；当前源码已经有 `SpendResources` 返回 Task 的包装、逐卡 token 和 `PowerModel._amount` 写入后捕获。
+- 本轮新增的两个独立静态审查代理都只落盘到中途：已确认当前支付期卡身份守卫和真实 Task 包装的首条事实，但没有形成最终 PASS/REWORK。它们的未完成报告不作为通过证据。
+- 因此本记录关闭的是 P0 的真实三张姿态卡出牌和形态 carrier/effect 生成，不关闭完整效果事务边界。支付失败后的 pending 清理、复杂嵌套重入、力量事务故障注入、完整数值平衡仍保留为后续审查项。

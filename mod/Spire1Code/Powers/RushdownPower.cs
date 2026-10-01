@@ -24,7 +24,7 @@ public class RushdownPower : CustomPowerModel, IOnStanceChanged
 
     public async Task OnStanceChanged(PlayerChoiceContext ctx, StancePower? from, StancePower? to)
     {
-        if (to is not WrathPower || Amount <= 0)
+        if (to?.StanceName != "Wrath" || Amount <= 0)
             return;
         Flash();
         await CardPileCmd.Draw(ctx, Amount, Owner.Player);

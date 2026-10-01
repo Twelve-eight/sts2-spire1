@@ -1,0 +1,44 @@
+[
+  {
+    "id": "01a0f779-5d14-7983-891e-db4ea39e4f67",
+    "requested": "ovoapi:6.1sol",
+    "model": "ovoapi:6.1sol",
+    "effort": "low",
+    "provider": "gateway",
+    "turn_timestamp": "2026-10-01T12:38:42.633Z",
+    "metadata_path": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\01\\rollout-2026-10-01T20-38-41-01a0f779-5d14-7983-891e-db4ea39e4f67.jsonl",
+    "checked_at": "2026-10-01T20:39:17.1690105+08:00",
+    "registry_provider": "ovoapi",
+    "registry_upstream_model": "gpt-6.1-sol",
+    "registry_fallback": null,
+    "registry_source": "G:\\omp works\\Tools\\agentrouter-filter\\providers.json"
+  },
+  {
+    "id": "01a0f779-5e40-7933-b5dd-cc6d76dc15b6",
+    "requested": "ovo05:opus5.5",
+    "model": "ovo05:opus5.5",
+    "effort": "low",
+    "provider": "gateway",
+    "turn_timestamp": "2026-10-01T12:38:42.541Z",
+    "metadata_path": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\01\\rollout-2026-10-01T20-38-41-01a0f779-5e40-7933-b5dd-cc6d76dc15b6.jsonl",
+    "checked_at": "2026-10-01T20:39:17.1955273+08:00",
+    "registry_provider": "ovoapi-005",
+    "registry_upstream_model": "claude-opus-5.5",
+    "registry_fallback": null,
+    "registry_source": "G:\\omp works\\Tools\\agentrouter-filter\\providers.json"
+  },
+  {
+    "id": "01a0f779-605c-7262-8869-d273d3ce1ab3",
+    "requested": "ovo05:opus5.5",
+    "model": "ovo05:opus5.5",
+    "effort": "low",
+    "provider": "gateway",
+    "turn_timestamp": "2026-10-01T12:38:43.812Z",
+    "metadata_path": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\01\\rollout-2026-10-01T20-38-42-01a0f779-605c-7262-8869-d273d3ce1ab3.jsonl",
+    "checked_at": "2026-10-01T20:39:17.2271392+08:00",
+    "registry_provider": "ovoapi-005",
+    "registry_upstream_model": "claude-opus-5.5",
+    "registry_fallback": null,
+    "registry_source": "G:\\omp works\\Tools\\agentrouter-filter\\providers.json"
+  }
+]

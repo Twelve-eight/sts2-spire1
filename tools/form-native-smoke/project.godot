@@ -1,0 +1,20 @@
+; 仅用于独立用户目录预检, 不加载游戏项目或任何模组.
+config_version=5
+
+[application]
+config/name="FormNativeUserdataProbe"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="FormNativeUserdataProbe"
+run/main_loop_type="SceneTree"
+run/low_processor_usage_mode=true
+
+[audio]
+driver/driver="Dummy"
+driver/enable_input=false
+
+[debug]
+file_logging/enable_file_logging=false
+file_logging/enable_file_logging.pc=false
+
+[rendering]
+renderer/rendering_method="gl_compatibility"

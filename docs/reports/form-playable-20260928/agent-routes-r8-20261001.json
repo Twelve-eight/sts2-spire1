@@ -1,0 +1,29 @@
+[
+  {
+    "id": "01a0f5ad-627a-7672-a4b1-784804bb9fbd",
+    "model": "gpt-6-astra-ar",
+    "effort": "low",
+    "session_provider": "gateway",
+    "metadata_path": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\01\\rollout-2026-10-01T12-16-15-01a0f5ad-627a-7672-a4b1-784804bb9fbd.jsonl",
+    "turn_timestamp": "2026-10-01T04:16:16.116Z",
+    "checked_at": "2026-10-01T12:17:02.7816427+08:00"
+  },
+  {
+    "id": "01a0f5ad-632b-7e42-bbbf-4a61246adff7",
+    "model": "gpt-6-astra-ar",
+    "effort": "low",
+    "session_provider": "gateway",
+    "metadata_path": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\01\\rollout-2026-10-01T12-16-16-01a0f5ad-632b-7e42-bbbf-4a61246adff7.jsonl",
+    "turn_timestamp": "2026-10-01T04:16:16.282Z",
+    "checked_at": "2026-10-01T12:17:02.7902017+08:00"
+  },
+  {
+    "id": "01a0f5ad-6391-7270-b53d-d608d8d4dfc8",
+    "model": "gpt-6-astra-ar",
+    "effort": "low",
+    "session_provider": "gateway",
+    "metadata_path": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\01\\rollout-2026-10-01T12-16-16-01a0f5ad-6391-7270-b53d-d608d8d4dfc8.jsonl",
+    "turn_timestamp": "2026-10-01T04:16:16.403Z",
+    "checked_at": "2026-10-01T12:17:02.8015247+08:00"
+  }
+]

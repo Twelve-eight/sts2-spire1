@@ -1,0 +1,8 @@
+{
+  "checked_at": "2026-10-01T11:28:58.4621897+08:00",
+  "alias": "gpt-6-astra-ar",
+  "provider": "agentrouter",
+  "upstream_model": "gpt-6-astra",
+  "model_fallback": null,
+  "source": "G:\\omp works\\Tools\\agentrouter-filter\\providers.json"
+}

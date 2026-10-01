@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <DefineConstants>$(DefineConstants);SPIRE1_FORM_MOD</DefineConstants>
+    <UseSharedCompilation>false</UseSharedCompilation>
+    <NuGetAudit>false</NuGetAudit>
+    <RestoreSources>$(MSBuildThisFileDirectory)</RestoreSources>
+    <FormsSourceRoot Condition="'$(FormsSourceRoot)' == ''">$(MSBuildThisFileDirectory)../../mod/Spire1Code/Forms</FormsSourceRoot>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="ContractStubs.cs" />
+    <Compile Include="ProbeSupport.cs" />
+    <Compile Include="VoidScenarios.cs" />
+    <Compile Include="SerpentScenarios.cs" />
+    <Compile Include="DemonScenarios.cs" />
+    <Compile Include="EchoScenarios.cs" />
+    <Compile Include="CelestialReaperScenarios.cs" />
+    <Compile Include="CloneScenarios.cs" />
+    <Compile Include="TransactionPatchAdapter.cs" />
+    <Compile Include="TransactionScenarios.cs" />
+    <Compile Include="$(FormsSourceRoot)/VoidFormPlayTransactionPatch.cs" Link="Forms/VoidFormPlayTransactionPatch.cs" Condition="Exists('$(FormsSourceRoot)/VoidFormPlayTransactionPatch.cs')" />
+    <Compile Include="$(FormsSourceRoot)/DemonFormStrengthTransactionPatch.cs" Link="Forms/DemonFormStrengthTransactionPatch.cs" Condition="Exists('$(FormsSourceRoot)/DemonFormStrengthTransactionPatch.cs')" />
+    <Compile Include="$(FormsSourceRoot)/VoidFormEffectPower.cs" Link="Forms/VoidFormEffectPower.cs" />
+    <Compile Include="$(FormsSourceRoot)/SerpentFormPower.cs" Link="Forms/SerpentFormPower.cs" />
+    <Compile Include="$(FormsSourceRoot)/DemonFormPower.cs" Link="Forms/DemonFormPower.cs" />
+    <Compile Include="$(FormsSourceRoot)/ReaperFormEffectPower.cs" Link="Forms/ReaperFormEffectPower.cs" />
+    <Compile Include="$(FormsSourceRoot)/EchoFormEffectPower.cs" Link="Forms/EchoFormEffectPower.cs" />
+    <Compile Include="$(FormsSourceRoot)/CelestialFormPower.cs" Link="Forms/CelestialFormPower.cs" />
+    <AssemblyMetadata Include="FormsSourceRoot" Value="$(FormsSourceRoot)" />
+  </ItemGroup>
+</Project>
