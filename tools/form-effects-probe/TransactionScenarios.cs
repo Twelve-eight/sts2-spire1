@@ -398,7 +398,6 @@ internal static class TransactionScenarios
             object? nextAction = null;
             Task? completion = null;
             var completionGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-            var raceStart = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             try
             {
                 // The native action owns the payment handoff before its completion task is released.
@@ -414,20 +413,11 @@ internal static class TransactionScenarios
                     action);
                 Check.False(completion.IsCompleted, "native completion observer remains gated before the race");
 
-                // Run the native CancelAction cleanup and release the completion gate concurrently.
-                // Neither side may double-cancel, retain the token, or roll back another generation.
-                Task cancel = Task.Run(async () =>
-                {
-                    await raceStart.Task;
-                    VoidFormPlayTransaction.CancelNativeActionForPatch(action);
-                });
-                Task release = Task.Run(async () =>
-                {
-                    await raceStart.Task;
-                    completionGate.SetResult(true);
-                });
-                raceStart.SetResult(true);
-                await Task.WhenAll(cancel, release);
+                // Keep the completion observer gated, then complete native CancelAction cleanup first.
+                // The synchronous return from CancelNativeActionForPatch is the cancel-first barrier:
+                // only after it returns may the completion gate be released and the observer continue.
+                VoidFormPlayTransaction.CancelNativeActionForPatch(action);
+                completionGate.SetResult(true);
                 await completion;
 
                 // Both native entry points have now run; repeated entry must remain idempotent.
