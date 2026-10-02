@@ -385,7 +385,97 @@ internal static class TransactionScenarios
                 }
                 VoidFormPlayTransaction.CancelNativeActionForPatch(action);
             }
-        });\n\n        suite.Add("transaction.void_no_token_manual_wrapper_does_not_consume_allowance", async () =>
+        });
+
+        suite.Add("transaction.void_native_inflight_cancel_completion_race_is_idempotent", async () =>
+        {
+            Check.True(ProductionPatchCalls.HasVoidPatch, "linked Void transaction patch is present");
+            Check.True(ProductionPatchCalls.HasOnPlayPatch, "linked OnPlay transaction patch is present");
+            var f = new Fixture();
+            var power = f.Attach<VoidFormEffectPower>();
+            CardModel card = f.Card();
+            object action = BeginNativeAction(card);
+            object? nextAction = null;
+            Task? completion = null;
+            var completionGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var raceStart = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            try
+            {
+                // The native action owns the payment handoff before its completion task is released.
+                Task<(int, int)> spend = ProductionPatchCalls.SpendResources(
+                    card,
+                    () => Task.FromResult((3, 0)));
+                await spend;
+                Check.Cost(power, card, true, "in-flight native action has a completed payment reservation");
+
+                // Keep ExecuteAction completion pending while the observer is already in flight.
+                completion = VoidFormPlayTransaction.ObserveNativeActionCompletionForPatch(
+                    completionGate.Task,
+                    action);
+                Check.False(completion.IsCompleted, "native completion observer remains gated before the race");
+
+                // Run the native CancelAction cleanup and release the completion gate concurrently.
+                // Neither side may double-cancel, retain the token, or roll back another generation.
+                Task cancel = Task.Run(async () =>
+                {
+                    await raceStart.Task;
+                    VoidFormPlayTransaction.CancelNativeActionForPatch(action);
+                });
+                Task release = Task.Run(async () =>
+                {
+                    await raceStart.Task;
+                    completionGate.SetResult(true);
+                });
+                raceStart.SetResult(true);
+                await Task.WhenAll(cancel, release);
+                await completion;
+
+                // Both native entry points have now run; repeated entry must remain idempotent.
+                VoidFormPlayTransaction.CancelNativeActionForPatch(action);
+                await VoidFormPlayTransaction.ObserveNativeActionCompletionForPatch(
+                    Task.CompletedTask,
+                    action);
+                Check.Cost(power, card, true, "cancel and completion race releases token and reservation once");
+
+                // A new action/payment generation can consume the allowance after the race.
+                nextAction = BeginNativeAction(card);
+                Task<(int, int)> nextSpend = ProductionPatchCalls.SpendResources(
+                    card,
+                    () => Task.FromResult((3, 0)));
+                await nextSpend;
+                await PlayTransactionCard(f, power, card, Fixture.Play(card), isAutoPlay: false);
+                Check.Cost(power, f.Card(), false, "next generation consumes after in-flight cancel race cleanup");
+
+                // Delayed cleanup from the old action must not roll back the successful AfterCardPlayed.
+                await VoidFormPlayTransaction.ObserveNativeActionCompletionForPatch(
+                    Task.CompletedTask,
+                    action);
+                VoidFormPlayTransaction.CancelNativeActionForPatch(action);
+                Check.Cost(power, f.Card(), false, "old race cleanup does not roll back AfterCardPlayed");
+            }
+            finally
+            {
+                completionGate.TrySetResult(true);
+                if (completion != null)
+                {
+                    try
+                    {
+                        await completion;
+                    }
+                    catch
+                    {
+                        // Preserve the original probe failure while observing the gated cleanup task.
+                    }
+                }
+                if (nextAction != null)
+                {
+                    VoidFormPlayTransaction.CancelNativeActionForPatch(nextAction);
+                }
+                VoidFormPlayTransaction.CancelNativeActionForPatch(action);
+            }
+        });
+
+        suite.Add("transaction.void_no_token_manual_wrapper_does_not_consume_allowance", async () =>
         {
             Check.True(ProductionPatchCalls.HasOnPlayPatch, "linked OnPlay transaction patch is present");
             var f = new Fixture();
