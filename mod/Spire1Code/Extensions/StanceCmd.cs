@@ -58,17 +58,20 @@ public static class StanceCmd
         }
 
         TStance? entered = await PowerCmd.Apply<TStance>(ctx, player.Creature, 1m, player.Creature, source);
-        if (entered == null)
+        TStance? mounted = player.Creature.GetPower<TStance>();
+        if (entered == null || mounted == null)
         {
+            // PowerCmd.Apply<T> can return an unattached mutable phantom when the non-generic
+            // Apply gate rejects the mount. Only the creature's live power is a successful entry.
             return;
         }
 
-        if (entered is DivinityPower)
+        if (mounted is DivinityPower)
         {
             await PlayerCmd.GainEnergy(3m, player);
         }
 
-        await Dispatch(player, ctx, current, entered);
+        await Dispatch(player, ctx, current, mounted);
     }
 
     public static async Task Exit(PlayerChoiceContext ctx, Player player, CardModel? source)
