@@ -62,3 +62,8 @@
 - 第三轮 reviewer 指出的源码伪换行阻断已修复并通过静态 grep 与 `git diff --check`。
 - 所要求的真正 in-flight execution-task cancel/completion race probe 已落盘，直接调用两个 production native cleanup 入口，未用 `ProbeEndAction` 冒充证据。
 - 本轮交付仍是静态源码级 REWORK4 完成，动态验证明确留给主会话；不宣称构建、探针或实机通过。
+
+## 备份记录
+
+- 本轮限定的两个文件已由提交 `cfdfeea`（`Add native transaction cancel race probe`）提交；未把其他会话已有 staged 变更纳入该提交。
+- 本报告随后仅追加本备份记录；仍未构建、未测试、未部署、未启动游戏。
