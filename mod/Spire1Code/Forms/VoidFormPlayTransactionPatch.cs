@@ -114,7 +114,13 @@ internal static class VoidFormPlayTransaction
         }
         else
         {
+            // Fail closed before any reservation or bucket registration. Without an exact
+            // action handoff no later ClaimForPlay/action completion can own this token, so a
+            // reservation here would starve the rest of the turn. The invocation still runs
+            // through the normal postfix/finalizer with unchanged payment result/exception
+            // semantics; it simply contributes no Void bookkeeping.
             token.Action = null;
+            return token;
         }
 
         if (power != null)
@@ -750,9 +756,18 @@ internal static class VoidFormReserveBeforeSpendPatch
 
     [HarmonyFinalizer]
     private static Exception? Finalizer(
-        VoidFormPlayTransaction.SpendToken __state,
+        VoidFormPlayTransaction.SpendToken? __state,
         Exception? __exception)
     {
+        // A prefix exception leaves __state at its default value: Harmony still runs this
+        // finalizer. Returning the original exception (instead of dereferencing null) keeps the
+        // real failure visible and never pretends that cleanup ran for a token that was never
+        // fully constructed.
+        if (__state == null)
+        {
+            return __exception;
+        }
+
         VoidFormPlayTransaction.EndSpendInvocation(__state);
         if (__exception != null)
         {
@@ -787,9 +802,15 @@ internal static class VoidFormOnPlayWrapperTransactionPatch
 
     [HarmonyFinalizer]
     private static Exception? Finalizer(
-        VoidFormPlayTransaction.PlayState __state,
+        VoidFormPlayTransaction.PlayState? __state,
         Exception? __exception)
     {
+        // Same prefix-exception contract as the spend finalizer: __state can be null here.
+        if (__state == null)
+        {
+            return __exception;
+        }
+
         if (__exception != null)
         {
             VoidFormPlayTransaction.AbortForPatch(__state);

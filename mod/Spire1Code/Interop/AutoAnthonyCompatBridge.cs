@@ -42,7 +42,28 @@ namespace Spire1.Spire1Code.Interop;
 /// </summary>
 internal static class AutoAnthonyCompatBridge
 {
-    private static bool _applied;
+    private enum ThirdPartyCapabilityState
+    {
+        Pending,
+        LegacyBridge,
+        OfficialAddon,
+        OfficialAddonPending,
+        Unsupported,
+    }
+
+    // Core AutoAnthony groups are tracked independently from the optional
+    // Watcher capability. A late Watcher/AutoAnthonyWatcher load must be able
+    // to revisit only the optional capability without replaying core patches.
+    private const int ExpectedFromPatchCount = 3;
+    private const int ExpectedPoolDeckPatchCount = 6;
+
+    private static bool _fromPatchesApplied;
+    private static bool _poolDeckPatchesApplied;
+    private static readonly List<MethodInfo> FromPartialPatchedMethods = new();
+    private static readonly List<MethodInfo> PoolDeckPartialPatchedMethods = new();
+    private static ThirdPartyCapabilityState _thirdPartyCapabilityState;
+    private static readonly List<MethodInfo> ThirdPartyPatchedMethods = new();
+    private static readonly List<MethodInfo> ThirdPartyPartialPatchedMethods = new();
 
     // GeneratedCharacter 枚举的 int 常量（2026-09-27 ilspycmd 反编译实锤枚举定义顺序：
     // Ironclad=0, Silent=1, Defect=2, Necrobinder=3, Regent=4, Colorless=5）。
@@ -193,16 +214,12 @@ internal static class AutoAnthonyCompatBridge
     }
 
     /// <summary>
-    /// 挂全部桥接补丁。必须在 ModManager 加载完 AutoAnthony 之后调用（晚于其 initializer）。
-    /// 返回 false = AutoAnthony 未加载或反射解析失败，静默跳过。
+    /// 挂载桥接补丁。必须在 ModManager 加载完 AutoAnthony 之后调用（晚于其 initializer）。
+    /// 返回 true 仅表示 core groups 已成功且 Watcher capability 已 settled；返回 false
+    /// 表示 AutoAnthony 尚未出现、解析或 core group 尚未完成，或可选 capability 仍在等待。
     /// </summary>
     internal static bool Apply(Harmony harmony)
     {
-        if (_applied)
-        {
-            return true;
-        }
-
         // 探测：AutoAnthony 程序集必须已在 AppDomain（ModManager 装载）。
         if (AaAssembly == null)
         {
@@ -216,17 +233,98 @@ internal static class AutoAnthonyCompatBridge
             return false;
         }
 
-        int patched = 0;
-        // SP1-1 (2026-09-15) capability-level failure boundary: each patch group runs in
-        // its own try/catch so one group throwing cannot abort the others - and cannot leave
-        // _applied=false after some groups already patched, which would let the
-        // AutoAnthonyLoadHook retry re-apply the successful groups as duplicate Harmony patches.
-        patched += ApplyPatchGroup("From overloads", () => PatchFrom(harmony));
-        patched += ApplyPatchGroup("pool/deck getters", () => PatchPoolsAndDecks(harmony));
-        patched += ApplyPatchGroup("third-party entries", () => PatchThirdPartyEntries(harmony));
-        _applied = patched > 0;
-        MainFile.Logger.Info($"[Spire1] AutoAnthony bridge applied ({patched} patch groups).");
-        return _applied;
+        int newlyPatched = 0;
+        // SP1-1: each core group has its own idempotence bit. A group is
+        // complete only when every expected member was patched. Partial
+        // installs are rolled back; if rollback itself fails, the recorded
+        // methods are cleaned before a later retry so no duplicate Harmony
+        // patches can be added.
+        if (!_fromPatchesApplied
+            && TryApplyCoreGroup(harmony, "From overloads", ExpectedFromPatchCount,
+                FromPartialPatchedMethods,
+                methods => PatchFrom(harmony, methods)))
+        {
+            _fromPatchesApplied = true;
+            newlyPatched++;
+        }
+        if (!_poolDeckPatchesApplied
+            && TryApplyCoreGroup(harmony, "pool/deck getters", ExpectedPoolDeckPatchCount,
+                PoolDeckPartialPatchedMethods,
+                methods => PatchPoolsAndDecks(harmony, methods)))
+        {
+            _poolDeckPatchesApplied = true;
+            newlyPatched++;
+        }
+
+        bool optionalSettled;
+        try
+        {
+            optionalSettled = PatchThirdPartyEntries(harmony);
+        }
+        catch (Exception e)
+        {
+            // Optional capability failure is fail-closed: it must not escape
+            // into the Spire1 initializer and must not change core state.
+            MainFile.Logger.Error($"[Spire1] AutoAnthony bridge: third-party capability failed: {e.Message} (core bridge unaffected)");
+            optionalSettled = false;
+        }
+
+        bool coreSettled = _fromPatchesApplied && _poolDeckPatchesApplied;
+        bool settled = coreSettled && optionalSettled;
+        if (newlyPatched > 0 || optionalSettled)
+        {
+            MainFile.Logger.Info($"[Spire1] AutoAnthony bridge state: core={coreSettled}, third-party={_thirdPartyCapabilityState}, settled={settled}.");
+        }
+        return settled;
+    }
+
+    /// <summary>当 AutoAnthony 已出现且仅靠 AssemblyLoad 事件不足以完成当前能力时,
+    /// 由加载钩子启动进程级低频重试.这里只读取程序集与纯内存状态,不触碰 Godot 或 ModelDb.
+    /// 可选 Watcher/AutoAnthonyWatcher 都未出现且 core 已完成时,AssemblyLoad 监听足够,
+    /// 不创建无意义的周期唤醒源.</summary>
+    internal static bool NeedsRetryWithoutAssemblyLoad
+    {
+        get
+        {
+            if (AaAssembly == null)
+            {
+                return false;
+            }
+
+            if (!_fromPatchesApplied
+                || !_poolDeckPatchesApplied
+                || FromPartialPatchedMethods.Count > 0
+                || PoolDeckPartialPatchedMethods.Count > 0
+                || ThirdPartyPartialPatchedMethods.Count > 0)
+            {
+                return true;
+            }
+
+            bool watcherLoaded = AppDomain.CurrentDomain.GetAssemblies()
+                .Any(a => a.GetName().Name == WatcherModAssembly);
+            bool officialAddonLoaded = AppDomain.CurrentDomain.GetAssemblies()
+                .Any(a => a.GetName().Name == "AutoAnthonyWatcher");
+
+            if (_thirdPartyCapabilityState == ThirdPartyCapabilityState.OfficialAddonPending)
+            {
+                return true;
+            }
+
+            // A late official addon must be observable even when a legacy
+            // Watcher bridge has already been installed and the deferred
+            // AssemblyLoad callback is still waiting to run.
+            if (officialAddonLoaded && _thirdPartyCapabilityState != ThirdPartyCapabilityState.OfficialAddon)
+            {
+                return true;
+            }
+
+            // Pending/Unsupported is timer-worthy only after an optional
+            // capability assembly is present. If neither optional assembly is
+            // installed, the AssemblyLoad hook is the only useful wake source.
+            return (_thirdPartyCapabilityState == ThirdPartyCapabilityState.Pending
+                    || _thirdPartyCapabilityState == ThirdPartyCapabilityState.Unsupported)
+                && (watcherLoaded || officialAddonLoaded);
+        }
     }
 
     /// <summary>Apply 期一次性解析 AutoAnthony 的类型与成员到静态缓存；任一必需成员缺失
@@ -298,19 +396,66 @@ internal static class AutoAnthonyCompatBridge
         Check(GcColorless, "Colorless");
     }
 
-    /// <summary>Runs one interop patch group in isolation: a thrown group is logged and
-    /// counted as 0, the remaining groups still apply.</summary>
-    private static int ApplyPatchGroup(string name, Func<int> group)
+    private static bool TryApplyCoreGroup(Harmony harmony, string name, int expectedCount,
+        List<MethodInfo> partialMethods, Func<List<MethodInfo>, int> group)
     {
+        if (partialMethods.Count > 0)
+        {
+            if (!RollbackPatchedMethods(harmony, partialMethods, name))
+            {
+                MainFile.Logger.Error($"[Spire1] AutoAnthony bridge: core group '{name}' has stale partial patches that could not be removed; keeping it pending.");
+                return false;
+            }
+            partialMethods.Clear();
+        }
+
+        List<MethodInfo> installed = new();
+        int patched;
         try
         {
-            return group();
+            patched = group(installed);
         }
         catch (Exception e)
         {
-            MainFile.Logger.Error($"[Spire1] AutoAnthony bridge: patch group '{name}' failed: {e.Message} (other groups unaffected)");
-            return 0;
+            bool rolledBack = RollbackPatchedMethods(harmony, installed, name);
+            if (!rolledBack)
+            {
+                partialMethods.AddRange(installed.Distinct());
+            }
+            MainFile.Logger.Error($"[Spire1] AutoAnthony bridge: core group '{name}' threw: {e.Message}; rollback={rolledBack}; keeping it pending.");
+            return false;
         }
+
+        if (patched == expectedCount)
+        {
+            return true;
+        }
+
+        bool completeRollback = RollbackPatchedMethods(harmony, installed, name);
+        if (!completeRollback)
+        {
+            partialMethods.AddRange(installed.Distinct());
+        }
+        MainFile.Logger.Error($"[Spire1] AutoAnthony bridge: core group '{name}' installed {patched}/{expectedCount}; rollback={completeRollback}; keeping it pending.");
+        return false;
+    }
+
+    private static bool RollbackPatchedMethods(Harmony harmony, IEnumerable<MethodInfo> methods, string scope)
+    {
+        bool success = true;
+        foreach (MethodInfo method in methods.Distinct())
+        {
+            try
+            {
+                harmony.Unpatch(method, HarmonyPatchType.All, harmony.Id);
+            }
+            catch (Exception e)
+            {
+                success = false;
+                MainFile.Logger.Error($"[Spire1] AutoAnthony bridge: failed to remove {scope} patch from {method.Name}: {e.Message}");
+            }
+        }
+        return success;
     }
 
     /// <summary>
@@ -318,8 +463,8 @@ internal static class AutoAnthonyCompatBridge
     ///
     /// 2026-09-10 让位:AutoAnthony 核心 v0.3.7x 起提供官方扩展 API,同作者的工坊扩展
     /// "Auto-Anthonyology: Watcher"(AutoAnthonyWatcher, 3794876718)用它注册了完整的观者
-    /// 生成体系.本桥的观者部分在该扩展在场时冗余且冲突,检测到该程序集时本方法返回 0,
-    /// 观者完全交给扩展;StS1 自有角色(SPIRE1-*)的桥接不受影响.
+    /// 生成体系.本桥的观者部分在该扩展在场时冗余且冲突,检测到该程序集时本方法
+    /// 不安装旧 Watcher bridge,观者完全交给扩展;StS1 自有角色(SPIRE1-*)的桥接不受影响.
     ///
     /// 扩展缺席时的旧行为保留:激活映射故意返回 Ironclad 而非 Colorless(AA 的
     /// NormalizeCharacters 会剥掉 Colorless);观者的实际卡池由 ThirdPartyPoolPrefix 指向
@@ -331,54 +476,171 @@ internal static class AutoAnthonyCompatBridge
     /// (Model id=CARD_POOL.WATCHER_CARD_POOL not found).现只记住 poolType,实例改由三个补丁
     /// 守卫首次真正需要时经 ResolveThirdPartyPoolInstance 惰性 GetByIdOrNull 解析并缓存.
     /// </summary>
-    private static int PatchThirdPartyEntries(Harmony harmony)
+    private static bool PatchThirdPartyEntries(Harmony harmony)
     {
+        List<MethodInfo> installed = new();
+        try
+        {
+            return PatchThirdPartyEntriesCore(harmony, installed);
+        }
+        catch (Exception e)
+        {
+            List<MethodInfo> attempted = installed
+                .Concat(ThirdPartyPatchedMethods)
+                .Concat(ThirdPartyPartialPatchedMethods)
+                .Distinct()
+                .ToList();
+            bool rolledBack = RollbackPatchedMethods(harmony, attempted, "Watcher exception");
+            ClearThirdPartyTransientState();
+            ThirdPartyPatchedMethods.Clear();
+            ThirdPartyPartialPatchedMethods.Clear();
+            if (!rolledBack)
+            {
+                ThirdPartyPartialPatchedMethods.AddRange(attempted);
+            }
+            _thirdPartyCapabilityState = AppDomain.CurrentDomain.GetAssemblies()
+                .Any(a => a.GetName().Name == "AutoAnthonyWatcher")
+                ? ThirdPartyCapabilityState.OfficialAddonPending
+                : ThirdPartyCapabilityState.Pending;
+            MainFile.Logger.Error($"[Spire1] AutoAnthony bridge: third-party capability threw: {e.Message}; rollback={rolledBack}; capability remains retryable.");
+            return false;
+        }
+    }
+
+    private static bool PatchThirdPartyEntriesCore(Harmony harmony, List<MethodInfo> installed)
+    {
+        // The official addon always wins, including after a legacy bridge was
+        // installed. If removal fails, the state stays retryable and this
+        // method never reports settled.
         if (AppDomain.CurrentDomain.GetAssemblies()
             .Any(a => a.GetName().Name == "AutoAnthonyWatcher"))
         {
-            MainFile.Logger.Info("[Spire1] AutoAnthony bridge: AutoAnthonyWatcher addon present - Watcher handed over to the official extension API, no third-party bridging.");
-            return 0;
+            return SetOfficialWatcherCapability(harmony);
+        }
+
+        if (_thirdPartyCapabilityState == ThirdPartyCapabilityState.OfficialAddon)
+        {
+            return true;
+        }
+        if (_thirdPartyCapabilityState == ThirdPartyCapabilityState.OfficialAddonPending)
+        {
+            return false;
+        }
+        if (_thirdPartyCapabilityState == ThirdPartyCapabilityState.Unsupported)
+        {
+            // Unsupported means the legacy capability is disabled, not that
+            // the optional ecosystem is settled. Keep the load hook alive so
+            // a later AutoAnthonyWatcher can still settle officially.
+            return false;
+        }
+        if (_thirdPartyCapabilityState == ThirdPartyCapabilityState.LegacyBridge)
+        {
+            // Keep the load hook alive so a late official addon can take over
+            // and trigger a deterministic unpatch attempt.
+            return false;
+        }
+
+        if (ThirdPartyPartialPatchedMethods.Count > 0)
+        {
+            if (!RollbackPatchedMethods(harmony, ThirdPartyPartialPatchedMethods, "partial Watcher"))
+            {
+                _thirdPartyCapabilityState = ThirdPartyCapabilityState.Pending;
+                MainFile.Logger.Error("[Spire1] AutoAnthony bridge: stale partial Watcher patches could not be removed; capability remains pending and retryable.");
+                return false;
+            }
+            ThirdPartyPartialPatchedMethods.Clear();
         }
 
         Assembly? watcherAssembly = AppDomain.CurrentDomain.GetAssemblies()
             .FirstOrDefault(a => a.GetName().Name == WatcherModAssembly);
         if (watcherAssembly == null)
         {
-            return 0; // 工坊观者未安装--不注册
+            return false; // 工坊观者未安装--保持 pending,等待可能的晚加载
         }
 
         Type? watcherType = watcherAssembly.GetType(WatcherCharacterType);
-        if (watcherType == null)
+        Type? watcherPoolType = watcherAssembly.GetType(WatcherPoolType);
+        if (watcherType == null || watcherPoolType == null)
         {
-            MainFile.Logger.Info("[Spire1] AutoAnthony bridge: Watcher mod present but WatcherMod.Watcher type not found - skipped.");
-            return 0;
+            // A missing type is not a settled optional capability: the assembly can
+            // still be in its registration window, or the official addon can load
+            // later. Keep the bridge fail-closed and retain the retry/load-hook path.
+            ClearThirdPartyTransientState();
+            _thirdPartyCapabilityState = ThirdPartyCapabilityState.Pending;
+            MainFile.Logger.Error("[Spire1] AutoAnthony bridge: Watcher character or WatcherCardPool type missing - legacy capability remains pending without partial install.");
+            return false;
+        }
+
+        // CardPool, AllCards and AllCardIds are one capability. The pool
+        // type is mandatory; no CardPool-only downgrade is accepted.
+        const int expected = 3;
+        int count = PatchGetter(harmony, watcherType, "CardPool",
+            new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(ThirdPartyPoolPrefix)),
+            patchedMethods: installed);
+        count += PatchGetter(harmony, watcherPoolType, "AllCards",
+            new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(ThirdPartyPoolContentsPrefix)),
+            patchedMethods: installed);
+        count += PatchGetter(harmony, watcherPoolType, "AllCardIds",
+            postfix: new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(ThirdPartyPoolIdsPostfix)),
+            patchedMethods: installed);
+
+        if (count != expected)
+        {
+            bool rolledBack = RollbackPatchedMethods(harmony, installed, "Watcher");
+            ClearThirdPartyTransientState();
+            if (!rolledBack)
+            {
+                ThirdPartyPartialPatchedMethods.AddRange(installed.Distinct());
+            }
+            _thirdPartyCapabilityState = ThirdPartyCapabilityState.Pending;
+            MainFile.Logger.Error($"[Spire1] AutoAnthony bridge: Watcher capability installed {count}/{expected} patch(es); rollback={rolledBack}; capability remains pending.");
+            return false;
         }
 
         // 激活身份 = Ironclad（见方法注释）；池身份 = Colorless（ThirdPartyPoolPrefix）。
         ThirdPartyMap[watcherType] = GcIronclad;
         ThirdPartyEntryMap[WatcherEntry] = GcIronclad;
+        ThirdPartyPatchedMethods.AddRange(installed);
+        _thirdPartyCapabilityState = ThirdPartyCapabilityState.LegacyBridge;
+        MainFile.Logger.Info("[Spire1] AutoAnthony bridge: workshop Watcher -> Colorless generated pool (Ironclad activation carrier, native starting deck kept, watcher pool contents chaos-swapped). Official addon takeover remains watchable.");
+        return false;
+    }
 
-        int count = PatchGetter(harmony, watcherType, "CardPool",
-            new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(ThirdPartyPoolPrefix)));
+    private static bool SetOfficialWatcherCapability(Harmony harmony)
+    {
+        if (_thirdPartyCapabilityState == ThirdPartyCapabilityState.OfficialAddon)
+        {
+            return true;
+        }
 
-        // 潘多拉魔盒类转换补丁修复：混沌局把 WatcherCardPool.AllCards 也换成混沌无色内容；
-        // AllCardIds 用并集保住原生卡的池身份解析（CardModel.Pool 经 AllCardIds 反查）。
-        // R2（2026-09-06 审阅）：WatcherCardPool 未重声明这两个属性，PatchGetter 经继承链把
-        // 补丁钉在基类 CardPoolModel 的 getter 上（声明域=全部卡池），守卫靠实例比对收回作用域。
-        // (2026-09-27) 池实例改惰性解析，这里只记住 poolType。
-        _thirdPartyPoolType = watcherAssembly.GetType(WatcherPoolType);
-        if (_thirdPartyPoolType != null)
+        bool legacyRemoved = RollbackPatchedMethods(harmony, ThirdPartyPatchedMethods, "legacy Watcher");
+        bool partialRemoved = RollbackPatchedMethods(harmony, ThirdPartyPartialPatchedMethods, "partial Watcher");
+        if (!legacyRemoved || !partialRemoved)
         {
-            count += PatchGetter(harmony, _thirdPartyPoolType, "AllCards",
-                new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(ThirdPartyPoolContentsPrefix)));
-            count += PatchGetter(harmony, _thirdPartyPoolType, "AllCardIds",
-                new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(ThirdPartyPoolIdsPostfix)));
+            // Even if Harmony refuses one Unpatch, disable the old callbacks
+            // immediately through the capability state and clear their maps.
+            // The method lists remain intact for a later unpatch retry.
+            ClearThirdPartyTransientState();
+            _thirdPartyCapabilityState = ThirdPartyCapabilityState.OfficialAddonPending;
+            MainFile.Logger.Error("[Spire1] AutoAnthony bridge: AutoAnthonyWatcher addon is present but legacy Watcher patches could not be fully removed; old callbacks are fail-closed and unpatch remains retryable.");
+            return false;
         }
-        if (count > 0)
-        {
-            MainFile.Logger.Info("[Spire1] AutoAnthony bridge: workshop Watcher -> Colorless generated pool (Ironclad activation carrier, native starting deck kept, watcher pool contents chaos-swapped).");
-        }
-        return count;
+
+        ThirdPartyPatchedMethods.Clear();
+        ThirdPartyPartialPatchedMethods.Clear();
+        ClearThirdPartyTransientState();
+        _thirdPartyCapabilityState = ThirdPartyCapabilityState.OfficialAddon;
+        MainFile.Logger.Info("[Spire1] AutoAnthony bridge: AutoAnthonyWatcher addon present - Watcher handed over to the official extension API, legacy bridge disabled.");
+        return true;
+    }
+
+    private static void ClearThirdPartyTransientState()
+    {
+        ThirdPartyMap.Clear();
+        ThirdPartyEntryMap.Clear();
+        _thirdPartyPoolType = null;
+        _thirdPartyPoolInstance = null;
+        _thirdPartyPoolResolved = false;
     }
 
     /// <summary>惰性解析工坊观者池实例：首次在补丁守卫里用到时才 ModelDb.GetByIdOrNull
@@ -408,6 +670,10 @@ internal static class AutoAnthonyCompatBridge
 
     private static bool ThirdPartyPoolPrefix(ref CardPoolModel __result)
     {
+        if (_thirdPartyCapabilityState != ThirdPartyCapabilityState.LegacyBridge)
+        {
+            return true;
+        }
         if (!IsRunActive())
         {
             return true; // 非混沌局:观者原版紫色池
@@ -427,6 +693,10 @@ internal static class AutoAnthonyCompatBridge
     /// R2 守卫（2026-09-06 审阅）：基类 getter 全局解析，只对观者池实例生效。</summary>
     private static bool ThirdPartyPoolContentsPrefix(CardPoolModel __instance, ref IEnumerable<CardModel> __result)
     {
+        if (_thirdPartyCapabilityState != ThirdPartyCapabilityState.LegacyBridge)
+        {
+            return true;
+        }
         if (!ReferenceEquals(__instance, ResolveThirdPartyPoolInstance()))
         {
             return true; // R2：基类 getter 全局解析下的其他池--不干涉
@@ -453,6 +723,10 @@ internal static class AutoAnthonyCompatBridge
     /// R2 守卫同上：基类 getter 全局解析，只对观者池实例生效。</summary>
     private static void ThirdPartyPoolIdsPostfix(CardPoolModel __instance, ref IEnumerable<ModelId> __result)
     {
+        if (_thirdPartyCapabilityState != ThirdPartyCapabilityState.LegacyBridge)
+        {
+            return;
+        }
         if (!ReferenceEquals(__instance, ResolveThirdPartyPoolInstance()))
         {
             return; // R2：其他池--不干涉
@@ -471,7 +745,7 @@ internal static class AutoAnthonyCompatBridge
 
     // ---- 1+2. ChaosCharacterMapping.From 三个重载的 Postfix ----
 
-    private static int PatchFrom(Harmony harmony)
+    private static int PatchFrom(Harmony harmony, List<MethodInfo>? patchedMethods = null)
     {
         int count = 0;
         Type? mappingType = AaType("AutoAnthony.Patches.ChaosCharacterMapping");
@@ -498,6 +772,7 @@ internal static class AutoAnthonyCompatBridge
             try
             {
                 harmony.Patch(from, postfix: postfix);
+                patchedMethods?.Add(from);
                 count++;
             }
             catch (Exception e)
@@ -599,35 +874,55 @@ internal static class AutoAnthonyCompatBridge
 
     // ---- 3+4. 本 mod 角色 CardPool / StartingDeck getter 的 Prefix ----
 
-    private static int PatchPoolsAndDecks(Harmony harmony)
+    private static int PatchPoolsAndDecks(Harmony harmony, List<MethodInfo>? patchedMethods = null)
     {
         int count = 0;
         count += PatchGetter(harmony, typeof(Ironclad), nameof(Ironclad.CardPool),
-            new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(IroncladPoolPrefix)));
+            new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(IroncladPoolPrefix)),
+            patchedMethods: patchedMethods);
         count += PatchGetter(harmony, typeof(Silent), nameof(Silent.CardPool),
-            new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(SilentPoolPrefix)));
+            new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(SilentPoolPrefix)),
+            patchedMethods: patchedMethods);
         count += PatchGetter(harmony, typeof(Defect), nameof(Defect.CardPool),
-            new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(DefectPoolPrefix)));
+            new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(DefectPoolPrefix)),
+            patchedMethods: patchedMethods);
         count += PatchGetter(harmony, typeof(Ironclad), nameof(Ironclad.StartingDeck),
-            new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(IroncladDeckPrefix)));
+            new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(IroncladDeckPrefix)),
+            patchedMethods: patchedMethods);
         count += PatchGetter(harmony, typeof(Silent), nameof(Silent.StartingDeck),
-            new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(SilentDeckPrefix)));
+            new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(SilentDeckPrefix)),
+            patchedMethods: patchedMethods);
         count += PatchGetter(harmony, typeof(Defect), nameof(Defect.StartingDeck),
-            new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(DefectDeckPrefix)));
+            new HarmonyMethod(typeof(AutoAnthonyCompatBridge), nameof(DefectDeckPrefix)),
+            patchedMethods: patchedMethods);
         return count;
     }
 
-    private static int PatchGetter(Harmony harmony, Type type, string propertyName, HarmonyMethod prefix)
+    private static int PatchGetter(Harmony harmony, Type type, string propertyName,
+        HarmonyMethod? prefix = null, HarmonyMethod? postfix = null,
+        List<MethodInfo>? patchedMethods = null)
     {
         try
         {
             MethodInfo? getter = AccessTools.PropertyGetter(type, propertyName);
+            if (getter?.DeclaringType is Type declaringType)
+            {
+                // Inherited getters can have ReflectedType != DeclaringType, which Harmony rejects.
+                // Rebind on the declaring type, not GetBaseDefinition(), so overrides stay intact.
+                getter = AccessTools.DeclaredPropertyGetter(declaringType, propertyName);
+            }
             if (getter == null)
             {
                 MainFile.Logger.Error($"[Spire1] AutoAnthony bridge: {type.Name}.{propertyName} getter not found.");
                 return 0;
             }
-            harmony.Patch(getter, prefix: prefix);
+            if (getter.IsStatic || getter.IsAbstract || getter.GetParameters().Length != 0)
+            {
+                MainFile.Logger.Error($"[Spire1] AutoAnthony bridge: {type.Name}.{propertyName} getter must be a concrete parameterless instance method.");
+                return 0;
+            }
+            harmony.Patch(getter, prefix: prefix, postfix: postfix);
+            patchedMethods?.Add(getter);
             return 1;
         }
         catch (Exception e)

@@ -108,3 +108,66 @@
 - 旧 `effects-review.md` 中的 F1/F3 结论来自较早快照，不能直接套到当前源码；当前源码已经有 `SpendResources` 返回 Task 的包装、逐卡 token 和 `PowerModel._amount` 写入后捕获。
 - 本轮新增的两个独立静态审查代理都只落盘到中途：已确认当前支付期卡身份守卫和真实 Task 包装的首条事实，但没有形成最终 PASS/REWORK。它们的未完成报告不作为通过证据。
 - 因此本记录关闭的是 P0 的真实三张姿态卡出牌和形态 carrier/effect 生成，不关闭完整效果事务边界。支付失败后的 pending 清理、复杂嵌套重入、力量事务故障注入、完整数值平衡仍保留为后续审查项。
+
+
+## 2026-10-03 中央 r23 实机闭环与交叉挂载复核
+
+本节把“可玩入口”“三形态真实卡路径”“部分 mod 交叉启动”“可选依赖门禁”分别记录,不把任一窄证据外推为完整产品验收。完整报告见:
+
+- `docs/reports/form-playable-20260928/form-native-smoke-r23-current-20261003.md`
+- `docs/reports/form-playable-20260928/partial-mod-launch-matrix-central-run-r26-20261003.md`
+- `docs/reports/form-playable-20260928/release-gates-current-20261003.md`
+
+### 当前 Release 产物
+
+- 中央 Release 构建: 0 errors / 61 warnings, 日志为 `G:\omp works\.tmp\form-playable-20260928-01a0e7ad\central-release-build-current-20261003-r23.log`。
+- AssemblyRef 结构门禁、manifest 一致性门禁、TypeDef 黑名单门禁全部 PASS。
+- 发布 DLL 的 mod AssemblyRef 只有 `BaseLib`; 没有 `Watcher`、`AutoAnthony`、`AutoAnthonyWatcher`、`DirectConnectIP` 或 `ActsFromThePast` 硬引用。
+- `Watcher` 只通过严格反射桥接参与运行时;没有把 Watcher 变成 Spire1 的 manifest 前置。
+
+### 三形态真实 Watcher 卡路径
+
+使用真实 Watcher 原生卡和真实 `PlayCardAction` 的 r23 隔离运行中:
+
+- Calm: `WATCHER_VIGILANCE` 进入 `VoidSerpentStancePower`, 后续一张 `WATCHER_STRIKE_P` 免费,下一张支付一次能量,群蛇效果两次各造成 9 点总伤害。
+- Wrath: `WATCHER_ERUPTION_P` 进入 `DemonReaperStancePower`, 后续 `WATCHER_STRIKE_P` 观测到目标伤害 7、形态 `StrengthPower=1`、目标 `DoomPower=7`,能量从 1 到 0。
+- Divinity: `WATCHER_BLASPHEMY` 进入 `EchoCelestialStancePower`, 后续 `WATCHER_STRIKE_P` 目标总伤害 12,回响历史完成增量为 2,两次 play count 均为 2。
+- 三个场景均 `status=passed`,入场 action 和后续 action 均 `Finished`,`formGateAfter.passed=true`,`effectVerification.passed=true`,`unobservedFaults=[]`。
+- r22 的 Wrath `targetDoom=0` 已归因于确定性测试敌人的 `ArtifactPower`; r23 仅在隔离测试目标上移除该 Artifact,不修改生产逻辑。
+
+### 部分 mod 交叉启动
+
+r26 五场景均保持顶层平面 staging 且 `nestedManifestCount=0`:
+
+- `BaseLib + Spire1` 在没有 Watcher 时正常初始化; bridge 缺失只记录 disabled/fail-closed。
+- `BaseLib + Watcher` 在没有 Spire1 时正常初始化。
+- `BaseLib` 单独启动。
+- `Spire1` 单独挂载时由 manifest 明确拒绝缺少 `BaseLib`,未进入 initializer。
+- 三 mod 全挂载时 BaseLib -> Watcher -> Spire1 顺序成立并出现 `Watcher bridge bound`。
+
+所有 case 均无超时、无窗口句柄、无 `FileNotFoundException`/`TypeLoadException`,共享 `mod_configs` 未改变,测试 staging 已清理。m4 的游戏退出码 0 仅表示 loader 正常退出,其 mod 结论以 `Loaded 0 mods` 和显式依赖错误为准。
+
+### 未覆盖边界
+
+当前证据仍不关闭可见 UI、视觉资源呈现、长战斗全部回合边界、战中存档重载、重连、多人同步、性能和完整平衡。stderr 中的 crashpad、Dummy renderer、Godot RID/resource leak 噪声单列,不作为形态代码通过或失败。
+
+## 2026-10-03 可选依赖与交叉挂载验收补充
+
+### 已确认
+
+- Release 二进制的 mod AssemblyRef 只有 `BaseLib`; forbidden AssemblyRef、manifest consistency、forbidden TypeDef 三项门禁均通过。
+- Watcher、AutoAnthony、AutoAnthonyWatcher 只作为可选运行时能力。缺少 Watcher 时 `BaseLib+Spire1` 仍初始化;缺少 AutoAnthony 时 `BaseLib+Watcher+AutoAnthonyWatcher+Spire1` 仍使 Spire1 初始化,而 ModLoader 只拒绝其缺少核心的 addon。
+- r29 九场景真实隔离启动全部退出码为 0,无超时、无窗口句柄、日志排空、无嵌套 manifest、共享配置未改变。m7 legacy bridge 和 m8 official addon takeover 均保持可观察。
+- r27 曾见的 `Cannot access a disposed object` timer 错误在 r29 的 m6/m9 不再出现。m6/m7/m8 中第三方 AutoAnthony 自身的 `65 vs 76` Colorless 资源自检错误仍单列,不作为 Spire1 硬依赖失败。
+
+### 未关闭
+
+- 本验收不覆盖可见 UI、视觉资源、长战斗、战中存档、重连、多人同步、性能和完整数值平衡。
+- 完整证据见 `docs/reports/form-playable-20260928/partial-mod-launch-matrix-central-run-r29-20261003.md`。源码初步独立审查报告为 `docs/reports/form-playable-20260928/autoanthony-cross-launch-final-review-20261003.md`,在原生 wait_agent 完成前不得把其中进行中内容写成监督通过。
+## 2026-10-03 交叉挂载最终回归与退出竞态修复
+
+- 独立只读审查发现旧控制流在 `ProcessExit` 与 in-flight unsettled Apply 之间可能重新挂回 `AssemblyLoad`。现以 `AssemblyLoadGate` 串行化退出卸载、订阅和退订,并在订阅前做入口与 gate 内二次 shutdown 检查。
+- 修复后的 Release 构建为 `0 errors / 60 warnings`;三项发布门禁均 PASS,发布 DLL 的 mod AssemblyRef 仍只有 `BaseLib`。
+- r30 九场景真实隔离交叉启动全部退出码 0,无超时、无窗口句柄、日志排空、无嵌套 manifest、共享配置未改变。m6/m7/m8/m9 没有再出现 disposed timer 错误;legacy bridge、官方 addon takeover、缺核心 addon 的 fail-closed 均保持。
+- r2 的 3 个 CS0103 是修复过程中的短暂本地构建失败,已在 r3 修复并由 r30 回归覆盖,不属于最终状态。
+- 最终报告: `docs/reports/form-playable-20260928/partial-mod-launch-matrix-central-run-r30-20261003.md`。退出竞态修复说明: `docs/reports/form-playable-20260928/autoanthony-cross-launch-post-review-fix-20261003.md`。

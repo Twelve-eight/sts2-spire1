@@ -34,6 +34,18 @@ public partial class MainFile : Node
     ///   Phase 4 diagnostics: INTENTIONALLY EMPTY at initializer time - observation runs
     ///     post-registration only (see Phase4Diagnostics).
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// CONTENT GATE CONTRACT (C01): model instantiation is engine-driven and happens
+    /// after every mod initializer (ModelDb.Init -> Activator.CreateInstance over
+    /// AllAbstractModelSubtypes, which includes mod types). Therefore "content group off"
+    /// can never mean "do not instantiate the class": it means the group is filtered at
+    /// the runtime query/grant entries and by the per-run snapshot. Phase 2 still runs
+    /// unconditionally so that old saves keep resolving their model ids; the switches are
+    /// read by <see cref="Spire1Config.IsEnabled(Spire1ContentGroup)"/>
+    /// consumers (pools, event filter, character pools, effect application).
+    /// </para>
+    /// </remarks>
     public static void Initialize()
     {
         Phase1AssetReadinessAndConfig();
@@ -67,19 +79,16 @@ public partial class MainFile : Node
     // ------------------------------------------------------------------
     private static void Phase2SemanticContentRegistration()
     {
-        // Events gate (user request 2026-09-13): gen-1 story events must be
-        // toggleable out of base-game event pools. CustomEventModel ctors run
-        // at ModelDb init (before config load), so the gate is applied HERE by
-        // removing them from BaseLib's registration lists; RegisterType's
-        // once-guard prevents re-adds. SpireHeart was already autoAdd:false.
-        if (!Spire1Config.EventsEnabled)
-        {
-            BaseLib.Patches.Content.CustomContentDictionary.ActCustomEvents
-                .RemoveAll(e => e is Spire1.Spire1Code.Events.Spire1Event);
-            BaseLib.Patches.Content.CustomContentDictionary.SharedCustomEvents
-                .RemoveAll(e => e is Spire1.Spire1Code.Events.Spire1Event);
-            Logger.Info("[Spire1] StS1 events removed from shared event pools (EnableSts1Events=false)");
-        }
+        // Events gate (user request 2026-09-13): gen-1 story events must be toggleable out of
+        // base-game event pools.
+        // FIXED 2026-09-27: the old removal here was a no-op. It ran in this INITIALIZER, but
+        // Spire1Event instances are only constructed (and auto-added to ActCustomEvents /
+        // SharedCustomEvents) later, at ModelDb.Init, which the engine's ModManager runs AFTER
+        // every mod initializer. So RemoveAll matched 0 items and the events were added anyway -
+        // the toggle had no effect regardless of its value. The gate is now enforced at RUNTIME
+        // by Sts1EventToggleFilterPatch (ActModel.GenerateRooms postfix), which reads the config
+        // after ModelDb.Init and strips Spire1Event from each act's event pool when disabled.
+        // SpireHeart stays out via compile-time autoAdd:false, unchanged.
 
         // LEAN-CODE RULE (DEVELOP.md 7a): shipped StS2 cards that are identical to their StS1
         // counterparts are added to our pools instead of being reimplemented. Must run before the
@@ -87,6 +96,9 @@ public partial class MainFile : Node
         // SP1-1: registration only - the old startup LogPoolCensus pool reads were moved to
         // Diagnostics/PoolCensus.cs (post-registration, opt-in; a diagnostic AllCards read
         // freezes pools and would lock later-loaded mods out of them).
+        // C01: this is append-only registration for save-compatibility and never reads a pool;
+        // the content-group switches are enforced at the query/grant entries instead (see the
+        // gate contract on the class doc).
         SharedCardReuse.Register();
     }
 
@@ -103,6 +115,15 @@ public partial class MainFile : Node
         // Apply Harmony patches declared in this assembly - one try/catch PER TYPE so a single
         // bad patch can never abort the whole set (PatchAll aborts on first failure, which
         // silently stripped every other patch for an entire night run on 2026-08-24).
+        // C01: every content filter registered here must read
+        // Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup) (or the matching computed
+        // property) and fail closed when its target cannot be resolved.
+        // C12 r5-B: the Spire1PowersFallback* classes are intentionally excluded from this scan;
+        // Spire1PowersFallbackInstaller.InstallIfNeeded below installs them only when the two
+        // central PowerCmd targets are not both verifiably installed, and records P1-C12-01
+        // NOT closed when the fallback layer itself is incomplete. The fallback layer holds no
+        // cross-invocation state (no token/count/CWT), so a blocked invocation can never consume
+        // an allowed invocation's state.
         // SP1-1 evidence note: this reflection discovery runs at startup but is NOT proven to
         // be a frame bottleneck - do not optimize or cache it without measurement.
         Harmony harmony = new(ModId);
@@ -110,6 +131,12 @@ public partial class MainFile : Node
         foreach (var type in typeof(MainFile).Assembly.GetTypes())
         {
             if (type.GetCustomAttributes(typeof(HarmonyPatch), false).Length == 0)
+            {
+                continue;
+            }
+            // C12 r5-B (P1-C12-01): fallback 类必须由 InstallIfNeeded 按中央 gate 的真实安装
+            // 状态显式安装, 不能随属性扫描无条件挂载 (否则主漏斗可用时也会增加运行期路径).
+            if (Spire1PowersGate.IsFallbackPatchType(type))
             {
                 continue;
             }
@@ -128,19 +155,24 @@ public partial class MainFile : Node
             Logger.Error($"Harmony: {failed} patch class(es) failed to apply");
         }
 
-        // AutoAnthony 桥接：必须在 ModManager 已加载 AutoAnthony 之后应用（本 initializer
+        // C12 r5-B (P1-C12-01): fallback 类已被上面的属性扫描排除, 这里按两个中央目标的真实安装
+        // 状态决定是否安装 fail-closed fallback. 中央漏斗完整时该调用是 no-op; 任一 fallback
+        // 目标缺失/安装失败时置 FailClosedDegraded 并记录 P1-C12-01 NOT closed.
+        Spire1PowersFallbackInstaller.InstallIfNeeded(harmony);
+
+        // AutoAnthony 桥接:必须在 ModManager 已加载 AutoAnthony 之后应用(本 initializer
         // 的调用时机--ModManager.Initialize 逐 mod 依拓扑序调 initializer--取决于加载
-        // 顺序；AutoAnthony 无依赖、按用户 mod 列表序可能在本 mod 之前或之后。若此刻
-        // 尚未加载，由 AutoAnthonyLoadHook 的 AssemblyLoad 事件兜底重试）。
+        // 顺序;AutoAnthony 无依赖,按用户 mod 列表序可能在本 mod 之前或之后.若此刻
+        // 尚未加载,由 AutoAnthonyLoadHook 的 AssemblyLoad 事件兜底重试).
         AutoAnthonyLoadHook.TryApplyBridge(harmony);
-        // AFTP-1 (SpireAftpCompat): optional AFTP effect-lifecycle compat — replaces the
+        // AFTP-1 (SpireAftpCompat): optional AFTP effect-lifecycle compat - replaces the
         // NSts1Effect family's ProcessFrame subscription with a symmetric detach/reentry
         // binding (astra AFTP-R4-03: GetTree outside the tree). Absent AFTP = no-op;
         // all outcomes logged by the compat layer itself.
         Interop.AftpEffectLifecycleCompat.TryApply(harmony);
 
-        // 第三方（RitsuLib）弹窗抑制不能进上面的属性扫描--目标类型缺失时 AccessTools
-        // 解析会抛异常，会让注册循环每次启动都记一条失败。显式调用、内部自兜底。
+        // 第三方(RitsuLib)弹窗抑制不能进上面的属性扫描--目标类型缺失时 AccessTools
+        // 解析会抛异常,会让注册循环每次启动都记一条失败.显式调用,内部自兜底.
         if (Spire1Config.IgnoreMpModDifferences)
         {
             Logger.Info(RitsuLibPopupSuppressionPatch.Apply(harmony)

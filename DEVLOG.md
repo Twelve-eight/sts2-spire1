@@ -2731,3 +2731,198 @@ G:\omp works\.tmp\workspace-audit-20260930\agent-routes.json 与 agent-routes-p1
 - 旧 `effects-review.md` 中的 F1/F3 结论来自较早快照，不能直接套到当前源码；当前源码已经有 `SpendResources` 返回 Task 的包装、逐卡 token 和 `PowerModel._amount` 写入后捕获。
 - 本轮新增的两个独立静态审查代理都只落盘到中途：已确认当前支付期卡身份守卫和真实 Task 包装的首条事实，但没有形成最终 PASS/REWORK。它们的未完成报告不作为通过证据。
 - 因此本记录关闭的是 P0 的真实三张姿态卡出牌和形态 carrier/effect 生成，不关闭完整效果事务边界。支付失败后的 pending 清理、复杂嵌套重入、力量事务故障注入、完整数值平衡仍保留为后续审查项。
+
+
+## 2026-10-02 C14 LargeCapsule 旧档加载与 fail-closed 收紧
+
+- `mod/Spire1Code/Patches/Spire1LargeCapsuleGatePatch.cs` 新增 `Player.FromSerializable(SerializablePlayer)` 的严格单目标作用域补丁，以及 `RelicModel.FromSerializable(SerializableRelic)` 的精确实例标记补丁。
+- 普通旧档链虽然以 `silent:false` 进入 `AddRelicInternal`, 现在只有被反序列化方法实际返回的同一 `RelicModel` 引用才能消费放行令牌；FromSerializable 作用域内重入的全新 `RelicCmd.Obtain` 不再能借用宽泛标记。
+- `AsyncLocal` 父作用域、锁保护令牌集合和 Harmony Finalizer 对称清理覆盖嵌套/异常退出；任一目标解析或安装失败都保持 fail-closed。
+- 集中 Release 编译: `Spire1.csproj`, 0 errors / 61 warnings；静态文本检查通过。无正式 Spire1 PCK/digest，未部署、未启动游戏、未通过 Workshop VerifyOnly。
+- 首轮 DeepSeek 路由记录: `global:deepseek-v4.1-flash` / `gateway/wb2api` / `max`。请求的监督路由为 `ovoapi:6.1sol` / `ovoapi` / `xhigh`, 但本轮没有收获其完成标记；不把集中复核冒充监督模型 PASS。
+
+
+## 2026-10-02 C14 r4c silent:true 边界收紧
+
+- 监督发现仅以 `silent:true` 放行会留下公共 `AddRelicInternal` 重入边界。本轮新增 `Player.SyncWithSerializedPlayer(SerializablePlayer)` 的严格 load-context patch，并让 `AddRelicInternal` 只接受 `RelicModel.FromSerializable` 产生的精确引用令牌。
+- 因此普通旧档和多人同步都保持兼容；新的直接 `AddRelicInternal(..., silent:true)`、重入调用和目标漂移路径不再凭参数本身绕过 Cards 关闭时的 fail-closed guard。
+- Release 编译再次通过: 0 errors / 61 warnings。真实 Harmony/旧档/多人运行时仍未验证，未部署到测试副本，未写 Steam 或共享 `mod_configs`。
+
+
+## 2026-10-03 姿态形态 r23 三形态实机与 r26 交叉挂载收尾
+
+本节是当前收尾恢复锚点。它只记录本轮中央构建和隔离运行的事实,不覆盖工作区内其它 staged/unstaged 改动。
+
+### 代码修正
+
+- `mod/Spire1Code/Interop/AutoAnthonyLoadHook.cs`: 将与 `Godot.Environment` 冲突的 `Environment.TickCount64` 限定为 `System.Environment.TickCount64`, Release 构建恢复为 0 errors.
+- `mod/Spire1Code/Run/FormNativeSmokeRunner.cs`: Wrath 真实 `WATCHER_ERUPTION_P` 即使运行时 `TargetType=Any` 也传入真实敌方目标;确定性 Cubex Construct 夹具的 ArtifactPower 只在隔离 smoke 目标上移除,使 Reaper 的 Doom 证据可观察。该夹具修正不改变生产路径。
+
+### 中央构建和依赖门禁
+
+- 构建日志: `G:\omp works\.tmp\form-playable-20260928-01a0e7ad\central-release-build-current-20261003-r23.log`。
+- 结果: 0 errors / 61 warnings.
+- 门禁 JSON: `G:\omp works\.tmp\form-playable-20260928-01a0e7ad\central-release-gates-current-20261003.json`。
+- AssemblyRef 15 个, TypeDef 964 个; `assemblyref-forbidden`、`manifest-consistency`、`typedef-forbidden` 全部 PASS。
+- mod AssemblyRef 只有 `BaseLib`;没有 Watcher、AutoAnthony、AutoAnthonyWatcher、DirectConnectIP、ActsFromThePast 硬引用。
+
+### r22 -> r23 真实 smoke
+
+r22 的 Calm/Divinity 已通过,Wrath 失败原因是唯一测试敌人带 ArtifactPower,阻止 `DoomPower=7`;不是形态逻辑或动作取消。r23 使用最新 DLL,独立 staging 为 `G:\omp works\.tmp\form-playable-20260928-01a0e7ad\native-form-smoke-r23-current-20261003`。
+
+- `run-final.json`: `exitCode=0`,未超时,无窗口句柄,共享配置哈希不变,cleanup 完成。
+- Calm: `WATCHER_VIGILANCE` -> `VoidSerpentStancePower`;两次后续 Strike 依次免费/付费,各 9 点总伤害。
+- Wrath: `WATCHER_ERUPTION_P` -> `DemonReaperStancePower`; Strike 目标伤害 7, `StrengthPower=1`, `DoomPower=7`,能量 1 -> 0。
+- Divinity: `WATCHER_BLASPHEMY` -> `EchoCelestialStancePower`; Strike 目标总伤害 12,回响完成增量 2,两次 play count 均 2。
+- 三场景 JSON 均 `status=passed`,`cardPlay.state=Finished`,`formGateAfter.passed=true`,`effectVerification.passed=true`,`unobservedFaults=[]`。
+- stderr 只保留已知 headless 噪声: crashpad 缺失、Dummy renderer 和 Godot 资源泄漏;不把它们伪报为业务失败。
+
+### r26 部分 mod 交叉挂载
+
+- 新运行目录: `G:\omp works\.tmp\form-playable-20260928-01a0e7ad\partial-mod-matrix-r26-20261003`。
+- m1 `BaseLib+Spire1`: 两个 initializer 成功,Watcher 未挂载;bridge disabled 是预期可选分支。
+- m2 `BaseLib+Watcher`: BaseLib/Watcher 成功,无 Spire1。
+- m3 `BaseLib-only`: BaseLib 成功。
+- m4 `Spire1-only`: loader 输出 `Loaded 0 mods (1 total)` 并明确拒绝缺少 BaseLib,未调用 Spire1 initializer。
+- m5 三 mod: 三个 initializer 成功并出现 `Watcher bridge bound`。
+- 五个 `run.json` 均进程退出码 0、无超时、无窗口、日志排空、共享配置不变、`nestedManifestCount=0`;测试 mods/settings 已清理恢复。
+
+详细报告:
+
+- `docs/reports/form-playable-20260928/form-native-smoke-r23-current-20261003.md`
+- `docs/reports/form-playable-20260928/partial-mod-launch-matrix-central-run-r26-20261003.md`
+- `docs/reports/form-playable-20260928/release-gates-current-20261003.md`
+
+### 未关闭边界
+
+本轮仍未验证可见 UI、视觉资源、长战斗全部回合边界、战中存档重载、重连、多人同步、性能或完整平衡。r23 是真实三形态出牌闭环,不是完整产品验收。
+
+## 2026-10-03 AutoAnthony 可选桥接晚加载与 r29 交叉挂载回归
+
+### 代码与结构门禁
+
+- `mod/Spire1Code/Interop/AutoAnthonyCompatBridge.cs` 的 `NeedsRetryWithoutAssemblyLoad` 现在只在 core 未完成、存在 partial patch、官方扩展 pending、或可选程序集已存在但能力仍 pending/unsupported 时请求周期唤醒。AutoAnthony 存在而 Watcher/AutoAnthonyWatcher 都不存在时只保留 `AssemblyLoad` 监听,不创建无意义 Timer。
+- `mod/Spire1Code/Interop/AutoAnthonyLoadHook.cs` 的 Timer/fallback thread 只提交主线程 deferred Apply,不直接碰 Harmony 或桥接状态;ProcessExit、Godot MainLoop 无效和 disposed native owner 路径会 fail-closed。非终态停止 Timer 不会阻塞后续 AssemblyLoad 重新唤醒。
+- 中央 Release 构建日志为 `G:\omp works\.tmp\form-playable-20260928-01a0e7ad\central-release-build-autoretimer-r1-20261002.log`: `0 errors`, `63 warnings`。产物哈希为 DLL `CE90BB1DBC6E3C15A061E625F3463B5F38AF49246FAFD06C06B8E52ECCA06980`, PCK `CF37054F2926F5CE92BF267D48CEB5CADD003F85AE73A0AF09F7B0A9931C623E`, PDB `52E678EB3546EAB612615AB0A5B2A28572FA17CC0113FD1B00F520348A998278`。
+- `central-release-gates-autoretimer-r1-20261002.json` 三项均 PASS: forbidden AssemblyRef、manifest 一致性、forbidden TypeDef。发布 DLL 的 mod AssemblyRef 只有 `BaseLib`,没有 `Watcher`、`AutoAnthony`、`AutoAnthonyWatcher`、`DirectConnectIP`、`ActsFromThePast`。
+
+### 真实隔离交叉启动
+
+- r29 脚本为 `G:\omp works\.tmp\form-playable-20260928-01a0e7ad\run-partial-mod-matrix-r29-20261003.ps1`,结果为 `...\partial-mod-matrix-r29-20261003\matrix-summary.json`。
+- 9 个场景全部 `exitCode=0`,未超时、无窗口句柄、日志排空、`nestedManifestCount=0`,共享 `mod_configs` 前后哈希不变,Steam 安全标记为 true。r29 只修复了测试夹具在进程退出与 `MainWindowHandle` 检查之间的竞态,未改变产品源码。
+- m1 `BaseLib+Spire1` 在没有 Watcher 时 Spire1 initializer 成功,Forms bridge 明确 disabled/fail-closed。
+- m5 `BaseLib+Watcher+Spire1` 三个 initializer 成功,Watcher bridge 绑定。
+- m6 `BaseLib+AutoAnthony+Spire1` 的 AutoAnthony core 成功且 third-party 为 Pending,未出现 r27 的 disposed timer 错误。
+- m7 `BaseLib+AutoAnthony+Watcher+Spire1` 的 legacy bridge 仍绑定,未出现 disposed timer 错误。
+- m8 `BaseLib+AutoAnthony+Watcher+AutoAnthonyWatcher+Spire1` 日志明确 `third-party=OfficialAddon, settled=True`,legacy bridge disabled,未出现 disposed timer 错误。
+- m9 `BaseLib+Watcher+AutoAnthonyWatcher+Spire1` 中 ModLoader 明确拒绝缺少 AutoAnthony 的 AutoAnthonyWatcher,但 BaseLib/Watcher/Spire1 仍加载,Spire1 initializer 成功。
+- m4 `Spire1` 单独挂载时 `Loaded 0 mods (1 total)`,未调用 Spire1 initializer,缺少 BaseLib 的前置项被 ModLoader fail-closed。
+- m6/m7/m8 的 AutoAnthony 自身仍可能输出 `Expected 65 complete v111 Colorless cards, found 76`;这是第三方资源版本自检噪声,本轮只确认它不阻塞隔离启动,不把它归咎于 Spire1。
+
+### 证据边界与后续
+
+- 交叉启动报告: `G:\omp works\Sts\sts2-spire1\docs\reports\form-playable-20260928\partial-mod-launch-matrix-central-run-r29-20261003.md`。
+- 独立只读审查仍在原生 `wait_agent` 门禁中;报告路径为 `G:\omp works\Sts\sts2-spire1\docs\reports\form-playable-20260928\autoanthony-cross-launch-final-review-20261003.md`。已落盘内容只能作为源码初步证据,不能提前写成最终监督通过。
+- 本轮关闭的是“交叉挂载无硬引用、缺少可选 Mod 不产生 disposed timer 竞态”的启动层证据,不关闭可见 UI、视觉、长战斗、存档、重连、多人、性能和完整平衡。
+## 2026-10-03 r30 退出竞态收紧与最终交叉挂载回归
+
+- 独立 Codex 原生审查代理已完成,唯一报告为 `docs/reports/form-playable-20260928/autoanthony-cross-launch-final-review-20261003.md`。报告结论: 可选依赖 fail-closed、Watcher/AutoAnthonyWatcher 可选、主线程/deferred/按需 Timer 控制和 r29 矩阵均 PASS;另外指出一个 P2 ProcessExit 与 in-flight Apply 的残留 AssemblyLoad 订阅竞态。该安全会话未暴露实际解析模型/provider route,报告按要求记录 Unknown,不从请求文字推断。
+- 主会话修复 `AutoAnthonyLoadHook.cs`: 新增 `AssemblyLoadGate`,让 `OnProcessExit`、`HookAssemblyLoad`、`UnhookAssemblyLoad` 串行化;入口和 gate 内二次检查 shutdown;失败后的 retry bookkeeping 移到 gate 外避免锁反转。
+- r2 构建首次因字段声明写入脚本失误产生 3 个 CS0103,立即修正,未部署、未进入验收。r3 中央 Release 构建为 `0 errors / 60 warnings`,日志 `central-release-build-autoretimer-r3-20261003.log`。
+- r3 结构门禁全部 PASS: AssemblyRef 15, TypeDef 971, mod AssemblyRef 只有 `BaseLib`,没有 Watcher/AutoAnthony/AutoAnthonyWatcher/DirectConnectIP/ActsFromThePast。门禁 JSON 为 `central-release-gates-autoretimer-r3-20261003.json`。
+- r30 脚本为 `run-partial-mod-matrix-r30-20261003.ps1`,九个真实隔离场景全部 `exitCode=0`,无超时、无窗口、日志排空、无嵌套 manifest、共享配置不变。m6/m7/m8 的可选桥接状态与 r29 一致,m9 的缺核心 addon 仍由 ModLoader fail-closed,m4 的缺 BaseLib 仍 `Loaded 0 mods`。
+- r30 m6/m7/m8/m9 均未出现 `Cannot access a disposed object` 或 `ObjectDisposedException`;AutoAnthony 自身 `Expected 65 complete v111 Colorless cards, found 76` 仍为独立第三方内容版本问题,不归咎于 Spire1。
+- 交付报告: `docs/reports/form-playable-20260928/partial-mod-launch-matrix-central-run-r30-20261003.md` 与 `docs/reports/form-playable-20260928/autoanthony-cross-launch-post-review-fix-20261003.md`。
+- 本轮仅关闭“可选 Mod 无硬引用/无意外前置项 + 退出竞态已收紧”的启动层证据,不关闭 AutoAnthony chaos 内容版本、UI、视觉、长战斗、存档、重连、多人、性能和平衡边界。
+## 2026-10-03 Beta r2 与 r25 当前字节真实验收
+
+本节只记录本轮当前 Beta r2 和隔离运行事实,不覆盖工作区其它 staged/unstaged 改动。
+
+### 发布包
+
+- 公开包: `dist/Spire1-Forms-Beta-20261003-r2.zip`.
+- ZIP 长度 `28413851`, SHA256 `B83B91E8F540D58305AC92AD2055D9A921001E9E43BE09384758DB565B0AEE7E`.
+- 包内白名单为 `Spire1.dll`、`Spire1.pck`、`Spire1.json` 和安装说明;不含 PDB、deps、日志、配置或本机路径。
+- DLL `51224C20B51EC0F550AEADD9E749B01B19D5F13DE74DD44D5EC8E190436A7AA7`; PCK `CF37054F2926F5CE92BF267D48CEB5CADD003F85AE73A0AF09F7B0A9931C623E`; manifest `CDBD57D54374285503538D866551B897938A5D540C2285CE5068019565BB9305`.
+- 对 staging DLL 重跑绑定门禁: `beta-r2-release-gates-bound-20261003.json`, exit code `0`, AssemblyRef `15`, TypeDef `972`, forbidden AssemblyRef/manifest consistency/forbidden TypeDef 全 PASS。二进制 mod AssemblyRef 只有 `BaseLib`; manifest 只声明 `BaseLib >= 3.4.5`。
+
+### r24 清理修复与 r25 真实运行
+
+- r24 证据目录的三形态 JSON 已确认是当前 DLL 字节对应的有效运行证据;旧 r23 轮转日志和 staging 不再采信。
+- r24 外层清理问题是目录级复制造成的嵌套 `steam_settings`;确认无游戏进程后,逐文件恢复顶层 settings,将 stale 嵌套目录留存到 `native-form-smoke-r24-cleanup-quarantine-20261003`,顶层哈希和共享配置 snapshot 均一致。
+- r25 第一次误用 Windows PowerShell runner 在 `ArgumentList` 初始化处停止,游戏未启动;临时 mods/settings 移入 `native-form-smoke-r25-abort-quarantine-20261003`,恢复后使用 `pwsh.exe` 重跑。失败尝试不作为实机证据,也未触碰 Steam 安装或共享 `mod_configs`。
+- r25 有效运行目录: `G:\omp works\.tmp\form-playable-20260928-01a0e7ad\native-form-smoke-r25-current-20261003`.
+- 运行窗口: `2026-10-03T08:56:11.6518119+08:00` 至 `2026-10-03T08:56:52.9697780+08:00`; `exitCode=0`,未超时,无窗口句柄,日志排空,scenario 新鲜度通过,共享配置哈希不变,Steam settings 恢复,mods 清理完成。
+- Calm: `WATCHER_VIGILANCE` -> `VoidSerpentStancePower`;两次 `WATCHER_STRIKE_P` 均完成,第一次免费、第二次付费一次,每次总伤害 `9`。
+- Wrath: `WATCHER_ERUPTION_P` -> `DemonReaperStancePower`; `WATCHER_STRIKE_P` 造成 `7`, `StrengthPower=1`,目标 `DoomPower=7`,能量 `1 -> 0`。
+- Divinity: `WATCHER_BLASPHEMY` -> `EchoCelestialStancePower`; `WATCHER_STRIKE_P` 目标总伤害 `12`,Echo 完成增量 `2`,两次 play count 均为 `2`。
+- 三场景均 `status=passed`,`formGateAfter.passed=true`,`effectVerification.passed=true`,`unobservedFaults=[]`; `form-native-smoke-final.json` 为 completed 且 quit drain settled。
+- 已知 stderr 的 crashpad、Dummy renderer、Godot RID/resource leak 仍单列为 headless 环境噪声,不伪报为形态业务失败。
+
+### 子代理路由记录
+
+- 本轮只派发一个只读审查代理 Hegel,使用 Codex 原生 `multi_agent_v1`,session id `01a0ff41-2cf1-7330-9179-a34455766ac5`。
+- session metadata 文件: `C:\Users\o_Obl\.codex\sessions\2026\10\03\rollout-2026-10-03T08-54-16-01a0ff41-2cf1-7330-9179-a34455766ac5.jsonl`。
+- 实际解析模型 `global:deepseek-v4.1-flash`, provider `gateway`, reasoning `xhigh`;用户请求路由为 `wb2api via local gateway`,但 session metadata 未暴露更细 wb2api 子路由,因此不把该子路由写成已核验事实。
+- 报告 `r25-harness-review-20261003.md` 只记录该代理未取得自身审查工具面的限制,未采信为 r25 通过或失败结论;主会话以本节和 `form-native-smoke-r25-current-20261003.md` 的中央证据为准。
+
+### 未关闭边界
+
+仍未验证可见 UI/视觉、长战斗全部回合、存档重载、重连、多人同步、性能和完整平衡;当前 r30 部分 Mod 矩阵使用旧 DLL 字节,不外推为 r2 的完整交叉矩阵。完整报告:
+
+- `docs/reports/form-playable-20260928/beta-package-r2-20261003.md`
+- `docs/reports/form-playable-20260928/form-native-smoke-r25-current-20261003.md`
+## 2026-10-03 当前 Beta r2 部分 Mod 交叉启动 r31
+
+- 为避免旧 r30 字节污染,新建 `partial-mod-matrix-r31-current-beta-20261003`;Spire1 来源固定为 `G:\omp works\.tmp\Spire1-beta-20261003-r2\mods\Spire1`。
+- 当前 staging 明确绑定 DLL `51224C20...`,PCK `CF37054F...`,manifest `CDBD57...`,不带 PDB。
+- 9 个挂载组合全部退出码 `0`,无超时、无窗口句柄、日志排空、`nestedManifestCount=0`;共享配置 before/after 一致,测试 mods 清理,Steam settings 恢复。
+- `BaseLib+Spire1` 无 Watcher 时 Spire1 initializer 成功,Forms bridge disabled/fail-closed,无意外 Watcher 前置。
+- `BaseLib+AutoAnthony+Spire1` 中 third-party 为 Pending,不阻塞 Spire1;`BaseLib+AutoAnthony+Watcher+Spire1` 为 LegacyBridge;完整挂载 `AutoAnthonyWatcher` 时为 `OfficialAddon, settled=True`,legacy bridge disabled。
+- 缺少 AutoAnthony 的 `AutoAnthonyWatcher` 被 ModLoader 明确拒绝,但 `BaseLib/Watcher/Spire1` 仍成功加载,证明可选 addon 不会连带成为 Spire1 的隐藏硬前置。
+- 交付报告: `docs/reports/form-playable-20260928/partial-mod-launch-matrix-current-beta-r31-20261003.md`。
+## 2026-10-03 Beta r3 当前源码重建、真实烟测与交叉挂载
+
+### 当前修复
+
+- `mod/Spire1Code/Patches/Spire1LargeCapsuleGatePatch.cs` 缺少 `using Spire1.Spire1Code.Run;`，导致当前工作树首次源码驱动 Release 构建出现 4 个 `CS0103`（`Spire1CardsGateSnapshot` 未解析）。该失败发生在部署前，未进入游戏验收。
+- 已补入导入并重新构建；当前源码 Release 编译为 `0 errors / 60 warnings`。
+
+### 当前 Release 字节
+
+- 构建输出：`G:\omp works\.tmp\form-playable-20260928-01a0e7ad\release-r4-current-20261003\`
+- DLL：788480 bytes，SHA256 `4F49BA0D2BE134C6EFD149E96E4B94387E0AA873DFFE40AA7368FC41EBBD88C2`
+- PCK：19669354 bytes，SHA256 `70CCBB4D1A2DD1439152F030E40B4C1A8BCA775547EB4F8273C956F62BB51C79`
+- manifest：548 bytes，SHA256 `CDBD57D54374285503538D866551B897938A5D540C2285CE5068019565BB9305`
+- PCK：`PCK_VERIFY_PASS`，1464 entries / 744 source files。
+- payload 绑定门禁：AssemblyRef 15、TypeDef 978；forbidden AssemblyRef、manifest consistency、forbidden TypeDef 全部 PASS。证据：`release-r4-current-20261003\evidence\release-gates-bound-r1.json`。
+
+### 当前字节真实三形态烟测
+
+- runner：`G:\omp works\.tmp\form-playable-20260928-01a0e7ad\run-native-form-smoke-r5-current-20261003.ps1`
+- 结果：`native-form-smoke-r5-current-20261003\run-final.json`
+- 2026-10-03 09:25:51 +08:00 至 09:26:32 +08:00；进程退出码 0、未超时、窗口句柄采样为零、日志排空、共享 `mod_configs` 未变化、Steam settings 已恢复、测试 mods 已清理。
+- Calm：`WATCHER_VIGILANCE`，carrier=`VoidSerpentStancePower`，两次 `WATCHER_STRIKE_P` 各 9 伤害，第一次免费、第二次付费 1 能量。
+- Wrath：`WATCHER_ERUPTION_P`，carrier=`DemonReaperStancePower`，`StrengthPower=1`、`DoomPower=7`，目标伤害 7，能量 1 -> 0。
+- Divinity：`WATCHER_BLASPHEMY`，carrier=`EchoCelestialStancePower`，目标总伤害 12，Echo 完成增量 2，两次 play count=2。
+- 三场景均 `status=passed`、`formGateAfter.passed=true`、`effectVerification.passed=true`、`unobservedFaults=[]`。
+
+### 当前字节可选 Mod 交叉矩阵
+
+- runner：`G:\omp works\.tmp\form-playable-20260928-01a0e7ad\run-partial-mod-matrix-r32-current-release-20261003.ps1`
+- 结果：`partial-mod-matrix-r32-current-release-20261003\matrix-summary.json`
+- 9/9 场景退出码 0；无超时、无窗口句柄、日志排空、无嵌套 manifest；共享配置未变化，Steam settings 恢复，测试 mods 清理。
+- `BaseLib + Spire1` 在 Watcher 缺失时 fail-closed，不把 Watcher 变成硬前置。
+- AutoAnthony/AutoAnthonyWatcher 缺失或晚接管时，Spire1 仍能按可选桥接启动；缺少 AutoAnthony 时 addon 自身被拒绝，但 BaseLib、Watcher、Spire1 仍成功加载。
+
+### Beta r3 副本
+
+- 包：`dist/Spire1-Forms-Beta-20261003-r3.zip`
+- ZIP 长度：19372105 bytes
+- ZIP SHA256：`D2C161A52DAA3F9694D38088C8CC03A07860AAC9B54D2831968987E6B45EEFD5`
+- 包内仅含 DLL、PCK、manifest 和中文安装说明；不含 PDB、deps、日志、配置或开发机路径。
+- 报告：`docs/reports/form-playable-20260928/release-build-current-r4-20261003.md`、`form-native-smoke-current-r5-20261003.md`、`partial-mod-launch-matrix-current-release-r32-20261003.md`、`beta-package-r3-20261003.md`。
+
+### 未关闭边界
+
+可见 UI/图像/动画、长战斗全部回合、战中存档/读档、重连、多人同步、性能、完整平衡和朋友环境的可见安装仍未验收。headless 的 crashpad、Dummy renderer RID/resource leak 仍作为环境噪声单列，不冒充业务通过。

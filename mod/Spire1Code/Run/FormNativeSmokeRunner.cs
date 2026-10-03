@@ -33,6 +33,7 @@ internal static class FormNativeSmokeRunner
     private const int RunTimeoutSeconds = 120;
     private const int CombatTimeoutSeconds = 120;
     private const int ActionTimeoutSeconds = 60;
+    private const int EffectActionTimeoutSeconds = 60;
     private const int CardInjectionTimeoutSeconds = 60;
     private const int DetachedDrainSeconds = 10;
     private const int MainThreadGateSeconds = 10;
@@ -431,6 +432,7 @@ internal static class FormNativeSmokeRunner
 
         RunManager? runManager = null;
         int faultsAtStart = unobservedFaults.Count;
+        result["unobservedFaultsAtStart"] = faultsAtStart;
         PlayCardAction? action = null;
         Dictionary<string, object?>? actionResult = null;
         bool actionFailureLatched = false;
@@ -534,11 +536,30 @@ internal static class FormNativeSmokeRunner
                 terminalOperations);
 
             Creature? target = await InvokeOnMainThreadWithTimeoutAsync(
-                () => canonicalCard.TargetType == TargetType.AnyEnemy
-                    ? player.Creature.CombatState?.HittableEnemies.FirstOrDefault()
+                // Watcher Eruption uses TargetType.Any in the live card model, even though
+                // the smoke path always supplies an enemy target. Keep the real target action
+                // path rather than letting the test enqueue a deliberately targetless action.
+                () => scenario == "wrath" || canonicalCard.TargetType == TargetType.AnyEnemy
+                    ? FindFirstHittableEnemy(player, scenario == "wrath")
                     : null,
                 "find combat target",
                 terminalOperations);
+            if (scenario == "wrath" && target != null)
+            {
+                // The deterministic Cubex Construct fixture carries ArtifactPower. Remove it
+                // only from the isolated smoke target so ReaperFormEffectPower can expose its
+                // native DoomPower evidence; the production card path is otherwise untouched.
+                Task removeArtifact = await InvokeOnMainThreadWithTimeoutAsync(
+                    () => RemoveArtifactPowerForSmoke(target),
+                    "remove ArtifactPower from Wrath smoke target",
+                    terminalOperations);
+                await AwaitOperationWithTimeoutAsync(
+                    removeArtifact,
+                    TimeSpan.FromSeconds(ActionTimeoutSeconds),
+                    "remove ArtifactPower from Wrath smoke target",
+                    terminalOnFailure: true,
+                    detachedOperations: terminalOperations);
+            }
             Dictionary<string, object?> beforeSnapshot = await InvokeOnMainThreadWithTimeoutAsync(
                 () => Snapshot(player, target),
                 "snapshot before card",
@@ -640,10 +661,11 @@ internal static class FormNativeSmokeRunner
             {
                 actionFailureLatched = true;
                 result["terminalFailure"] = true;
-                await RecordActionEvidenceAsync(
+                await TryCancelActionAsync(
                     currentAction,
                     currentActionResult,
-                    exception.ToString(),
+                    "Game action execution failed",
+                    exception,
                     terminalOperations);
             }
 
@@ -654,28 +676,27 @@ internal static class FormNativeSmokeRunner
                 terminalOperations);
             result["cardPlay"] = currentActionResult;
             bool hasNewUnobservedFault = unobservedFaults.Count > faultsAtStart;
-            bool actionPassed;
+            ActionRuntimeSnapshot actionRuntime;
             try
             {
-                actionPassed = await InvokeOnMainThreadWithTimeoutAsync(
-                    () => !actionFailureLatched
-                        && currentActionResult["failure"] is null
-                        && currentAction.State == GameActionState.Finished
-                        && currentAction.Exception == null
-                        && currentAction.CompletionTask.Status == TaskStatus.RanToCompletion
-                        && !hasNewUnobservedFault,
+                actionRuntime = await ReadActionRuntimeAsync(
+                    currentAction,
                     "evaluate action result",
                     terminalOperations);
             }
             catch (Exception exception)
             {
-                actionPassed = false;
+                actionRuntime = ActionRuntimeSnapshot.Failed(exception.ToString());
                 actionFailureLatched = true;
                 result["terminalFailure"] = true;
                 currentActionResult["evidenceFailure"] = exception.ToString();
                 currentActionResult["failure"] = exception.ToString();
                 result["failure"] = exception.ToString();
             }
+            bool actionPassed = !actionFailureLatched
+                && currentActionResult["failure"] is null
+                && actionRuntime.IsSuccessful
+                && !hasNewUnobservedFault;
             if (actionPassed)
             {
                 Dictionary<string, object?> afterSnapshot = await InvokeOnMainThreadWithTimeoutAsync(
@@ -687,8 +708,24 @@ internal static class FormNativeSmokeRunner
                 result["formGateAfter"] = formGate;
                 if (formGate["passed"] is true && !formFailureLatched)
                 {
-                    result["status"] = "passed";
-                    result["failure"] = null;
+                    Dictionary<string, object?> effectVerification = await RunEffectVerificationAsync(
+                        scenario,
+                        runManager,
+                        player,
+                        unobservedFaults,
+                        terminalOperations);
+                    result["effectVerification"] = effectVerification;
+                    if (effectVerification["passed"] is true)
+                    {
+                        result["status"] = "passed";
+                        result["failure"] = null;
+                    }
+                    else
+                    {
+                        result["status"] = "failed";
+                        result["failure"] = effectVerification["failure"]?.ToString()
+                            ?? "Native effect verification failed after successful entry card action";
+                    }
                 }
                 else
                 {
@@ -882,6 +919,7 @@ internal static class FormNativeSmokeRunner
             }
         }
 
+        ApplyUnobservedFaultGate(result, unobservedFaults, faultsAtStart, "scenario");
         return result;
     }
 
@@ -901,6 +939,71 @@ internal static class FormNativeSmokeRunner
         };
     }
 
+    private sealed record ActionRuntimeSnapshot(
+        GameActionState State,
+        TaskStatus CompletionStatus,
+        bool CompletionIsCompleted,
+        bool CompletionIsCanceled,
+        bool CompletionIsFaulted,
+        string? Exception)
+    {
+        public bool IsSuccessful => State == GameActionState.Finished
+            && CompletionStatus == TaskStatus.RanToCompletion
+            && CompletionIsCompleted
+            && !CompletionIsCanceled
+            && !CompletionIsFaulted
+            && Exception == null;
+
+        public static ActionRuntimeSnapshot Failed(string exception)
+            => new(
+                GameActionState.Canceled,
+                TaskStatus.Faulted,
+                CompletionIsCompleted: true,
+                CompletionIsCanceled: false,
+                CompletionIsFaulted: true,
+                Exception: exception);
+    }
+
+    private static Task<ActionRuntimeSnapshot> ReadActionRuntimeAsync(
+        PlayCardAction action,
+        string description,
+        List<DetachedOperation> detachedOperations)
+    {
+        return InvokeOnMainThreadWithTimeoutAsync(
+            () => ReadActionRuntime(action),
+            description,
+            detachedOperations);
+    }
+
+    private static ActionRuntimeSnapshot ReadActionRuntime(PlayCardAction action)
+    {
+        Task completion = action.CompletionTask;
+        return new ActionRuntimeSnapshot(
+            action.State,
+            completion.Status,
+            completion.IsCompleted,
+            completion.IsCanceled,
+            completion.IsFaulted,
+            action.Exception?.ToString());
+    }
+
+    private static void RegisterActionCompletionDrain(
+        PlayCardAction action,
+        string description,
+        List<DetachedOperation> detachedOperations)
+    {
+        Task completion = action.CompletionTask;
+        if (completion.IsCompleted
+            || detachedOperations.Any(operation => ReferenceEquals(operation.Task, completion)))
+        {
+            return;
+        }
+
+        var detachedOperation = new DetachedOperation(completion, description + " completion drain");
+        detachedOperations.Add(detachedOperation);
+        ObserveDetachedTask(detachedOperation);
+    }
+
     private static async Task TryCancelActionAsync(
         PlayCardAction action,
         Dictionary<string, object?> actionResult,
@@ -909,6 +1012,7 @@ internal static class FormNativeSmokeRunner
         List<DetachedOperation> detachedOperations)
     {
         actionResult["failure"] = failure + ": " + exception;
+        RegisterActionCompletionDrain(action, "PlayCardAction cancellation", detachedOperations);
         try
         {
             await InvokeOnMainThreadWithTimeoutAsync(
@@ -923,6 +1027,7 @@ internal static class FormNativeSmokeRunner
                     {
                         actionResult["cancelRequest"] = "not-needed";
                     }
+                    RegisterActionCompletionDrain(action, "PlayCardAction cancellation", detachedOperations);
                     RecordActionEvidence(actionResult, action, actionResult["failure"]?.ToString());
                     return true;
                 },
@@ -1070,6 +1175,34 @@ internal static class FormNativeSmokeRunner
         };
     }
 
+    private static bool ApplyUnobservedFaultGate(
+        Dictionary<string, object?> result,
+        ConcurrentQueue<string> unobservedFaults,
+        int faultsAtStart,
+        string scope)
+    {
+        string[] faults = unobservedFaults.Skip(faultsAtStart).ToArray();
+        result["unobservedFaults"] = faults;
+        if (faults.Length == 0)
+        {
+            result["unobservedFaultGatePassed"] = true;
+            return true;
+        }
+
+        string failure = scope + " observed TaskHelper.UnobservedFault after the action gate: "
+            + string.Join(" | ", faults);
+        result["unobservedFaultGatePassed"] = false;
+        result["unobservedFaultFailure"] = failure;
+        result["status"] = "failed";
+        result["terminalFailure"] = true;
+        if (result.ContainsKey("passed"))
+        {
+            result["passed"] = false;
+        }
+        result["failure"] = AppendFailure(result["failure"]?.ToString(), failure);
+        return false;
+    }
+
     private static CharacterModel FindWatcherCharacter()
     {
         CharacterModel? character = ModelDb.AllCharacters.FirstOrDefault(model =>
@@ -1095,6 +1228,11 @@ internal static class FormNativeSmokeRunner
             "divinity" => "WATCHER_BLASPHEMY",
             _ => throw new InvalidOperationException("Unsupported scenario: " + scenario)
         };
+        return FindCardByEntry(entry);
+    }
+
+    private static CardModel FindCardByEntry(string entry)
+    {
         CardModel? card = ModelDb.AllCards.FirstOrDefault(model =>
             string.Equals(model.Id.Entry, entry, StringComparison.Ordinal));
         return card ?? throw new InvalidOperationException("Real Watcher card was not found in ModelDb.AllCards: " + entry);
@@ -1200,6 +1338,62 @@ internal static class FormNativeSmokeRunner
     }
 
     private static string TypeName(Type type) => type.FullName ?? type.Name;
+
+    private sealed record CreatureEvidence(
+        uint? CombatId,
+        string Type,
+        string LogName,
+        int CurrentHp,
+        int MaxHp,
+        int Block,
+        bool IsDead,
+        string[] PowerTypes,
+        Dictionary<string, int> PowerAmounts);
+
+    private sealed record CardPlayHistoryEvidence(
+        int StartedCount,
+        int FinishedCount,
+        int[] PlayIndices,
+        int[] PlayCounts,
+        int[] EnergySpent,
+        int[] EnergyValues,
+        int[] StarsSpent,
+        int[] StarValues,
+        bool[] IsAutoPlay);
+
+    private sealed record EffectCardRun(
+        string Label,
+        string Card,
+        Dictionary<string, object?> Before,
+        Dictionary<string, object?> After,
+        Dictionary<string, object?> Action,
+        bool Passed,
+        string? Failure);
+
+    private static CreatureEvidence DescribeCreature(Creature creature)
+    {
+        var powerTypes = new List<string>();
+        var powerAmounts = new Dictionary<string, int>(StringComparer.Ordinal);
+        foreach (PowerModel power in creature.Powers)
+        {
+            string fullName = power.GetType().FullName ?? power.GetType().Name;
+            string shortName = power.GetType().Name;
+            powerTypes.Add(fullName);
+            powerAmounts[shortName] = power.Amount;
+        }
+
+        return new CreatureEvidence(
+            creature.CombatId,
+            creature.GetType().FullName ?? creature.GetType().Name,
+            creature.LogName,
+            creature.CurrentHp,
+            creature.MaxHp,
+            creature.Block,
+            creature.IsDead,
+            powerTypes.ToArray(),
+            powerAmounts);
+    }
+
     private static Dictionary<string, object?> Snapshot(Player player, Creature? target)
     {
         string nativeStance = "unknown";
@@ -1220,6 +1414,12 @@ internal static class FormNativeSmokeRunner
             .Select(power => power.GetType().FullName ?? power.GetType().Name)
             .Where(name => name.IndexOf("Form", StringComparison.OrdinalIgnoreCase) >= 0)
             .ToArray();
+        ICombatState? combatState = player.Creature.CombatState;
+        List<Creature> enemies = combatState?.Enemies.ToList() ?? new List<Creature>();
+        if (target != null && !enemies.Any(enemy => ReferenceEquals(enemy, target)))
+        {
+            enemies.Add(target);
+        }
         return new Dictionary<string, object?>
         {
             ["nativeWatcherStance"] = nativeStance,
@@ -1228,24 +1428,546 @@ internal static class FormNativeSmokeRunner
             ["formCarrierOrEffectTypes"] = formCarrierTypes.Concat(formEffectTypes).ToArray(),
             ["formModeSelected"] = FormStanceMode.IsSelected(player),
             ["formBridgeAvailable"] = FormStanceWatcherBridge.IsAvailable,
-            ["energy"] = player.PlayerCombatState is { } combatState ? combatState.Energy : "unknown",
+            ["energy"] = player.PlayerCombatState is { } playerCombatState ? playerCombatState.Energy : "unknown",
             ["handCount"] = PileType.Hand.GetPile(player).Cards.Count,
             ["turnNumber"] = player.PlayerCombatState is { } combatStateForTurn ? combatStateForTurn.TurnNumber : "unknown",
-            ["combatRound"] = player.Creature.CombatState is { } combatStateForRound ? combatStateForRound.RoundNumber : "unknown",
-            ["target"] = target == null
-                ? "unknown"
-                : new Dictionary<string, object?>
-                {
-                    ["type"] = target.GetType().FullName ?? target.GetType().Name,
-                    ["logName"] = target.LogName,
-                    ["currentHp"] = target.CurrentHp,
-                    ["maxHp"] = target.MaxHp,
-                    ["isDead"] = target.IsDead,
-                    ["powerTypes"] = target.Powers
-                        .Select(power => power.GetType().FullName ?? power.GetType().Name)
-                        .ToArray()
-                }
+            ["combatRound"] = combatState is { } combatStateForRound ? combatStateForRound.RoundNumber : "unknown",
+            ["ownerPowerAmounts"] = DescribeCreature(player.Creature).PowerAmounts,
+            ["target"] = target == null ? null : DescribeCreature(target),
+            ["enemies"] = enemies.Select(DescribeCreature).ToArray(),
+            ["watcherStrikeHistory"] = DescribeCardPlayHistory(player, "WATCHER_STRIKE_P")
         };
+    }
+
+    private static Creature? FindFirstHittableEnemy(Player player, bool preferNoArtifact = false)
+    {
+        IReadOnlyList<Creature>? enemies = player.Creature.CombatState?.HittableEnemies;
+        if (enemies == null || enemies.Count == 0)
+        {
+            return null;
+        }
+
+        if (!preferNoArtifact)
+        {
+            return enemies[0];
+        }
+
+        // Prefer a target without Artifact so Reaper evidence can observe Doom,
+        // but never turn a one-enemy fixture into a targetless card action.
+        return enemies.FirstOrDefault(candidate =>
+                   !candidate.Powers.Any(power =>
+                       string.Equals(power.GetType().Name, "ArtifactPower", StringComparison.Ordinal)))
+               ?? enemies[0];
+    }
+
+    private static Task RemoveArtifactPowerForSmoke(Creature target)
+    {
+        PowerModel? artifact = target.Powers.FirstOrDefault(power =>
+            string.Equals(power.GetType().Name, "ArtifactPower", StringComparison.Ordinal));
+        return PowerCmd.Remove(artifact);
+    }
+
+    private static int ReadEnergy(Dictionary<string, object?> snapshot)
+        => snapshot.TryGetValue("energy", out object? value) && value is int energy ? energy : int.MinValue;
+
+    private static int ReadOwnerPowerAmount(Dictionary<string, object?> snapshot, string powerName)
+    {
+        if (snapshot.TryGetValue("ownerPowerAmounts", out object? value)
+            && value is Dictionary<string, int> amounts
+            && amounts.TryGetValue(powerName, out int amount))
+        {
+            return amount;
+        }
+        return 0;
+    }
+
+    private static int ReadTargetPowerAmount(Dictionary<string, object?> snapshot, string powerName)
+    {
+        if (snapshot.TryGetValue("target", out object? value)
+            && value is CreatureEvidence target
+            && target.PowerAmounts.TryGetValue(powerName, out int amount))
+        {
+            return amount;
+        }
+        return 0;
+    }
+
+    private static CardPlayHistoryEvidence DescribeCardPlayHistory(Player player, string cardEntry)
+    {
+        var history = CombatManager.Instance.History;
+        CardPlay[] started = history.CardPlaysStarted
+            .Where(entry => entry.CardPlay.Player == player
+                && string.Equals(entry.CardPlay.Card.Id.Entry, cardEntry, StringComparison.Ordinal))
+            .Select(entry => entry.CardPlay)
+            .ToArray();
+        CardPlay[] finished = history.CardPlaysFinished
+            .Where(entry => entry.CardPlay.Player == player
+                && string.Equals(entry.CardPlay.Card.Id.Entry, cardEntry, StringComparison.Ordinal))
+            .Select(entry => entry.CardPlay)
+            .ToArray();
+        return new CardPlayHistoryEvidence(
+            started.Length,
+            finished.Length,
+            finished.Select(play => play.PlayIndex).ToArray(),
+            finished.Select(play => play.PlayCount).ToArray(),
+            finished.Select(play => play.Resources.EnergySpent).ToArray(),
+            finished.Select(play => play.Resources.EnergyValue).ToArray(),
+            finished.Select(play => play.Resources.StarsSpent).ToArray(),
+            finished.Select(play => play.Resources.StarValue).ToArray(),
+            finished.Select(play => play.IsAutoPlay).ToArray());
+    }
+
+    private static CardPlayHistoryEvidence ReadCardPlayHistory(Dictionary<string, object?> snapshot)
+        => snapshot.TryGetValue("watcherStrikeHistory", out object? value)
+            && value is CardPlayHistoryEvidence history
+            ? history
+            : new CardPlayHistoryEvidence(
+                0,
+                0,
+                Array.Empty<int>(),
+                Array.Empty<int>(),
+                Array.Empty<int>(),
+                Array.Empty<int>(),
+                Array.Empty<int>(),
+                Array.Empty<int>(),
+                Array.Empty<bool>());
+
+    private static int HistoryFinishedDelta(
+        Dictionary<string, object?> before,
+        Dictionary<string, object?> after)
+        => Math.Max(0, ReadCardPlayHistory(after).FinishedCount - ReadCardPlayHistory(before).FinishedCount);
+
+    private static int[] HistoryDeltaValues(
+        Dictionary<string, object?> before,
+        Dictionary<string, object?> after,
+        Func<CardPlayHistoryEvidence, int[]> selector)
+    {
+        CardPlayHistoryEvidence beforeHistory = ReadCardPlayHistory(before);
+        CardPlayHistoryEvidence afterHistory = ReadCardPlayHistory(after);
+        int skip = Math.Min(beforeHistory.FinishedCount, afterHistory.FinishedCount);
+        return selector(afterHistory).Skip(skip).ToArray();
+    }
+
+    private static CreatureEvidence? MatchCreature(
+        CreatureEvidence source,
+        IReadOnlyList<CreatureEvidence> candidates)
+    {
+        if (source.CombatId.HasValue)
+        {
+            return candidates.FirstOrDefault(candidate => candidate.CombatId == source.CombatId);
+        }
+
+        string key = source.Type + "|" + source.LogName;
+        CreatureEvidence[] matches = candidates
+            .Where(candidate => !candidate.CombatId.HasValue
+                && candidate.Type + "|" + candidate.LogName == key)
+            .ToArray();
+        return matches.Length == 1 ? matches[0] : null;
+    }
+
+    private static int TotalEnemyHpLoss(Dictionary<string, object?> before, Dictionary<string, object?> after)
+        => TotalEnemyMetric(before, after, (beforeCreature, afterCreature) =>
+            Math.Max(0, beforeCreature.CurrentHp - afterCreature.CurrentHp));
+
+    private static int TotalEnemyDamageTaken(Dictionary<string, object?> before, Dictionary<string, object?> after)
+        => TotalEnemyMetric(before, after, (beforeCreature, afterCreature) =>
+            Math.Max(0, beforeCreature.CurrentHp - afterCreature.CurrentHp)
+            + Math.Max(0, beforeCreature.Block - afterCreature.Block));
+
+    private static int TotalEnemyMetric(
+        Dictionary<string, object?> before,
+        Dictionary<string, object?> after,
+        Func<CreatureEvidence, CreatureEvidence, int> metric)
+    {
+        if (!before.TryGetValue("enemies", out object? beforeValue)
+            || beforeValue is not CreatureEvidence[] beforeEnemies
+            || !after.TryGetValue("enemies", out object? afterValue)
+            || afterValue is not CreatureEvidence[] afterEnemies)
+        {
+            return 0;
+        }
+
+        int total = 0;
+        foreach (CreatureEvidence beforeEnemy in beforeEnemies)
+        {
+            CreatureEvidence? afterEnemy = MatchCreature(beforeEnemy, afterEnemies);
+            if (afterEnemy != null)
+            {
+                total += metric(beforeEnemy, afterEnemy);
+            }
+        }
+        return total;
+    }
+
+    private static int TargetDamageTaken(
+        Dictionary<string, object?> before,
+        Dictionary<string, object?> after)
+    {
+        if (before.TryGetValue("target", out object? beforeValue)
+            && beforeValue is CreatureEvidence beforeTarget
+            && after.TryGetValue("target", out object? afterValue)
+            && afterValue is CreatureEvidence afterTarget)
+        {
+            return Math.Max(0, beforeTarget.CurrentHp - afterTarget.CurrentHp)
+                + Math.Max(0, beforeTarget.Block - afterTarget.Block);
+        }
+        return 0;
+    }
+
+    private static async Task<Dictionary<string, object?>> RunEffectVerificationAsync(
+        string scenario,
+        RunManager runManager,
+        Player player,
+        ConcurrentQueue<string> unobservedFaults,
+        List<DetachedOperation> detachedOperations)
+    {
+        var result = new Dictionary<string, object?>
+        {
+            ["status"] = "failed",
+            ["passed"] = false,
+            ["card"] = "WATCHER_STRIKE_P",
+            ["expectedBaseDamage"] = 6,
+            ["expectedManualPlayCount"] = scenario == "calm" ? 2 : 1,
+            ["actions"] = Array.Empty<EffectCardRun>(),
+            ["failure"] = "unknown"
+        };
+        var runs = new List<EffectCardRun>();
+        int faultsAtStart = unobservedFaults.Count;
+        result["unobservedFaultsAtStart"] = faultsAtStart;
+        int actionCount = scenario == "calm" ? 2 : 1;
+        for (int index = 0; index < actionCount; index++)
+        {
+            string label = scenario == "calm" ? "effect-first" + (index + 1) : "effect-first";
+            Creature? target = await InvokeOnMainThreadWithTimeoutAsync(
+                () => FindFirstHittableEnemy(player, scenario == "wrath"),
+                "find WatcherStrike_P target " + label,
+                detachedOperations);
+            if (target == null)
+            {
+                result["failure"] = "No hittable enemy remained for " + label;
+                break;
+            }
+
+            EffectCardRun run = await PlayEffectCardAsync(
+                runManager,
+                player,
+                target,
+                label,
+                unobservedFaults,
+                faultsAtStart,
+                detachedOperations);
+            runs.Add(run);
+            if (!run.Passed)
+            {
+                result["failure"] = run.Failure ?? (label + " action did not complete");
+                break;
+            }
+        }
+
+        result["actions"] = runs.ToArray();
+        if (runs.Count == 0 || runs.Any(run => !run.Passed))
+        {
+            result["status"] = "failed";
+            ApplyUnobservedFaultGate(result, unobservedFaults, faultsAtStart, "effect");
+            return result;
+        }
+
+        EffectCardRun first = runs[0];
+        int firstLoss = TotalEnemyHpLoss(first.Before, first.After);
+        int firstDamage = TotalEnemyDamageTaken(first.Before, first.After);
+        int firstTargetDamage = TargetDamageTaken(first.Before, first.After);
+        int firstEnergyBefore = ReadEnergy(first.Before);
+        int firstEnergyAfter = ReadEnergy(first.After);
+        bool effectPassed;
+        string? failure;
+        switch (scenario)
+        {
+            case "calm":
+                int secondLoss = runs.Count > 1 ? TotalEnemyHpLoss(runs[1].Before, runs[1].After) : 0;
+                int secondDamage = runs.Count > 1 ? TotalEnemyDamageTaken(runs[1].Before, runs[1].After) : 0;
+                int secondEnergyBefore = runs.Count > 1 ? ReadEnergy(runs[1].Before) : int.MinValue;
+                int secondEnergyAfter = runs.Count > 1 ? ReadEnergy(runs[1].After) : int.MinValue;
+                int[] firstPlayCounts = HistoryDeltaValues(first.Before, first.After, history => history.PlayCounts);
+                int[] secondPlayCounts = runs.Count > 1
+                    ? HistoryDeltaValues(runs[1].Before, runs[1].After, history => history.PlayCounts)
+                    : Array.Empty<int>();
+                int[] firstEnergySpent = HistoryDeltaValues(first.Before, first.After, history => history.EnergySpent);
+                int[] secondEnergySpent = runs.Count > 1
+                    ? HistoryDeltaValues(runs[1].Before, runs[1].After, history => history.EnergySpent)
+                    : Array.Empty<int>();
+                effectPassed = runs.Count == 2
+                    && firstDamage == 9
+                    && secondDamage == 9
+                    && firstEnergyBefore == firstEnergyAfter
+                    && secondEnergyBefore - secondEnergyAfter == 1
+                    && HistoryFinishedDelta(first.Before, first.After) == 1
+                    && HistoryFinishedDelta(runs[1].Before, runs[1].After) == 1
+                    && firstPlayCounts.Length == 1
+                    && firstPlayCounts[0] == 1
+                    && secondPlayCounts.Length == 1
+                    && secondPlayCounts[0] == 1
+                    && firstEnergySpent.Length == 1
+                    && firstEnergySpent[0] == 0
+                    && secondEnergySpent.Length == 1
+                    && secondEnergySpent[0] == 1;
+                failure = effectPassed
+                    ? null
+                    : "Calm effect evidence mismatch: hpLoss=" + firstLoss
+                        + ", firstDamage=" + firstDamage
+                        + ", secondHpLoss=" + secondLoss
+                        + ", secondDamage=" + secondDamage
+                        + ", firstEnergy=" + firstEnergyBefore + "->" + firstEnergyAfter
+                        + ", secondEnergy=" + secondEnergyBefore + "->" + secondEnergyAfter
+                        + ", firstPlayCounts=" + string.Join(",", firstPlayCounts)
+                        + ", secondPlayCounts=" + string.Join(",", secondPlayCounts)
+                        + ", firstEnergySpent=" + string.Join(",", firstEnergySpent)
+                        + ", secondEnergySpent=" + string.Join(",", secondEnergySpent);
+                result["firstManualPlayFree"] = firstEnergyBefore == firstEnergyAfter && firstEnergySpent.Length == 1 && firstEnergySpent[0] == 0;
+                result["secondManualPlayPaidOnce"] = secondEnergyBefore - secondEnergyAfter == 1 && secondEnergySpent.Length == 1 && secondEnergySpent[0] == 1;
+                result["firstTotalEnemyHpLoss"] = firstLoss;
+                result["secondTotalEnemyHpLoss"] = secondLoss;
+                result["firstTotalEnemyDamageTaken"] = firstDamage;
+                result["secondTotalEnemyDamageTaken"] = secondDamage;
+                result["firstHistoryFinishedDelta"] = HistoryFinishedDelta(first.Before, first.After);
+                result["secondHistoryFinishedDelta"] = HistoryFinishedDelta(runs[1].Before, runs[1].After);
+                break;
+            case "wrath":
+                int strength = ReadOwnerPowerAmount(first.Before, "StrengthPower");
+                int doom = ReadTargetPowerAmount(first.After, "DoomPower");
+                int[] wrathPlayCounts = HistoryDeltaValues(first.Before, first.After, history => history.PlayCounts);
+                int[] wrathEnergySpent = HistoryDeltaValues(first.Before, first.After, history => history.EnergySpent);
+                int wrathHistoryDelta = HistoryFinishedDelta(first.Before, first.After);
+                bool wrathPaidOneEnergy = firstEnergyBefore - firstEnergyAfter == 1
+                    && wrathEnergySpent.Length == 1
+                    && wrathEnergySpent[0] == 1;
+                effectPassed = firstTargetDamage == 7
+                    && strength == 1
+                    && doom == 7
+                    && wrathHistoryDelta == 1
+                    && wrathPlayCounts.Length == 1
+                    && wrathPlayCounts[0] == 1
+                    && wrathPaidOneEnergy;
+                failure = effectPassed
+                    ? null
+                    : "Wrath effect evidence mismatch: hpLoss=" + firstLoss
+                        + ", totalDamage=" + firstDamage
+                        + ", targetDamage=" + firstTargetDamage
+                        + ", ownerStrength=" + strength
+                        + ", targetDoom=" + doom
+                        + ", energy=" + firstEnergyBefore + "->" + firstEnergyAfter
+                        + ", historyDelta=" + wrathHistoryDelta
+                        + ", playCounts=" + string.Join(",", wrathPlayCounts)
+                        + ", energySpent=" + string.Join(",", wrathEnergySpent);
+                result["totalEnemyHpLoss"] = firstLoss;
+                result["totalEnemyDamageTaken"] = firstDamage;
+                result["targetDamageTaken"] = firstTargetDamage;
+                result["ownerStrength"] = strength;
+                result["targetDoom"] = doom;
+                result["doomEvidence"] = doom == 7 ? "observed-exact" : "not-observed-or-wrong-amount";
+                result["energyBefore"] = firstEnergyBefore;
+                result["energyAfter"] = firstEnergyAfter;
+                result["energySpentEvidence"] = wrathEnergySpent;
+                break;
+            case "divinity":
+                int[] divinityPlayCounts = HistoryDeltaValues(first.Before, first.After, history => history.PlayCounts);
+                int[] divinityPlayIndices = HistoryDeltaValues(first.Before, first.After, history => history.PlayIndices);
+                int[] divinityEnergySpent = HistoryDeltaValues(first.Before, first.After, history => history.EnergySpent);
+                int divinityHistoryDelta = HistoryFinishedDelta(first.Before, first.After);
+                bool echoExtraPlay = divinityHistoryDelta == 2
+                    && divinityPlayCounts.Length == 2
+                    && divinityPlayCounts.All(playCount => playCount == 2)
+                    && divinityPlayIndices.SequenceEqual(new[] { 0, 1 });
+                bool divinityPaidOneEnergy = firstEnergyBefore - firstEnergyAfter == 1
+                    && divinityEnergySpent.Length == 2
+                    && divinityEnergySpent.All(energySpent => energySpent == 1);
+                effectPassed = firstTargetDamage == 12
+                    && echoExtraPlay
+                    && divinityPaidOneEnergy;
+                failure = effectPassed
+                    ? null
+                    : "Divinity effect evidence mismatch: hpLoss=" + firstLoss
+                        + ", totalDamage=" + firstDamage
+                        + ", targetDamage=" + firstTargetDamage
+                        + ", energy=" + firstEnergyBefore + "->" + firstEnergyAfter
+                        + ", historyDelta=" + divinityHistoryDelta
+                        + ", playCounts=" + string.Join(",", divinityPlayCounts)
+                        + ", playIndices=" + string.Join(",", divinityPlayIndices)
+                        + ", energySpent=" + string.Join(",", divinityEnergySpent);
+                result["totalEnemyHpLoss"] = firstLoss;
+                result["totalEnemyDamageTaken"] = firstDamage;
+                result["targetDamageTaken"] = firstTargetDamage;
+                result["energyBefore"] = firstEnergyBefore;
+                result["energyAfter"] = firstEnergyAfter;
+                result["echoHistoryFinishedDelta"] = divinityHistoryDelta;
+                result["echoPlayCounts"] = divinityPlayCounts;
+                result["echoPlayIndices"] = divinityPlayIndices;
+                result["echoEnergySpent"] = divinityEnergySpent;
+                result["echoExtraPlayEvidence"] = echoExtraPlay;
+                break;
+            default:
+                effectPassed = false;
+                failure = "Unsupported effect verification scenario: " + scenario;
+                break;
+        }
+
+        result["passed"] = effectPassed;
+        result["status"] = effectPassed ? "passed" : "failed";
+        result["failure"] = failure;
+        result["unobservedFaultsSinceEffectStart"] = unobservedFaults.Skip(faultsAtStart).ToArray();
+        ApplyUnobservedFaultGate(result, unobservedFaults, faultsAtStart, "effect");
+        return result;
+    }
+
+    private static async Task<EffectCardRun> PlayEffectCardAsync(
+        RunManager runManager,
+        Player player,
+        Creature target,
+        string label,
+        ConcurrentQueue<string> unobservedFaults,
+        int faultsAtStart,
+        List<DetachedOperation> detachedOperations)
+    {
+        Dictionary<string, object?> before = new();
+        Dictionary<string, object?> after = new();
+        Dictionary<string, object?> actionResult = new() { ["status"] = "not-started", ["failure"] = null };
+        PlayCardAction? action = null;
+        string? failure = null;
+        bool actionFailure = false;
+        try
+        {
+            before = await InvokeOnMainThreadWithTimeoutAsync(
+                () => Snapshot(player, target),
+                "snapshot before " + label,
+                detachedOperations);
+            CardModel canonicalCard = await InvokeOnMainThreadWithTimeoutAsync(
+                () => FindCardByEntry("WATCHER_STRIKE_P"),
+                "find WatcherStrike_P for " + label,
+                detachedOperations);
+            CardModel card = await InvokeOnMainThreadWithTimeoutAsync(
+                () => player.Creature.CombatState?.CreateCard(canonicalCard, player)
+                    ?? throw new InvalidOperationException("CombatState was unavailable while creating WatcherStrike_P"),
+                "create WatcherStrike_P for " + label,
+                detachedOperations);
+            Task addCard = await InvokeOnMainThreadWithTimeoutAsync(
+                () => CardPileCmd.Add(card, PileType.Hand, skipVisuals: true),
+                "add WatcherStrike_P to hand for " + label,
+                detachedOperations);
+            await AwaitOperationWithTimeoutAsync(
+                addCard,
+                TimeSpan.FromSeconds(CardInjectionTimeoutSeconds),
+                "WatcherStrike_P injection for " + label,
+                terminalOnFailure: true,
+                detachedOperations: detachedOperations);
+            bool cardInHand = await InvokeOnMainThreadWithTimeoutAsync(
+                () => card.Pile?.Type == PileType.Hand,
+                "verify WatcherStrike_P hand pile for " + label,
+                detachedOperations);
+            if (!cardInHand)
+                throw new InvalidOperationException("WatcherStrike_P was not added to the hand for " + label);
+
+            action = await InvokeOnMainThreadWithTimeoutAsync(
+                () => new PlayCardAction(card, target),
+                "create WatcherStrike_P PlayCardAction for " + label,
+                detachedOperations);
+            actionResult = await InvokeOnMainThreadWithTimeoutAsync(
+                () => CreateActionResult(action),
+                "record WatcherStrike_P action for " + label,
+                detachedOperations);
+            await InvokeOnMainThreadWithTimeoutAsync(
+                () =>
+                {
+                    runManager.ActionQueueSynchronizer.RequestEnqueue(action);
+                    return true;
+                },
+                "enqueue WatcherStrike_P for " + label,
+                detachedOperations);
+            try
+            {
+                await AwaitOperationWithTimeoutAsync(
+                    action.CompletionTask,
+                    TimeSpan.FromSeconds(EffectActionTimeoutSeconds),
+                    "WatcherStrike_P completion for " + label,
+                    terminalOnFailure: true,
+                    detachedOperations: detachedOperations);
+            }
+            catch (TerminalOperationException exception)
+            {
+                actionFailure = true;
+                failure = exception.ToString();
+                await TryCancelActionAsync(action, actionResult, "WatcherStrike_P action failed", exception, detachedOperations);
+            }
+            catch (Exception exception)
+            {
+                actionFailure = true;
+                failure = exception.ToString();
+                await TryCancelActionAsync(
+                    action,
+                    actionResult,
+                    "WatcherStrike_P action execution failed",
+                    exception,
+                    detachedOperations);
+            }
+
+            await RecordActionEvidenceAsync(action, actionResult, actionResult["failure"]?.ToString(), detachedOperations);
+            bool hasNewUnobservedFault = unobservedFaults.Count > faultsAtStart;
+            ActionRuntimeSnapshot actionRuntime = await ReadActionRuntimeAsync(
+                action,
+                "evaluate WatcherStrike_P action for " + label,
+                detachedOperations);
+            bool actionPassed = !actionFailure
+                && actionResult["failure"] is null
+                && actionRuntime.IsSuccessful
+                && !hasNewUnobservedFault;
+            if (!actionPassed)
+            {
+                failure ??= BuildActionFailure(actionResult, hasNewUnobservedFault);
+            }
+            else
+            {
+                after = await InvokeOnMainThreadWithTimeoutAsync(
+                    () => Snapshot(player, target),
+                    "snapshot after " + label,
+                    detachedOperations);
+            }
+
+            return new EffectCardRun(
+                label,
+                "WATCHER_STRIKE_P",
+                before,
+                after,
+                actionResult,
+                actionPassed,
+                failure);
+        }
+        catch (Exception exception)
+        {
+            failure ??= exception.ToString();
+            if (action != null)
+            {
+                actionFailure = true;
+                try
+                {
+                    await TryCancelActionAsync(
+                        action,
+                        actionResult,
+                        "WatcherStrike_P action execution failed",
+                        exception,
+                        detachedOperations);
+                }
+                catch (Exception cancelException)
+                {
+                    failure = AppendFailure(failure, cancelException.ToString());
+                }
+            }
+            return new EffectCardRun(
+                label,
+                "WATCHER_STRIKE_P",
+                before,
+                after,
+                actionResult,
+                false,
+                failure);
+        }
     }
 
     private static async Task WaitWithTimeoutAsync(

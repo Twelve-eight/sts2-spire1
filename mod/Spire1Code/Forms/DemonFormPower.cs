@@ -18,6 +18,10 @@ namespace Spire1.Spire1Code.Forms;
 /// <summary>
 /// Grants successive triangular Strength deltas and adds the round number to enemy damage.
 /// Scheduled deltas and accepted Strength are separate ledgers: a blocked grant is not retried.
+/// On removal the accepted-Strength ledger is consumed: if the aggregate instance that carried the
+/// contribution still exists, only the recorded delta is withdrawn. If another source drove that
+/// aggregate to zero, the cancelled source contribution is restored before the next Demon grant or
+/// on form exit; an explicit purge is still treated as a loss of the aggregate and is not recreated.
 /// </summary>
 public sealed class DemonFormPower : CustomPowerModel
 {
@@ -29,6 +33,9 @@ public sealed class DemonFormPower : CustomPowerModel
         public decimal previousTarget;
         public decimal grantedStrength;
         public StrengthPower? strength;
+        public Action? strengthRemovedHandler;
+        public StrengthPower? removedStrength;
+        public bool strengthRemovedAtZero;
         public bool initialized;
         public bool refreshing;
         public bool removed;
@@ -92,7 +99,7 @@ public sealed class DemonFormPower : CustomPowerModel
             return;
         }
 
-        ForgetPurgedStrength(owner, data);
+        await ForgetPurgedStrength(owner, data);
         data.refreshing = true;
         try
         {
@@ -110,7 +117,7 @@ public sealed class DemonFormPower : CustomPowerModel
                 // it. DemonFormStrengthTransaction observes the real SetAmount write instead, so a
                 // before-hook write by another source never enters this ledger, and a post-write
                 // failure still keeps the delta that was really stored.
-                data.strength = strength;
+                TrackStrength(data, strength);
                 await DemonFormStrengthTransaction.ModifyAmountAsync(
                     choiceContext,
                     strength,
@@ -119,7 +126,7 @@ public sealed class DemonFormPower : CustomPowerModel
                     accepted => data.grantedStrength += accepted);
             }
 
-            ForgetPurgedStrength(owner, data);
+            await ForgetPurgedStrength(owner, data);
         }
         finally
         {
@@ -160,20 +167,97 @@ public sealed class DemonFormPower : CustomPowerModel
             if (observed && (ReferenceEquals(owner.GetPower<StrengthPower>(), strength) || strength.Amount == 0))
             {
                 data.grantedStrength += acceptedAmount;
-                data.strength = strength;
+                TrackStrength(data, strength);
             }
         }
     }
 
-    private static void ForgetPurgedStrength(Creature owner, Data data)
+    private static void TrackStrength(Data data, StrengthPower strength)
     {
-        if (data.strength != null && data.strength.Amount != 0
-            && !ReferenceEquals(owner.GetPower<StrengthPower>(), data.strength))
+        if (ReferenceEquals(data.strength, strength))
         {
-            // Explicit removal of a nonzero aggregate also removed this form's contribution.
-            // A zero-amount removal is different: other Strength may have cancelled our bonus.
+            return;
+        }
+
+        UntrackStrength(data);
+        data.strength = strength;
+        data.removedStrength = null;
+        data.strengthRemovedAtZero = false;
+        Action removedHandler = () =>
+        {
+            if (ReferenceEquals(data.strength, strength))
+            {
+                // Removed fires before Creature.RemovePowerInternal removes the instance from
+                // the owner's list. Keep the exact instance so a later replacement cannot be
+                // mistaken for the aggregate that carried this ledger.
+                data.removedStrength = strength;
+                data.strengthRemovedAtZero = strength.Amount == 0;
+            }
+        };
+        data.strengthRemovedHandler = removedHandler;
+        strength.Removed += removedHandler;
+    }
+
+    private static void UntrackStrength(Data data)
+    {
+        if (data.strength != null && data.strengthRemovedHandler != null)
+        {
+            data.strength.Removed -= data.strengthRemovedHandler;
+        }
+
+        data.strength = null;
+        data.strengthRemovedHandler = null;
+    }
+
+    private static async Task ForgetPurgedStrength(Creature owner, Data data)
+    {
+        StrengthPower? tracked = data.strength;
+        if (tracked == null)
+        {
+            return;
+        }
+
+        StrengthPower? current = owner.GetPower<StrengthPower>();
+        if (ReferenceEquals(current, tracked))
+        {
+            return;
+        }
+
+        bool zeroAggregate = ReferenceEquals(data.removedStrength, tracked)
+            && data.strengthRemovedAtZero
+            && data.grantedStrength != 0m;
+        bool replacement = current != null && !ReferenceEquals(current, tracked);
+        decimal granted = data.grantedStrength;
+        UntrackStrength(data);
+        data.removedStrength = null;
+        data.strengthRemovedAtZero = false;
+
+        if (!zeroAggregate || replacement)
+        {
+            // An explicit purge or a replacement instance means the old aggregate no longer
+            // carries this form's contribution. Clear it before a later unrelated Strength can
+            // absorb the form's withdrawal.
             data.grantedStrength = 0m;
-            data.strength = null;
+            return;
+        }
+
+        // Strength is an AllowNegative power. When an external -n modification cancels the
+        // aggregate to zero, the engine removes the aggregate instance even though the external
+        // source is still semantically active. Restore that external remainder directly, without
+        // sending it through a new grant hook or CombatHistory entry. This runs before the next
+        // Demon grant, or on form exit if no later grant occurs.
+        data.grantedStrength = 0m;
+        if (owner.IsDead || owner.CombatState == null || CombatManager.Instance.IsOverOrEnding)
+        {
+            return;
+        }
+
+        // A non-null current instance was already classified as a replacement above and returned.
+        // Only the no-replacement case may recreate the external remainder.
+        if (current == null)
+        {
+            StrengthPower restored = (StrengthPower)ModelDb.Power<StrengthPower>().ToMutable();
+            restored.ApplyInternal(owner, -granted, silent: true);
         }
     }
 
@@ -201,11 +285,14 @@ public sealed class DemonFormPower : CustomPowerModel
             return;
         }
 
-        ForgetPurgedStrength(owner, data);
+        await ForgetPurgedStrength(owner, data);
         decimal granted = data.grantedStrength;
+        StrengthPower? tracked = data.strength;
         data.cleanupComplete = true;
         data.grantedStrength = 0m;
-        data.strength = null;
+        UntrackStrength(data);
+        data.removedStrength = null;
+        data.strengthRemovedAtZero = false;
         if (granted == 0m || owner.IsDead || owner.CombatState == null
             || CombatManager.Instance.IsOverOrEnding)
         {
@@ -213,25 +300,23 @@ public sealed class DemonFormPower : CustomPowerModel
         }
 
         StrengthPower? strength = owner.GetPower<StrengthPower>();
-        int remaining = (int)Math.Clamp((strength?.Amount ?? 0) - granted, -StrengthLimit, StrengthLimit);
+        if (strength == null || tracked == null || !ReferenceEquals(strength, tracked))
+        {
+            // The aggregate instance that carried this form's accepted Strength is already gone
+            // (for example, other Strength cancelled the total to zero and the engine removed the
+            // zero instance), or a replacement instance took its place. The form's contribution
+            // must not be withdrawn from an unrelated Strength generation.
+            return;
+        }
+
+        int remaining = (int)Math.Clamp(strength.Amount - granted, -StrengthLimit, StrengthLimit);
         // Source cleanup is not a new Strength debuff. A second Apply would let Artifact or
         // grant multipliers block/amplify the withdrawal and corrupt unrelated Strength.
         // SetAmount keeps the normal amount/UI events; zero still uses awaited PowerCmd.Remove.
-        if (strength == null)
+        strength.SetAmount(remaining, silent: true);
+        if (strength.Amount == 0 && ReferenceEquals(owner.GetPower<StrengthPower>(), strength))
         {
-            if (remaining != 0)
-            {
-                strength = (StrengthPower)ModelDb.Power<StrengthPower>().ToMutable();
-                strength.ApplyInternal(owner, remaining, silent: true);
-            }
-        }
-        else
-        {
-            strength.SetAmount(remaining, silent: true);
-            if (strength.Amount == 0 && ReferenceEquals(owner.GetPower<StrengthPower>(), strength))
-            {
-                await PowerCmd.Remove(strength);
-            }
+            await PowerCmd.Remove(strength);
         }
     }
 }

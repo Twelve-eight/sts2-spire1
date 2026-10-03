@@ -44,22 +44,24 @@
       "Spire1.Spire1Code.Interop.AftpFireFlyPerfCompat",
       "Spire1.Spire1Code.Interop.AftpCardStateCompat",
       "Spire1.Spire1Code.Patches.DebugCardInjectPatch",
-      "Spire1.Spire1Code.Patches.DebugRelicInjectPatch",
-      "Spire1.Spire1Code.Forms.CelestialFormPower",
-      "Spire1.Spire1Code.Forms.DemonFormPower",
-      "Spire1.Spire1Code.Forms.DemonReaperStancePower",
-      "Spire1.Spire1Code.Forms.EchoCelestialStancePower",
-      "Spire1.Spire1Code.Forms.EchoFormEffectPower",
-      "Spire1.Spire1Code.Forms.FormStanceCmd",
-      "Spire1.Spire1Code.Forms.ReaperFormEffectPower",
-      "Spire1.Spire1Code.Forms.SerpentFormPower",
-      "Spire1.Spire1Code.Forms.VoidFormEffectPower",
-      "Spire1.Spire1Code.Forms.VoidSerpentStancePower"
+      "Spire1.Spire1Code.Patches.DebugRelicInjectPatch"
     ],
-    "_forbiddenNamespaces_comment": "整命名空间禁含(前缀匹配,以 . 收尾避免同前缀命名空间误伤)。这样将来往 Forms/Experimental 里新增类型也会被自动拦截,无需逐个登记。",
+    "_forbiddenNamespaces_comment": "Experimental 命名空间继续自动拦截.本轮 Forms 默认编译,仅手选 FormStanceModifier 启用,不解除 Experimental, Debug, AFTP held-back 或可选程序集硬引用门禁.",
     "forbiddenNamespaces": [
-      "Spire1.Spire1Code.Forms",
       "Spire1.Spire1Code.Experimental"
     ]
+  },
+  "pckPublishGate": {
+    "_comment": "门禁#4(声明): GodotPublish 的 PCK 发布契约。本文件只是声明, 不执行验证; 运行验证由 Spire1.csproj 的 GodotPublish target 在 Publish 时执行 (导出前删除旧 PCK/digest, 移除 ContinueOnError, 导出后断言存在/非空/时间戳不早于导出起点, 写 <Mod>.pck.sha256 并回读比对)。此处只记录口径, 不得把静态配置当成运行验证。",
+    "enabled": true,
+    "target": "GodotPublish",
+    "manifestRelativePath": "../../mod/Spire1.json",
+    "manifestHasPckRequired": true,
+    "pckRelativeToModsPath": "Spire1/Spire1.pck",
+    "digestRelativeToModsPath": "Spire1/Spire1.pck.sha256",
+    "digestAlgorithm": "SHA256",
+    "staleTimestampGuard": true,
+    "deletionBeforeExport": true,
+    "continueOnError": false
   }
 }

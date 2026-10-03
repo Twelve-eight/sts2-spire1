@@ -1,4 +1,4 @@
-﻿<Project Sdk="Godot.NET.Sdk/4.5.1" InitialTargets="CheckDependencyPaths">
+<Project Sdk="Godot.NET.Sdk/4.5.1" InitialTargets="CheckDependencyPaths">
     <Import Project=".\Sts2PathDiscovery.props"/>
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
@@ -160,7 +160,7 @@
          target exactly like the copy targets it guards.
          ============================================================================== -->
     <Target Name="AssertModsPathIdentity"
-            BeforeTargets="CopyToModsFolderOnBuild;CopyQuickPck;GodotPublish"
+            BeforeTargets="UpdateDependencyVersions;WritePckDigestForQuickPck;CopyToModsFolderOnBuild;CopyQuickPck;GodotPublish;CopyGodotPckToModsFolder"
             Condition="'$(CopyToModsFolderOnBuild)' != 'false'">
         <!-- Resolve once: GetFullPath collapses '..' and mixed separators, and the lowercase form
              makes the prefix test below case-insensitive. Every check reads this one value. -->
@@ -216,45 +216,440 @@
             <_ModsPathGuardAnyReparse Condition="$(_ModsPathGuardNormReparse) == 'true' Or $(_ModsPathGuardGameRootReparse) == 'true' Or $(_ModsPathGuardAnc2Reparse) == 'true' Or $(_ModsPathGuardAnc3Reparse) == 'true' Or $(_ModsPathGuardAnc4Reparse) == 'true' Or $(_ModsPathGuardAnc5Reparse) == 'true'">true</_ModsPathGuardAnyReparse>
         </PropertyGroup>
 
+        <!-- Deny reason 4 (A09, 2026-10-02): final-destination chain. The guard above proves only
+             $(ModsPath) and its ancestors. The real writes are $(ModsPath)/Spire1/ and files inside
+             it (Spire1.dll/pdb/json/pck and Spire1.pck.sha256). A junction/symlink AT the Spire1
+             leaf or at any deeper level would redirect those writes outside the allowlist even when
+             $(ModsPath) itself is clean. Build the final destination from the SAME leaf the copy
+             targets use, then check it and a bounded set of deeper file targets (PCK/digest/PDB/
+             manifest) level by level to the drive root. Any reparse point, a chain deeper than the
+             checked window, a non-allowlisted destination, the Steam marker, dot-dot, or an empty
+             path denies the build BEFORE the first write. -->
+        <PropertyGroup>
+            <_ModsPathGuardDestNorm>$([System.IO.Path]::GetFullPath('$(ModsPath)/$(MSBuildProjectName)/').TrimEnd('\').TrimEnd('/').ToLowerInvariant())</_ModsPathGuardDestNorm>
+            <_ModsPathGuardDestAllowed>false</_ModsPathGuardDestAllowed>
+            <_ModsPathGuardDestAllowed Condition="$(_ModsPathGuardDestNorm) == 'e:\slay the spire 2\mods\spire1' Or $(_ModsPathGuardDestNorm.StartsWith('e:\slay the spire 2\mods\'))">true</_ModsPathGuardDestAllowed>
+            <_ModsPathGuardDestAllowed Condition="$(_ModsPathGuardDestNorm) == 'g:\omp works\sts\_runtime\sts2-test-client-b\mods\spire1' Or $(_ModsPathGuardDestNorm.StartsWith('g:\omp works\sts\_runtime\sts2-test-client-b\mods\'))">true</_ModsPathGuardDestAllowed>
+            <_ModsPathGuardDestAllowed Condition="$(_ModsPathGuardDestNorm) == 'g:\omp works\.tmp\spire1' Or $(_ModsPathGuardDestNorm.StartsWith('g:\omp works\.tmp\'))">true</_ModsPathGuardDestAllowed>
+            <_ModsPathGuardDestL0>$(_ModsPathGuardDestNorm)</_ModsPathGuardDestL0>
+            <_ModsPathGuardDestL1 Condition="'$(_ModsPathGuardDestL0)' != ''">$([System.IO.Path]::GetDirectoryName('$(_ModsPathGuardDestL0)'))</_ModsPathGuardDestL1>
+            <_ModsPathGuardDestL2 Condition="'$(_ModsPathGuardDestL1)' != ''">$([System.IO.Path]::GetDirectoryName('$(_ModsPathGuardDestL1)'))</_ModsPathGuardDestL2>
+            <_ModsPathGuardDestL3 Condition="'$(_ModsPathGuardDestL2)' != ''">$([System.IO.Path]::GetDirectoryName('$(_ModsPathGuardDestL2)'))</_ModsPathGuardDestL3>
+            <_ModsPathGuardDestL4 Condition="'$(_ModsPathGuardDestL3)' != ''">$([System.IO.Path]::GetDirectoryName('$(_ModsPathGuardDestL3)'))</_ModsPathGuardDestL4>
+            <_ModsPathGuardDestL5 Condition="'$(_ModsPathGuardDestL4)' != ''">$([System.IO.Path]::GetDirectoryName('$(_ModsPathGuardDestL4)'))</_ModsPathGuardDestL5>
+            <_ModsPathGuardDestL6 Condition="'$(_ModsPathGuardDestL5)' != ''">$([System.IO.Path]::GetDirectoryName('$(_ModsPathGuardDestL5)'))</_ModsPathGuardDestL6>
+            <_ModsPathGuardDestL7 Condition="'$(_ModsPathGuardDestL6)' != ''">$([System.IO.Path]::GetDirectoryName('$(_ModsPathGuardDestL6)'))</_ModsPathGuardDestL7>
+            <_ModsPathGuardDestL8 Condition="'$(_ModsPathGuardDestL7)' != ''">$([System.IO.Path]::GetDirectoryName('$(_ModsPathGuardDestL7)'))</_ModsPathGuardDestL8>
+            <_ModsPathGuardDestL9 Condition="'$(_ModsPathGuardDestL8)' != ''">$([System.IO.Path]::GetDirectoryName('$(_ModsPathGuardDestL8)'))</_ModsPathGuardDestL9>
+            <_ModsPathGuardDestL10 Condition="'$(_ModsPathGuardDestL9)' != ''">$([System.IO.Path]::GetDirectoryName('$(_ModsPathGuardDestL9)'))</_ModsPathGuardDestL10>
+            <_ModsPathGuardDestL11 Condition="'$(_ModsPathGuardDestL10)' != ''">$([System.IO.Path]::GetDirectoryName('$(_ModsPathGuardDestL10)'))</_ModsPathGuardDestL11>
+            <_ModsPathGuardDestL12 Condition="'$(_ModsPathGuardDestL11)' != ''">$([System.IO.Path]::GetDirectoryName('$(_ModsPathGuardDestL11)'))</_ModsPathGuardDestL12>
+            <_ModsPathGuardDestR0>false</_ModsPathGuardDestR0>
+            <_ModsPathGuardDestR0 Condition="'$(_ModsPathGuardDestL0)' != '' And Exists('$(_ModsPathGuardDestL0)')">$([System.IO.File]::GetAttributes('$(_ModsPathGuardDestL0)').ToString().Contains('ReparsePoint'))</_ModsPathGuardDestR0>
+            <_ModsPathGuardDestR1>false</_ModsPathGuardDestR1>
+            <_ModsPathGuardDestR1 Condition="'$(_ModsPathGuardDestL1)' != '' And Exists('$(_ModsPathGuardDestL1)')">$([System.IO.File]::GetAttributes('$(_ModsPathGuardDestL1)').ToString().Contains('ReparsePoint'))</_ModsPathGuardDestR1>
+            <_ModsPathGuardDestR2>false</_ModsPathGuardDestR2>
+            <_ModsPathGuardDestR2 Condition="'$(_ModsPathGuardDestL2)' != '' And Exists('$(_ModsPathGuardDestL2)')">$([System.IO.File]::GetAttributes('$(_ModsPathGuardDestL2)').ToString().Contains('ReparsePoint'))</_ModsPathGuardDestR2>
+            <_ModsPathGuardDestR3>false</_ModsPathGuardDestR3>
+            <_ModsPathGuardDestR3 Condition="'$(_ModsPathGuardDestL3)' != '' And Exists('$(_ModsPathGuardDestL3)')">$([System.IO.File]::GetAttributes('$(_ModsPathGuardDestL3)').ToString().Contains('ReparsePoint'))</_ModsPathGuardDestR3>
+            <_ModsPathGuardDestR4>false</_ModsPathGuardDestR4>
+            <_ModsPathGuardDestR4 Condition="'$(_ModsPathGuardDestL4)' != '' And Exists('$(_ModsPathGuardDestL4)')">$([System.IO.File]::GetAttributes('$(_ModsPathGuardDestL4)').ToString().Contains('ReparsePoint'))</_ModsPathGuardDestR4>
+            <_ModsPathGuardDestR5>false</_ModsPathGuardDestR5>
+            <_ModsPathGuardDestR5 Condition="'$(_ModsPathGuardDestL5)' != '' And Exists('$(_ModsPathGuardDestL5)')">$([System.IO.File]::GetAttributes('$(_ModsPathGuardDestL5)').ToString().Contains('ReparsePoint'))</_ModsPathGuardDestR5>
+            <_ModsPathGuardDestR6>false</_ModsPathGuardDestR6>
+            <_ModsPathGuardDestR6 Condition="'$(_ModsPathGuardDestL6)' != '' And Exists('$(_ModsPathGuardDestL6)')">$([System.IO.File]::GetAttributes('$(_ModsPathGuardDestL6)').ToString().Contains('ReparsePoint'))</_ModsPathGuardDestR6>
+            <_ModsPathGuardDestR7>false</_ModsPathGuardDestR7>
+            <_ModsPathGuardDestR7 Condition="'$(_ModsPathGuardDestL7)' != '' And Exists('$(_ModsPathGuardDestL7)')">$([System.IO.File]::GetAttributes('$(_ModsPathGuardDestL7)').ToString().Contains('ReparsePoint'))</_ModsPathGuardDestR7>
+            <_ModsPathGuardDestR8>false</_ModsPathGuardDestR8>
+            <_ModsPathGuardDestR8 Condition="'$(_ModsPathGuardDestL8)' != '' And Exists('$(_ModsPathGuardDestL8)')">$([System.IO.File]::GetAttributes('$(_ModsPathGuardDestL8)').ToString().Contains('ReparsePoint'))</_ModsPathGuardDestR8>
+            <_ModsPathGuardDestR9>false</_ModsPathGuardDestR9>
+            <_ModsPathGuardDestR9 Condition="'$(_ModsPathGuardDestL9)' != '' And Exists('$(_ModsPathGuardDestL9)')">$([System.IO.File]::GetAttributes('$(_ModsPathGuardDestL9)').ToString().Contains('ReparsePoint'))</_ModsPathGuardDestR9>
+            <_ModsPathGuardDestR10>false</_ModsPathGuardDestR10>
+            <_ModsPathGuardDestR10 Condition="'$(_ModsPathGuardDestL10)' != '' And Exists('$(_ModsPathGuardDestL10)')">$([System.IO.File]::GetAttributes('$(_ModsPathGuardDestL10)').ToString().Contains('ReparsePoint'))</_ModsPathGuardDestR10>
+            <_ModsPathGuardDestR11>false</_ModsPathGuardDestR11>
+            <_ModsPathGuardDestR11 Condition="'$(_ModsPathGuardDestL11)' != '' And Exists('$(_ModsPathGuardDestL11)')">$([System.IO.File]::GetAttributes('$(_ModsPathGuardDestL11)').ToString().Contains('ReparsePoint'))</_ModsPathGuardDestR11>
+            <_ModsPathGuardDestR12>false</_ModsPathGuardDestR12>
+            <_ModsPathGuardDestR12 Condition="'$(_ModsPathGuardDestL12)' != '' And Exists('$(_ModsPathGuardDestL12)')">$([System.IO.File]::GetAttributes('$(_ModsPathGuardDestL12)').ToString().Contains('ReparsePoint'))</_ModsPathGuardDestR12>
+            <_ModsPathGuardDestReparse>false</_ModsPathGuardDestReparse>
+            <_ModsPathGuardDestReparse Condition="$(_ModsPathGuardDestR0) == 'true' Or $(_ModsPathGuardDestR1) == 'true' Or $(_ModsPathGuardDestR2) == 'true' Or $(_ModsPathGuardDestR3) == 'true' Or $(_ModsPathGuardDestR4) == 'true' Or $(_ModsPathGuardDestR5) == 'true' Or $(_ModsPathGuardDestR6) == 'true' Or $(_ModsPathGuardDestR7) == 'true' Or $(_ModsPathGuardDestR8) == 'true' Or $(_ModsPathGuardDestR9) == 'true' Or $(_ModsPathGuardDestR10) == 'true' Or $(_ModsPathGuardDestR11) == 'true' Or $(_ModsPathGuardDestR12) == 'true'">true</_ModsPathGuardDestReparse>
+            <_ModsPathGuardDestRootParent Condition="'$(_ModsPathGuardDestL12)' != ''">$([System.IO.Path]::GetDirectoryName('$(_ModsPathGuardDestL12)'))</_ModsPathGuardDestRootParent>
+            <_ModsPathGuardDestChainUnproven>false</_ModsPathGuardDestChainUnproven>
+            <_ModsPathGuardDestChainUnproven Condition="'$(_ModsPathGuardDestL12)' != '' And '$(_ModsPathGuardDestRootParent)' != ''">true</_ModsPathGuardDestChainUnproven>
+            <_ModsPathGuardPathHasDotDot>false</_ModsPathGuardPathHasDotDot>
+            <_ModsPathGuardPathHasDotDot Condition="$(ModsPath.Contains('..')) Or $(Sts2Path.Contains('..'))">true</_ModsPathGuardPathHasDotDot>
+            <_ModsPathGuardPathNotRooted>false</_ModsPathGuardPathNotRooted>
+            <_ModsPathGuardPathNotRooted Condition="!$([System.IO.Path]::IsPathRooted('$(ModsPath)'))">true</_ModsPathGuardPathNotRooted>
+
+            <!-- Final FILE targets, not just the Spire1 directory: a pre-existing file-level
+                 symlink (Spire1.pck, .pck.sha256, .dll, .pdb, .json) would let a single write
+                 escape even when every directory level is clean. Any existing target that is a
+                 reparse point denies the build before the first write. -->
+            <_ModsPathGuardFilesNorm>$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).dll;$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).pdb;$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).json;$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).pck;$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).pck.sha256</_ModsPathGuardFilesNorm>
+            <_ModsPathGuardFileAnyReparse>false</_ModsPathGuardFileAnyReparse>
+            <_ModsPathGuardFileAnyReparse Condition="Exists('$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).dll') And $([System.IO.File]::GetAttributes('$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).dll').ToString().Contains('ReparsePoint'))">true</_ModsPathGuardFileAnyReparse>
+            <_ModsPathGuardFileAnyReparse Condition="Exists('$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).pdb') And $([System.IO.File]::GetAttributes('$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).pdb').ToString().Contains('ReparsePoint'))">true</_ModsPathGuardFileAnyReparse>
+            <_ModsPathGuardFileAnyReparse Condition="Exists('$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).json') And $([System.IO.File]::GetAttributes('$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).json').ToString().Contains('ReparsePoint'))">true</_ModsPathGuardFileAnyReparse>
+            <_ModsPathGuardFileAnyReparse Condition="Exists('$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).pck') And $([System.IO.File]::GetAttributes('$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).pck').ToString().Contains('ReparsePoint'))">true</_ModsPathGuardFileAnyReparse>
+            <_ModsPathGuardFileAnyReparse Condition="Exists('$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).pck.sha256') And $([System.IO.File]::GetAttributes('$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).pck.sha256').ToString().Contains('ReparsePoint'))">true</_ModsPathGuardFileAnyReparse>
+        </PropertyGroup>
+
         <!-- Verdict: the last matching reason names the failure. Both messages print every input, so
              a denial is diagnosable from the build log alone, without reproducing it by hand. -->
         <PropertyGroup>
             <_ModsPathGuardVerdict>ALLOW</_ModsPathGuardVerdict>
             <_ModsPathGuardVerdict Condition="$(_ModsPathGuardAllowed) != 'true'">DENY-outside-allowlist</_ModsPathGuardVerdict>
+            <_ModsPathGuardVerdict Condition="$(_ModsPathGuardDestAllowed) != 'true'">DENY-final-outside-allowlist</_ModsPathGuardVerdict>
             <_ModsPathGuardVerdict Condition="$(_ModsPathGuardSteamMarker) == 'true'">DENY-steam-install</_ModsPathGuardVerdict>
             <_ModsPathGuardVerdict Condition="$(_ModsPathGuardAnyReparse) == 'true'">DENY-reparse</_ModsPathGuardVerdict>
+            <_ModsPathGuardVerdict Condition="$(_ModsPathGuardDestReparse) == 'true'">DENY-final-reparse</_ModsPathGuardVerdict>
+            <_ModsPathGuardVerdict Condition="$(_ModsPathGuardFileAnyReparse) == 'true'">DENY-final-file-reparse</_ModsPathGuardVerdict>
+            <_ModsPathGuardVerdict Condition="$(_ModsPathGuardDestChainUnproven) == 'true'">DENY-final-chain-unproven</_ModsPathGuardVerdict>
+            <_ModsPathGuardVerdict Condition="$(_ModsPathGuardPathHasDotDot) == 'true'">DENY-path-dot-dot</_ModsPathGuardVerdict>
+            <_ModsPathGuardVerdict Condition="$(_ModsPathGuardPathNotRooted) == 'true'">DENY-path-not-rooted</_ModsPathGuardVerdict>
+            <_ModsPathGuardVerdict Condition="$(_ModsPathGuardDestNorm) == ''">DENY-final-empty</_ModsPathGuardVerdict>
         </PropertyGroup>
 
         <Message Importance="high"
                  Condition="'$(_ModsPathGuardVerdict)' == 'ALLOW'"
                  Text="MODSPATH-GUARD-ALLOW: resolved '$(_ModsPathGuardNorm)' (raw '$(ModsPath)') allowlist=$(_ModsPathGuardAllowed) steamMarker=$(_ModsPathGuardSteamMarker) at gameRoot '$(_ModsPathGuardGameRoot)' reparse=[mods=$(_ModsPathGuardNormReparse) gameRoot=$(_ModsPathGuardGameRootReparse) anc2=$(_ModsPathGuardAnc2Reparse) anc3=$(_ModsPathGuardAnc3Reparse) anc4=$(_ModsPathGuardAnc4Reparse) anc5=$(_ModsPathGuardAnc5Reparse)]" />
         <Error Condition="'$(_ModsPathGuardVerdict)' != 'ALLOW'"
-               Text="MODSPATH-GUARD-DENY [$(_ModsPathGuardVerdict)]: ModsPath resolves to '$(_ModsPathGuardNorm)' (raw '$(ModsPath)'). allowlist=$(_ModsPathGuardAllowed) - allowed roots are E:/Slay the Spire 2/mods, G:/omp works/Sts/_runtime/sts2-test-client-B/mods and G:/omp works/.tmp/. steamMarker=$(_ModsPathGuardSteamMarker) at gameRoot '$(_ModsPathGuardGameRoot)'. reparse=[mods=$(_ModsPathGuardNormReparse) gameRoot=$(_ModsPathGuardGameRootReparse) anc2=$(_ModsPathGuardAnc2Reparse) anc3=$(_ModsPathGuardAnc3Reparse) anc4=$(_ModsPathGuardAnc4Reparse) anc5=$(_ModsPathGuardAnc5Reparse)]. The Steam install is never a valid build target. If this build really must write there, pass /p:CopyToModsFolderOnBuild=false and deploy by hand." />
+               Text="MODSPATH-GUARD-DENY [$(_ModsPathGuardVerdict)]: ModsPath resolves to '$(_ModsPathGuardNorm)' (raw '$(ModsPath)'); final file reparse=$(_ModsPathGuardFileAnyReparse); and the final destination resolves to '$(_ModsPathGuardDestNorm)'. allowlist=[mods=$(_ModsPathGuardAllowed) final=$(_ModsPathGuardDestAllowed)] - allowed roots are E:/Slay the Spire 2/mods, G:/omp works/Sts/_runtime/sts2-test-client-B/mods and G:/omp works/.tmp/. steamMarker=$(_ModsPathGuardSteamMarker) at gameRoot '$(_ModsPathGuardGameRoot)'. reparse=[mods=$(_ModsPathGuardNormReparse) gameRoot=$(_ModsPathGuardGameRootReparse) anc2=$(_ModsPathGuardAnc2Reparse) anc3=$(_ModsPathGuardAnc3Reparse) anc4=$(_ModsPathGuardAnc4Reparse) anc5=$(_ModsPathGuardAnc5Reparse)] finalChain=[any=$(_ModsPathGuardDestReparse) unproven=$(_ModsPathGuardDestChainUnproven) l0=$(_ModsPathGuardDestR0) l1=$(_ModsPathGuardDestR1) l2=$(_ModsPathGuardDestR2) l3=$(_ModsPathGuardDestR3) l4=$(_ModsPathGuardDestR4) l5=$(_ModsPathGuardDestR5) l6=$(_ModsPathGuardDestR6) l7=$(_ModsPathGuardDestR7) l8=$(_ModsPathGuardDestR8) l9=$(_ModsPathGuardDestR9) l10=$(_ModsPathGuardDestR10) l11=$(_ModsPathGuardDestR11) l12=$(_ModsPathGuardDestR12)] dotDot=$(_ModsPathGuardPathHasDotDot) notRooted=$(_ModsPathGuardPathNotRooted). The Steam install is never a valid build target. If this build really must write there, pass /p:CopyToModsFolderOnBuild=false and deploy by hand." />
     </Target>
     
     <Target Name="CopyToModsFolderOnBuild" AfterTargets="PostBuildEvent"
             Condition="'$(CopyToModsFolderOnBuild)' != 'false'">
         <Message Text="Copying .dll .pdb and .json to mods folder." Importance="high" />
-        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/" />
-        <Copy SourceFiles="$(AssemblyName).json" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/" />
-        <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/" />
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModsPath)/$(MSBuildProjectName)/" />
+        <Copy SourceFiles="$(AssemblyName).json" DestinationFolder="$(ModsPath)/$(MSBuildProjectName)/" />
+        <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(ModsPath)/$(MSBuildProjectName)/" />
     </Target>
 
-    <Target Name="CopyQuickPck" AfterTargets="PackPck" Condition="'$(CopyToModsFolderOnBuild)' != 'false' And Exists('$(PckPackerOutputPath)') And '$(PckPackerSkipped)' != 'true'">
+    <!-- ===================== PCK producer identity (A09, 2026-10-02) =====================
+         Contract: exactly ONE PCK producer may write the shipped artifact, and the digest
+         record must sit next to the exact bytes the Workshop ledger consumes.
+
+         Before A09 there were two producers with no shared identity:
+           - PackPck (BSchneppe.StS2.PckPacker) wrote $(OutputPath)$(MSBuildProjectName).pck
+             (Release build dir) and CopyQuickPck copied it to $(ModsPath)/Spire1/ ungated;
+           - GodotPublish exported a second PCK straight into $(ModsPath)/Spire1/ and wrote
+             its digest there, while the Workshop ledger reads the build dir.
+         The ledger (refresh-workshop-payloads.ps1, Spire1 row Build=mod\.godot\mono\temp\
+         bin\Release\Spire1.dll) consumes the build-dir PCK, so that is the identity A09 makes
+         canonical: the digest is now written to $(OutputPath)$(MSBuildProjectName).pck.sha256
+         and CopyQuickPck only copies bytes that passed the gate (digest recomputed from the
+         build-dir PCK and re-read).
+
+         When GodotPath is set (Publish), GodotPublish owns the build-dir PCK and overwrites
+         the PackPck artifact + digest with the export-pack bytes; PackPck itself is disabled
+         under Publish (see PackPck condition) so no ungated second producer can win the race.
+
+         Gate conditions covered by AssertPckProducerIdentity: has_pck=true requires the PCK
+         to exist, be non-zero, be newer than the export start, and match the digest record
+         written next to it. Missing digest, zero bytes, stale mtime, export failure and
+         digest mismatch all fail closed. CopyQuickPck is never a producer: it only copies
+         the already-verified build-dir artifact to the mods folder.
+         ============================================================================== -->
+    <!-- A compile-only build (/p:CopyToModsFolderOnBuild=false) must keep its original meaning:
+         compile, but do not produce or deploy a PCK. The inner Godot export must not run the
+         PckPacker either, because GodotPublish owns the canonical PCK in that mode. -->
+    <PropertyGroup Condition="'$(CopyToModsFolderOnBuild)' == 'false' Or '$(IsInnerGodotExport)' == 'true'">
+        <PckPackerEnabled>false</PckPackerEnabled>
+    </PropertyGroup>
+
+    <!-- A09: build-start timestamp for the quick PCK path. The gate below refuses a PCK whose
+         mtime predates this build, so an old artifact left in the output directory can never be
+         re-labelled as "this build's" PCK by writing a fresh digest next to it. -->
+    <PropertyGroup>
+        <_PckGateStartUtcTicks>$([System.DateTime]::UtcNow.Ticks)</_PckGateStartUtcTicks>
+    </PropertyGroup>
+
+    <Target Name="WritePckDigestForQuickPck" BeforeTargets="AssertPckProducerIdentity"
+            Condition="'$(CopyToModsFolderOnBuild)' != 'false' and '$(IsInnerGodotExport)' != 'true' and '$(PckPackerSkipped)' != 'true' and Exists('$(OutputPath)$(MSBuildProjectName).pck')">
+        <!-- The quick path (PackPck, no Godot) has no digest producer of its own. Compute the
+             SHA256 from the exact canonical build-dir PCK and record it next to that PCK, so the
+             gate below validates the same artifact the Workshop ledger will consume. -->
+        <ReadPckMetadata PckPath="$(OutputPath)$(MSBuildProjectName).pck">
+            <Output TaskParameter="LastWriteUtcTicks" PropertyName="_QuickPckLastWriteUtcTicks" />
+            <Output TaskParameter="Length" PropertyName="_QuickPckLength" />
+            <Output TaskParameter="Sha256" PropertyName="_QuickPckSha256" />
+        </ReadPckMetadata>
+        <Error Condition="'$(_QuickPckLength)' == '0'"
+               Text="PCK-QUICK-DENY [empty]: PackPck 产出的 PCK 长度为 0: $(OutputPath)$(MSBuildProjectName).pck. 发布中止." />
+        <Error Condition="'$(_QuickPckLastWriteUtcTicks)' &lt; '$(_PckGateStartUtcTicks)'"
+               Text="PCK-QUICK-DENY [stale-timestamp]: canonical PCK 写入时间 ($(_QuickPckLastWriteUtcTicks)) 早于本次构建起点 ($(_PckGateStartUtcTicks)); 拒绝把旧 PCK 当成本次产物. 发布中止." />
+        <WriteLinesToFile File="$(OutputPath)$(MSBuildProjectName).pck.sha256" Lines="$(_QuickPckSha256)" Overwrite="true" Encoding="ASCII" />
+        <Message Text="PCK-QUICK-DIGEST: $(OutputPath)$(MSBuildProjectName).pck.sha256 = $(_QuickPckSha256)" Importance="normal" />
+    </Target>
+
+    <Target Name="AssertPckProducerIdentity" BeforeTargets="CopyQuickPck;CopyGodotPckToModsFolder" Condition="'$(CopyToModsFolderOnBuild)' != 'false' and '$(IsInnerGodotExport)' != 'true' and (( '$(PckPackerSkipped)' != 'true' and Exists('$(OutputPath)$(MSBuildProjectName).pck') ) or '$(_PckProducerIdentityRequired)' == 'true')">
+        <!-- Reads the manifest and requires has_pck=true, then verifies the canonical build-dir
+             PCK: exists, non-zero, mtime not older than the pack/export start, and SHA256 equal
+             to the digest record written next to it. Fails closed on any of those. -->
+        <PropertyGroup>
+            <_PckProducerManifestPath>$(MSBuildProjectDirectory)/$(MSBuildProjectName).json</_PckProducerManifestPath>
+            <_PckProducerCanonicalPath>$(OutputPath)$(MSBuildProjectName).pck</_PckProducerCanonicalPath>
+            <_PckProducerDigestPath>$(_PckProducerCanonicalPath).sha256</_PckProducerDigestPath>
+        </PropertyGroup>
+        <Error Condition="!Exists('$(_PckProducerManifestPath)')"
+               Text="PCK-PRODUCER-DENY [manifest-missing]: 找不到 manifest '$(_PckProducerManifestPath)'; PCK producer gate 中止." />
+        <ValidatePckManifest ManifestPath="$(_PckProducerManifestPath)" Condition="Exists('$(_PckProducerManifestPath)')" />
+        <Error Condition="!Exists('$(_PckProducerCanonicalPath)')"
+               Text="PCK-PRODUCER-DENY [pck-missing]: has_pck=true 但 canonical PCK 不存在: $(_PckProducerCanonicalPath). 发布中止, 不得复制未经验证的 PCK." />
+        <ReadPckMetadata PckPath="$(_PckProducerCanonicalPath)">
+            <Output TaskParameter="LastWriteUtcTicks" PropertyName="_PckProducerLastWriteUtcTicks" />
+            <Output TaskParameter="Length" PropertyName="_PckProducerLength" />
+            <Output TaskParameter="Sha256" PropertyName="_PckProducerSha256" />
+        </ReadPckMetadata>
+        <Error Condition="'$(_PckProducerLength)' == '0'"
+               Text="PCK-PRODUCER-DENY [empty]: canonical PCK 长度为 0: $(_PckProducerCanonicalPath). 发布中止." />
+        <Error Condition="'$(_PckProducerLastWriteUtcTicks)' &lt; '$(_PckGateStartUtcTicks)'"
+               Text="PCK-PRODUCER-DENY [stale-timestamp]: canonical PCK 写入时间 ($(_PckProducerLastWriteUtcTicks)) 早于本次构建起点 ($(_PckGateStartUtcTicks)); 旧 PCK 不得被当成本次产物. 发布中止." />
+        <Error Condition="!Exists('$(_PckProducerDigestPath)')"
+               Text="PCK-PRODUCER-DENY [digest-missing]: has_pck=true 但 canonical digest 不存在: $(_PckProducerDigestPath). 发布中止; 缺失 digest 不得视为通过." />
+        <PropertyGroup>
+            <_PckProducerDigestReadBack></_PckProducerDigestReadBack>
+            <_PckProducerDigestReadBack Condition="Exists('$(_PckProducerDigestPath)')">$([System.IO.File]::ReadAllText('$(_PckProducerDigestPath)').Trim())</_PckProducerDigestReadBack>
+        </PropertyGroup>
+        <Error Condition="'$(_PckProducerDigestReadBack)' == ''"
+               Text="PCK-PRODUCER-DENY [digest-empty]: canonical digest 记录为空: $(_PckProducerDigestPath). 发布中止." />
+        <Error Condition="'$(_PckProducerDigestReadBack)' != '$(_PckProducerSha256)'"
+               Text="PCK-PRODUCER-DENY [digest-mismatch]: canonical digest 记录与 PCK 字节不一致 (记录 '$(_PckProducerDigestReadBack)' vs 实际 '$(_PckProducerSha256)'). 发布中止." />
+        <Message Text="PCK-PRODUCER-ALLOW: $(_PckProducerCanonicalPath) mtimeUtcTicks=$(_PckProducerLastWriteUtcTicks) sha256=$(_PckProducerSha256) digest=$(_PckProducerDigestPath)" Importance="high" />
+    </Target>
+
+    <Target Name="CopyQuickPck" AfterTargets="PackPck" Condition="'$(CopyToModsFolderOnBuild)' != 'false' And Exists('$(_PckProducerCanonicalPath)') And '$(PckPackerSkipped)' != 'true'">
         <Message Text="Copying quick .pck to mods folder." Importance="high"/>
-        <Copy SourceFiles="$(PckPackerOutputPath)"
-              DestinationFolder="$(ModsPath)/$(MSBuildProjectName)" />
+        <Copy SourceFiles="$(_PckProducerCanonicalPath)"
+              DestinationFolder="$(ModsPath)/$(MSBuildProjectName)/" />
+        <!-- The digest is part of the final Spire1 destination and must travel with the bytes it
+             describes; the gate above (AssertPckProducerIdentity) already proved it matches. -->
+        <Copy SourceFiles="$(_PckProducerDigestPath)"
+              DestinationFolder="$(ModsPath)/$(MSBuildProjectName)/"
+              Condition="Exists('$(_PckProducerDigestPath)')" />
     </Target>
     
     <Target Name="NeedGodotForPublish" BeforeTargets="Publish">
         <Error Text=" Godot path must be set up before publishing; Godot not found at path '$(GodotPath)'. Check Directory.Build.props file."
-               Condition="'$(GodotPath)' == '' or !Exists('$(GodotPath)')"/>
+               Condition="'$(CopyToModsFolderOnBuild)' != 'false' and ('$(GodotPath)' == '' or !Exists('$(GodotPath)'))"/>
     </Target>
     
+<UsingTask TaskName="ValidatePckManifest" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <ManifestPath ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Collections.Generic" />
+      <Using Namespace="System.Text" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        try
+        {
+            var text = new UTF8Encoding(false, true).GetString(File.ReadAllBytes(ManifestPath));
+            var index = 0;
+
+            var hasPck = false;
+            var hasPckSeen = false;
+            Action skip = null;
+            Action parseValue = null;
+            Action<bool> parseObject = null;
+            Action parseArray = null;
+            Func<string> parseString = null;
+            skip = () => { while (index < text.Length && (text[index] == ' ' || text[index] == '\t' || text[index] == '\r' || text[index] == '\n')) index++; };
+            parseString = () => {
+                if (index >= text.Length || text[index] != '"') throw new FormatException("JSON string expected");
+                index++;
+                var sb = new StringBuilder();
+                while (index < text.Length)
+                {
+                    var c = text[index++];
+                    if (c == '"') return sb.ToString();
+                    if (c < 0x20) throw new FormatException("control character in JSON string");
+                    if (c != '\\') { sb.Append(c); continue; }
+                    if (index >= text.Length) throw new FormatException("unterminated escape");
+                    var e = text[index++];
+                    switch (e)
+                    {
+                        case '"': sb.Append('"'); break;
+                        case '\\': sb.Append('\\'); break;
+                        case '/': sb.Append('/'); break;
+                        case 'b': sb.Append('\b'); break;
+                        case 'f': sb.Append('\f'); break;
+                        case 'n': sb.Append('\n'); break;
+                        case 'r': sb.Append('\r'); break;
+                        case 't': sb.Append('\t'); break;
+                        case 'u':
+                            if (index + 4 > text.Length) throw new FormatException("short unicode escape");
+                            var hex = text.Substring(index, 4);
+                            if (!UInt16.TryParse(hex, System.Globalization.NumberStyles.AllowHexSpecifier, System.Globalization.CultureInfo.InvariantCulture, out var code)) throw new FormatException("invalid unicode escape");
+                            sb.Append((char)code); index += 4; break;
+                        default: throw new FormatException("invalid JSON escape");
+                    }
+                }
+                throw new FormatException("unterminated JSON string");
+            };
+            parseValue = () => {
+                skip();
+                if (index >= text.Length) throw new FormatException("JSON value expected");
+                var c = text[index];
+                if (c == '{') { parseObject(false); return; }
+                if (c == '[') { parseArray(); return; }
+                if (c == '"') { parseString(); return; }
+                if (c == 't' && text.Substring(index).StartsWith("true", StringComparison.Ordinal)) { index += 4; return; }
+                if (c == 'f' && text.Substring(index).StartsWith("false", StringComparison.Ordinal)) { index += 5; return; }
+                if (c == 'n' && text.Substring(index).StartsWith("null", StringComparison.Ordinal)) { index += 4; return; }
+                if (c == '-' || (c >= '0' && c <= '9'))
+                {
+                    if (c == '-') { index++; if (index >= text.Length) throw new FormatException("invalid number"); }
+                    if (index < text.Length && text[index] == '0') index++;
+                    else
+                    {
+                        if (index >= text.Length || text[index] < '1' || text[index] > '9') throw new FormatException("invalid number");
+                        while (index < text.Length && text[index] >= '0' && text[index] <= '9') index++;
+                    }
+                    if (index < text.Length && text[index] == '.') { index++; if (index >= text.Length || text[index] < '0' || text[index] > '9') throw new FormatException("invalid fraction"); while (index < text.Length && text[index] >= '0' && text[index] <= '9') index++; }
+                    if (index < text.Length && (text[index] == 'e' || text[index] == 'E')) { index++; if (index < text.Length && (text[index] == '+' || text[index] == '-')) index++; if (index >= text.Length || text[index] < '0' || text[index] > '9') throw new FormatException("invalid exponent"); while (index < text.Length && text[index] >= '0' && text[index] <= '9') index++; }
+                    return;
+                }
+                throw new FormatException("invalid JSON value");
+            };
+            parseArray = () => {
+                index++; skip(); if (index < text.Length && text[index] == ']') { index++; return; }
+                while (true) { parseValue(); skip(); if (index < text.Length && text[index] == ']') { index++; return; } if (index >= text.Length || text[index] != ',') throw new FormatException("array comma expected"); index++; }
+            };
+            parseObject = root => {
+                index++;
+                var objectNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                skip(); if (index < text.Length && text[index] == '}') { index++; return; }
+                while (true)
+                {
+                    skip(); var name = parseString(); if (!objectNames.Add(name)) throw new FormatException("duplicate JSON property: " + name); skip(); if (index >= text.Length || text[index] != ':') throw new FormatException("object colon expected"); index++; skip();
+                    if (root && StringComparer.Ordinal.Equals(name, "has_pck"))
+                    {
+                        if (index + 4 <= text.Length && StringComparer.Ordinal.Equals(text.Substring(index, 4), "true")) { index += 4; hasPck = true; hasPckSeen = true; }
+                        else if (index + 5 <= text.Length && StringComparer.Ordinal.Equals(text.Substring(index, 5), "false")) { index += 5; hasPckSeen = true; }
+                        else throw new FormatException("has_pck must be a JSON boolean");
+                    }
+                    else parseValue();
+                    skip(); if (index < text.Length && text[index] == '}') { index++; return; } if (index >= text.Length || text[index] != ',') throw new FormatException("object comma expected"); index++;
+                }
+            };
+            skip(); if (index >= text.Length || text[index] != '{') throw new FormatException("manifest root must be an object"); parseObject(true); skip(); if (index != text.Length) throw new FormatException("trailing JSON data"); if (!hasPckSeen || !hasPck) throw new FormatException("root has_pck must be true");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Log.LogErrorFromException(ex, true);
+            return false;
+        }
+      ]]></Code>
+    </Task>
+  </UsingTask>
+
+<UsingTask TaskName="ReadPckMetadata" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <PckPath ParameterType="System.String" Required="true" />
+      <LastWriteUtcTicks ParameterType="System.String" Output="true" />
+      <Length ParameterType="System.String" Output="true" />
+      <Sha256 ParameterType="System.String" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Security.Cryptography" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        try
+        {
+            var info = new FileInfo(PckPath);
+            if (!info.Exists) { Log.LogError("file missing"); return false; }
+            LastWriteUtcTicks = info.LastWriteTimeUtc.Ticks.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            Length = info.Length.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            using (var stream = info.OpenRead()) using (var sha = SHA256.Create()) Sha256 = BitConverter.ToString(sha.ComputeHash(stream)).Replace("-", String.Empty).ToUpperInvariant();
+            return true;
+        }
+        catch (Exception ex) { Log.LogErrorFromException(ex, true); return false; }
+      ]]></Code>
+    </Task>
+  </UsingTask>
+    <!-- ===================== Godot PCK publish gate (A05, 2026-10-02) =====================
+         此前 GodotPublish 用 ContinueOnError="WarnAndContinue": Godot export-pack 返回非零时
+         MSBuild 仍继续, 目标目录里可能留下上一次的旧 PCK, 而 mod/Spire1.json 仍声明
+         has_pck=true. 发布链可能因此拿到与本次源码不对应的 PCK.
+
+         现在的契约 (fail closed, 只在 GodotPublish 触发时执行):
+           1. 先读 manifest 行, 要求 has_pck=true; 缺失/false/无法解析即中止, 不触碰任何 PCK;
+           2. 导出前删除目标 PCK 与旧 digest 记录: 旧字节/旧记录不可能被当成本次结果;
+           3. Exec 不再带 ContinueOnError: Godot 非零退出码直接让 Publish 失败;
+           4. 导出后断言: 目标存在, 长度 > 0, 写入时间不早于本次导出起点;
+           5. 计算 SHA256, 写 <ModsPath>/<Mod>/<Mod>.pck.sha256 并回读比对, 不一致即中止.
+         未触发条件 (CopyToModsFolderOnBuild=false 或 IsInnerGodotExport=true) 不产生 PCK,
+         也不在此处伪造成功; 发布方仍须遵守 docs/RELEASE-GATES-CHECKLIST.md 的隔离构建契约.
+         ============================================================================== -->
     <Target Name="GodotPublish" AfterTargets="Publish" Condition="'$(CopyToModsFolderOnBuild)' != 'false' and '$(GodotPath)' != '' and Exists('$(GodotPath)') and '$(IsInnerGodotExport)' != 'true'">
+        <PropertyGroup>
+            <!-- A09 (2026-10-02): the canonical shipped artifact is the BUILD-DIR PCK, because
+                 the Workshop ledger consumes that directory. The old code exported straight into
+                 $(ModsPath) and wrote the digest there, so the ledger's build-dir PCK could be an
+                 ungated PackPck artifact. Export into the build dir, then the verified copy target
+                 below copies it to the mods folder after the gate has passed. -->
+            <_PckPath>$(OutputPath)$(MSBuildProjectName).pck</_PckPath>
+            <_PckDigestPath>$(_PckPath).sha256</_PckDigestPath>
+            <_PckManifestPath>$(MSBuildProjectDirectory)/$(MSBuildProjectName).json</_PckManifestPath>
+            <_PckExportStartedUtcTicks>$([System.DateTime]::UtcNow.Ticks)</_PckExportStartedUtcTicks>
+            <_PckProducerIdentityRequired>true</_PckProducerIdentityRequired>
+        </PropertyGroup>
+
+        <!-- (1) manifest 预检: 使用严格 JSON 解析, 只接受根层 has_pck=true. -->
+        <Error Condition="!Exists('$(_PckManifestPath)')"
+               Text="PCK-GATE-DENY [manifest-missing]: 找不到 manifest '$(_PckManifestPath)'; 发布中止." />
+        <ValidatePckManifest ManifestPath="$(_PckManifestPath)" Condition="Exists('$(_PckManifestPath)')" />
+        <!-- (2) 删除旧 PCK 与旧 digest 记录. 删除失败即中止, 不允许带着旧字节继续. -->
+        <Delete Files="$(_PckPath)" TreatErrorsAsWarnings="false" />
+        <Delete Files="$(_PckDigestPath)" TreatErrorsAsWarnings="false" />
+        <Message Text="PCK-GATE: old PCK/digest removed before export: $(_PckPath)" Importance="normal" />
+
+        <!-- (3) 导出. 无 ContinueOnError: 非零退出码 = Publish 失败. -->
         <Message Text="Exporting Godot .pck to mods folder" Importance="high"/>
-        <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;BasicExport&quot; &quot;$(ModsPath)$(MSBuildProjectName)/$(MSBuildProjectName).pck&quot;"
-              EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"
-              ContinueOnError="WarnAndContinue"/>
+        <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;BasicExport&quot; &quot;$(_PckPath)&quot;"
+              EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1" />
+
+        <!-- (4) 存在性 / 非空 / 时间戳断言. -->
+        <Error Condition="!Exists('$(_PckPath)')"
+               Text="PCK-GATE-DENY [missing]: Godot export-pack 返回 0 但目标 PCK 不存在: $(_PckPath). 发布中止, 不得沿用旧 PCK." />
+        <!-- (4) 存在性 / 非空 / 时间戳 / SHA256 由同一个 .NET 文件读取任务一次性取得. -->
+        <ReadPckMetadata PckPath="$(_PckPath)">
+            <Output TaskParameter="LastWriteUtcTicks" PropertyName="_PckLastWriteUtcTicks" />
+            <Output TaskParameter="Length" PropertyName="_PckLength" />
+            <Output TaskParameter="Sha256" PropertyName="_PckSha256" />
+        </ReadPckMetadata>
+        <Error Condition="'$(_PckLength)' == '0'"
+               Text="PCK-GATE-DENY [empty]: 导出的 PCK 长度为 0: $(_PckPath). 发布中止." />
+        <Error Condition="'$(_PckLastWriteUtcTicks)' &lt; '$(_PckExportStartedUtcTicks)'"
+               Text="PCK-GATE-DENY [stale-timestamp]: 导出后的 PCK 写入时间 ($(_PckLastWriteUtcTicks)) 早于本次导出起点 ($(_PckExportStartedUtcTicks)). 发布中止." />
+        <!-- (5) digest: 记录本次导出的 SHA256, 并回读验证记录本身. -->
+        <WriteLinesToFile File="$(_PckDigestPath)" Lines="$(_PckSha256)" Overwrite="true" Encoding="ASCII" />
+        <PropertyGroup>
+            <_PckSha256ReadBack></_PckSha256ReadBack>
+            <_PckSha256ReadBack Condition="Exists('$(_PckDigestPath)')">$([System.IO.File]::ReadAllText('$(_PckDigestPath)').Trim())</_PckSha256ReadBack>
+        </PropertyGroup>
+        <Error Condition="!Exists('$(_PckDigestPath)')"
+               Text="PCK-GATE-DENY [digest-record-missing]: 未能写出 digest 记录 $(_PckDigestPath). 发布中止." />
+        <Error Condition="'$(_PckSha256ReadBack)' != '$(_PckSha256)'"
+               Text="PCK-GATE-DENY [digest-record-mismatch]: digest 记录回读不一致 (写 $(_PckDigestPath) 期望 '$(_PckSha256)' 实得 '$(_PckSha256ReadBack)'). 发布中止." />
+        <Message Text="PCK-GATE-ALLOW: $(_PckPath) mtimeUtcTicks=$(_PckLastWriteUtcTicks) sha256=$(_PckSha256)" Importance="high" />
+    </Target>
+
+    <!-- ===================== Godot export -> mods folder copy (A09, 2026-10-02) =====================
+         The exported build-dir PCK + digest are copied to $(ModsPath)/Spire1/ ONLY after the
+         GodotPublish gate above has verified them. In a build (no GodotPath) this target is a
+         no-op, so a build with CopyToModsFolderOnBuild=true deploys the gated PackPck artifact.
+         ============================================================================== -->
+    <Target Name="CopyGodotPckToModsFolder" AfterTargets="GodotPublish" Condition="'$(CopyToModsFolderOnBuild)' != 'false' and '$(GodotPath)' != '' and Exists('$(GodotPath)') and '$(IsInnerGodotExport)' != 'true'">
+        <Error Condition="'$(_PckProducerIdentityRequired)' != 'true'" Text="PCK-COPY-DENY: CopyGodotPckToModsFolder may run only after the gated GodotPublish target." />
+        <Error Condition="!Exists('$(_PckPath)') Or !Exists('$(_PckDigestPath)')"
+               Text="PCK-COPY-DENY: GodotPublish 未产出经过 gate 的 PCK/digest ($(_PckPath), $(_PckDigestPath)); 发布中止." />
+        <Copy SourceFiles="$(_PckPath)" DestinationFolder="$(ModsPath)/$(MSBuildProjectName)/" />
+        <Copy SourceFiles="$(_PckDigestPath)" DestinationFolder="$(ModsPath)/$(MSBuildProjectName)/" />
+        <Message Text="PCK-COPY-ALLOW: copied gated build-dir PCK/digest to $(ModsPath)/$(MSBuildProjectName)/" Importance="high" />
     </Target>
 </Project>
