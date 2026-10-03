@@ -141,7 +141,7 @@ public abstract class Spire1Card(int cost, CardType type, CardRarity rarity, Tar
 }
 
 /// <summary>
-/// C14 r11 (2026-10-03): keeps a canonical Spire1 card subscribed as a run-state hook listener.
+/// C14 r12 (2026-10-03): keeps an owner-free mutable modifier subscribed as a run-state hook listener.
 /// <para>
 /// ENGINE FACT: <c>Hook.ShouldAddToDeck</c> enumerates the run's existing deck cards, relics,
 /// potions, modifiers and <c>ModHelper.IterateAllRunStateSubscribers</c>. A brand-new card that is
@@ -150,11 +150,18 @@ public abstract class Spire1Card(int cost, CardType type, CardRarity rarity, Tar
 /// every run's listener set and inspects the incoming card argument.
 /// </para>
 /// <para>
+/// The subscriber returns a mutable <see cref="Spire1DeckGrantGuardModifier"/>, never a canonical
+/// CardModel. That matters because hook contexts inspect owner-bearing models while constructing
+/// <c>HookPlayerChoiceContext</c>; an owner-free ModifierModel falls through to the combat player
+/// without touching a mutable-only owner getter.
+/// </para>
+/// <para>
 /// Subscription is attempted once from the <see cref="Spire1Config"/> static constructor, i.e.
-/// during MainFile Phase 1 before any run or pool consumer exists; the representative canonical
-/// model is resolved lazily on first hook use (after ModelDb.Init). If resolution ever fails the
-/// guard logs an error and yields nothing - the gate is then still enforced by the lifecycle
-/// patches and the Tags fuse, and the failure is never reported as protected.
+/// during MainFile Phase 1 before any run or pool consumer exists; the registered modifier is
+/// resolved lazily on first hook use (after ModelDb.Init) and cloned to a mutable listener. If
+/// resolution ever fails the guard logs an error and yields nothing - the gate is then still
+/// enforced by the lifecycle patches and the Tags fuse, and the failure is never reported as
+/// protected.
 /// </para>
 /// </summary>
 internal static class Spire1DeckGrantGuard
@@ -163,7 +170,7 @@ internal static class Spire1DeckGrantGuard
 
     private static readonly object Sync = new();
     private static bool _subscribed;
-    private static AbstractModel? _representative;
+    private static Spire1DeckGrantGuardModifier? _representative;
     private static bool _resolveFailureLogged;
 
     internal static void EnsureSubscribed()
@@ -183,7 +190,7 @@ internal static class Spire1DeckGrantGuard
                 ModHelper.SubscribeForRunStateHooks(SubscriptionId, _ => ResolveRepresentatives());
                 _subscribed = true;
                 MainFile.Logger.Info(
-                    "[Spire1] deck-grant guard subscribed: canonical Spire1 card is a run-state " +
+                    "[Spire1] deck-grant guard subscribed: owner-free mutable modifier is a run-state " +
                     "hook listener so Spire1 deck grants can fail closed without any Harmony patch.");
             }
             catch (Exception e)
@@ -198,31 +205,33 @@ internal static class Spire1DeckGrantGuard
 
     private static IEnumerable<AbstractModel> ResolveRepresentatives()
     {
-        AbstractModel? representative = _representative;
-        if (representative is null)
+        Spire1DeckGrantGuardModifier? representative;
+        lock (Sync)
         {
-            try
+            representative = _representative;
+            if (representative is null)
             {
-                representative = ModelDb.Card<Strike>();
-                _representative = representative;
-            }
-            catch (Exception e)
-            {
-                if (!_resolveFailureLogged)
+                try
                 {
-                    _resolveFailureLogged = true;
-                    MainFile.Logger.Error(
-                        "[Spire1] deck-grant guard could not resolve the canonical SPIRE1-STRIKE " +
-                        $"representative ({e.GetType().Name}: {e.Message}); no Spire1 deck-grant " +
-                        "listener is present this run.");
+                    representative = (Spire1DeckGrantGuardModifier)
+                        ModelDb.Modifier<Spire1DeckGrantGuardModifier>().ToMutable();
+                    _representative = representative;
                 }
-                yield break;
+                catch (Exception e)
+                {
+                    if (!_resolveFailureLogged)
+                    {
+                        _resolveFailureLogged = true;
+                        MainFile.Logger.Error(
+                            "[Spire1] deck-grant guard could not resolve the registered owner-free " +
+                            $"modifier ({e.GetType().Name}: {e.Message}); no Spire1 deck-grant " +
+                            "listener is present this run.");
+                    }
+                    yield break;
+                }
             }
         }
 
-        if (representative is not null)
-        {
-            yield return representative;
-        }
+        yield return representative;
     }
 }

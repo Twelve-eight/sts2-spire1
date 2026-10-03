@@ -136,18 +136,18 @@ internal static class Sts1EventFilter
         {
             // 关闭状态下不能把空池交给 RoomSet.NextEvent (其实现执行 eventsVisited % events.Count).
             // 使用同一确定性 vanilla fallback 保持池非空; fallback 解析失败则显式 fail closed.
-            List<EventModel> fallback = GetVanillaFallbackEvents();
-            if (fallback.Count == 0)
+            List<EventModel> emptyPoolFallback = GetVanillaFallbackEvents();
+            if (emptyPoolFallback.Count == 0)
             {
                 throw new InvalidOperationException(
                     $"[Spire1] StS1 event filter: {act.GetType().Name} event pool was empty while the " +
                     "events content group is off, and no vanilla fallback event could be resolved.");
             }
 
-            rooms.events.AddRange(fallback);
+            rooms.events.AddRange(emptyPoolFallback);
             MainFile.Logger.Warn(
                 $"[Spire1] StS1 event filter ({source}): {act.GetType().Name} event pool was empty; " +
-                $"added {fallback.Count} vanilla fallback event(s) to prevent an empty RoomSet.NextEvent pool.");
+                $"added {emptyPoolFallback.Count} vanilla fallback event(s) to prevent an empty RoomSet.NextEvent pool.");
             return;
         }
 
@@ -170,8 +170,8 @@ internal static class Sts1EventFilter
         // The next line would divide by events.Count, so an empty pool must be filled before the engine reads it.
         // Resolve the same deterministic vanilla fallback; if resolution fails, throw fail-closed.
         // This never passes a disabled event or an empty pool to the engine.
-        List<EventModel> fallback = GetVanillaFallbackEvents();
-        if (fallback.Count == 0)
+        List<EventModel> allGen1Fallback = GetVanillaFallbackEvents();
+        if (allGen1Fallback.Count == 0)
         {
             throw new InvalidOperationException(
                 $"[Spire1] StS1 event filter: {act.GetType().Name} event pool contained only gen-1 events, " +
@@ -180,13 +180,13 @@ internal static class Sts1EventFilter
         }
 
         rooms.events.Clear();
-        rooms.events.AddRange(fallback);
+        rooms.events.AddRange(allGen1Fallback);
         if (!_allGen1ReplacedLogged)
         {
             _allGen1ReplacedLogged = true;
             MainFile.Logger.Warn(
                 $"[Spire1] StS1 event filter ({source}): {act.GetType().Name} event pool was 100% gen-1 " +
-                $"events; replaced all {before} with {fallback.Count} vanilla fallback event(s) to keep " +
+                $"events; replaced all {before} with {allGen1Fallback.Count} vanilla fallback event(s) to keep " +
                 "the pool non-empty (events content group off).");
         }
     }
