@@ -2996,3 +2996,10 @@ r22 的 Calm/Divinity 已通过,Wrath 失败原因是唯一测试敌人带 Artif
 
 - 未验证可见 UI/视觉资源,完整长战斗,战中存档重载,重连,多人同步,性能,完整平衡和用户 Steam 安装.
 - 当前证据是隔离 non-Steam headless 真实运行,不是用户 Steam 安装的 UI 验收.
+## 2026-10-04 Workshop push attempt blocked by provenance gate
+
+- 使用当前工作区内的 `pwsh.exe`（Windows PowerShell 需要写作 `./pwsh.exe` 或 `.\pwsh.exe`）调用 `workshop/workshop-push.ps1`。第一次调用被 Steam 登录冷却门禁拒绝：最近一次登录尝试记录为 `2026-10-04 20:53:44`，30 分钟窗口尚未结束；脚本明确报告没有发布。
+- 随后使用 `-Force` 仅绕过本地登录冷却检查。该次运行在 provenance pre-copy gate 阶段停止，尚未启动 SteamCMD、没有写入 staging，也没有发布任何 Workshop 项目。
+- 当前阻塞证据：`Spire1` 的 `mod/.godot/mono/temp/bin/Release/Spire1.pck` 时间早于同目录 `Spire1.dll`，报告 `PCK_STALE`；`Perfect`、`MpConfigSync`、`HeartShake`、`QuriousCraftingRelics` 的 Release build 目录缺少各自的 `.pck.sha256`，报告 `PCK_DIGEST_MISSING`。
+- `-Only Spire1` 仍会运行全量 provenance 预检；因此不能把其它项目的缺失记录当作已验证，也不能用 `-Force` 绕过 payload provenance gate。
+- 后续必须先按当前 PCK producer/A09 契约重新生成受影响项目的 Release build PCK 与 digest，并执行 `refresh-workshop-payloads.ps1 -VerifyOnly` 成功；之后再等待登录冷却结束（或仅在确实切换 IP 时使用 `-Force`）执行 Spire1 单项 Workshop 上传。
