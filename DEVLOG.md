@@ -3044,3 +3044,7 @@ r22 的 Calm/Divinity 已通过,Wrath 失败原因是唯一测试敌人带 Artif
 ## 2026-10-05 Workshop来源技能格式校验
 
 - Bundled skill-creator quick_validate首次默认GBK读取中文UTF-8失败, 后续显式python -X utf8检查发现旧disable-model-invocation不在Codex允许frontmatter中. 已把该旧键的显式调用限制等价放入agents/openai.yaml policy.allow_implicit_invocation=false, 不改全局设置或授权边界. 最终quick_validate与YAML布尔值校验通过, 语言检查通过; 证据r4-skill-validation.json.
+## 2026-10-05 Workshop准备GitHub备份收据
+
+- 七仓本轮发布脚本/暂存和日志增量已精确提交并推送GitHub, 各实际push exit0且当时ahead/behind为0/0. Spire1代码/快照/报告提交212d40d; 六暂存提交Perfect c057060, ChaosBridge 65641c7, RegentFXFastBoot 8092443, MpConfigSync d58563f, HeartShake c13d583, QuriousCraftingRelics b36a452.
+- 详细收据docs/reports/workshop-prep-20261004/backup-completion-r4.json. 保留旧dirty与并行Forms源码/日志, 不声称全工作树clean. 该GitHub备份不等于Workshop上传, 正式全量provenance仍仅被Spire1真实源码/旧DLL不一致阻塞.
