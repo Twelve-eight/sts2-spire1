@@ -3003,3 +3003,11 @@ r22 的 Calm/Divinity 已通过,Wrath 失败原因是唯一测试敌人带 Artif
 - 当前阻塞证据：`Spire1` 的 `mod/.godot/mono/temp/bin/Release/Spire1.pck` 时间早于同目录 `Spire1.dll`，报告 `PCK_STALE`；`Perfect`、`MpConfigSync`、`HeartShake`、`QuriousCraftingRelics` 的 Release build 目录缺少各自的 `.pck.sha256`，报告 `PCK_DIGEST_MISSING`。
 - `-Only Spire1` 仍会运行全量 provenance 预检；因此不能把其它项目的缺失记录当作已验证，也不能用 `-Force` 绕过 payload provenance gate。
 - 后续必须先按当前 PCK producer/A09 契约重新生成受影响项目的 Release build PCK 与 digest，并执行 `refresh-workshop-payloads.ps1 -VerifyOnly` 成功；之后再等待登录冷却结束（或仅在确实切换 IP 时使用 `-Force`）执行 Spire1 单项 Workshop 上传。
+
+## 2026-10-05 姿态形态跨会话交接断点
+
+- 用户要求把姿态形态进度落盘供另一个开发会话接续. 自洽入口: `G:\omp works\Sts\sts2-spire1\docs\HANDOFF-forms-current-20261005.md`; 文件/hash快照: `G:\omp works\Sts\sts2-spire1\docs\HANDOFF-forms-source-snapshot-20261005.json`.
+- 核对时 Forms 等选定源码对交接前 HEAD 1149129 没有未提交差异. r15 本地 staging 三文件仍绑定 DLL 8C7CA3DB..., PCK 70CCBB4D..., manifest CDBD57D5.... 不是新游戏运行或已上传证据.
+- 最新窄实机证据仍为 2026-10-04 r15: 三姿态首回合与九组合可选启动通过. 可见 UI, 完整长战斗, 战中读档/重连/多人, 性能和平衡均未关闭; Blasphemy 的下一回合即死不被误写成长战斗通过.
+- 交接包含六效果契约, 当前入口/源文件, 133断言探针及源码审查边界, r15原始结果路径, 下一步验收面和与发布管线会话的独立输出约定. 未发消息到其它会话, 未动游戏或共享配置.
+- 推送准备仍在接续实现/监督阶段, 中央PS7隔离发布门禁11/11通过不等于形态实机或发布通过. 另一个形态会话不能直接覆盖 canonical Release 或正式 Workshop staging; 新源码/新hash必须重新绑定验证.

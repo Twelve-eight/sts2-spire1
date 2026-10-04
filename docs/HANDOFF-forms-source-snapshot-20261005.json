@@ -1,0 +1,169 @@
+{
+  "CheckedAt": "2026-10-05T03:53:37.1028487+08:00",
+  "TimeZone": "Asia/Shanghai",
+  "Repo": "G:\\omp works\\Sts\\sts2-spire1",
+  "Head": "1149129e3ea46ad8695f9780ca1d7dcbcc79c4c2",
+  "SelectedSourceDiff": [],
+  "Sources": [
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Extensions\\StanceCmd.cs",
+      "Bytes": 9006,
+      "Sha256": "2C39A5B1A3AF96606F2255CFCECBBD6FA603B3AE94EBDBEDC97CE11893B71935",
+      "Mtime": "2026-10-03T06:36:01.5838177+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Forms\\CelestialFormPower.cs",
+      "Bytes": 1847,
+      "Sha256": "FB015D3D950248828298FC74F4AD0842490F1AFB208ED7083C86920A278E8052",
+      "Mtime": "2026-09-28T19:23:05.1957124+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Forms\\DemonFormPower.cs",
+      "Bytes": 12404,
+      "Sha256": "C62C20B2678EB3631103E51DEA9ED780443DE95B4DA08F28849A1755023DF7DD",
+      "Mtime": "2026-10-02T19:42:13.8477993+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Forms\\DemonFormStrengthTransactionPatch.cs",
+      "Bytes": 9943,
+      "Sha256": "5A7D3D748B5F5CB8D77946C88096446EC1713097D7F92C6F747A0C51A745B44C",
+      "Mtime": "2026-10-01T07:03:16.3478282+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Forms\\DemonReaperStancePower.cs",
+      "Bytes": 281,
+      "Sha256": "0996EBB19BE36490987CE3BA5DD11BA84141D65CBEEEEA01A7B3ACEC47BEC606",
+      "Mtime": "2026-09-28T19:31:38.1393062+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Forms\\EchoCelestialStancePower.cs",
+      "Bytes": 289,
+      "Sha256": "3F26B269475DB23535526AE799DF2C7812BC4E576812496EF0B8B1FDE67DF076",
+      "Mtime": "2026-09-28T19:31:38.1413074+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Forms\\EchoFormEffectPower.cs",
+      "Bytes": 2283,
+      "Sha256": "133FE6609F79CFCC8B00BC7A973A825D87824F17C27EC0958482B0DFD4015505",
+      "Mtime": "2026-09-28T19:31:09.0971542+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Forms\\FormStanceCmd.cs",
+      "Bytes": 1144,
+      "Sha256": "A271223B3EC1572452CE71412A907C7C3D1AA8326FE781D296694FCD0B98F669",
+      "Mtime": "2026-09-28T19:31:38.1343062+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Forms\\FormStanceMode.cs",
+      "Bytes": 2630,
+      "Sha256": "100519CEEEEA4A6260A2E29703893B2D61B432EF58C828914028EBF0F2B70C09",
+      "Mtime": "2026-09-28T19:31:38.1303057+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Forms\\FormStanceModePatch.cs",
+      "Bytes": 519,
+      "Sha256": "1D338F5B6E804D4C5206AE4A4F1B8E5F68A4C10C1D3B86064F6FD9FB2461B459",
+      "Mtime": "2026-09-28T19:48:48.8913680+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Forms\\FormStanceModifier.cs",
+      "Bytes": 808,
+      "Sha256": "64A0EF881AEDCF5B2A17449C44D99F5A9D4AB1C2D7B97323F31EEDF37AE35F9B",
+      "Mtime": "2026-09-28T19:31:38.1313080+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Forms\\FormStanceWatcherBridge.cs",
+      "Bytes": 28667,
+      "Sha256": "3F25960DBBD5E33C1BB2A81C31FEF54F6807F0DF74B84EC2AB424F2C99B78AD0",
+      "Mtime": "2026-09-28T19:41:33.4075997+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Forms\\ReaperFormEffectPower.cs",
+      "Bytes": 1925,
+      "Sha256": "C2B2C8B0B74972EA212F38B6B949F888974ED5B067F800AC9CCF456B693666B8",
+      "Mtime": "2026-09-28T19:23:05.1937124+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Forms\\SerpentFormPower.cs",
+      "Bytes": 12294,
+      "Sha256": "09B9E7A15C8C888F133AE286F052F53DBA1D77E04B45F721DF2D92F3C3A56B78",
+      "Mtime": "2026-10-01T20:41:56.5509313+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Forms\\VoidFormEffectPower.cs",
+      "Bytes": 10510,
+      "Sha256": "845614BB75C9D4AC50EEC7997D71D224C3784398692C4191D0C5353B05F6C6A6",
+      "Mtime": "2026-10-03T02:24:17.2490215+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Forms\\VoidFormPlayTransactionPatch.cs",
+      "Bytes": 26715,
+      "Sha256": "9D55E1950E423512A41CCF9DD630855983C7B7589ABD05095DCD45C6D796B7CA",
+      "Mtime": "2026-10-03T06:19:45.6630085+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Forms\\VoidSerpentStancePower.cs",
+      "Bytes": 279,
+      "Sha256": "1DFBE5476BDC01A532642EF5EB665BDF13C1184A6D1B860A1FF0134722C6942C",
+      "Mtime": "2026-09-28T19:31:38.1383071+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Forms\\WatcherFormStancePower.cs",
+      "Bytes": 8257,
+      "Sha256": "2DB107FBD527A8452A0B5EDA1CE9D1BADC53B9C96FF26407A4F481B667CB651A",
+      "Mtime": "2026-09-28T19:41:33.4115992+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Interop\\AutoAnthonyLoadHook.cs",
+      "Bytes": 29737,
+      "Sha256": "18541F17AEAC28B2F00C31091A9AF6B3DAD1688BD3ECC4305243FD302C7BB245",
+      "Mtime": "2026-10-04T12:06:55.5859746+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Patches\\FormNativeSmokePatch.cs",
+      "Bytes": 353,
+      "Sha256": "6EF951691C975347D750A74CFFC816F7A8C215BDD54A5EFBA653F5B8881D495E",
+      "Mtime": "2026-10-01T22:32:34.2172926+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Powers\\StancePower.cs",
+      "Bytes": 276,
+      "Sha256": "402B1F4F175B1CBF62FB7B5347BE5515CDE841E747F25184C003F68F320201B1",
+      "Mtime": "2026-08-19T20:07:01.2067878+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Run\\FormNativeSmokeRunner.cs",
+      "Bytes": 152416,
+      "Sha256": "3001C04C0225BA0EE44A865EF542A50F8D1315836BBE4D086BF31EBCB834BF88",
+      "Mtime": "2026-10-03T10:38:10.8161931+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Run\\Spire1RunContent.cs",
+      "Bytes": 15541,
+      "Sha256": "1FE756E4917C99C544113DFA64821769B0466385424C34E93F71D88E027EA4A3",
+      "Mtime": "2026-10-04T11:01:11.8113698+08:00"
+    }
+  ],
+  "CurrentWorkshopPayload": [
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\workshop\\content\\Spire1\\Spire1.dll",
+      "Bytes": 900608,
+      "Sha256": "8C7CA3DB1AE21FACB4A982287535ED89E25EBB3C369F5C346C68373FC4962F06",
+      "Mtime": "2026-10-04T14:12:02.4436245+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\workshop\\content\\Spire1\\Spire1.json",
+      "Bytes": 548,
+      "Sha256": "CDBD57D54374285503538D866551B897938A5D540C2285CE5068019565BB9305",
+      "Mtime": "2026-09-30T02:01:48.7059491+08:00"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\workshop\\content\\Spire1\\Spire1.pck",
+      "Bytes": 19669354,
+      "Sha256": "70CCBB4D1A2DD1439152F030E40B4C1A8BCA775547EB4F8273C956F62BB51C79",
+      "Mtime": "2026-10-04T14:32:59.5959673+08:00"
+    }
+  ],
+  "WorkshopUploadedThisTask": false,
+  "NewRuntimeStartedThisTask": false
+}
