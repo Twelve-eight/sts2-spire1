@@ -1,0 +1,30 @@
+[
+  {
+    "Path": "G:\\omp works\\.tooling\\refresh-workshop-payloads.ps1",
+    "Engine": "7.6.5",
+    "Sha256": "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD",
+    "Passed": true,
+    "Errors": []
+  },
+  {
+    "Path": "G:\\omp works\\Sts\\sts2-spire1\\tools\\release\\Build-Spire1Release.ps1",
+    "Engine": "7.6.5",
+    "Sha256": "F38EC7F5E3E03061AC708903B8BCF537ECF7C81BA86F03AA70404A2FABC7D8DA",
+    "Passed": true,
+    "Errors": []
+  },
+  {
+    "Path": "G:\\omp works\\.tooling\\workshop-push-all.ps1",
+    "Engine": "7.6.5",
+    "Sha256": "C793CC1AE0E992194B8D410F14E6AFA7F76434BF59DD395A31472DBCF486BEB0",
+    "Passed": true,
+    "Errors": []
+  },
+  {
+    "Path": "G:\\omp works\\Sts\\sts2-spire1\\workshop\\workshop-push.ps1",
+    "Engine": "7.6.5",
+    "Sha256": "E77DF36AAA9413A8D36101C0EE64767A5EDD14A44B564C356AF37ADFEA4455BB",
+    "Passed": true,
+    "Errors": []
+  }
+]

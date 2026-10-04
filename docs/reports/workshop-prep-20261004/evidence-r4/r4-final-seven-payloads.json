@@ -1,0 +1,199 @@
+{
+  "At": "2026-10-05T06:49:43.9135530+08:00",
+  "Payloads": [
+    {
+      "Item": "Spire1",
+      "Directory": "G:\\omp works\\Sts\\sts2-spire1\\workshop\\content\\Spire1",
+      "Files": [
+        {
+          "Name": "Spire1.dll",
+          "Bytes": 900608,
+          "Sha256": "8C7CA3DB1AE21FACB4A982287535ED89E25EBB3C369F5C346C68373FC4962F06",
+          "MtimeUtc": "2026-10-04T06:12:02.4436245Z"
+        },
+        {
+          "Name": "Spire1.json",
+          "Bytes": 548,
+          "Sha256": "CDBD57D54374285503538D866551B897938A5D540C2285CE5068019565BB9305",
+          "MtimeUtc": "2026-09-29T18:01:48.7059491Z"
+        },
+        {
+          "Name": "Spire1.pck",
+          "Bytes": 19669354,
+          "Sha256": "70CCBB4D1A2DD1439152F030E40B4C1A8BCA775547EB4F8273C956F62BB51C79",
+          "MtimeUtc": "2026-10-04T20:47:46.7022446Z"
+        }
+      ]
+    },
+    {
+      "Item": "Perfect",
+      "Directory": "G:\\omp works\\Sts\\sts2-perfect\\workshop\\content\\Perfect",
+      "Files": [
+        {
+          "Name": "Perfect.dll",
+          "Bytes": 58880,
+          "Sha256": "55FE275D9CD9844108CF307F6DDFF32508AFE0E336C94DCB0368DE11D49F8228",
+          "MtimeUtc": "2026-10-04T20:58:25.6305771Z"
+        },
+        {
+          "Name": "Perfect.json",
+          "Bytes": 1084,
+          "Sha256": "3067D95F26CD703F24F3E89F579876D7A6636D90FE8B30814069DA6DD8B35C96",
+          "MtimeUtc": "2026-10-02T01:52:51.2731413Z"
+        },
+        {
+          "Name": "Perfect.pck",
+          "Bytes": 347206,
+          "Sha256": "75374572EE29E0CF4B20E0AC38E78711E7C71C43CFB858A78F58912C903EE354",
+          "MtimeUtc": "2026-10-04T20:58:27.7731618Z"
+        },
+        {
+          "Name": "Perfect.pdb",
+          "Bytes": 24584,
+          "Sha256": "9676C3AD57A4E638BC04BDC43278B8F5A7F8F77098F6458CA772A20B18A1ABCA",
+          "MtimeUtc": "2026-10-04T20:58:25.5580442Z"
+        }
+      ]
+    },
+    {
+      "Item": "ChaosBridge",
+      "Directory": "G:\\omp works\\Sts\\chaosbridge\\workshop\\content\\ChaosBridge",
+      "Files": [
+        {
+          "Name": "ChaosBridge.dll",
+          "Bytes": 80896,
+          "Sha256": "7E21221A9C5E15BFC4ECCE28E9F00CCC1962ADCF8224BB6DF9D1A0C5DD68AF4F",
+          "MtimeUtc": "2026-10-03T17:19:38.4945283Z"
+        },
+        {
+          "Name": "ChaosBridge.json",
+          "Bytes": 969,
+          "Sha256": "713894758AF84CAE370598B1B0A5213761163EDEDB685A0ABBDC9788A65D0409",
+          "MtimeUtc": "2026-10-01T23:45:25.7592927Z"
+        },
+        {
+          "Name": "ChaosBridge.pdb",
+          "Bytes": 31120,
+          "Sha256": "EDC7FFDB91C9D96C0DC52C4D185183B5354F2D573A326F8571E0F734DDDA2749",
+          "MtimeUtc": "2026-10-03T17:19:38.4653083Z"
+        }
+      ]
+    },
+    {
+      "Item": "RegentFXFastBoot",
+      "Directory": "G:\\omp works\\Sts\\sts2-regentfxfastboot\\workshop\\content\\RegentFXFastBoot",
+      "Files": [
+        {
+          "Name": "RegentFXFastBoot.dll",
+          "Bytes": 68096,
+          "Sha256": "608E71672CE2876F9F0173F6E5A0C8D9AC9354CDCD36B12689D10ACE8E00ACEE",
+          "MtimeUtc": "2026-10-02T07:50:53.6597589Z"
+        },
+        {
+          "Name": "RegentFXFastBoot.json",
+          "Bytes": 1673,
+          "Sha256": "9B739716C126597AB457DBCB3AE44A52623AFFC9F7C551E524B5FE931DFD0D8F",
+          "MtimeUtc": "2026-10-01T23:09:53.5961996Z"
+        },
+        {
+          "Name": "RegentFXFastBoot.pdb",
+          "Bytes": 41576,
+          "Sha256": "FC3AC3645410CB17B8B087A265C98C215A206DC6F83B2B3381CF8F00CBE026A4",
+          "MtimeUtc": "2026-10-02T07:50:53.6547597Z"
+        }
+      ]
+    },
+    {
+      "Item": "MpConfigSync",
+      "Directory": "G:\\omp works\\Sts\\sts2-mpconfigsync\\workshop\\content\\MpConfigSync",
+      "Files": [
+        {
+          "Name": "MpConfigSync.dll",
+          "Bytes": 52224,
+          "Sha256": "56FCF7F624F873F1769760CC8C7A90630935A9DB31DDB170A898D69FB81ADFC8",
+          "MtimeUtc": "2026-10-04T20:58:30.9401653Z"
+        },
+        {
+          "Name": "MpConfigSync.json",
+          "Bytes": 1359,
+          "Sha256": "320D9B4EB680DE1F6A4CCB61346277E44E42C200729600CA9856D54D673E58F4",
+          "MtimeUtc": "2026-10-02T04:46:17.4736098Z"
+        },
+        {
+          "Name": "MpConfigSync.pck",
+          "Bytes": 59143,
+          "Sha256": "27D698D2DCF5B869F5185E42FE378F8CBACBB353C6D7077FA557C835526CD4CE",
+          "MtimeUtc": "2026-10-04T20:58:31.1601647Z"
+        },
+        {
+          "Name": "MpConfigSync.pdb",
+          "Bytes": 26764,
+          "Sha256": "D3631AF0D3A8A5E5A24CA721806EF7B18F375C207FEAF0CD5CAE058D207977B1",
+          "MtimeUtc": "2026-10-04T20:58:30.9291688Z"
+        }
+      ]
+    },
+    {
+      "Item": "HeartShake",
+      "Directory": "G:\\omp works\\Sts\\sts2-heartshake\\workshop\\content\\HeartShake",
+      "Files": [
+        {
+          "Name": "HeartShake.dll",
+          "Bytes": 20992,
+          "Sha256": "3738C328E31635B6B61301C579B45884591FE4B9C24935DCFD2D68E958A5D0F8",
+          "MtimeUtc": "2026-10-04T20:58:33.6394746Z"
+        },
+        {
+          "Name": "HeartShake.json",
+          "Bytes": 1299,
+          "Sha256": "10DF66DD37F34D421BC777C694B57ED7BD92376760AA4451F6855517AADB20E4",
+          "MtimeUtc": "2026-10-02T01:43:47.2436842Z"
+        },
+        {
+          "Name": "HeartShake.pck",
+          "Bytes": 30010,
+          "Sha256": "3043D131D1AD504F35BC2F53C79A69CA3832B919D8C9724BBEBA0852178F1534",
+          "MtimeUtc": "2026-10-04T20:58:33.8439521Z"
+        },
+        {
+          "Name": "HeartShake.pdb",
+          "Bytes": 24232,
+          "Sha256": "31FCC372DAD6F7B1B5E870E1E394E76FB6CC06D71223BA2B910D0C0C0492EFE6",
+          "MtimeUtc": "2026-10-04T20:58:33.6354772Z"
+        }
+      ]
+    },
+    {
+      "Item": "QuriousCraftingRelics",
+      "Directory": "G:\\omp works\\Sts\\AutoAnthonyRelics\\workshop\\content\\QuriousCraftingRelics",
+      "Files": [
+        {
+          "Name": "QuriousCraftingRelics.dll",
+          "Bytes": 214016,
+          "Sha256": "FC1A0E1351DF677DF4ACAF3A0A7F39C178C4443423BA42BCA59B95F806031CF0",
+          "MtimeUtc": "2026-10-04T20:58:36.9777379Z"
+        },
+        {
+          "Name": "QuriousCraftingRelics.json",
+          "Bytes": 903,
+          "Sha256": "617F120FE31D8EFC488C8A88847D7CAF5AA63B81C461B465C333AFB7A5E62D62",
+          "MtimeUtc": "2026-10-02T02:28:07.9134771Z"
+        },
+        {
+          "Name": "QuriousCraftingRelics.pck",
+          "Bytes": 576005,
+          "Sha256": "5693D8490BB396F3B2AD1B6058FFEC4ABC18FDCC79FB21D68E8A2A5246281A06",
+          "MtimeUtc": "2026-10-04T20:58:38.8126873Z"
+        },
+        {
+          "Name": "QuriousCraftingRelics.pdb",
+          "Bytes": 85632,
+          "Sha256": "40F5FE6D75A4189E7811B81FD60F7D00E8AC0C3E26FC915147CC8E96E7E01619",
+          "MtimeUtc": "2026-10-04T20:58:36.9417379Z"
+        }
+      ]
+    }
+  ],
+  "FullGate": "Blocked by Spire1 genuine source/build freshness mismatch",
+  "Upload": "Not executed"
+}

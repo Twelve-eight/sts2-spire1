@@ -3011,3 +3011,36 @@ r22 的 Calm/Divinity 已通过,Wrath 失败原因是唯一测试敌人带 Artif
 - 最新窄实机证据仍为 2026-10-04 r15: 三姿态首回合与九组合可选启动通过. 可见 UI, 完整长战斗, 战中读档/重连/多人, 性能和平衡均未关闭; Blasphemy 的下一回合即死不被误写成长战斗通过.
 - 交接包含六效果契约, 当前入口/源文件, 133断言探针及源码审查边界, r15原始结果路径, 下一步验收面和与发布管线会话的独立输出约定. 未发消息到其它会话, 未动游戏或共享配置.
 - 推送准备仍在接续实现/监督阶段, 中央PS7隔离发布门禁11/11通过不等于形态实机或发布通过. 另一个形态会话不能直接覆盖 canonical Release 或正式 Workshop staging; 新源码/新hash必须重新绑定验证.
+
+## 2026-10-05 Workshop 准备接续: 监督返工与真实 producer 验证
+
+- 本轮只准备, 不上传 Workshop, 不调用 SteamCMD 或读取凭据, 不消耗登录冷却. 未部署到任何游戏安装, 未改 Steam 安装/共享 mod_configs, 未启动或停止用户游戏; 缓存和输出均固定 G:.
+- 原生 multi_agent_v1.wait_agent 收到 r2 两位监督 completed: 四份 csproj 静态 SUPERVISION_PASS; 两脚本监督发现空 Workshop 目录 junction 漏查, 判 NEEDS_REWORK. 先用 G: 隔离夹具提取真实 promote AST 与 helper, 原版 empty-junction exit=0 且目标出现三文件, 其余六项符合预期. 这是合成 DLL/PCK 的控制流证据, 不是产品门禁或游戏运行.
+- 同批 DeepSeek 实现者 Linnaeus 与监督者 Schrodinger 完成单行修复和独立监督. 主会话对精确实现者真实 wait completed 后激活监督, 监督结论 SUPERVISION_PASS. 新无条件 workshop-root 目录/祖先链门禁在 canonical 和 Workshop 写入前; 最终 Build-Spire1Release.ps1 SHA256 F38EC7F5E3E03061AC708903B8BCF537ECF7C81BA86F03AA70404A2FABC7D8DA.
+- 中央修复后路径夹具 PS7 7/7 与 PS5.1 7/7. 首次 PS5.1 夹具因 native stderr 与 ErrorActionPreference=Stop 提前中断, 不能记为完整验收; 修正验证器捕获后完整重跑. 不改产品检查来迎合测试.
+- 四项目真实 Release Rebuild 已通过 4/4, 显式 CopyToModsFolderOnBuild=false 与 Sts2Path=E:\Slay the Spire 2, build PCK/digest 实算一致, mtime 不早于 DLL/pack起点. 每项目新增一个内联工厂 CS0162 警告, 已交同批 DeepSeek 实现+监督消除, 尚待最终复验. 原始构建结果备份为 four-mods-rebuild-results-r2-before-warning-fix.json, 不把该结果冒充返工后字节验收.
+- 真实 Spire1 -SkipBuild -Promote 已退出 0, 精简 PCK 正式接入 canonical Release 后再更新 Workshop. PCK结构 entries=1464/sourceFiles=744, 三个 DLL 门禁全部 PASS. 输出 G:\omp works\.tmp\spire1-release-prep-final-20261005-044650, 详细 spire1-final-promote-results.json 在中央证据目录.
+- Promote 前后核对 1404 个源码/资产文件, hash 和数量均不变, 23 个 Forms 交接源文件也未变. 最终 staging 恰为三文件, DLL/PCK/manifest 与既有 r15 hash 完全相同, canonical PCK为19669354 bytes而非旧28866294 bytes. 仅保留已有 r15首回合/启动矩阵的窄覆盖, 本轮未新增游戏运行.
+- 所有接续代理安全 session 元数据均解析为 global:deepseek-v4.1-flash / max / provider gateway; 实际 wb2api 更细子路由未暴露, 保持 Unknown. 证据 docs/reports/workshop-prep-20261004/agent-routes-fixes-r3.json. 本轮用户最新并发上限12, 不代表后续会话自动获同模型/渠道授权.
+- 仍待: 四项目警告补丁监督与中央24路径/真实重建, 全量 refresh/VerifyOnly 和 guarded wrapper GuardsOnly, 最终记录与精确 GitHub 备份. 停止维护的新版 autoanthonyrelics 未恢复; AutoAnthonyRelics 路径在本轮指继续维护的 QuriousCraftingRelics.
+- 证据目录 G:\omp works\.tmp\workshop-prep-20261004-central; 协调与监督入口 G:\omp works\Sts\sts2-spire1\docs\reports\workshop-prep-20261004. 可见UI, 长战斗, 旧档/重连/多人, 性能和平衡仍未关闭.
+
+### 全量来源复验新增两处freshness问题 (尚未关闭)
+- 四项目最终真实Rebuild已4/4, 全部0 warnings/0 errors, 24路径夹具通过并绑定r3最终hash; 警告独立监督真实waitcompleted且SUPERVISION_PASS, 临时写入范围偏差和版本笔误已单列报告.
+- 真实全量VerifyOnly仍exit1: Spire1把根docs门禁/交接JSON误当生产输入而REBUILD_REQUIRED; 另外六项目staging确实落后于build, 未刷新, 不称7/7通过.
+- 新隔离freshness矩阵还确认原excludes用绝对FullName, 合法.tmp Root祖先让全部新生产cs/csproj/props/json被忽略, 7个负例错误Exit0. DLL与新源文件真实UTCmtime已核对, 非未来fixture. docs正例在该隔离Root被同一漏洞掩盖, 不能采信为旧版文档误报复现; 真实Sts日志是文档误报证据.
+- 同批Euler实现与Socrates监督只修rootdocs JSON区分及repo相对排除路径. 保留docs中的CS/项目/props与mod/.../docs中的runtime JSON, 不抹去生产输入检查. 唯一模型global:deepseek-v4.1-flash/max, 无临时取证写入, 由hubwait激活独立监督后集中跑13项矩阵/既有11项/全量入口.
+- 受保护文件清单290项的长度与真实UTC ticks核对无差异. 初版比较字符串和ConvertFrom-Json自动DateTime造成290条假阳性, 已保留invalid-string-comparison.json并更正验证器, 未改任何受保护文件元数据. 该清单检查不是整个Steam安装字节审计.
+## 2026-10-05 Workshop准备r4中央收尾与真实源码阻塞
+
+- 本机UTC+8记录2026-10-05 06:49, 对应UTC2026-10-04 22:49; 不因UTC日期差将合法报告判为未来. 子代理仅global:deepseek-v4.1-flash/max, 原生multi_agent_v1. 安全session_meta/turn_context核对包含激活后的监督轮次, 实际provider gateway, 更细wb2api路由未暴露仍Unknown. 两代理已完成并close.
+- hub重新对Euler精确id实际waitcompleted并落盘source-freshness-worker-r4-wait-gate.json, 再激活Socrates独立监督. 监督真实waitcompleted且SUPERVISION_PASS, 只覆盖源码/配置面. 最终refresh脚本SHA256 35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD, 精确快照已同步tools/release/workspace-snapshots. Worker自行只读parse的纪律偏差已记录, 不作中央验收.
+- 中央PS7与PS5.1均四脚本parse通过,新freshness矩阵13/13,既有发布负例11/11. 原始运行汇总r4-central-test-runs.json, 详情位于中央source-freshness-r4-ps7/ps51与negative-gates对应目录. 之前producer24/24和四真实Release Rebuild4/4仍按原始输出引用, 每项目最终0 warnings/0 errors.
+- 真实全量refresh已更新六项目staging, 最终exit1仅Spire1 REBUILD_REQUIRED. 复制前25文件已备份r4-staging-backup.json. 验证器误认为所有失败均前置无写入, 停在断言; 实际22文件更新有证据, 已在r4-full-refusal-staging-no-writes.json明确标AssertionValid=false. 原有freshness在复制后核验, 不是新增产品回归或事务性声明.
+- 后续独立只读六项目Perfect/ChaosBridge/RegentFXFastBoot/MpConfigSync/HeartShake/QuriousCraftingRelics均exit0; 全量VerifyOnly只剩Spire1生产本地化晚于DLL. 正式Spire1 wrapper GuardsOnly exit12在provenance拒绝, 没有后续内容/VDF/description门禁通过证据, 未接触Steam. r4-real-final-verification-results.json保留原始命令与退出码.
+- 并行Forms独立化已修改旧1404集合中6个内容文件, 新桥/续档门禁及Spire1.csproj另有变化; r4-source-and-staging-current.json里的NewModFiles仅指不在旧集合覆盖, 不等于全部新创建. 当前r15三hash未变, 但不能证明新源码已构建或实机通过. 本轮不覆盖它的修改, 不重标旧产物, 不上传.
+- 290项受保护Steam mod/共享配置长度与实际UTC ticks无差异, 登录记录/冷却marker未变, Spire1 staging仍恰为三文件. 这不是全安装字节审计或新的UI/长战斗/读档/多人/性能验收.
+- 自洽接续入口docs/CHECKPOINT-workshop-prep-20261005.md; 当前实际阻塞待Forms源码监督验收与冻结后新Spire1 build/PCK/运行绑定, 再全量门禁. 原始证据G:/omp works/.tmp/workshop-prep-20261004-central. 不使用Force/SkipRefresh绕过, 新版autoanthonyrelics仍停止维护.
+## 2026-10-05 Workshop来源技能格式校验
+
+- Bundled skill-creator quick_validate首次默认GBK读取中文UTF-8失败, 后续显式python -X utf8检查发现旧disable-model-invocation不在Codex允许frontmatter中. 已把该旧键的显式调用限制等价放入agents/openai.yaml policy.allow_implicit_invocation=false, 不改全局设置或授权边界. 最终quick_validate与YAML布尔值校验通过, 语言检查通过; 证据r4-skill-validation.json.

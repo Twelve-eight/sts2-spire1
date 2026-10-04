@@ -39,6 +39,33 @@ function Assert-NoReparse([string]$Path, [string]$Name) {
     }
 }
 
+function Assert-SafeWriteTarget([string]$Path, [string]$Root, [string]$Name) {
+    # Release-write target gate (2026-10-05): the resolved target must stay under $Root; every
+    # existing level from the target up to the drive root must be free of reparse points; no level
+    # may carry a Steam marker; and C:, steamapps trees and the shared mod_configs tree are never
+    # legal release targets.
+    Assert-Under $Path $Root $Name
+    $n = (Resolve-FullPath $Path).TrimEnd([char[]]"\/").ToLowerInvariant()
+    if ($n.StartsWith('c:')) { throw "PATH-DENY [$Name]: C: is never a legal release target." }
+    if ($n -match '\\steamapps(\\|$)') { throw "PATH-DENY [$Name]: a Steam library tree is not allowed." }
+    if ($n -match '\\mod_configs(\\|$)') { throw "PATH-DENY [$Name]: the shared mod_configs tree is not allowed." }
+    $p = Resolve-FullPath $Path
+    while ($p) {
+        if (Test-Path -LiteralPath $p) {
+            $item = Get-Item -LiteralPath $p -Force -ErrorAction Stop
+            if (($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
+                throw "PATH-DENY [$Name]: reparse point '$p' is not allowed."
+            }
+        }
+        if (Test-Path -LiteralPath (Join-Path $p 'steam_appid.txt') -PathType Leaf) {
+            throw "PATH-DENY [$Name]: Steam marker under '$p' is not allowed."
+        }
+        $parent = Split-Path -Path $p -Parent
+        if (-not $parent -or $parent -eq $p) { break }
+        $p = $parent
+    }
+}
+
 function Convert-ToSnake([string]$Name) {
     # Model IDs in this codebase split every capital boundary, including acronyms:
     # CreativeAI -> creative_a_i, FTL -> f_t_l, JAX -> j_a_x.
@@ -288,10 +315,100 @@ if (-not $PlanOnly -and $dll) {
 
 if ($Promote) {
     if ($PlanOnly) { throw 'PROMOTE-DENY: cannot promote a plan-only run.' }
+    if ($Configuration -ne 'Release') { throw 'PROMOTE-DENY: promotion is allowed only for Configuration=Release.' }
     $workshopRoot = Join-Path $RepoRoot 'workshop\content\Spire1'
     Assert-Under $workshopRoot (Join-Path $RepoRoot 'workshop\content') 'workshop-payload'
     Assert-NoReparse (Join-Path $RepoRoot 'workshop\content') 'workshop-content-root'
+    Assert-SafeWriteTarget $workshopRoot (Join-Path $RepoRoot 'workshop\content') 'workshop-root'
     if (-not $PSCmdlet.ShouldProcess($workshopRoot, 'replace Spire1 Workshop payload with clean three-file staging')) { throw 'PROMOTE-CANCELLED.' }
+
+    # ---- canonical sync (2026-10-05): only on explicit -Promote, only after the PCK structure
+    # gate and all DLL gates above passed, and only before any Workshop payload byte is written.
+    # The canonical DLL is exactly mod\.godot\mono\temp\bin\Release\Spire1.dll; the bin/Release and
+    # publish fallbacks are never promotable. The staged payload DLL must still be the same bytes as
+    # the canonical DLL, so the gates above cover the exact file whose PCK is installed here.
+    # The two-file install (PCK first, digest second) is deliberately NOT a pair-atomic
+    # transaction: a crash between the two installs leaves an incomplete pair, and the existing
+    # provenance gates reject exactly that (missing, mismatched or stale digest). No timestamp is
+    # ever faked; every check below reads the real metadata of the installed files.
+    $canonicalDir = Join-Path $RepoRoot 'mod\.godot\mono\temp\bin\Release'
+    $canonicalDll = Join-Path $canonicalDir 'Spire1.dll'
+    $canonicalPck = Join-Path $canonicalDir 'Spire1.pck'
+    $canonicalDigest = Join-Path $canonicalDir 'Spire1.pck.sha256'
+    if (-not (Test-Path -LiteralPath $canonicalDir -PathType Container)) { throw "PROMOTE-DENY: canonical build dir missing: '$canonicalDir'." }
+    Assert-SafeWriteTarget $canonicalDir $RepoRoot 'canonical-build-dir'
+    Assert-SafeWriteTarget $canonicalDll $canonicalDir 'canonical-dll'
+    Assert-SafeWriteTarget $canonicalPck $canonicalDir 'canonical-pck'
+    Assert-SafeWriteTarget $canonicalDigest $canonicalDir 'canonical-digest'
+    if (-not (Test-Path -LiteralPath $canonicalDll -PathType Leaf)) {
+        throw "PROMOTE-DENY: canonical DLL missing at '$canonicalDll'; bin/publish fallbacks are not promotable."
+    }
+    if (-not $dll -or (Normalize $dll) -ne (Normalize $canonicalDll)) {
+        throw "PROMOTE-DENY: promotion requires the canonical Release DLL '$canonicalDll' (resolved '$dll')."
+    }
+    $canonicalDllHash = (Get-FileHash -LiteralPath $canonicalDll -Algorithm SHA256).Hash.ToUpperInvariant()
+    $payloadDll = Join-Path $payloadModsRoot 'Spire1.dll'
+    if (-not (Test-Path -LiteralPath $payloadDll -PathType Leaf)) { throw "PROMOTE-DENY: staged payload DLL missing: '$payloadDll'." }
+    $payloadDllHash = (Get-FileHash -LiteralPath $payloadDll -Algorithm SHA256).Hash.ToUpperInvariant()
+    if ($canonicalDllHash -ne $payloadDllHash) {
+        throw "PROMOTE-DENY: canonical DLL '$canonicalDllHash' differs from the staged payload DLL '$payloadDllHash'."
+    }
+
+    $sourcePckItem = Get-Item -LiteralPath $pck -Force -ErrorAction Stop
+    $sourcePckHash = (Get-FileHash -LiteralPath $pck -Algorithm SHA256).Hash.ToUpperInvariant()
+    if ($sourcePckHash -ne $pckHash) { throw "CANONICAL-SYNC-DENY: payload PCK changed after the structure gate ('$sourcePckHash' vs '$pckHash')." }
+    $canonicalDllItem = Get-Item -LiteralPath $canonicalDll -Force -ErrorAction Stop
+    $syncId = [Guid]::NewGuid().ToString('N')
+    $tempPck = Join-Path $canonicalDir ("Spire1.pck.new-$syncId")
+    $tempDigest = Join-Path $canonicalDir ("Spire1.pck.sha256.new-$syncId")
+    Assert-SafeWriteTarget $tempPck $canonicalDir 'canonical-temp-pck'
+    Assert-SafeWriteTarget $tempDigest $canonicalDir 'canonical-temp-digest'
+    try {
+        Copy-Item -LiteralPath $pck -Destination $tempPck -Force -ErrorAction Stop
+        $tempPckItem = Get-Item -LiteralPath $tempPck -Force -ErrorAction Stop
+        $tempPckHash = (Get-FileHash -LiteralPath $tempPck -Algorithm SHA256).Hash.ToUpperInvariant()
+        if ($tempPckItem.Length -ne $sourcePckItem.Length) { throw "CANONICAL-SYNC-DENY: temp PCK length $($tempPckItem.Length) differs from payload $($sourcePckItem.Length)." }
+        if ($tempPckHash -ne $sourcePckHash) { throw "CANONICAL-SYNC-DENY: temp PCK hash $tempPckHash differs from payload $sourcePckHash." }
+        if ($tempPckItem.LastWriteTimeUtc -lt $canonicalDllItem.LastWriteTimeUtc) { throw "CANONICAL-SYNC-DENY: temp PCK mtime $($tempPckItem.LastWriteTimeUtc.ToString('o')) predates canonical DLL mtime $($canonicalDllItem.LastWriteTimeUtc.ToString('o')); timestamps are never faked." }
+        Set-Content -LiteralPath $tempDigest -Value $tempPckHash -Encoding ASCII
+        $tempDigestRead = (Get-Content -LiteralPath $tempDigest -Raw -ErrorAction Stop).Trim()
+        if ($tempDigestRead -notmatch '^[0-9A-F]{64}$') { throw "CANONICAL-SYNC-DENY: temp digest is not a 64-hex ASCII SHA256: '$tempDigestRead'." }
+        if ($tempDigestRead -ne $tempPckHash) { throw "CANONICAL-SYNC-DENY: temp digest $tempDigestRead differs from temp PCK hash $tempPckHash." }
+        [System.IO.File]::Copy($tempPck, $canonicalPck, $true)
+        [System.IO.File]::Copy($tempDigest, $canonicalDigest, $true)
+        $finalPckItem = Get-Item -LiteralPath $canonicalPck -Force -ErrorAction Stop
+        $finalPckHash = (Get-FileHash -LiteralPath $canonicalPck -Algorithm SHA256).Hash.ToUpperInvariant()
+        if ($finalPckItem.Length -le 0) { throw 'CANONICAL-SYNC-DENY: installed canonical PCK is empty.' }
+        if ($finalPckHash -ne $tempPckHash) { throw "CANONICAL-SYNC-DENY: installed canonical PCK hash $finalPckHash differs from the verified temp hash $tempPckHash." }
+        if ($finalPckItem.LastWriteTimeUtc -lt $canonicalDllItem.LastWriteTimeUtc) { throw "CANONICAL-SYNC-DENY: installed canonical PCK mtime $($finalPckItem.LastWriteTimeUtc.ToString('o')) predates canonical DLL mtime $($canonicalDllItem.LastWriteTimeUtc.ToString('o'))." }
+        $finalDigestRead = (Get-Content -LiteralPath $canonicalDigest -Raw -ErrorAction Stop).Trim()
+        if ($finalDigestRead -ne $finalPckHash) { throw "CANONICAL-SYNC-DENY: installed canonical digest $finalDigestRead differs from installed PCK hash $finalPckHash." }
+        $syncRecord = [pscustomobject]@{
+            Schema='Spire1CanonicalSync.v1'
+            GeneratedAt=(Get-Date).ToString('o')
+            CanonicalDir=$canonicalDir
+            PairAtomic=$false
+            InstalledOrder=@('Spire1.pck','Spire1.pck.sha256')
+            DllSha256=$canonicalDllHash
+            PckBytes=$finalPckItem.Length
+            PckSha256=$finalPckHash
+            PckMtimeUtc=$finalPckItem.LastWriteTimeUtc.ToString('o')
+            Digest=$finalDigestRead
+        }
+        $syncRecord | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $evidenceRoot 'canonical-sync.json') -Encoding UTF8
+        Write-Host "[release] canonical build dir synchronized: $canonicalPck ($finalPckHash)"
+    } finally {
+        foreach ($tempPath in @($tempPck, $tempDigest)) {
+            if (Test-Path -LiteralPath $tempPath -PathType Leaf) {
+                Remove-Item -LiteralPath $tempPath -Force -ErrorAction SilentlyContinue
+            }
+        }
+    }
+
+    foreach ($name in @('Spire1.dll','Spire1.json','Spire1.pck')) {
+        $leaf = Join-Path $workshopRoot $name
+        if (Test-Path -LiteralPath $leaf) { Assert-SafeWriteTarget $leaf (Join-Path $RepoRoot 'workshop\content') 'workshop-payload-file' }
+    }
     New-Item -ItemType Directory -Force -Path $workshopRoot | Out-Null
     foreach ($name in @('Spire1.dll','Spire1.json','Spire1.pck')) {
         Copy-Item -LiteralPath (Join-Path $payloadModsRoot $name) -Destination (Join-Path $workshopRoot $name) -Force
@@ -305,6 +422,13 @@ if ($Promote) {
     if ($leftovers) { throw "PROMOTE-DENY: unexpected files or directories remain: $($leftovers.Name -join ', ')" }
     $dirs = $children | Where-Object { $_.PSIsContainer }
     if ($dirs) { throw "PROMOTE-DENY: unexpected directories remain: $($dirs.Name -join ', ')" }
+    foreach ($name in @('Spire1.dll','Spire1.json','Spire1.pck')) {
+        $finalPath = Join-Path $workshopRoot $name
+        $payloadPath = Join-Path $payloadModsRoot $name
+        $finalHash = (Get-FileHash -LiteralPath $finalPath -Algorithm SHA256).Hash.ToUpperInvariant()
+        $payloadHash = (Get-FileHash -LiteralPath $payloadPath -Algorithm SHA256).Hash.ToUpperInvariant()
+        if ($finalHash -ne $payloadHash) { throw "PROMOTE-READBACK-DENY: '$finalPath' hash $finalHash differs from payload $payloadHash." }
+    }
     Write-Host "[release] promoted clean payload to $workshopRoot"
 }
 

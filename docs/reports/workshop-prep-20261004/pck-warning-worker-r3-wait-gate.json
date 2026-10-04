@@ -1,0 +1,27 @@
+{
+  "CheckedAt": "2026-10-05T04:53:18.1870959+08:00",
+  "Tool": "multi_agent_v1.wait_agent",
+  "Target": "01a108a8-ed70-7420-8436-76f1d7aad3a3",
+  "Status": "completed",
+  "TimedOut": false,
+  "InvocationId": null,
+  "Files": [
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-perfect\\mod\\Perfect.csproj",
+      "Sha256": "A4495FA79D1250A7475B236AAD37B9E2322C75E101996CA9F85871C0D47EE5C3"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-mpconfigsync\\mod\\MpConfigSync.csproj",
+      "Sha256": "F4CE5EC5A4B0177A57115E62124457509C284C19AC79BD25FCFCE6831B256C94"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-heartshake\\mod\\HeartShake.csproj",
+      "Sha256": "8F3C6C4B5FA8D72E8CAE576336BE7CD20B4532B10D9D1B86E91B7F382696995A"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\AutoAnthonyRelics\\mod\\QuriousCraftingRelics.csproj",
+      "Sha256": "F44992193E9859A1C530C91645F215660673A6AE6D1C0891A67A3FBCFE1C5931"
+    }
+  ],
+  "Report": "G:\\omp works\\Sts\\sts2-spire1\\docs\\reports\\workshop-prep-20261004\\pck-warning-worker-r3.md"
+}

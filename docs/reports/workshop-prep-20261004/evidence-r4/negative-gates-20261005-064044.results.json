@@ -1,0 +1,57 @@
+﻿[
+    {
+        "Name":  "spire1-three-file-and-other-pdb-baseline",
+        "Passed":  true,
+        "Detail":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\negative-gates-20261005-064044\\01-baseline.log"
+    },
+    {
+        "Name":  "regenerate-does-not-introduce-spire1-pdb",
+        "Passed":  true,
+        "Detail":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\negative-gates-20261005-064044\\02-regenerate.log"
+    },
+    {
+        "Name":  "staged-spire1-pdb-fails-before-write",
+        "Passed":  true,
+        "Detail":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\negative-gates-20261005-064044\\03-staged-pdb.log"
+    },
+    {
+        "Name":  "mtime-mismatch-verify-is-read-only",
+        "Passed":  true,
+        "Detail":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\negative-gates-20261005-064044\\04-mtime-verify.log"
+    },
+    {
+        "Name":  "mtime-mismatch-whatif-is-read-only",
+        "Passed":  true,
+        "Detail":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\negative-gates-20261005-064044\\05-mtime-whatif.log"
+    },
+    {
+        "Name":  "same-hash-mtime-refresh-copies-source",
+        "Passed":  true,
+        "Detail":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\negative-gates-20261005-064044\\06-mtime-refresh.log"
+    },
+    {
+        "Name":  "mtime-refreshed-fixture-verifies",
+        "Passed":  true,
+        "Detail":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\negative-gates-20261005-064044\\07-mtime-after.log"
+    },
+    {
+        "Name":  "digest-missing-fails-before-write",
+        "Passed":  true,
+        "Detail":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\negative-gates-20261005-064044\\08-digest-missing.log"
+    },
+    {
+        "Name":  "digest-malformed-fails-before-write",
+        "Passed":  true,
+        "Detail":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\negative-gates-20261005-064044\\08-digest-malformed.log"
+    },
+    {
+        "Name":  "digest-mismatch-fails-before-write",
+        "Passed":  true,
+        "Detail":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\negative-gates-20261005-064044\\08-digest-mismatch.log"
+    },
+    {
+        "Name":  "digest-stale-fails-before-write",
+        "Passed":  true,
+        "Detail":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\negative-gates-20261005-064044\\08-digest-stale.log"
+    }
+]

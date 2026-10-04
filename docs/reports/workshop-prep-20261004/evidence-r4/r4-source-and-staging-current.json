@@ -1,0 +1,180 @@
+{
+  "CheckedAt": "2026-10-05T06:40:25.5169349+08:00",
+  "Before": "2026-10-05T04:46:50.7617204+08:00",
+  "Changes": [
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Extensions\\StanceCmd.cs",
+      "Kind": "Changed",
+      "Before": "2C39A5B1A3AF96606F2255CFCECBBD6FA603B3AE94EBDBEDC97CE11893B71935",
+      "Now": "5065BF91D1C8E6E586DA39671A81C94AA46AD9FB6B5286E6BB45D07450F112B6",
+      "MtimeUtc": "2026-10-04T21:52:42.5324957Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Patches\\Spire1PowersGatePatch.cs",
+      "Kind": "Changed",
+      "Before": "9EEAF7C63ED1685F4ABE44658B077B37471E74B1C211C6193859FA8B6F3B08DB",
+      "Now": "DF841DFD99F43F55335742F8946ADA008F0F54B45D1F244AFF8D74F2813DB22F",
+      "MtimeUtc": "2026-10-04T22:26:01.3837412Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1\\localization\\eng\\modifiers.json",
+      "Kind": "Changed",
+      "Before": "3F6A98CCC8DD2D71ACE26D5E4B0294221B5641E9C81E0864E675FE81762B85D8",
+      "Now": "D914176FD50BD7F565700006A31AA97B79D3AD17CEE20C8E5FF2061D5CB74817",
+      "MtimeUtc": "2026-10-04T22:26:19.0198438Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1\\localization\\eng\\powers.json",
+      "Kind": "Changed",
+      "Before": "9405D9E050A3C828BA3025228E21E4BFD22E197CA4C8DFD0DCC4D5874F71579A",
+      "Now": "C1671F2D52471C0C57A38C1E794A826C0D2F775316B6E53EAE87A7C0E8B23428",
+      "MtimeUtc": "2026-10-04T22:26:18.9750682Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1\\localization\\zhs\\modifiers.json",
+      "Kind": "Changed",
+      "Before": "D43F63564E3AE1F399BA7B30533292B66FB3575565750E8803ACF3EA66505CAB",
+      "Now": "D914176FD50BD7F565700006A31AA97B79D3AD17CEE20C8E5FF2061D5CB74817",
+      "MtimeUtc": "2026-10-04T22:26:19.0218441Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1\\localization\\zhs\\powers.json",
+      "Kind": "Changed",
+      "Before": "BA8933FCD55BC1AF6B346230D2B3D68559913208AC252939EA56C61F58665414",
+      "Now": "DEF941C6752EAA414DFB81D7A9D7FA9B072452E0C9B1C277CCA29010B7120DDB",
+      "MtimeUtc": "2026-10-04T22:26:19.0158428Z"
+    }
+  ],
+  "NewModFiles": [
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\.gitattributes",
+      "Bytes": 80,
+      "Sha256": "21B01A606C9F85F18BB9230245F00AB104DF7409CBB2FE9423F6751CA72BA754",
+      "MtimeUtc": "2026-08-18T06:56:03.4014042Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\.gitignore",
+      "Bytes": 114,
+      "Sha256": "4F917C4666245D728AE99ADEB5EE6C6F1E9C0182AE280E58D7C13419E25DB194",
+      "MtimeUtc": "2026-08-18T06:56:03.4024021Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Directory.Build.props",
+      "Bytes": 789,
+      "Sha256": "1A6C8FB6AB1B3DACE8A22A879A7EBEF2C885789F436C880DB6AD891AFEF57F20",
+      "MtimeUtc": "2026-08-18T06:56:03.4114024Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\export_presets.cfg",
+      "Bytes": 2541,
+      "Sha256": "D54E61977EF54015E5E2D87B4EF6077F887783CE4B3295C4532BE8E72E49E3A3",
+      "MtimeUtc": "2026-08-18T06:56:03.4124032Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\GlobalUsings.cs",
+      "Bytes": 490,
+      "Sha256": "E0EB3F44E7B0845B5747334BABA594D8716B77DB74DE575E059E4D72EE4283E8",
+      "MtimeUtc": "2026-08-19T14:23:48.2086144Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\project.godot",
+      "Bytes": 745,
+      "Sha256": "09925700A883CDDD49D4363D853A08BF5D8D98776041D7CA543D336E9E1E0379",
+      "MtimeUtc": "2026-08-18T06:56:03.4134051Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1.csproj",
+      "Bytes": 57001,
+      "Sha256": "D69FD282F4D0B52EC3CAA0E92D10496222359980E0A81B3B14D7EBC188F16DEE",
+      "MtimeUtc": "2026-10-04T21:24:22.7881684Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1.json",
+      "Bytes": 548,
+      "Sha256": "CDBD57D54374285503538D866551B897938A5D540C2285CE5068019565BB9305",
+      "MtimeUtc": "2026-09-29T18:01:48.7059491Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1.sln.DotSettings",
+      "Bytes": 16310,
+      "Sha256": "67FED9775222CAB8E97AB7B12DE9B439FF1D3E2609BEA619B7DD5C59118484A2",
+      "MtimeUtc": "2026-08-18T06:56:03.4104018Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Sts2PathDiscovery.props",
+      "Bytes": 2855,
+      "Sha256": "EAE5599E7DBD39A369973E45C4B4D87A5BDAEBBCE7773EC8B7A16E1868A561FD",
+      "MtimeUtc": "2026-09-17T04:19:40.2471164Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Interop\\FormsCompatibilityBridge.cs",
+      "Bytes": 30258,
+      "Sha256": "D0236BCD23B8C207AF4DA67979DDA42E75CB0593D038CC1ED836EC6137D86DFB",
+      "MtimeUtc": "2026-10-04T22:25:56.9157307Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\Spire1Code\\Patches\\FormsMissingModifierSaveGuardPatch.cs",
+      "Bytes": 3780,
+      "Sha256": "A4F3E10DE174A0989861C7ACC6D625EA5A86D624AC7DDA86C12512705517EEA5",
+      "MtimeUtc": "2026-10-04T22:25:06.9896648Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\_staging\\batch-context-20260906.md",
+      "Bytes": 2847,
+      "Sha256": "D08802CFAF76EA25194A0CB4EEED5D7D614DD1284DA85EFD04DF3016E3CE48D9",
+      "MtimeUtc": "2026-09-06T13:51:37.5568718Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\_staging\\louse-extracted-data.md",
+      "Bytes": 1512,
+      "Sha256": "B0566684FB22CA95349056F0C163EA728862D114FB233F5C83783B63BB3E477C",
+      "MtimeUtc": "2026-08-21T07:40:29.7449834Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\_staging\\R12-fission.md",
+      "Bytes": 4243,
+      "Sha256": "4017F1137D51407EA3C0392A6595EA1CB0E04FD634970011FC3B5F2B9461B7AB",
+      "MtimeUtc": "2026-09-06T13:51:37.557863Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\_staging\\R13-evaluate.md",
+      "Bytes": 8334,
+      "Sha256": "C042720F3CEF62D0CAE57C4865EC3F1797AA111E006976E01D73A6170470EA47",
+      "MtimeUtc": "2026-09-06T13:51:37.557863Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\_staging\\R6-nine-twins-verdict.md",
+      "Bytes": 18457,
+      "Sha256": "EE87FAB21BF6EDCFE5DBDFF0DA7696F84E3FC3CFDFAC295F5966276CF50E1AD8",
+      "MtimeUtc": "2026-09-06T13:51:37.5588632Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\mod\\_staging\\R9-encounters.md",
+      "Bytes": 7228,
+      "Sha256": "0945BB03688908D5C8B121375BAA9303EEF6830318F98BF3912E15AEE7635A20",
+      "MtimeUtc": "2026-09-06T13:51:37.5598653Z"
+    }
+  ],
+  "Staging": [
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\workshop\\content\\Spire1\\Spire1.dll",
+      "Bytes": 900608,
+      "Sha256": "8C7CA3DB1AE21FACB4A982287535ED89E25EBB3C369F5C346C68373FC4962F06",
+      "MtimeUtc": "2026-10-04T06:12:02.4436245Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\workshop\\content\\Spire1\\Spire1.json",
+      "Bytes": 548,
+      "Sha256": "CDBD57D54374285503538D866551B897938A5D540C2285CE5068019565BB9305",
+      "MtimeUtc": "2026-09-29T18:01:48.7059491Z"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\workshop\\content\\Spire1\\Spire1.pck",
+      "Bytes": 19669354,
+      "Sha256": "70CCBB4D1A2DD1439152F030E40B4C1A8BCA775547EB4F8273C956F62BB51C79",
+      "MtimeUtc": "2026-10-04T20:47:46.7022446Z"
+    }
+  ],
+  "Boundary": "Read-only source and staging snapshot. Parallel Forms development is not overwritten. No new game runtime validation.",
+  "OutsideSnapshotExplanation": "NewModFiles means not covered by the prior AllContentSources set, not created since that snapshot. Ten root/config files and old staging notes predate this round. Specific parallel new code is corroborated by git status and source timestamps."
+}

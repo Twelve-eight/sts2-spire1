@@ -1,0 +1,232 @@
+{
+  "At": "2026-10-05T06:42:53.7792291+08:00",
+  "Directory": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253",
+  "FileCount": 25,
+  "Files": [
+    {
+      "Item": "Spire1",
+      "Source": "G:\\omp works\\Sts\\sts2-spire1\\workshop\\content\\Spire1\\Spire1.dll",
+      "RelativePath": "Spire1.dll",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\Spire1\\Spire1.dll",
+      "Bytes": 900608,
+      "Ticks": 639266911224436245,
+      "Sha256": "8C7CA3DB1AE21FACB4A982287535ED89E25EBB3C369F5C346C68373FC4962F06"
+    },
+    {
+      "Item": "Spire1",
+      "Source": "G:\\omp works\\Sts\\sts2-spire1\\workshop\\content\\Spire1\\Spire1.json",
+      "RelativePath": "Spire1.json",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\Spire1\\Spire1.json",
+      "Bytes": 548,
+      "Ticks": 639263017087059491,
+      "Sha256": "CDBD57D54374285503538D866551B897938A5D540C2285CE5068019565BB9305"
+    },
+    {
+      "Item": "Spire1",
+      "Source": "G:\\omp works\\Sts\\sts2-spire1\\workshop\\content\\Spire1\\Spire1.pck",
+      "RelativePath": "Spire1.pck",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\Spire1\\Spire1.pck",
+      "Bytes": 19669354,
+      "Ticks": 639267436667022446,
+      "Sha256": "70CCBB4D1A2DD1439152F030E40B4C1A8BCA775547EB4F8273C956F62BB51C79"
+    },
+    {
+      "Item": "Perfect",
+      "Source": "G:\\omp works\\Sts\\sts2-perfect\\workshop\\content\\Perfect\\Perfect.dll",
+      "RelativePath": "Perfect.dll",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\Perfect\\Perfect.dll",
+      "Bytes": 47104,
+      "Ticks": 639252228435232988,
+      "Sha256": "25F342ABF7E1C737B9C4971CF437D3A0DB72894FE0CD7F8234EABFEC1CEE04B9"
+    },
+    {
+      "Item": "Perfect",
+      "Source": "G:\\omp works\\Sts\\sts2-perfect\\workshop\\content\\Perfect\\Perfect.json",
+      "RelativePath": "Perfect.json",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\Perfect\\Perfect.json",
+      "Bytes": 416,
+      "Ticks": 639248259468879844,
+      "Sha256": "1575D71A36959C0312B4CA0B9718992B668ECA913307DAD8570106B59BA55A56"
+    },
+    {
+      "Item": "Perfect",
+      "Source": "G:\\omp works\\Sts\\sts2-perfect\\workshop\\content\\Perfect\\Perfect.pck",
+      "RelativePath": "Perfect.pck",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\Perfect\\Perfect.pck",
+      "Bytes": 342844,
+      "Ticks": 639248259468164141,
+      "Sha256": "5E1283DCD627473FBECFB405B886F29CF6986D1ED7792BF3AD6044A6C3F05CAE"
+    },
+    {
+      "Item": "Perfect",
+      "Source": "G:\\omp works\\Sts\\sts2-perfect\\workshop\\content\\Perfect\\Perfect.pdb",
+      "RelativePath": "Perfect.pdb",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\Perfect\\Perfect.pdb",
+      "Bytes": 22816,
+      "Ticks": 639252133797478031,
+      "Sha256": "ABEF4F84A439BC4D8066B609D9F75CD1544E47570680D357DDD6858FFC370D0D"
+    },
+    {
+      "Item": "ChaosBridge",
+      "Source": "G:\\omp works\\Sts\\chaosbridge\\workshop\\content\\ChaosBridge\\ChaosBridge.dll",
+      "RelativePath": "ChaosBridge.dll",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\ChaosBridge\\ChaosBridge.dll",
+      "Bytes": 31232,
+      "Ticks": 639263017281868120,
+      "Sha256": "7397CBAAA7F7A44383B6392A2AD24A9DC21B07F5D5B3525909CF5466B12846D5"
+    },
+    {
+      "Item": "ChaosBridge",
+      "Source": "G:\\omp works\\Sts\\chaosbridge\\workshop\\content\\ChaosBridge\\ChaosBridge.json",
+      "RelativePath": "ChaosBridge.json",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\ChaosBridge\\ChaosBridge.json",
+      "Bytes": 760,
+      "Ticks": 639263017087230148,
+      "Sha256": "F918C0FF23E11125971CD8ED39361B2CE37C924AE9A37BC9C7ACCEDDF7B581A1"
+    },
+    {
+      "Item": "ChaosBridge",
+      "Source": "G:\\omp works\\Sts\\chaosbridge\\workshop\\content\\ChaosBridge\\ChaosBridge.pdb",
+      "RelativePath": "ChaosBridge.pdb",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\ChaosBridge\\ChaosBridge.pdb",
+      "Bytes": 18836,
+      "Ticks": 639263017281788416,
+      "Sha256": "BED1B573DD07B0CBC29C5FB1E409B1C626CCFDF93DA65709D062696FA2D9FF8A"
+    },
+    {
+      "Item": "RegentFXFastBoot",
+      "Source": "G:\\omp works\\Sts\\sts2-regentfxfastboot\\workshop\\content\\RegentFXFastBoot\\RegentFXFastBoot.dll",
+      "RelativePath": "RegentFXFastBoot.dll",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\RegentFXFastBoot\\RegentFXFastBoot.dll",
+      "Bytes": 59904,
+      "Ticks": 639251625769862768,
+      "Sha256": "40C2DBC51091F2668E809A9875607D48072928F2366E2F2276B5C7A413D013F8"
+    },
+    {
+      "Item": "RegentFXFastBoot",
+      "Source": "G:\\omp works\\Sts\\sts2-regentfxfastboot\\workshop\\content\\RegentFXFastBoot\\RegentFXFastBoot.json",
+      "RelativePath": "RegentFXFastBoot.json",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\RegentFXFastBoot\\RegentFXFastBoot.json",
+      "Bytes": 1429,
+      "Ticks": 639250989570872123,
+      "Sha256": "159AE5A667659C60A51C175DCFAB376484A42B500368496A688258633DA40FA3"
+    },
+    {
+      "Item": "RegentFXFastBoot",
+      "Source": "G:\\omp works\\Sts\\sts2-regentfxfastboot\\workshop\\content\\RegentFXFastBoot\\RegentFXFastBoot.pdb",
+      "RelativePath": "RegentFXFastBoot.pdb",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\RegentFXFastBoot\\RegentFXFastBoot.pdb",
+      "Bytes": 38236,
+      "Ticks": 639251625769812702,
+      "Sha256": "E5686FEB0785A73B812AE80D8835E0C362C57B36FD0969364F412121B5F91A78"
+    },
+    {
+      "Item": "MpConfigSync",
+      "Source": "G:\\omp works\\Sts\\sts2-mpconfigsync\\workshop\\content\\MpConfigSync\\MpConfigSync.dll",
+      "RelativePath": "MpConfigSync.dll",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\MpConfigSync\\MpConfigSync.dll",
+      "Bytes": 38400,
+      "Ticks": 639263017250482297,
+      "Sha256": "2EB2738DC714462AB952113091D4AF08B3EBA506C46B32F35A4CAAFFEB1E9D23"
+    },
+    {
+      "Item": "MpConfigSync",
+      "Source": "G:\\omp works\\Sts\\sts2-mpconfigsync\\workshop\\content\\MpConfigSync\\MpConfigSync.json",
+      "RelativePath": "MpConfigSync.json",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\MpConfigSync\\MpConfigSync.json",
+      "Bytes": 464,
+      "Ticks": 639263017087200160,
+      "Sha256": "2902C449DF14A2349245C77946B347A4075C34199E1F53558CEBBBCC38767925"
+    },
+    {
+      "Item": "MpConfigSync",
+      "Source": "G:\\omp works\\Sts\\sts2-mpconfigsync\\workshop\\content\\MpConfigSync\\MpConfigSync.pck",
+      "RelativePath": "MpConfigSync.pck",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\MpConfigSync\\MpConfigSync.pck",
+      "Bytes": 55630,
+      "Ticks": 639261147891537381,
+      "Sha256": "06FDE2AEED17D58002F554EB38F2C276750FB6639CB00255819C01F714A99DB6"
+    },
+    {
+      "Item": "MpConfigSync",
+      "Source": "G:\\omp works\\Sts\\sts2-mpconfigsync\\workshop\\content\\MpConfigSync\\MpConfigSync.pdb",
+      "RelativePath": "MpConfigSync.pdb",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\MpConfigSync\\MpConfigSync.pdb",
+      "Bytes": 24084,
+      "Ticks": 639263017250262244,
+      "Sha256": "70F5664252403EDA509013FA42906F68CC854578021B7AB2693C58FE5C5F6CF6"
+    },
+    {
+      "Item": "HeartShake",
+      "Source": "G:\\omp works\\Sts\\sts2-heartshake\\workshop\\content\\HeartShake\\HeartShake.dll",
+      "RelativePath": "HeartShake.dll",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\HeartShake\\HeartShake.dll",
+      "Bytes": 16384,
+      "Ticks": 639252134235970272,
+      "Sha256": "1271C1EB46DC2E8BD6604C0373FA787D480810957D841B73C99C2F7D7AE18802"
+    },
+    {
+      "Item": "HeartShake",
+      "Source": "G:\\omp works\\Sts\\sts2-heartshake\\workshop\\content\\HeartShake\\HeartShake.json",
+      "RelativePath": "HeartShake.json",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\HeartShake\\HeartShake.json",
+      "Bytes": 495,
+      "Ticks": 639248259475757821,
+      "Sha256": "3196E00116B25F7BD37E068F57B48DF45715EBE540DF084250A2A76B7D783BA6"
+    },
+    {
+      "Item": "HeartShake",
+      "Source": "G:\\omp works\\Sts\\sts2-heartshake\\workshop\\content\\HeartShake\\HeartShake.pck",
+      "RelativePath": "HeartShake.pck",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\HeartShake\\HeartShake.pck",
+      "Bytes": 30010,
+      "Ticks": 639248259475520682,
+      "Sha256": "3043D131D1AD504F35BC2F53C79A69CA3832B919D8C9724BBEBA0852178F1534"
+    },
+    {
+      "Item": "HeartShake",
+      "Source": "G:\\omp works\\Sts\\sts2-heartshake\\workshop\\content\\HeartShake\\HeartShake.pdb",
+      "RelativePath": "HeartShake.pdb",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\HeartShake\\HeartShake.pdb",
+      "Bytes": 22640,
+      "Ticks": 639252134235880289,
+      "Sha256": "9570B268F4E766C7F127124285EF650F2FBB9677305A28E8C1259EC3B26E7C33"
+    },
+    {
+      "Item": "QuriousCraftingRelics",
+      "Source": "G:\\omp works\\Sts\\AutoAnthonyRelics\\workshop\\content\\QuriousCraftingRelics\\QuriousCraftingRelics.dll",
+      "RelativePath": "QuriousCraftingRelics.dll",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\QuriousCraftingRelics\\QuriousCraftingRelics.dll",
+      "Bytes": 207872,
+      "Ticks": 639257283469236839,
+      "Sha256": "347AF24D7FC51677E6E53F26A86B95A043FFEC86886F95909C8FAC810D838A5C"
+    },
+    {
+      "Item": "QuriousCraftingRelics",
+      "Source": "G:\\omp works\\Sts\\AutoAnthonyRelics\\workshop\\content\\QuriousCraftingRelics\\QuriousCraftingRelics.json",
+      "RelativePath": "QuriousCraftingRelics.json",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\QuriousCraftingRelics\\QuriousCraftingRelics.json",
+      "Bytes": 598,
+      "Ticks": 639249301606654478,
+      "Sha256": "334747B8940130CD98A7B9E6EF68BA728A8915C0CC750873887B8EFEB502F0E3"
+    },
+    {
+      "Item": "QuriousCraftingRelics",
+      "Source": "G:\\omp works\\Sts\\AutoAnthonyRelics\\workshop\\content\\QuriousCraftingRelics\\QuriousCraftingRelics.pck",
+      "RelativePath": "QuriousCraftingRelics.pck",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\QuriousCraftingRelics\\QuriousCraftingRelics.pck",
+      "Bytes": 572965,
+      "Ticks": 639257283486407950,
+      "Sha256": "FDC1FB9B1F8619222C4FCC825299AC97F8B27107389375C3CAE9C2DB90DA60C4"
+    },
+    {
+      "Item": "QuriousCraftingRelics",
+      "Source": "G:\\omp works\\Sts\\AutoAnthonyRelics\\workshop\\content\\QuriousCraftingRelics\\QuriousCraftingRelics.pdb",
+      "RelativePath": "QuriousCraftingRelics.pdb",
+      "Backup": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\staging-before-r4-20261005-064253\\QuriousCraftingRelics\\QuriousCraftingRelics.pdb",
+      "Bytes": 83764,
+      "Ticks": 639257283468956815,
+      "Sha256": "89B8FB4E27A014FDF7902A57A60F35D08F87C2DC6023A408AA3C158E47A33ABC"
+    }
+  ]
+}

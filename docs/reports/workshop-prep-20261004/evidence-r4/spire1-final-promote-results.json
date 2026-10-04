@@ -1,0 +1,32 @@
+{
+  "CheckedAt": "2026-10-05T04:49:20.9365777+08:00",
+  "PromoteExit": 0,
+  "SourceCount": 1404,
+  "SourceChanges": [],
+  "Payload": [
+    {
+      "Name": "Spire1.json",
+      "Bytes": 548,
+      "Sha256": "CDBD57D54374285503538D866551B897938A5D540C2285CE5068019565BB9305",
+      "MtimeUtc": "2026-09-29T18:01:48.7059491Z"
+    },
+    {
+      "Name": "Spire1.pck",
+      "Bytes": 19669354,
+      "Sha256": "70CCBB4D1A2DD1439152F030E40B4C1A8BCA775547EB4F8273C956F62BB51C79",
+      "MtimeUtc": "2026-10-04T20:47:46.7022446Z"
+    },
+    {
+      "Name": "Spire1.dll",
+      "Bytes": 900608,
+      "Sha256": "8C7CA3DB1AE21FACB4A982287535ED89E25EBB3C369F5C346C68373FC4962F06",
+      "MtimeUtc": "2026-10-04T06:12:02.4436245Z"
+    }
+  ],
+  "PayloadFileCount": 3,
+  "CanonicalPckBytes": 19669354,
+  "DigestMatches": true,
+  "ExistingR15NarrowSmokeStillSameBytes": true,
+  "NewGameRun": false,
+  "WorkshopUploaded": false
+}

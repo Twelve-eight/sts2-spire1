@@ -1,0 +1,14 @@
+{
+  "Tool": "multi_agent_v1.wait_agent",
+  "Target": "01a108cd-b5c4-7b72-ada4-051ee3c15cea",
+  "Supervisor": "01a108cd-d513-7b31-8673-67e3b3baf762",
+  "State": "completed",
+  "TimedOut": false,
+  "RecordedAt": "2026-10-05T06:37:34.0892536+08:00",
+  "Evidence": "Current hub native wait returned precise worker completed, timed_out=false after recovery; earlier summary not used as replacement",
+  "CallIdentifier": "Not exposed by tool",
+  "Product": "G:\\omp works\\.tooling\\refresh-workshop-payloads.ps1",
+  "Sha256": "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD",
+  "WorkerReport": "G:\\omp works\\Sts\\sts2-spire1\\docs\\reports\\workshop-prep-20261004\\source-freshness-worker-r4.md",
+  "Baseline": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\refresh-workshop-payloads.pre-doc-freshness-r4.ps1"
+}

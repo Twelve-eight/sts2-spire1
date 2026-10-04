@@ -1,0 +1,8 @@
+{
+  "At": "2026-10-05T06:57:33.3475350+08:00",
+  "Exit": 0,
+  "Validator": "Bundled skill-creator quick_validate.py with Python -X utf8",
+  "LegacyField": "disable-model-invocation unsupported by Codex validator",
+  "Policy": "Preserved explicit-only semantics in agents/openai.yaml allow_implicit_invocation=false",
+  "Boundary": "Narrow existing skill documentation/metadata correction; no user-level settings or release permissions changed"
+}

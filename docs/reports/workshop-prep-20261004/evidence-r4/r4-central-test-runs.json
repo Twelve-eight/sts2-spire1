@@ -1,0 +1,56 @@
+[
+  {
+    "Runtime": "ps7",
+    "Kind": "parse",
+    "Exit": 0,
+    "Started": "2026-10-05T06:38:38.3463474+08:00",
+    "Finished": "2026-10-05T06:38:38.8176564+08:00",
+    "Log": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\r4-ps7-parse-run.log",
+    "GateSha256": "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD"
+  },
+  {
+    "Runtime": "ps7",
+    "Kind": "freshness",
+    "Exit": 0,
+    "Started": "2026-10-05T06:38:38.8494318+08:00",
+    "Finished": "2026-10-05T06:39:36.0885326+08:00",
+    "Log": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\r4-ps7-freshness-run.log",
+    "GateSha256": "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD"
+  },
+  {
+    "Runtime": "ps7",
+    "Kind": "negative",
+    "Exit": 0,
+    "Started": "2026-10-05T06:39:36.0949553+08:00",
+    "Finished": "2026-10-05T06:40:18.1122260+08:00",
+    "Log": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\r4-ps7-negative-run.log",
+    "GateSha256": "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD"
+  },
+  {
+    "Runtime": "ps51",
+    "Kind": "parse",
+    "Exit": 0,
+    "Started": "2026-10-05T06:40:18.1158188+08:00",
+    "Finished": "2026-10-05T06:40:18.4592082+08:00",
+    "Log": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\r4-ps51-parse-run.log",
+    "GateSha256": "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD"
+  },
+  {
+    "Runtime": "ps51",
+    "Kind": "freshness",
+    "Exit": 0,
+    "Started": "2026-10-05T06:40:18.4632506+08:00",
+    "Finished": "2026-10-05T06:40:44.1129730+08:00",
+    "Log": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\r4-ps51-freshness-run.log",
+    "GateSha256": "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD"
+  },
+  {
+    "Runtime": "ps51",
+    "Kind": "negative",
+    "Exit": 0,
+    "Started": "2026-10-05T06:40:44.1163477+08:00",
+    "Finished": "2026-10-05T06:41:03.5524583+08:00",
+    "Log": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\r4-ps51-negative-run.log",
+    "GateSha256": "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD"
+  }
+]

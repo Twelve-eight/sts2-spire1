@@ -1,0 +1,35 @@
+[
+  {
+    "Agent": "01a10873-550a-7690-8e8a-e17bdd04f80e",
+    "SessionPath": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\05\\rollout-2026-10-05T03-45-38-01a10873-550a-7690-8e8a-e17bdd04f80e.jsonl",
+    "RequestedModel": "global:deepseek-v4.1-flash",
+    "RequestedEffort": "max",
+    "ResolvedModel": "global:deepseek-v4.1-flash",
+    "ResolvedEffort": "max",
+    "SessionProvider": "gateway",
+    "FinerRoute": "Unknown unless safely exposed",
+    "CheckedAt": "2026-10-05T03:55:48.7125387+08:00"
+  },
+  {
+    "Agent": "01a10873-941f-75f3-ad52-3a2ed49d44e5",
+    "SessionPath": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\05\\rollout-2026-10-05T03-45-54-01a10873-941f-75f3-ad52-3a2ed49d44e5.jsonl",
+    "RequestedModel": "global:deepseek-v4.1-flash",
+    "RequestedEffort": "max",
+    "ResolvedModel": "global:deepseek-v4.1-flash",
+    "ResolvedEffort": "max",
+    "SessionProvider": "gateway",
+    "FinerRoute": "Unknown unless safely exposed",
+    "CheckedAt": "2026-10-05T03:55:48.7397514+08:00"
+  },
+  {
+    "Agent": "01a10873-da14-7883-8683-94275b56f276",
+    "SessionPath": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\05\\rollout-2026-10-05T03-46-12-01a10873-da14-7883-8683-94275b56f276.jsonl",
+    "RequestedModel": "global:deepseek-v4.1-flash",
+    "RequestedEffort": "max",
+    "ResolvedModel": "global:deepseek-v4.1-flash",
+    "ResolvedEffort": "max",
+    "SessionProvider": "gateway",
+    "FinerRoute": "Unknown unless safely exposed",
+    "CheckedAt": "2026-10-05T03:55:48.7536729+08:00"
+  }
+]

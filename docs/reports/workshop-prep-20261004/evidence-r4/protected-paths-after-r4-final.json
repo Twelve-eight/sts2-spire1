@@ -1,0 +1,8 @@
+{
+  "CheckedAt": "2026-10-05T06:49:43.8175692+08:00",
+  "BaselineAt": "2026-10-05T01:52:02.5977232+08:00",
+  "CheckedFileCount": 290,
+  "Changes": [],
+  "Comparison": "File length and actual UTC DateTime ticks",
+  "Boundary": "Listed Steam mod/shared config files only, not a full installation byte audit. Read-only observations are not evidence about independent user actions."
+}

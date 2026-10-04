@@ -1,0 +1,10 @@
+{
+  "Name": "full-refresh-attempt",
+  "Exit": 1,
+  "Started": "2026-10-05T06:44:50.8525305+08:00",
+  "Finished": "2026-10-05T06:44:57.5262419+08:00",
+  "Log": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\r4-real-full-refresh-attempt.log",
+  "Script": "G:\\omp works\\.tooling\\refresh-workshop-payloads.ps1",
+  "Arguments": [],
+  "GateSha256": "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD"
+}

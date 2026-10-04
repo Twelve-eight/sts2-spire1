@@ -1,0 +1,54 @@
+[
+  {
+    "Repo": "G:\\omp works\\Sts\\sts2-perfect",
+    "Commit": "462596785b8843cd9ade059af39c491aab252491",
+    "OwnedFiles": [
+      "DEVELOP.md",
+      "DEVLOG.md",
+      "mod/Perfect.csproj"
+    ],
+    "AheadBehind": "0\t0",
+    "PushSucceeded": true,
+    "PreexistingDirtyPreserved": true,
+    "GamePublished": false
+  },
+  {
+    "Repo": "G:\\omp works\\Sts\\sts2-mpconfigsync",
+    "Commit": "142d33c4eb963f176c5659aaf629a696b3216bfa",
+    "OwnedFiles": [
+      "DEVELOP.md",
+      "DEVLOG.md",
+      "mod/MpConfigSync.csproj"
+    ],
+    "AheadBehind": "0\t0",
+    "PushSucceeded": true,
+    "PreexistingDirtyPreserved": true,
+    "GamePublished": false
+  },
+  {
+    "Repo": "G:\\omp works\\Sts\\sts2-heartshake",
+    "Commit": "d1acbd6d95426b9b35c7b08adb3fb8b88933baf3",
+    "OwnedFiles": [
+      "DEVELOP.md",
+      "DEVLOG.md",
+      "mod/HeartShake.csproj"
+    ],
+    "AheadBehind": "0\t0",
+    "PushSucceeded": true,
+    "PreexistingDirtyPreserved": true,
+    "GamePublished": false
+  },
+  {
+    "Repo": "G:\\omp works\\Sts\\AutoAnthonyRelics",
+    "Commit": "5807b163d930665f9d901b479e7a0d6ac149f213",
+    "OwnedFiles": [
+      "DEVELOP.md",
+      "DEVLOG.md",
+      "mod/QuriousCraftingRelics.csproj"
+    ],
+    "AheadBehind": "0\t0",
+    "PushSucceeded": true,
+    "PreexistingDirtyPreserved": true,
+    "GamePublished": false
+  }
+]

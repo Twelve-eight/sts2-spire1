@@ -1,0 +1,101 @@
+[
+  {
+    "Item": "Perfect",
+    "Repo": "G:\\omp works\\Sts\\sts2-perfect",
+    "BeforeHead": "462596785b8843cd9ade059af39c491aab252491",
+    "Commit": "c0570604e1a063d3f5e0ee707399ed357cf762b4",
+    "Paths": [
+      "DEVLOG.md",
+      "workshop/content/Perfect/Perfect.dll",
+      "workshop/content/Perfect/Perfect.json",
+      "workshop/content/Perfect/Perfect.pck",
+      "workshop/content/Perfect/Perfect.pdb"
+    ],
+    "PushExit": 0,
+    "PushLog": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\sts2-perfect.r4-push.log",
+    "AheadBehind": "0\t0",
+    "Boundary": "Only new staging artifacts and owned DEVLOG append committed; unrelated existing dirty source preserved."
+  },
+  {
+    "Item": "ChaosBridge",
+    "Repo": "G:\\omp works\\Sts\\chaosbridge",
+    "BeforeHead": "a97e5ea7dbb57b2715be048ae061d921f3615dd4",
+    "Commit": "65641c79786859adce224f36e8ae2c35467f203e",
+    "Paths": [
+      "DEVLOG.md",
+      "workshop/content/ChaosBridge/ChaosBridge.dll",
+      "workshop/content/ChaosBridge/ChaosBridge.json",
+      "workshop/content/ChaosBridge/ChaosBridge.pdb"
+    ],
+    "PushExit": 0,
+    "PushLog": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\chaosbridge.r4-push.log",
+    "AheadBehind": "0\t0",
+    "Boundary": "Only new staging artifacts and owned DEVLOG append committed; unrelated existing dirty source preserved."
+  },
+  {
+    "Item": "RegentFXFastBoot",
+    "Repo": "G:\\omp works\\Sts\\sts2-regentfxfastboot",
+    "BeforeHead": "df37b2f58c41dfe4e6f46191b4e6b3393c927522",
+    "Commit": "8092443f058aa053e4cd0a059cf17cdde0f2cfd8",
+    "Paths": [
+      "DEVLOG.md",
+      "workshop/content/RegentFXFastBoot/RegentFXFastBoot.dll",
+      "workshop/content/RegentFXFastBoot/RegentFXFastBoot.json",
+      "workshop/content/RegentFXFastBoot/RegentFXFastBoot.pdb"
+    ],
+    "PushExit": 0,
+    "PushLog": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\sts2-regentfxfastboot.r4-push.log",
+    "AheadBehind": "0\t0",
+    "Boundary": "Only new staging artifacts and owned DEVLOG append committed; unrelated existing dirty source preserved."
+  },
+  {
+    "Item": "MpConfigSync",
+    "Repo": "G:\\omp works\\Sts\\sts2-mpconfigsync",
+    "BeforeHead": "142d33c4eb963f176c5659aaf629a696b3216bfa",
+    "Commit": "d58563f66ccde36fc8f6476c549dcd1601e5146c",
+    "Paths": [
+      "DEVLOG.md",
+      "workshop/content/MpConfigSync/MpConfigSync.dll",
+      "workshop/content/MpConfigSync/MpConfigSync.json",
+      "workshop/content/MpConfigSync/MpConfigSync.pck",
+      "workshop/content/MpConfigSync/MpConfigSync.pdb"
+    ],
+    "PushExit": 0,
+    "PushLog": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\sts2-mpconfigsync.r4-push.log",
+    "AheadBehind": "0\t0",
+    "Boundary": "Only new staging artifacts and owned DEVLOG append committed; unrelated existing dirty source preserved."
+  },
+  {
+    "Item": "HeartShake",
+    "Repo": "G:\\omp works\\Sts\\sts2-heartshake",
+    "BeforeHead": "d1acbd6d95426b9b35c7b08adb3fb8b88933baf3",
+    "Commit": "c13d583b2992994b224dd1d81d4c5ffcfadcd6e5",
+    "Paths": [
+      "DEVLOG.md",
+      "workshop/content/HeartShake/HeartShake.dll",
+      "workshop/content/HeartShake/HeartShake.json",
+      "workshop/content/HeartShake/HeartShake.pdb"
+    ],
+    "PushExit": 0,
+    "PushLog": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\sts2-heartshake.r4-push.log",
+    "AheadBehind": "0\t0",
+    "Boundary": "Only new staging artifacts and owned DEVLOG append committed; unrelated existing dirty source preserved."
+  },
+  {
+    "Item": "QuriousCraftingRelics",
+    "Repo": "G:\\omp works\\Sts\\AutoAnthonyRelics",
+    "BeforeHead": "5807b163d930665f9d901b479e7a0d6ac149f213",
+    "Commit": "b36a452c51c1571924a80e8ff0939e8693e48c2c",
+    "Paths": [
+      "DEVLOG.md",
+      "workshop/content/QuriousCraftingRelics/QuriousCraftingRelics.dll",
+      "workshop/content/QuriousCraftingRelics/QuriousCraftingRelics.json",
+      "workshop/content/QuriousCraftingRelics/QuriousCraftingRelics.pck",
+      "workshop/content/QuriousCraftingRelics/QuriousCraftingRelics.pdb"
+    ],
+    "PushExit": 0,
+    "PushLog": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\AutoAnthonyRelics.r4-push.log",
+    "AheadBehind": "0\t0",
+    "Boundary": "Only new staging artifacts and owned DEVLOG append committed; unrelated existing dirty source preserved."
+  }
+]

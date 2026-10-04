@@ -330,3 +330,7 @@ Most of the original list is now closed - resolved in session 5 and documented i
 - `AssemblyLoad` 订阅必须与 `ProcessExit` 共享串行 gate。入口快速检查不能替代 gate 内二次检查,否则 in-flight unsettled Apply 可能在 shutdown 标记后重新订阅。
 - Retry timer/fallback thread 的失败 bookkeeping 不得在 AssemblyLoad gate 内调用会锁 RetryGate 的路径,避免 shutdown 时锁反转。所有退出期间回调必须 fail-closed。
 - 最终 Release 与 r30 隔离矩阵证据以 `docs/reports/form-playable-20260928/partial-mod-launch-matrix-central-run-r30-20261003.md` 为准;此前 r29 是修复前的基线,不再作为最终产物证据。
+## 2026-10-05 Workshop 推送前准备
+
+本轮契约见 docs/WORKSHOP-PREPARATION-CONTRACT-20261005.md. 修复 canonical精简 PCK接线和 digest producer,保留全量 fail-closed门禁,不发布 Workshop.
+

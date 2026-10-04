@@ -1,0 +1,31 @@
+{
+  "At": "2026-10-05T06:44:57.6067166+08:00",
+  "CheckedFiles": 25,
+  "Changes": [
+    "G:\\omp works\\Sts\\sts2-perfect\\workshop\\content\\Perfect\\Perfect.dll",
+    "G:\\omp works\\Sts\\sts2-perfect\\workshop\\content\\Perfect\\Perfect.json",
+    "G:\\omp works\\Sts\\sts2-perfect\\workshop\\content\\Perfect\\Perfect.pck",
+    "G:\\omp works\\Sts\\sts2-perfect\\workshop\\content\\Perfect\\Perfect.pdb",
+    "G:\\omp works\\Sts\\chaosbridge\\workshop\\content\\ChaosBridge\\ChaosBridge.dll",
+    "G:\\omp works\\Sts\\chaosbridge\\workshop\\content\\ChaosBridge\\ChaosBridge.json",
+    "G:\\omp works\\Sts\\chaosbridge\\workshop\\content\\ChaosBridge\\ChaosBridge.pdb",
+    "G:\\omp works\\Sts\\sts2-regentfxfastboot\\workshop\\content\\RegentFXFastBoot\\RegentFXFastBoot.dll",
+    "G:\\omp works\\Sts\\sts2-regentfxfastboot\\workshop\\content\\RegentFXFastBoot\\RegentFXFastBoot.json",
+    "G:\\omp works\\Sts\\sts2-regentfxfastboot\\workshop\\content\\RegentFXFastBoot\\RegentFXFastBoot.pdb",
+    "G:\\omp works\\Sts\\sts2-mpconfigsync\\workshop\\content\\MpConfigSync\\MpConfigSync.dll",
+    "G:\\omp works\\Sts\\sts2-mpconfigsync\\workshop\\content\\MpConfigSync\\MpConfigSync.json",
+    "G:\\omp works\\Sts\\sts2-mpconfigsync\\workshop\\content\\MpConfigSync\\MpConfigSync.pck",
+    "G:\\omp works\\Sts\\sts2-mpconfigsync\\workshop\\content\\MpConfigSync\\MpConfigSync.pdb",
+    "G:\\omp works\\Sts\\sts2-heartshake\\workshop\\content\\HeartShake\\HeartShake.dll",
+    "G:\\omp works\\Sts\\sts2-heartshake\\workshop\\content\\HeartShake\\HeartShake.json",
+    "G:\\omp works\\Sts\\sts2-heartshake\\workshop\\content\\HeartShake\\HeartShake.pck",
+    "G:\\omp works\\Sts\\sts2-heartshake\\workshop\\content\\HeartShake\\HeartShake.pdb",
+    "G:\\omp works\\Sts\\AutoAnthonyRelics\\workshop\\content\\QuriousCraftingRelics\\QuriousCraftingRelics.dll",
+    "G:\\omp works\\Sts\\AutoAnthonyRelics\\workshop\\content\\QuriousCraftingRelics\\QuriousCraftingRelics.json",
+    "G:\\omp works\\Sts\\AutoAnthonyRelics\\workshop\\content\\QuriousCraftingRelics\\QuriousCraftingRelics.pck",
+    "G:\\omp works\\Sts\\AutoAnthonyRelics\\workshop\\content\\QuriousCraftingRelics\\QuriousCraftingRelics.pdb"
+  ],
+  "Boundary": "Pre-copy full refusal must preserve all seven staging trees",
+  "AssertionValid": false,
+  "Correction": "Harness incorrectly assumed REBUILD_REQUIRED is pre-copy. Existing freshness runs during final staging verification after valid artifacts may be refreshed. Actual 22 staging changes are real, not timestamp conversion errors; six rows now carry the intended build files. No upload occurred. This failed assertion is not evidence of a new product regression or of no writes."
+}

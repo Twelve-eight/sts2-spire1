@@ -1,0 +1,46 @@
+[
+  {
+    "Agent": "01a108a4-47b1-79a3-b836-d814ffa24557",
+    "SessionPath": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\05\\rollout-2026-10-05T04-39-06-01a108a4-47b1-79a3-b836-d814ffa24557.jsonl",
+    "RequestedModel": "global:deepseek-v4.1-flash",
+    "RequestedEffort": "max",
+    "ResolvedModel": "global:deepseek-v4.1-flash",
+    "ResolvedEffort": "max",
+    "SessionProvider": "gateway",
+    "FinerRoute": "Unknown unless safely exposed",
+    "CheckedAt": "2026-10-05T04:45:50.0975971+08:00"
+  },
+  {
+    "Agent": "01a108a4-6b7c-7b93-b51c-89bbb3e31e93",
+    "SessionPath": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\05\\rollout-2026-10-05T04-39-15-01a108a4-6b7c-7b93-b51c-89bbb3e31e93.jsonl",
+    "RequestedModel": "global:deepseek-v4.1-flash",
+    "RequestedEffort": "max",
+    "ResolvedModel": "global:deepseek-v4.1-flash",
+    "ResolvedEffort": "max",
+    "SessionProvider": "gateway",
+    "FinerRoute": "Unknown unless safely exposed",
+    "CheckedAt": "2026-10-05T04:45:50.1234730+08:00"
+  },
+  {
+    "Agent": "01a108a8-ed70-7420-8436-76f1d7aad3a3",
+    "SessionPath": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\05\\rollout-2026-10-05T04-44-10-01a108a8-ed70-7420-8436-76f1d7aad3a3.jsonl",
+    "RequestedModel": "global:deepseek-v4.1-flash",
+    "RequestedEffort": "max",
+    "ResolvedModel": "global:deepseek-v4.1-flash",
+    "ResolvedEffort": "max",
+    "SessionProvider": "gateway",
+    "FinerRoute": "Unknown unless safely exposed",
+    "CheckedAt": "2026-10-05T04:45:50.1420160+08:00"
+  },
+  {
+    "Agent": "01a108a9-069e-7470-a95a-98ad1f9751c4",
+    "SessionPath": "C:\\Users\\o_Obl\\.codex\\sessions\\2026\\10\\05\\rollout-2026-10-05T04-44-17-01a108a9-069e-7470-a95a-98ad1f9751c4.jsonl",
+    "RequestedModel": "global:deepseek-v4.1-flash",
+    "RequestedEffort": "max",
+    "ResolvedModel": "global:deepseek-v4.1-flash",
+    "ResolvedEffort": "max",
+    "SessionProvider": "gateway",
+    "FinerRoute": "Unknown unless safely exposed",
+    "CheckedAt": "2026-10-05T04:45:50.1508972+08:00"
+  }
+]

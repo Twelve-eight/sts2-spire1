@@ -1,0 +1,20 @@
+{
+  "At": "2026-10-05T06:47:06.0017839+08:00",
+  "LoginHistoryBefore": [
+    {
+      "Path": "G:\\omp works\\.tmp\\workshop-push-last-attempt",
+      "Exists": true,
+      "Bytes": 36,
+      "Ticks": 639263034330541653
+    },
+    {
+      "Path": "G:\\omp works\\.tooling\\steamcmd\\logs\\console_log.txt",
+      "Exists": true,
+      "Bytes": 101119,
+      "Ticks": 639267152242991487
+    }
+  ],
+  "LoginHistoryChanges": [],
+  "Spire1StagingChanges": [],
+  "Boundary": "GuardsOnly refused at read-only provenance; no later guard or Steam login claimed passed. Freshness is post-copy for regenerate, so earlier full refresh legitimately changed six staging rows before exit 1."
+}

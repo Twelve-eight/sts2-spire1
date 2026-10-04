@@ -1,0 +1,41 @@
+{
+  "CheckedAt": "2026-10-05T03:55:48.4699581+08:00",
+  "Tool": "multi_agent_v1.wait_agent",
+  "Target": "01a10873-550a-7690-8e8a-e17bdd04f80e",
+  "Status": "completed",
+  "Round": "resume-finalizer-r2",
+  "ZeroCodeChanges": true,
+  "WorkerReport": "G:\\omp works\\Sts\\sts2-spire1\\docs\\reports\\workshop-prep-20261004\\resume-finalizer-r2.md",
+  "Files": [
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-spire1\\tools\\release\\Build-Spire1Release.ps1",
+      "Bytes": 24710,
+      "Sha256": "5CBD6F25138767D57BB75D492DC07E10145D490CC20AD96C70E4D6E68ACAC279"
+    },
+    {
+      "Path": "G:\\omp works\\.tooling\\refresh-workshop-payloads.ps1",
+      "Bytes": 83057,
+      "Sha256": "EBB4AC34A27C2365B7486AE1B8D9D21C8588F502282579AC8C2535D7B6789C4C"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-perfect\\mod\\Perfect.csproj",
+      "Bytes": 12887,
+      "Sha256": "769E2D0FE6B183B1B48625056D32DE104F283431B43A23D5B7BFF4A1912C98D5"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-mpconfigsync\\mod\\MpConfigSync.csproj",
+      "Bytes": 11367,
+      "Sha256": "C3B273F5E6398844FCD61BD44F3EF10DF92BE8FD7D2FAEB5D71B3DBD7123EEB0"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-heartshake\\mod\\HeartShake.csproj",
+      "Bytes": 12051,
+      "Sha256": "2D5266D5A0121E36EF81C04462C9BD95976443BA8F8BFE8A9FC701B6BE7E80E9"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\AutoAnthonyRelics\\mod\\QuriousCraftingRelics.csproj",
+      "Bytes": 10256,
+      "Sha256": "962D9EAF7EA3C208084E8C5B587D165B3F36ECC5F474C727C7B25663BE488900"
+    }
+  ]
+}

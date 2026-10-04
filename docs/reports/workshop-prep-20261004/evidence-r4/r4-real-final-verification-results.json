@@ -1,0 +1,112 @@
+[
+  {
+    "Name": "Perfect-verify",
+    "Exit": 0,
+    "Started": "2026-10-05T06:46:44.7974074+08:00",
+    "Finished": "2026-10-05T06:46:45.9868435+08:00",
+    "Log": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\r4-real-Perfect-verify.log",
+    "Script": "G:\\omp works\\.tooling\\refresh-workshop-payloads.ps1",
+    "Arguments": [
+      "-Only",
+      "Perfect",
+      "-VerifyOnly"
+    ],
+    "GateSha256": "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD"
+  },
+  {
+    "Name": "ChaosBridge-verify",
+    "Exit": 0,
+    "Started": "2026-10-05T06:46:46.0120355+08:00",
+    "Finished": "2026-10-05T06:46:47.0539320+08:00",
+    "Log": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\r4-real-ChaosBridge-verify.log",
+    "Script": "G:\\omp works\\.tooling\\refresh-workshop-payloads.ps1",
+    "Arguments": [
+      "-Only",
+      "ChaosBridge",
+      "-VerifyOnly"
+    ],
+    "GateSha256": "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD"
+  },
+  {
+    "Name": "RegentFXFastBoot-verify",
+    "Exit": 0,
+    "Started": "2026-10-05T06:46:47.0588717+08:00",
+    "Finished": "2026-10-05T06:46:48.0982606+08:00",
+    "Log": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\r4-real-RegentFXFastBoot-verify.log",
+    "Script": "G:\\omp works\\.tooling\\refresh-workshop-payloads.ps1",
+    "Arguments": [
+      "-Only",
+      "RegentFXFastBoot",
+      "-VerifyOnly"
+    ],
+    "GateSha256": "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD"
+  },
+  {
+    "Name": "MpConfigSync-verify",
+    "Exit": 0,
+    "Started": "2026-10-05T06:46:48.1008718+08:00",
+    "Finished": "2026-10-05T06:46:49.2005640+08:00",
+    "Log": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\r4-real-MpConfigSync-verify.log",
+    "Script": "G:\\omp works\\.tooling\\refresh-workshop-payloads.ps1",
+    "Arguments": [
+      "-Only",
+      "MpConfigSync",
+      "-VerifyOnly"
+    ],
+    "GateSha256": "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD"
+  },
+  {
+    "Name": "HeartShake-verify",
+    "Exit": 0,
+    "Started": "2026-10-05T06:46:49.2034469+08:00",
+    "Finished": "2026-10-05T06:46:50.3474094+08:00",
+    "Log": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\r4-real-HeartShake-verify.log",
+    "Script": "G:\\omp works\\.tooling\\refresh-workshop-payloads.ps1",
+    "Arguments": [
+      "-Only",
+      "HeartShake",
+      "-VerifyOnly"
+    ],
+    "GateSha256": "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD"
+  },
+  {
+    "Name": "QuriousCraftingRelics-verify",
+    "Exit": 0,
+    "Started": "2026-10-05T06:46:50.3498590+08:00",
+    "Finished": "2026-10-05T06:46:51.9798137+08:00",
+    "Log": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\r4-real-QuriousCraftingRelics-verify.log",
+    "Script": "G:\\omp works\\.tooling\\refresh-workshop-payloads.ps1",
+    "Arguments": [
+      "-Only",
+      "QuriousCraftingRelics",
+      "-VerifyOnly"
+    ],
+    "GateSha256": "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD"
+  },
+  {
+    "Name": "full-verify-final",
+    "Exit": 1,
+    "Started": "2026-10-05T06:46:51.9827532+08:00",
+    "Finished": "2026-10-05T06:46:58.8473262+08:00",
+    "Log": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\r4-real-full-verify-final.log",
+    "Script": "G:\\omp works\\.tooling\\refresh-workshop-payloads.ps1",
+    "Arguments": [
+      "-VerifyOnly"
+    ],
+    "GateSha256": "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD"
+  },
+  {
+    "Name": "Spire1-wrapper-GuardsOnly",
+    "Exit": 12,
+    "Started": "2026-10-05T06:46:58.8502112+08:00",
+    "Finished": "2026-10-05T06:47:05.9590343+08:00",
+    "Log": "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\r4-real-Spire1-wrapper-GuardsOnly.log",
+    "Script": "G:\\omp works\\Sts\\sts2-spire1\\workshop\\workshop-push.ps1",
+    "Arguments": [
+      "-Vdf",
+      "G:\\omp works\\Sts\\sts2-spire1\\workshop\\workshop_upload.vdf",
+      "-GuardsOnly"
+    ],
+    "GateSha256": "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD"
+  }
+]

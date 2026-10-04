@@ -1,0 +1,119 @@
+﻿[
+    {
+        "Name":  "baseline",
+        "Passed":  true,
+        "Exit":  0,
+        "WantRebuild":  false,
+        "Log":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\source-freshness-r4-ps51-20261005-064018\\baseline\\gate.log",
+        "GateSha256":  "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD",
+        "Boundary":  "Synthetic seven-row fixture, fresh files use actual WriteAllText time, no game or real staging writes"
+    },
+    {
+        "Name":  "root-doc-report-json",
+        "Passed":  true,
+        "Exit":  0,
+        "WantRebuild":  false,
+        "Log":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\source-freshness-r4-ps51-20261005-064018\\root-doc-report-json\\gate.log",
+        "GateSha256":  "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD",
+        "Boundary":  "Synthetic seven-row fixture, fresh files use actual WriteAllText time, no game or real staging writes"
+    },
+    {
+        "Name":  "root-doc-snapshot-json",
+        "Passed":  true,
+        "Exit":  0,
+        "WantRebuild":  false,
+        "Log":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\source-freshness-r4-ps51-20261005-064018\\root-doc-snapshot-json\\gate.log",
+        "GateSha256":  "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD",
+        "Boundary":  "Synthetic seven-row fixture, fresh files use actual WriteAllText time, no game or real staging writes"
+    },
+    {
+        "Name":  "production-json",
+        "Passed":  true,
+        "Exit":  1,
+        "WantRebuild":  true,
+        "Log":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\source-freshness-r4-ps51-20261005-064018\\production-json\\gate.log",
+        "GateSha256":  "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD",
+        "Boundary":  "Synthetic seven-row fixture, fresh files use actual WriteAllText time, no game or real staging writes"
+    },
+    {
+        "Name":  "nested-runtime-docs-json",
+        "Passed":  true,
+        "Exit":  1,
+        "WantRebuild":  true,
+        "Log":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\source-freshness-r4-ps51-20261005-064018\\nested-runtime-docs-json\\gate.log",
+        "GateSha256":  "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD",
+        "Boundary":  "Synthetic seven-row fixture, fresh files use actual WriteAllText time, no game or real staging writes"
+    },
+    {
+        "Name":  "production-cs",
+        "Passed":  true,
+        "Exit":  1,
+        "WantRebuild":  true,
+        "Log":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\source-freshness-r4-ps51-20261005-064018\\production-cs\\gate.log",
+        "GateSha256":  "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD",
+        "Boundary":  "Synthetic seven-row fixture, fresh files use actual WriteAllText time, no game or real staging writes"
+    },
+    {
+        "Name":  "root-doc-cs",
+        "Passed":  true,
+        "Exit":  1,
+        "WantRebuild":  true,
+        "Log":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\source-freshness-r4-ps51-20261005-064018\\root-doc-cs\\gate.log",
+        "GateSha256":  "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD",
+        "Boundary":  "Synthetic seven-row fixture, fresh files use actual WriteAllText time, no game or real staging writes"
+    },
+    {
+        "Name":  "production-csproj",
+        "Passed":  true,
+        "Exit":  1,
+        "WantRebuild":  true,
+        "Log":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\source-freshness-r4-ps51-20261005-064018\\production-csproj\\gate.log",
+        "GateSha256":  "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD",
+        "Boundary":  "Synthetic seven-row fixture, fresh files use actual WriteAllText time, no game or real staging writes"
+    },
+    {
+        "Name":  "root-props",
+        "Passed":  true,
+        "Exit":  1,
+        "WantRebuild":  true,
+        "Log":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\source-freshness-r4-ps51-20261005-064018\\root-props\\gate.log",
+        "GateSha256":  "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD",
+        "Boundary":  "Synthetic seven-row fixture, fresh files use actual WriteAllText time, no game or real staging writes"
+    },
+    {
+        "Name":  "root-doc-props",
+        "Passed":  true,
+        "Exit":  1,
+        "WantRebuild":  true,
+        "Log":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\source-freshness-r4-ps51-20261005-064018\\root-doc-props\\gate.log",
+        "GateSha256":  "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD",
+        "Boundary":  "Synthetic seven-row fixture, fresh files use actual WriteAllText time, no game or real staging writes"
+    },
+    {
+        "Name":  "internal-tools-cs",
+        "Passed":  true,
+        "Exit":  0,
+        "WantRebuild":  false,
+        "Log":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\source-freshness-r4-ps51-20261005-064018\\internal-tools-cs\\gate.log",
+        "GateSha256":  "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD",
+        "Boundary":  "Synthetic seven-row fixture, fresh files use actual WriteAllText time, no game or real staging writes"
+    },
+    {
+        "Name":  "internal-research-json",
+        "Passed":  true,
+        "Exit":  0,
+        "WantRebuild":  false,
+        "Log":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\source-freshness-r4-ps51-20261005-064018\\internal-research-json\\gate.log",
+        "GateSha256":  "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD",
+        "Boundary":  "Synthetic seven-row fixture, fresh files use actual WriteAllText time, no game or real staging writes"
+    },
+    {
+        "Name":  "internal-obj-cs",
+        "Passed":  true,
+        "Exit":  0,
+        "WantRebuild":  false,
+        "Log":  "G:\\omp works\\.tmp\\workshop-prep-20261004-central\\source-freshness-r4-ps51-20261005-064018\\internal-obj-cs\\gate.log",
+        "GateSha256":  "35E412AAD8C84CF465A3D5E17E0B2F53D6ADEFEBBDBAE4F782968F30B402A1BD",
+        "Boundary":  "Synthetic seven-row fixture, fresh files use actual WriteAllText time, no game or real staging writes"
+    }
+]
