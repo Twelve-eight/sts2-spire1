@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.ValueProps;
 using Spire1.Spire1Code.Extensions;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -25,6 +26,10 @@ public class MentalFortressPower : CustomPowerModel, IOnStanceChanged
 
     public async Task OnStanceChanged(PlayerChoiceContext ctx, StancePower? from, StancePower? to)
     {
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
         if (Amount <= 0)
             return;
         Flash();

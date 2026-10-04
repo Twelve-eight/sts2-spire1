@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using Spire1.Spire1Code.Powers;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -13,7 +14,13 @@ public class Metallicize() : Spire1Card(1, CardType.Power, CardRarity.Uncommon, 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<MetallicizePower>(3)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
-        => await CommonActions.ApplySelf<MetallicizePower>(choiceContext, this);
+    {
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
+        await CommonActions.ApplySelf<MetallicizePower>(choiceContext, this);
+    }
 
     protected override void OnUpgrade() => DynamicVars.Power<MetallicizePower>().UpgradeValueBy(1);
 }

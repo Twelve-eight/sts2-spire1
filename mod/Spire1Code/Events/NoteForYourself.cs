@@ -10,6 +10,8 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using Spire1.Spire1Code.Cards;
 
+using Spire1.Spire1Code.Config;
+
 namespace Spire1.Spire1Code.Events;
 
 /// <summary>
@@ -49,6 +51,16 @@ public class NoteForYourself : Spire1Event
 
     private async Task TakeAndGive()
     {
+        // Cards content group gate (C18 r2, 2026-10-03): this event grants IronWave directly via RunState.CreateCard, bypassing the card pool filters; the event still completes so the page never soft-locks.
+        // Fail closed before any card is constructed or added; the card is not granted.
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Cards))
+        {
+            MainFile.Logger.Warn("[Spire1] Note For Yourself card grant skipped: cards content group is off");
+            // End the event so a stale page cannot be retried indefinitely; nothing is granted or stored.
+            SetEventFinished(PageDescription("DONE"));
+            return;
+        }
+
         // FLAGGED: in StS1 the received card and its upgrade count are read from the player's
         // persistent prefs (NOTE_CARD / NOTE_UPGRADE) and the stored card is written back, so the
         // card you store now is the one you receive in future runs. No such save system exists in

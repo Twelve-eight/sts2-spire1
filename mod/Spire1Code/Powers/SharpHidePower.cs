@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.ValueProps;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -37,6 +38,10 @@ public sealed class SharpHidePower : CustomPowerModel
         Creature? player = cardPlay.Card.Owner.Creature;
         if (player == null || player == Owner || player.IsDead)
             return;
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
         Flash();
         // ValueProp mirrors the shipped ThornsPower retaliation: unpowered (Strength must not
         // scale it) and no hurt anim, since the player is mid-card-play.

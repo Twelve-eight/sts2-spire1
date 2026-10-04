@@ -8,6 +8,8 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using System.Linq;
 
+using Spire1.Spire1Code.Config;
+
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>
@@ -35,6 +37,14 @@ public class Discovery() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, Ta
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
+        // Cards content group gate (C18 r2, 2026-10-03): this Spire1 card adds the chosen card directly through AddGeneratedCardToCombat, so the candidate pool gate cannot close the grant.
+        // Fail closed before any card is constructed or added; the card is not granted.
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Cards))
+        {
+            MainFile.Logger.Warn("[Spire1] Discovery card grant skipped: cards content group is off");
+            return;
+        }
+
         IEnumerable<CardModel> anyColorCards = ModelDb.AllCharacterCardPools
             .SelectMany(pool => pool.GetUnlockedCards(Owner.UnlockState, Owner.RunState.CardMultiplayerConstraint));
 

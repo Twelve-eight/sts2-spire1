@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Models;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -23,7 +24,8 @@ public class BlurPower : CustomPowerModel
             "#Block is not removed at the start of your next turn.",
             "Block is not removed at the start of your next turn.");
 
-    public override bool ShouldClearBlock(Creature creature) => Owner != creature;
+    public override bool ShouldClearBlock(Creature creature) =>
+        !Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers) || Owner != creature;
 
     public override Task AfterPreventingBlockClear(AbstractModel preventer, Creature creature)
     {
@@ -36,9 +38,17 @@ public class BlurPower : CustomPowerModel
 
     public override async Task AfterSideTurnStart(CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
     {
-        if (participants.Contains(Owner))
+        if (!participants.Contains(Owner))
         {
-            await PowerCmd.Decrement(this);
+            return;
         }
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            // C12 r5 stale cleanup: disabled Blur must not keep preventing block clear; remove
+            // the stale instance at its own next relevant hook.
+            await PowerCmd.Remove(this);
+            return;
+        }
+        await PowerCmd.Decrement(this);
     }
 }

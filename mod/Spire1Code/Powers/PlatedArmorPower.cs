@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.ValueProps;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -43,6 +44,10 @@ public class PlatedArmorPower : CustomPowerModel
         {
             return;
         }
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
         Flash();
         await CreatureCmd.GainBlock(Owner, Amount, ValueProp.Move, null);
     }
@@ -58,6 +63,10 @@ public class PlatedArmorPower : CustomPowerModel
         // the same gate the shipped FlutterPower uses. So thorns, HP loss and other unpowered
         // sources must NOT strip a stack.
         if (target != Owner || result.UnblockedDamage <= 0 || !props.IsPoweredAttack())
+        {
+            return;
+        }
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
         {
             return;
         }

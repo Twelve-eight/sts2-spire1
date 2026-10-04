@@ -31,6 +31,14 @@ internal static class MpIgnoreModDiffPatch
     [HarmonyPostfix]
     private static void AllowThrough(ref HandshakeResult __result, HandshakeManager __instance)
     {
+        // r8c: 独立不可用状态优先于任何 Spire1Config 静态读取. 类型初始化失败时
+        // Spire1Config 静态属性会抛 TypeInitializationException; 这里先早退, 保持引擎
+        // 原始握手结果, 保证 vanilla/其它 mod 的联机路径不被 Spire1 异常污染.
+        if (Spire1PowersGate.ContentUnavailableActive)
+        {
+            return;
+        }
+
         if (!Spire1Config.IgnoreMpModDifferences || __result.status == HandshakeStatus.Success)
         {
             return;

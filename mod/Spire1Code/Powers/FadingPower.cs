@@ -7,11 +7,12 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
 /// <summary>
-/// StS1 <c>com.megacrit.cardcrawl.powers.FadingPower</c> - Transient's countdown. 官方中文名：消逝。
+/// StS1 <c>com.megacrit.cardcrawl.powers.FadingPower</c> - Transient's countdown. 官方中文名:消逝.
 /// <para>
 /// Vanilla duringTurn fires at the START of the owner's turn: at 1 stack it detonates and dies
 /// without acting; otherwise it decrements. A Fading 5 Transient therefore attacks four times
@@ -36,6 +37,12 @@ public sealed class FadingPower : CustomPowerModel
     {
         if (side != CombatSide.Enemy || !participants.Contains(Owner))
         {
+            return;
+        }
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            // C12 r5 stale cleanup: do not tick toward an escape that is disabled; wind down.
+            await PowerCmd.Remove(this);
             return;
         }
         if ((int)Amount <= 1)

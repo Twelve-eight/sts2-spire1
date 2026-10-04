@@ -25,9 +25,16 @@ namespace Spire1.Spire1Code.Events;
 /// <summary>
 /// SP1-3 fix (astra-advice 2026-09-12): this lethal endgame story was
 /// auto-added to the normal Act 3 event pool (CustomEventModel autoAdd=true
-/// default) with no key gate - rolling it randomly kills the owner. It is no
-/// longer auto-added; reachability goes through an explicit endgame flow
-/// (real-machine verification pending).
+/// default) with no key gate - rolling it randomly kills the owner. That
+/// safety fix stands: the event is intentionally constructed with
+/// <c>autoAdd: false</c> (see the constructor below) and is never registered into any event pool.
+/// No trigger point is wired anywhere in this repository - there is no endgame
+/// flow, no re-registration and no act-entry hook that constructs this event -
+/// so it is UNREACHABLE in the shipped build. Only five of the six unique
+/// events this mod ships (Addict / BackToBasics / DrugDealer /
+/// FountainOfCurseRemoval / NoteForYourself) can actually be encountered;
+/// reaching SpireHeart is a separate product requirement that still needs a
+/// real endgame flow.
 /// </summary>
 public class SpireHeart : Spire1Event
 {

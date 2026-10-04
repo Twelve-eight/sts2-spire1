@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using Spire1.Spire1Code.Character;
 using Spire1.Spire1Code.Powers;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -17,7 +18,13 @@ public class PiercingWail() : Spire1Card(1, CardType.Skill, CardRarity.Common, T
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<PiercingWailPower>(6)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
-        => await CommonActions.Apply<PiercingWailPower>(choiceContext, this, play);
+    {
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
+        await CommonActions.Apply<PiercingWailPower>(choiceContext, this, play);
+    }
 
     protected override void OnUpgrade() => DynamicVars.Power<PiercingWailPower>().UpgradeValueBy(2m);
 }

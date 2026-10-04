@@ -51,6 +51,16 @@ internal static class AutoAnthonyCompatBridge
         Unsupported,
     }
 
+    // core 反射解析的终态标记。Incompatible 只在 AutoAnthony 程序集已加载但必需
+    // 类型/成员无法解析时置位；程序集缺席永远保持 NotResolved（仍等待晚加载）。
+    // 与 ThirdPartyCapabilityState 无关：官方 addon 的 AssemblyLoad 观察继续保留。
+    private enum ReflectionState
+    {
+        NotResolved,
+        Ready,
+        Incompatible,
+    }
+
     // Core AutoAnthony groups are tracked independently from the optional
     // Watcher capability. A late Watcher/AutoAnthonyWatcher load must be able
     // to revisit only the optional capability without replaying core patches.
@@ -119,7 +129,7 @@ internal static class AutoAnthonyCompatBridge
     private static MethodInfo? _canonicalCharacterSlot;
     private static MethodInfo? _colorlessTypesGetter;
     private static MethodInfo? _modelDbCardPoolGeneric;
-    private static bool _reflectionReady;
+    private static ReflectionState _reflectionState;
 
     /// <summary>工坊观者池的 canonical 类型（Apply 期记住），实例惰性解析（见
     /// <see cref="ResolveThirdPartyPoolInstance"/>）。R2 守卫用：WatcherCardPool 未重声明
@@ -217,6 +227,8 @@ internal static class AutoAnthonyCompatBridge
     /// 挂载桥接补丁。必须在 ModManager 加载完 AutoAnthony 之后调用（晚于其 initializer）。
     /// 返回 true 仅表示 core groups 已成功且 Watcher capability 已 settled；返回 false
     /// 表示 AutoAnthony 尚未出现、解析或 core group 尚未完成，或可选 capability 仍在等待。
+    /// core 反射一旦判定 Incompatible 即为终态：后续 Apply 静默短路（不重复解析/日志），
+    /// 周期重试关闭，但 AssemblyLoad 观察保留给官方 AutoAnthonyWatcher 晚加载。
     /// </summary>
     internal static bool Apply(Harmony harmony)
     {
@@ -229,7 +241,8 @@ internal static class AutoAnthonyCompatBridge
 
         if (!ResolveReflection())
         {
-            MainFile.Logger.Error("[Spire1] AutoAnthony bridge: reflection resolution failed - bridge disabled (no patches applied).");
+            // ResolveReflection 失败时已由 MarkIncompatible 记录唯一一次主要 Error。
+            // 这里不再重复刷日志；Incompatible latch 下后续 Apply 也只会静默短路。
             return false;
         }
 
@@ -281,13 +294,22 @@ internal static class AutoAnthonyCompatBridge
     /// <summary>当 AutoAnthony 已出现且仅靠 AssemblyLoad 事件不足以完成当前能力时,
     /// 由加载钩子启动进程级低频重试.这里只读取程序集与纯内存状态,不触碰 Godot 或 ModelDb.
     /// 可选 Watcher/AutoAnthonyWatcher 都未出现且 core 已完成时,AssemblyLoad 监听足够,
-    /// 不创建无意义的周期唤醒源.</summary>
+    /// 不创建无意义的周期唤醒源.
+    /// core 反射终态 Incompatible 时直接返回 false：已加载的 AutoAnthony 字节不可能在
+    /// 本进程内改变，周期 Apply/反射/日志不可能推进。AssemblyLoad 观察由加载钩子保留，
+    /// 官方 AutoAnthonyWatcher 晚加载仍可触发一次性安全 no-op 的 Apply。</summary>
     internal static bool NeedsRetryWithoutAssemblyLoad
     {
         get
         {
             if (AaAssembly == null)
             {
+                return false;
+            }
+
+            if (_reflectionState == ReflectionState.Incompatible)
+            {
+                // 终态 latch：不维持无意义的周期重试；不改变 Pending/partial/OfficialAddonPending 路径。
                 return false;
             }
 
@@ -327,64 +349,97 @@ internal static class AutoAnthonyCompatBridge
         }
     }
 
-    /// <summary>Apply 期一次性解析 AutoAnthony 的类型与成员到静态缓存；任一必需成员缺失
-    /// 返回 false（Apply 据此整体放弃并禁用桥接，绝不半挂）。</summary>
+    /// <summary>Apply 期解析 AutoAnthony 的类型与成员；完整成功后才提交静态缓存。
+    /// 任一必需成员缺失或解析抛异常时：AutoAnthony 程序集已加载但版本不兼容 -> 置终态
+    /// Incompatible 并只记录一次主要 Error（同一字节生命周期内不再重复解析/刷日志）；
+    /// 若程序集尚未出现则保持 NotResolved，Apply 早已提前返回，等待晚加载后的第一次尝试。
+    /// 解析失败绝不写入任何字段：所有结果先落在局部变量，检查通过后才原子提交，
+    /// 避免半套反射状态影响后续补丁体。</summary>
     private static bool ResolveReflection()
     {
-        if (_reflectionReady)
+        if (_reflectionState == ReflectionState.Ready)
         {
             return true;
         }
+        if (_reflectionState == ReflectionState.Incompatible)
+        {
+            // 终态 latch：同一 AutoAnthony 字节生命周期内不再重复反射解析或刷日志。
+            return false;
+        }
         try
         {
-            _ = GeneratedCharacterType; // 解析枚举类型（失败即抛）
-            VerifyEnumConstants();
+            // 用局部变量解析枚举类型：绝不在完整成功前触碰任何静态缓存（含 GeneratedCharacterType 属性）。
+            Type? generatedCharacterType = AaType("ChaosCardGenerator.GeneratedCharacter");
+            if (generatedCharacterType == null)
+            {
+                return MarkIncompatible("ChaosCardGenerator.GeneratedCharacter not resolvable");
+            }
 
             Type? crd = AaType("AutoAnthony.ChaosRunDefinitions");
             Type? registry = AaType("AutoAnthony.ChaosCardRegistry");
             if (crd == null || registry == null)
             {
-                MainFile.Logger.Error("[Spire1] AutoAnthony bridge: ChaosRunDefinitions/ChaosCardRegistry not resolvable.");
-                return false;
+                return MarkIncompatible("ChaosRunDefinitions/ChaosCardRegistry not resolvable");
             }
 
-            _isRunActiveGetter = AccessTools.PropertyGetter(crd, "IsRunActive");
-            _activeReplaceStartingGetter = AccessTools.PropertyGetter(crd, "ActiveReplaceStartingCards");
-            _activePreserveOriginalGetter = AccessTools.PropertyGetter(crd, "ActivePreserveOriginalCards");
-            _isCharacterRunActive = AccessTools.Method(crd, "IsCharacterRunActive", new[] { GeneratedCharacterType });
-            _basicCountFor = AccessTools.Method(crd, "BasicCountFor", new[] { GeneratedCharacterType });
-            _originalCardsForPreservedPool = AccessTools.Method(crd, "OriginalCardsForPreservedPool", new[] { GeneratedCharacterType });
-            _colorlessTypesGetter = AccessTools.PropertyGetter(registry, "ColorlessTypes");
-            _canonicalCharacterSlot = AccessTools.Method(registry, "Canonical", new[] { GeneratedCharacterType, typeof(int) });
-            _modelDbCardPoolGeneric = AccessTools.Method(typeof(ModelDb), "CardPool");
+            // 全部结果先写局部变量；任一必需成员缺失时静态缓存保持原样，绝不留半套状态。
+            MethodInfo? isRunActiveGetter = AccessTools.PropertyGetter(crd, "IsRunActive");
+            MethodInfo? activeReplaceStartingGetter = AccessTools.PropertyGetter(crd, "ActiveReplaceStartingCards");
+            MethodInfo? activePreserveOriginalGetter = AccessTools.PropertyGetter(crd, "ActivePreserveOriginalCards");
+            MethodInfo? isCharacterRunActive = AccessTools.Method(crd, "IsCharacterRunActive", new[] { generatedCharacterType });
+            MethodInfo? basicCountFor = AccessTools.Method(crd, "BasicCountFor", new[] { generatedCharacterType });
+            MethodInfo? originalCardsForPreservedPool = AccessTools.Method(crd, "OriginalCardsForPreservedPool", new[] { generatedCharacterType });
+            MethodInfo? colorlessTypesGetter = AccessTools.PropertyGetter(registry, "ColorlessTypes");
+            MethodInfo? canonicalCharacterSlot = AccessTools.Method(registry, "Canonical", new[] { generatedCharacterType, typeof(int) });
+            MethodInfo? modelDbCardPoolGeneric = AccessTools.Method(typeof(ModelDb), "CardPool");
 
-            if (_isRunActiveGetter == null || _activeReplaceStartingGetter == null
-                || _activePreserveOriginalGetter == null || _isCharacterRunActive == null
-                || _basicCountFor == null || _colorlessTypesGetter == null
-                || _canonicalCharacterSlot == null || _modelDbCardPoolGeneric == null)
+            if (isRunActiveGetter == null || activeReplaceStartingGetter == null
+                || activePreserveOriginalGetter == null || isCharacterRunActive == null
+                || basicCountFor == null || colorlessTypesGetter == null
+                || canonicalCharacterSlot == null || modelDbCardPoolGeneric == null)
             {
-                MainFile.Logger.Error("[Spire1] AutoAnthony bridge: one or more AutoAnthony members not resolvable - bridge disabled.");
-                return false;
+                return MarkIncompatible("one or more required AutoAnthony members not resolvable");
             }
-            // _originalCardsForPreservedPool 为可选（PreserveOriginalCards 附加用），缺失只降级不禁用。
+            // originalCardsForPreservedPool 为可选（PreserveOriginalCards 附加用），缺失只降级不禁用。
 
-            _reflectionReady = true;
+            VerifyEnumConstants(generatedCharacterType); // 纯日志校验，不参与成败判定（保持原有行为）
+
+            // 完整解析成功：原子提交全部静态缓存。
+            _generatedCharacterType = generatedCharacterType;
+            _isRunActiveGetter = isRunActiveGetter;
+            _activeReplaceStartingGetter = activeReplaceStartingGetter;
+            _activePreserveOriginalGetter = activePreserveOriginalGetter;
+            _isCharacterRunActive = isCharacterRunActive;
+            _basicCountFor = basicCountFor;
+            _originalCardsForPreservedPool = originalCardsForPreservedPool;
+            _colorlessTypesGetter = colorlessTypesGetter;
+            _canonicalCharacterSlot = canonicalCharacterSlot;
+            _modelDbCardPoolGeneric = modelDbCardPoolGeneric;
+            _reflectionState = ReflectionState.Ready;
             return true;
         }
         catch (Exception e)
         {
-            MainFile.Logger.Error($"[Spire1] AutoAnthony bridge: reflection resolution threw: {e.Message}");
-            return false;
+            return MarkIncompatible($"reflection resolution threw: {e.Message}");
         }
+    }
+
+    /// <summary>core 反射解析失败的唯一终态入口：置 Incompatible latch，并在同一不兼容
+    /// 字节生命周期内只记录这一次主要 Error。返回 false 供 ResolveReflection 直接透传。</summary>
+    private static bool MarkIncompatible(string reason)
+    {
+        _reflectionState = ReflectionState.Incompatible;
+        MainFile.Logger.Error($"[Spire1] AutoAnthony bridge: {reason} - incompatible AutoAnthony assembly detected; bridge disabled permanently for this process (no periodic retry).");
+        return false;
     }
 
     /// <summary>校验硬编码枚举 int 常量与 AutoAnthony 当前枚举定义名对齐；不抛，仅在错位时
     /// 记 Error（防 AutoAnthony 大版本改枚举顺序时静默把 Ironclad 当成别的角色）。</summary>
-    private static void VerifyEnumConstants()
+    private static void VerifyEnumConstants(Type generatedCharacterType)
     {
         void Check(int value, string expected)
         {
-            string? actual = Enum.GetName(GeneratedCharacterType, value);
+            string? actual = Enum.GetName(generatedCharacterType, value);
             if (!string.Equals(actual, expected, StringComparison.Ordinal))
             {
                 MainFile.Logger.Error($"[Spire1] AutoAnthony bridge: GeneratedCharacter constant drift - value {value} expected '{expected}' but AutoAnthony defines '{actual}'. Mapping may be wrong.");

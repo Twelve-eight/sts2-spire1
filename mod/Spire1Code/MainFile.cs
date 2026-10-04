@@ -20,6 +20,7 @@ public partial class MainFile : Node
     public static MegaCrit.Sts2.Core.Logging.Logger Logger { get; } =
         new(ModId, MegaCrit.Sts2.Core.Logging.LogType.Generic);
 
+
     /// <summary>
     /// SP1-1 (2026-09-15) phase map. Statement order is UNCHANGED from the pre-SP1-1
     /// initializer - the phases only name the boundaries so registration, patching and
@@ -31,6 +32,10 @@ public partial class MainFile : Node
     ///     pool via ModHelper.ConcatModelsFromMods and then AddModelToPool throws).
     ///   Phase 3 patch + interop registration: registers the Harmony triggers, including
     ///     the on-demand census trigger; registering a trigger touches no pool.
+    ///     C12 r7: after the scan, the central gate installation is reconciled by Harmony
+    ///     probe and Spire1PowersGate.EvaluateAndEnforceCoverage runs; when the Spire1
+    ///     power-path coverage cannot be proven, it hard-closes the Spire1 content master
+    ///     switch (runtime only, not saved) before any run or pool consumer exists.
     ///   Phase 4 diagnostics: INTENTIONALLY EMPTY at initializer time - observation runs
     ///     post-registration only (see Phase4Diagnostics).
     /// </summary>
@@ -48,9 +53,73 @@ public partial class MainFile : Node
     /// </remarks>
     public static void Initialize()
     {
-        Phase1AssetReadinessAndConfig();
-        Phase2SemanticContentRegistration();
-        Phase3PatchAndInteropRegistration();
+        // r8c: 注册熔断面必须最先安装: 它不读 Spire1Config, 不依赖 powers central/fallback prefix,
+        // 只过滤 Spire1 程序集的模型类型 (vanilla/其它 mod 放行). 先于 Phase1/Phase2, 保证
+        // 之后任何确定性不可用状态 (含 Phase1 异常) 都能在 ModelDb.Init 之前生效.
+        try
+        {
+            Spire1PowersGate.EnsureRegistrationFuseInstalled(Phase3Harmony());
+        }
+        catch (Exception e)
+        {
+            Spire1PowersGate.MarkDeterministicUnavailable(
+                "registration fuse installation exception (" + e.GetType().Name + ": " + e.Message + ")");
+        }
+
+        try
+        {
+            Phase1AssetReadinessAndConfig();
+        }
+        catch (Exception e)
+        {
+            Spire1PowersGate.MarkDeterministicUnavailable(
+                "Phase1 exception (" + e.GetType().Name + ": " + e.Message + ")");
+        }
+
+        // r8b (P1-C12-01): powers gate 安装/覆盖证明必须收束在 Phase2 内容注册之前. 覆盖证明
+        // 失败或任何确定性不可用状态置位时, 跳过 Phase2 内容注册 (硬失败状态已独立于
+        // Spire1Config setter 与未安装 prefix). Phase3 只安装其余补丁并复核, 不会重复挂载.
+        bool contentRegistrationAllowed;
+        try
+        {
+            contentRegistrationAllowed = Spire1PowersGate.PreflightBeforeContentRegistration(
+                Phase3Harmony());
+        }
+        catch (Exception e)
+        {
+            Spire1PowersGate.MarkDeterministicUnavailable(
+                "Phase3 harmony creation exception (" + e.GetType().Name + ": " + e.Message + ")");
+            contentRegistrationAllowed = false;
+        }
+        if (contentRegistrationAllowed)
+        {
+            try
+            {
+                Phase2SemanticContentRegistration();
+            }
+            catch (Exception e)
+            {
+                Spire1PowersGate.MarkDeterministicUnavailable(
+                    "Phase2 content registration exception (" + e.GetType().Name + ": " + e.Message + ")");
+            }
+        }
+        else
+        {
+            Logger.Error(
+                "[Spire1] Phase2 semantic content registration skipped: powers gate reported the " +
+                "deterministic unavailable state (coverage not proven or hard fail-closed).");
+        }
+
+        try
+        {
+            Phase3PatchAndInteropRegistration();
+        }
+        catch (Exception e)
+        {
+            Spire1PowersGate.MarkDeterministicUnavailable(
+                "Phase3 global exception (" + e.GetType().Name + ": " + e.Message + ")");
+        }
+
         Phase4Diagnostics();
     }
 
@@ -112,74 +181,122 @@ public partial class MainFile : Node
     // ------------------------------------------------------------------
     private static void Phase3PatchAndInteropRegistration()
     {
-        // Apply Harmony patches declared in this assembly - one try/catch PER TYPE so a single
-        // bad patch can never abort the whole set (PatchAll aborts on first failure, which
-        // silently stripped every other patch for an entire night run on 2026-08-24).
-        // C01: every content filter registered here must read
-        // Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup) (or the matching computed
-        // property) and fail closed when its target cannot be resolved.
-        // C12 r5-B: the Spire1PowersFallback* classes are intentionally excluded from this scan;
-        // Spire1PowersFallbackInstaller.InstallIfNeeded below installs them only when the two
-        // central PowerCmd targets are not both verifiably installed, and records P1-C12-01
-        // NOT closed when the fallback layer itself is incomplete. The fallback layer holds no
-        // cross-invocation state (no token/count/CWT), so a blocked invocation can never consume
-        // an allowed invocation's state.
-        // SP1-1 evidence note: this reflection discovery runs at startup but is NOT proven to
-        // be a frame bottleneck - do not optimize or cache it without measurement.
-        Harmony harmony = new(ModId);
-        int failed = 0;
-        foreach (var type in typeof(MainFile).Assembly.GetTypes())
+        // r8b (P1-C12-01): Phase3 重复进入保护改为 "完整成功收束后置位". 首个调用者执行;
+        // 中途异常由 Initialize 的全局 catch 进入确定性不可用路径, 且不会把半成品标记为已完成,
+        // 后续重入会重新尝试 (Harmony 安装本身幂等, 不会重复挂载).
+        lock (Phase3Lock)
         {
-            if (type.GetCustomAttributes(typeof(HarmonyPatch), false).Length == 0)
+            if (_phase3Completed)
             {
-                continue;
+                Logger.Error("[Spire1] Phase3 re-entry ignored (already completed this process).");
+                return;
             }
-            // C12 r5-B (P1-C12-01): fallback 类必须由 InstallIfNeeded 按中央 gate 的真实安装
-            // 状态显式安装, 不能随属性扫描无条件挂载 (否则主漏斗可用时也会增加运行期路径).
-            if (Spire1PowersGate.IsFallbackPatchType(type))
-            {
-                continue;
-            }
-            try
-            {
-                harmony.CreateClassProcessor(type).Patch();
-            }
-            catch (Exception e)
-            {
-                failed++;
-                Logger.Error($"Harmony patch {type.Name} failed: {e.Message}");
-            }
-        }
-        if (failed > 0)
-        {
-            Logger.Error($"Harmony: {failed} patch class(es) failed to apply");
-        }
 
-        // C12 r5-B (P1-C12-01): fallback 类已被上面的属性扫描排除, 这里按两个中央目标的真实安装
-        // 状态决定是否安装 fail-closed fallback. 中央漏斗完整时该调用是 no-op; 任一 fallback
-        // 目标缺失/安装失败时置 FailClosedDegraded 并记录 P1-C12-01 NOT closed.
-        Spire1PowersFallbackInstaller.InstallIfNeeded(harmony);
+            // r8b: powers gate 类 (central Apply/ModifyAmount + 五个 fallback 类) 已由
+            // Spire1PowersGate.PreflightBeforeContentRegistration 在 Phase2 之前显式安装/收束;
+            // 属性扫描跳过它们, 避免重复挂载. 其余补丁保持每个类型独立 try/catch.
+            Harmony harmony = Phase3Harmony();
 
-        // AutoAnthony 桥接:必须在 ModManager 已加载 AutoAnthony 之后应用(本 initializer
-        // 的调用时机--ModManager.Initialize 逐 mod 依拓扑序调 initializer--取决于加载
-        // 顺序;AutoAnthony 无依赖,按用户 mod 列表序可能在本 mod 之前或之后.若此刻
-        // 尚未加载,由 AutoAnthonyLoadHook 的 AssemblyLoad 事件兜底重试).
-        AutoAnthonyLoadHook.TryApplyBridge(harmony);
-        // AFTP-1 (SpireAftpCompat): optional AFTP effect-lifecycle compat - replaces the
-        // NSts1Effect family's ProcessFrame subscription with a symmetric detach/reentry
-        // binding (astra AFTP-R4-03: GetTree outside the tree). Absent AFTP = no-op;
-        // all outcomes logged by the compat layer itself.
-        Interop.AftpEffectLifecycleCompat.TryApply(harmony);
+            // r8c (P1-C12-01): 独立不可用状态 (ContentUnavailable/HardFailClosed) 下不得再安装任何
+            // 普通补丁或 interop: 它们会读取 Spire1Config, 类型初始化失败时会把异常传播到 vanilla/其它
+            // mod 路径. 只保留已实测安装的注册熔断面, 由 EnsureRegistrationFuseInstalled 复核 (幂等).
+            if (Spire1PowersGate.ContentUnavailableActive)
+            {
+                // r8d (P1 D1): 不可用状态下不能只保留 ModelDb 熔断面. 引擎仍会构造 Spire1 模型并
+                // 经 BaseLib [Pool] 注入池; 因此这里显式安装 cards/relics/potions/events 的独立安全
+                // 过滤器, 并逐目标用 Harmony.GetPatchInfo 精确证明. 白名单安装失败时保持 fail closed,
+                // 由 EnsureUnavailableSafetyFiltersInstalled 返回 false 并如实记录未闭合边界.
+                Logger.Error(
+                    "[Spire1] Phase3 patch/interop installation skipped: deterministic unavailable state is set; " +
+                    "installing only the independent unavailable content safety filters (cards/relics/potions/events).");
+                Spire1PowersGate.EnsureRegistrationFuseInstalled(harmony);
+                bool safetyFiltersProven = Spire1PowersGate.EnsureUnavailableSafetyFiltersInstalled(harmony);
+                if (!safetyFiltersProven)
+                {
+                    Logger.Error(
+                        "[Spire1] r8d unavailable content safety filters NOT fully proven; Spire1 content " +
+                        "closure is incomplete and remains fail-closed pending investigation.");
+                }
+                _phase3Completed = true;
+                return;
+            }
 
-        // 第三方(RitsuLib)弹窗抑制不能进上面的属性扫描--目标类型缺失时 AccessTools
-        // 解析会抛异常,会让注册循环每次启动都记一条失败.显式调用,内部自兜底.
-        if (Spire1Config.IgnoreMpModDifferences)
-        {
-            Logger.Info(RitsuLibPopupSuppressionPatch.Apply(harmony)
-                ? "[Spire1] MP ignore-mod-diff: RitsuLib divergence popup suppressed"
-                : "[Spire1] MP ignore-mod-diff: RitsuLib popup type not found (mod absent?) - skipped");
+            // r8c: powers gate 幂等复核提前到属性扫描之前. 若 coverage 失败/独立不可用状态置位,
+            // 本次 Phase3 不安装任何普通补丁/interop (见下方第二次检查), 避免读取 Spire1Config 的
+            // 补丁在类型初始化失败时把异常传播到 vanilla/其它 mod 路径.
+            Spire1PowersGate.EnsureInstalled(harmony);
+
+            if (Spire1PowersGate.ContentUnavailableActive)
+            {
+                // r8d: powers gate 中途进入不可用状态时, 同样显式安装并证明安全过滤器.
+                Logger.Error(
+                    "[Spire1] Phase3 patch/interop installation skipped: powers gate reported the deterministic " +
+                    "unavailable state; installing only the independent unavailable content safety filters.");
+                Spire1PowersGate.EnsureRegistrationFuseInstalled(harmony);
+                bool safetyFiltersProven = Spire1PowersGate.EnsureUnavailableSafetyFiltersInstalled(harmony);
+                if (!safetyFiltersProven)
+                {
+                    Logger.Error(
+                        "[Spire1] r8d unavailable content safety filters NOT fully proven; Spire1 content " +
+                        "closure is incomplete and remains fail-closed pending investigation.");
+                }
+                _phase3Completed = true;
+                return;
+            }
+
+            if (!_phase3ScanCompleted)
+            {
+                int failed = 0;
+                foreach (var type in typeof(MainFile).Assembly.GetTypes())
+                {
+                    if (type.GetCustomAttributes(typeof(HarmonyPatch), false).Length == 0)
+                    {
+                        continue;
+                    }
+                    if (Spire1PowersGate.IsGateManagedPatchType(type))
+                    {
+                        continue;
+                    }
+                    try
+                    {
+                        harmony.CreateClassProcessor(type).Patch();
+                    }
+                    catch (Exception e)
+                    {
+                        failed++;
+                        Logger.Error($"Harmony patch {type.Name} failed: {e.Message}");
+                    }
+                }
+                if (failed > 0)
+                {
+                    Logger.Error($"Harmony: {failed} patch class(es) failed to apply");
+                }
+                _phase3ScanCompleted = true;
+            }
+
+            AutoAnthonyLoadHook.TryApplyBridge(harmony);
+            Interop.AftpEffectLifecycleCompat.TryApply(harmony);
+
+            if (Spire1Config.IgnoreMpModDifferences)
+            {
+                Logger.Info(RitsuLibPopupSuppressionPatch.Apply(harmony)
+                    ? "[Spire1] MP ignore-mod-diff: RitsuLib divergence popup suppressed"
+                    : "[Spire1] MP ignore-mod-diff: RitsuLib popup type not found (mod absent?) - skipped");
+            }
+
+            _phase3Completed = true;
         }
     }
+
+    /// <summary>r8b: Phase3 一次性 completed 状态 (完整收束后才置位).</summary>
+    private static readonly object Phase3Lock = new();
+    private static bool _phase3Completed;
+    private static bool _phase3ScanCompleted;
+    private static Harmony? _phase3Harmony;
+
+    /// <summary>r8b: Phase3 使用的进程级 Harmony 实例 (preflight 与 Phase3 共用同一 id/实例).</summary>
+    private static Harmony Phase3Harmony() =>
+        _phase3Harmony ??= new Harmony(ModId);
 
     // ------------------------------------------------------------------
     // PHASE 4 - diagnostics: post-registration only, INTENTIONALLY EMPTY here.

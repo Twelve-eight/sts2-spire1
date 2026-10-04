@@ -2,7 +2,10 @@ using System.Threading.Tasks;
 using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -20,9 +23,19 @@ public sealed class CalmPower : StancePower
 
     public override async Task AfterRemoved(Creature oldOwner)
     {
-        if (oldOwner.Player != null)
+        if (oldOwner.Player != null && Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
         {
             await PlayerCmd.GainEnergy(2m, oldOwner.Player);
+        }
+    }
+
+    // C12 r5 stale cleanup: an old-save Calm instance must not linger after the powers group is
+    // switched off. Next relevant hook = the owner's turn start; removal pays no exit energy.
+    public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
+    {
+        if (player == Owner.Player && !Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            await PowerCmd.Remove(this);
         }
     }
 }

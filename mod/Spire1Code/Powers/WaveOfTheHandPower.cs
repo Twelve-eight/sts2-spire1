@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -37,6 +38,10 @@ public class WaveOfTheHandPower : CustomPowerModel
         var enemies = CombatState.HittableEnemies;
         if (enemies.Count == 0)
             return;
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
         Flash();
         await PowerCmd.Apply<WeakPower>(new ThrowingPlayerChoiceContext(), enemies, Amount, Owner, null);
     }

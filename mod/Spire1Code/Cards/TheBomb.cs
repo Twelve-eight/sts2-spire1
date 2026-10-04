@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -29,9 +30,15 @@ public class TheBomb() : Spire1Card(2, CardType.Skill, CardRarity.Rare, TargetTy
         [new IntVar(TurnsKey, 3), new IntVar(BombDamageKey, 40)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
-        => (await PowerCmd.Apply<TheBombPower>(choiceContext, Owner.Creature,
+    {
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
+        (await PowerCmd.Apply<TheBombPower>(choiceContext, Owner.Creature,
             DynamicVars[TurnsKey].BaseValue, Owner.Creature, this))
             .SetDamage(DynamicVars[BombDamageKey].BaseValue);
+    }
 
     protected override void OnUpgrade() => DynamicVars[BombDamageKey].UpgradeValueBy(10m);
 }

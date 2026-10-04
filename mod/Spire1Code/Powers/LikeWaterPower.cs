@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.ValueProps;
 using Spire1.Spire1Code.Extensions;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -27,6 +28,10 @@ public class LikeWaterPower : CustomPowerModel
         Player? owner = Owner.Player;
         if (owner == null || !participants.Contains(Owner) || Amount <= 0)
             return;
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
         if (!StanceCmd.IsIn<CalmPower>(owner))
             return;
         Flash();

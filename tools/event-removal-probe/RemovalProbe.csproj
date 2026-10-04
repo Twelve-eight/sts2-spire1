@@ -13,5 +13,6 @@
     <Compile Include="ContractStubs.cs" />
     <Compile Include="$(EventSource)" Link="NoteForYourself.cs" />
     <Compile Include="$(ConfigSource)" Link="Spire1Config.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)../../mod/Spire1Code/Run/Spire1RunContent.cs" Link="Spire1RunContent.cs" />
   </ItemGroup>
 </Project>

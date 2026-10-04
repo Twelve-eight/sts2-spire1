@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.ValueProps;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -41,6 +42,12 @@ public class ExplosivePower : CustomPowerModel
     {
         if (side != CombatSide.Enemy || !participants.Contains(Owner) || Owner.IsDead)
             return;
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            // C12 r5 stale cleanup: do not tick toward an explosion that is disabled; wind down.
+            await PowerCmd.Remove(this);
+            return;
+        }
         await PowerCmd.Decrement(this);
         if (Amount > 0)
             return;

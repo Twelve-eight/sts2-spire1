@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -28,6 +29,12 @@ public sealed class BlasphemyPower : Spire1Power
     {
         if (!participants.Contains(Owner) || Owner.IsDead)
             return;
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            // C12 r5 stale cleanup: the disabled instance must not linger showing a pending death.
+            await PowerCmd.Remove(this);
+            return;
+        }
         Flash();
         await CreatureCmd.Kill(Owner);
     }

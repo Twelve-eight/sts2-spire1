@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -20,7 +21,13 @@ public class Blind() : Spire1Card(0, CardType.Skill, CardRarity.Uncommon, Target
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<WeakPower>(2)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
-        => await CommonActions.Apply<WeakPower>(choiceContext, this, play);
+    {
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
+        await CommonActions.Apply<WeakPower>(choiceContext, this, play);
+    }
 
     protected override void OnUpgrade()
     {

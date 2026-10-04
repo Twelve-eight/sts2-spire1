@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -28,7 +29,13 @@ public class DarkShackles() : Spire1Card(0, CardType.Skill, CardRarity.Uncommon,
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
-        => await CommonActions.Apply<DarkShacklesPower>(choiceContext, play.Target!, this);
+    {
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
+        await CommonActions.Apply<DarkShacklesPower>(choiceContext, play.Target!, this);
+    }
 
     protected override void OnUpgrade() => DynamicVars.Power<DarkShacklesPower>().UpgradeValueBy(6m);
 }

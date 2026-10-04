@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -37,6 +38,10 @@ public class ChokePower : CustomPowerModel
 
     public override Task BeforeCardPlayed(CardPlay cardPlay)
     {
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return Task.CompletedTask;
+        }
         Data data = GetInternalData<Data>();
         if (data.Applier != null && cardPlay.Card.Owner.Creature == data.Applier)
             data.PlaysInProgress[cardPlay] = Amount;
@@ -52,6 +57,10 @@ public class ChokePower : CustomPowerModel
         }
         // No record means the play started before this power was applied (e.g. Choke itself) - ignore it.
         if (!data.PlaysInProgress.Remove(cardPlay, out decimal damage))
+        {
+            return;
+        }
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
         {
             return;
         }

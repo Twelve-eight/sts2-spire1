@@ -46,7 +46,9 @@ public class CrackedCore : Spire1Relic
     /// hardcoded <c>RefinementUpgrades</c> dictionary - keyed on the BASE-GAME CrackedCore id -
     /// misses our SPIRE1-* id and falls back to the placeholder <c>Circlet</c> ("头环").
     /// </summary>
-    public override RelicModel? GetUpgradeReplacement() => ModelDb.Relic<InfusedCore>();
+    public override RelicModel? GetUpgradeReplacement() => Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Relics)
+        ? ModelDb.Relic<InfusedCore>()
+        : null;
 
     public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
     {

@@ -1,5 +1,10 @@
 using BaseLib.Abstracts;
 using Godot;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Unlocks;
+using Spire1.Spire1Code.Config;
+using EngineDefectCardPool = MegaCrit.Sts2.Core.Models.CardPools.DefectCardPool;
 
 namespace Spire1.Spire1Code.Character;
 
@@ -16,4 +21,23 @@ public class DefectCardPool : CustomCardPoolModel
     public override Color DeckEntryCardColor => new("3EB3ED");
 
     public override bool IsColorless => false;
+
+    /// <summary>
+    /// C02 content gate (2026-10-02). The pool identity stays stable - ModelDb caches
+    /// AllCardPools at Preload and CardModel.Pool resolves through those caches, so swapping the
+    /// character's pool getter would break old saves holding SPIRE1-* ids. The gate therefore
+    /// lives here, on the single query entry every reward/shop/event consumer uses
+    /// (CardCreationOptions.GetPossibleCards, MerchantInventory, CardFactory, compendium).
+    /// When the cards group (or the per-run snapshot) is closed, this pool answers with the
+    /// ENGINE Defect pool, i.e. original vanilla semantics - no SPIRE1-* card and no
+    /// SharedCardReuse twin can be offered.
+    /// </summary>
+    protected override IEnumerable<CardModel> FilterThroughEpochs(UnlockState unlockState, IEnumerable<CardModel> cards)
+    {
+        if (Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Cards))
+        {
+            return base.FilterThroughEpochs(unlockState, cards);
+        }
+        return ModelDb.CardPool<EngineDefectCardPool>().GetUnlockedCards(unlockState, CardMultiplayerConstraint.None);
+    }
 }

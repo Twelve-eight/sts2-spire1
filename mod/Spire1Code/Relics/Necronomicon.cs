@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Rooms;
 using Spire1.Spire1Code.Cards;
+using Spire1.Spire1Code.Config;
 using System.Linq;
 
 namespace Spire1.Spire1Code.Relics;
@@ -51,6 +52,17 @@ public class Necronomicon : Spire1Relic
     public override async Task AfterObtained()
     {
         await base.AfterObtained();
+
+        // Cards content group gate (C13, 2026-10-02): Necronomicurse is a Spire1 curse created directly
+        // by CardPileCmd.AddCurseToDeck, so Spire1Curse.CanBeGenerated* cannot stop this grant. Fail
+        // closed before any card is constructed; the relic itself is still obtained normally, and the
+        // AfterRemoved cleanup below stays unconditional so old saves can always shed the curse.
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Cards))
+        {
+            MainFile.Logger.Warn("[Spire1] Necronomicon obtained while cards content group is off; Necronomicurse grant skipped");
+            return;
+        }
+
         await CardPileCmd.AddCurseToDeck<Necronomicurse>(Owner);
     }
 

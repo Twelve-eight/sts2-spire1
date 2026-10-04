@@ -5,6 +5,8 @@ using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 
+using Spire1.Spire1Code.Config;
+
 namespace Spire1.Spire1Code.Relics;
 
 /// <summary>
@@ -41,6 +43,14 @@ public class Enchiridion : Spire1Relic
     // filtering to Attack.
     public override async Task BeforeCombatStart()
     {
+        // Cards content group gate (C18 r2, 2026-10-03): this Spire1 relic grants a card directly through AddGeneratedCardsToCombat; the relic stays obtained and cleanup semantics are unchanged.
+        // Fail closed before any card is constructed or added; the card is not granted.
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Cards))
+        {
+            MainFile.Logger.Warn("[Spire1] Enchiridion card grant skipped: cards content group is off");
+            return;
+        }
+
         IReadOnlyList<CardModel> powers = Owner.Character.CardPool
             .GetUnlockedCards(Owner.UnlockState, Owner.RunState.CardMultiplayerConstraint)
             .Where(c => c.Type == CardType.Power)

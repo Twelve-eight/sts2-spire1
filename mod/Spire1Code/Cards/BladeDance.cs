@@ -6,6 +6,8 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Cards;
 using Spire1.Spire1Code.Character;
 
+using Spire1.Spire1Code.Config;
+
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Silent - Blade Dance (Common). Add 3 Shivs into your hand (4 upgraded).
@@ -18,7 +20,17 @@ public class BladeDance() : Spire1Card(1, CardType.Skill, CardRarity.Common, Tar
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(3)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
-        => await Shiv.CreateInHand(Owner, DynamicVars.Cards.IntValue, Owner.Creature.CombatState, Owner);
+    {
+        // Cards content group gate (C18 r2, 2026-10-03): Shiv is granted directly by this Spire1 card, so the card pool filters cannot close the path.
+        // Fail closed before any card is constructed or added; the card is not granted.
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Cards))
+        {
+            MainFile.Logger.Warn("[Spire1] Blade Dance Shiv grant skipped: cards content group is off");
+            return;
+        }
+
+        await Shiv.CreateInHand(Owner, DynamicVars.Cards.IntValue, Owner.Creature.CombatState, Owner);
+    }
 
     protected override void OnUpgrade() => DynamicVars.Cards.UpgradeValueBy(1m);
 }

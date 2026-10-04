@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Spire1.Spire1Code.Config;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -29,6 +30,12 @@ public class PhantasmalKillerPower : CustomPowerModel
     {
         if (!participants.Contains(Owner))
             return;
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            // Powers off: consume the deferred instance without granting the vanilla DoubleDamage.
+            await PowerCmd.Remove(this);
+            return;
+        }
         Flash();
         await PowerCmd.Apply<DoubleDamagePower>(new ThrowingPlayerChoiceContext(), Owner, Amount, Owner, null);
         await PowerCmd.Remove(this);

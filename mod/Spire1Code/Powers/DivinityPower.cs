@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.Models;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -35,6 +36,10 @@ public sealed class DivinityPower : StancePower
         // atDamageGive only multiplies when DamageType == NORMAL. Divinity has no
         // atDamageReceive override, so incoming damage is never multiplied.
         // StS2 equivalent: props.IsPoweredAttack().
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return 1m;
+        }
         if (!props.IsPoweredAttack())
         {
             return 1m;

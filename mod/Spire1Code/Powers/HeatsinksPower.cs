@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -27,6 +28,10 @@ public class HeatsinksPower : CustomPowerModel
 
     public override Task BeforeCardPlayed(CardPlay cardPlay)
     {
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return Task.CompletedTask;
+        }
         if (cardPlay.Card.Owner.Creature == Owner && cardPlay.Card.Type == CardType.Power)
             GetInternalData<Data>().AmountsForPowerCards[cardPlay.Card] = Amount;
         return Task.CompletedTask;
@@ -36,6 +41,12 @@ public class HeatsinksPower : CustomPowerModel
     {
         if (!GetInternalData<Data>().AmountsForPowerCards.Remove(cardPlay.Card, out int amount) || amount <= 0)
             return;
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            // C12 r5 stale cleanup: wind the disabled instance down at its own next relevant hook.
+            await PowerCmd.Remove(this);
+            return;
+        }
         Flash();
         await CardPileCmd.Draw(choiceContext, amount, Owner.Player);
     }

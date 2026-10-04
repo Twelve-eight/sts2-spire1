@@ -39,7 +39,9 @@ public class RingOfTheSnake : Spire1Relic
     /// hardcoded <c>RefinementUpgrades</c> dictionary - keyed on the BASE-GAME RingOfTheSnake id -
     /// misses our SPIRE1-* id and falls back to the placeholder <c>Circlet</c> ("头环").
     /// </summary>
-    public override RelicModel? GetUpgradeReplacement() => ModelDb.Relic<RingOfTheDrake>();
+    public override RelicModel? GetUpgradeReplacement() => Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Relics)
+        ? ModelDb.Relic<RingOfTheDrake>()
+        : null;
 
     public override async Task BeforeCombatStart()
     {

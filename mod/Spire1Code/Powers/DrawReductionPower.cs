@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -23,7 +24,7 @@ public sealed class DrawReductionPower : CustomPowerModel
 
     public override decimal ModifyHandDraw(Player player, decimal count)
     {
-        if (player == base.Owner.Player)
+        if (player == base.Owner.Player && Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
         {
             return count - Amount;
         }

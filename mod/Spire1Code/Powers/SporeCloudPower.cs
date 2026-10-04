@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -40,6 +41,10 @@ public class SporeCloudPower : CustomPowerModel
     {
         if (wasRemovalPrevented || creature != Owner)
             return;
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
         Flash();
         // Owner.Player is null for enemy-side creatures; resolve the target through the
         // combat state's players (GremlinMerc / Looter pattern).
@@ -49,10 +54,12 @@ public class SporeCloudPower : CustomPowerModel
         }
     }
 
-    // Keeps the combat open until the death-triggered Vulnerable has been applied.
+    // Keeps the combat open until the death-triggered Vulnerable has been applied. C12 r5: with the
+    // powers group off the death trigger is gated, so this predicate must not keep the combat
+    // blocked after the owner dies (an old-save instance would otherwise soft-lock combat end).
     public override bool ShouldStopCombatFromEnding()
     {
-        return true;
+        return Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers);
     }
 
     // Survive the owner's death so AfterDeath can run (SteamEruptionPower pattern).

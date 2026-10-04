@@ -10,6 +10,8 @@ using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
+using Spire1.Spire1Code.Config;
+using Spire1.Spire1Code.Relics;
 
 namespace Spire1.Spire1Code.Patches;
 
@@ -24,7 +26,7 @@ namespace Spire1.Spire1Code.Patches;
 [HarmonyPatch(typeof(NMapScreen), nameof(NMapScreen.Initialize))]
 internal static class DebugRelicInjectPatch
 {
-    private const string QueuePath = "G:\\omp works\\sts2-spire1\\.tmp\\night\\inject-queue.txt";
+    private const string QueuePath = "G:\\omp works\\Sts\\sts2-spire1\\.tmp\\night\\inject-queue.txt";
 
     static void Postfix(NMapScreen __instance, RunState runState)
     {
@@ -64,6 +66,13 @@ internal static class DebugRelicInjectPatch
                     MainFile.Logger.Error($"[Spire1] Relic inject: id '{rid}' not found in ModelDb.AllRelics");
                     continue;
                 }
+                if (relic is Spire1Relic
+                    && !Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Relics))
+                {
+                    MainFile.Logger.Info($"[Spire1] Relic inject skipped by relics content gate: {relic.Id.Entry}");
+                    continue;
+                }
+
                 var mutable = relic.ToMutable();
                 MainFile.Logger.Info($"[Spire1] Relic inject (map screen): {mutable.Id.Entry}");
                 if (mutable is MegaCrit.Sts2.Core.Models.Relics.DustyTome tome)

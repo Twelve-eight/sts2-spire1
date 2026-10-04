@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using Spire1.Spire1Code.Character;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -27,6 +28,14 @@ public class EndlessAgony() : Spire1Card(0, CardType.Attack, CardRarity.Uncommon
     {
         if (card != this || CombatState == null)
         {
+            return;
+        }
+        // Cards content group gate (C18, 2026-10-03): the copy is a Spire1 card constructed directly by
+        // CreateCloneForPlayer, which bypasses the pool filters that carry the cards gate. Fail closed
+        // before any card is constructed; the draw event itself completes normally.
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Cards))
+        {
+            MainFile.Logger.Warn("[Spire1] Endless Agony copy grant skipped: cards content group is off");
             return;
         }
         var copy = CreateCloneForPlayer(Owner);

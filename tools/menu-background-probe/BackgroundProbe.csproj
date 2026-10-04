@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType><TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <DefineConstants>$(DefineConstants);SPIRE1_MENU_PERFORMANCE_PROBE</DefineConstants>
+    <BackgroundSource Condition="'$(BackgroundSource)' == ''">$(MSBuildThisFileDirectory)../../mod/Spire1Code/Experimental/MenuPerformance/CharacterSelectBackgroundPause.cs</BackgroundSource>
+    <HarmonyPath Condition="'$(HarmonyPath)' == ''">E:/Slay the Spire 2/data_sts2_windows_x86_64/0Harmony.dll</HarmonyPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs"/><Compile Include="ContractStubs.cs"/>
+    <Compile Include="$(BackgroundSource)" Link="CharacterSelectBackgroundPause.cs"/>
+    <Reference Include="0Harmony"><HintPath>$(HarmonyPath)</HintPath></Reference>
+  </ItemGroup>
+</Project>

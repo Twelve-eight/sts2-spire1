@@ -4,7 +4,7 @@ const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const javap = 'C:/Program Files/Zulu/zulu-21/bin/javap.exe';
-const dir = 'G:/omp works/sts2-spire1/research/sts1-kb/.tmp-javap/cls/com/megacrit/cardcrawl/events';
+const dir = 'G:/omp works/Sts/sts2-spire1/research/sts1-kb/.tmp-javap/cls/com/megacrit/cardcrawl/events';
 const out = [];
 (function walk(d) {
   for (const e of fs.readdirSync(d, { withFileTypes: true })) {

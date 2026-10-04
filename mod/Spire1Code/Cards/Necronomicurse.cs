@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using Spire1.Spire1Code.Config;
 using Spire1.Spire1Code.Relics;
 using System.Threading.Tasks;
 
@@ -59,6 +60,12 @@ public class Necronomicurse() : Spire1Curse()
         if (card != this)
             return;
 
+        // Cards content group gate (C17, 2026-10-02): Necronomicurse is created and added directly
+        // below, bypassing the pool filters that carry the cards gate. Fail closed before the relic
+        // flash and before any card is constructed or added; the callback completes normally.
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Cards))
+            return;
+
         Necronomicon? relic = HoldersRelic;
         if (relic == null)
             return;
@@ -92,6 +99,12 @@ public class Necronomicurse() : Spire1Curse()
 
     private async Task Returns(PileType pile)
     {
+        // Cards content group gate (C17, 2026-10-02): this path is used by BeforeCardRemoved and
+        // AfterTransformedFrom. Fail closed before the relic flash, before creating a card, and before
+        // adding it; the async method still completes normally so callers keep their contract.
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Cards))
+            return;
+
         Necronomicon? relic = HoldersRelic;
         if (relic == null)
             return;

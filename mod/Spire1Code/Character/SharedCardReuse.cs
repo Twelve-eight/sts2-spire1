@@ -16,6 +16,8 @@ namespace Spire1.Spire1Code.Character;
 /// Every entry below was verified field by field (cost, base values, upgrade deltas, keywords, target
 /// and effect) against the decompiled shipped card. Cards whose shipped version differs in any field
 /// keep our own vanilla-faithful class instead and are absent from these lists.
+/// Exception: entries declared in RarityDriftTwins / FieldDriftTwins below stay listed here as twins
+/// but are injected from our own vanilla-faithful class instead.
 /// </summary>
 internal static class SharedCardReuse
 {
@@ -264,6 +266,8 @@ internal static class SharedCardReuse
         "Chill",
         // Darkness：StS1 升级只换文案（触发全部暗球被动一次不变）；StS2 升级触发两次
         "Darkness",
+        // Envenom:StS1 升级 2->1 费,EnvenomPower 仍 1;StS2 升级费用仍 2,EnvenomPower 1->2
+        "Envenom",
     ];
 
     private static void AddOwnImplementations(System.Type pool, System.Type[] twins)

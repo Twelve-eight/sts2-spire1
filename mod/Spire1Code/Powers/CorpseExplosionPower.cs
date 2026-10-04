@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.ValueProps;
 using System.Linq;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -25,6 +26,10 @@ public class CorpseExplosionPower : CustomPowerModel
     {
         if (wasRemovalPrevented || creature != Owner)
             return;
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
         Flash();
         var targets = CombatState.HittableEnemies.Where(e => e != Owner).ToList();
         if (targets.Count == 0)

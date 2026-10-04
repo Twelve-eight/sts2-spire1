@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Spire1.Spire1Code.Character;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -14,7 +15,13 @@ public class AfterImage() : Spire1Card(1, CardType.Power, CardRarity.Rare, Targe
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<AfterimagePower>(1)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
-        => await CommonActions.ApplySelf<AfterimagePower>(choiceContext, this);
+    {
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
+        await CommonActions.ApplySelf<AfterimagePower>(choiceContext, this);
+    }
 
     protected override void OnUpgrade() => AddKeyword(CardKeyword.Innate);
 }

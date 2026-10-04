@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -28,6 +29,11 @@ public sealed class MasterRealityPower : Spire1Power
     {
         if (card.Owner != Owner.Player || card.IsClone || card.IsDupe || !card.IsUpgradable)
             return Task.CompletedTask;
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            // C12 r5 stale cleanup: wind the disabled instance down at its own next relevant hook.
+            return PowerCmd.Remove(this);
+        }
         Flash();
         CardCmd.Upgrade(card, CardPreviewStyle.None);
         return Task.CompletedTask;

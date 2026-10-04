@@ -1,4 +1,10 @@
 using BaseLib.Abstracts;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.CardPools;
+using MegaCrit.Sts2.Core.Unlocks;
+using Spire1.Spire1Code.Config;
+using Spire1.Spire1Code.Patches;
 using Spire1.Spire1Code.Extensions;
 using Godot;
 
@@ -32,4 +38,25 @@ public class Spire1CardPool : CustomCardPoolModel
     public override Color DeckEntryCardColor => new("ffffff");
     
     public override bool IsColorless => false;
+
+    /// <summary>
+    /// C02 content gate (2026-10-02). The pool identity stays stable - ModelDb caches
+    /// AllCardPools at Preload and CardModel.Pool resolves through those caches, so swapping the
+    /// character's pool getter would break old saves holding SPIRE1-* ids. The gate therefore
+    /// lives here, on the single query entry every reward/shop/event consumer uses
+    /// (CardCreationOptions.GetPossibleCards, MerchantInventory, CardFactory, compendium).
+    /// When the cards group (or the per-run snapshot) is closed, this pool answers with the
+    /// ENGINE Ironclad pool, i.e. original vanilla semantics - no SPIRE1-* card and no
+    /// SharedCardReuse twin can be offered.
+    /// </summary>
+    protected override IEnumerable<CardModel> FilterThroughEpochs(UnlockState unlockState, IEnumerable<CardModel> cards)
+    {
+        // r8d: 独立不可用状态优先于任何 Spire1Config 静态读取 (静态构造失败时不得把异常传播到引擎).
+        if (!Spire1PowersGate.ContentUnavailableActive
+            && Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Cards))
+        {
+            return base.FilterThroughEpochs(unlockState, cards);
+        }
+        return ModelDb.CardPool<IroncladCardPool>().GetUnlockedCards(unlockState, CardMultiplayerConstraint.None);
+    }
 }

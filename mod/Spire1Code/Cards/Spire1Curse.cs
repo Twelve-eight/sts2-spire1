@@ -4,6 +4,8 @@ using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using Spire1.Spire1Code.Extensions;
+using Spire1.Spire1Code.Config;
+using Spire1.Spire1Code.Patches;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -16,7 +18,19 @@ namespace Spire1.Spire1Code.Cards;
 public abstract class Spire1Curse() : CustomCardModel(-1, CardType.Curse, CardRarity.Curse, TargetType.None)
 {
     public override int MaxUpgradeLevel => 0;
+    /// <summary>
+    /// Curse rewards and curse modifiers query this property after reading CurseCardPool.
+    /// Keep the model registered for save compatibility, but fail closed at that consumer when
+    /// the Spire1 cards group is disabled.
+    /// </summary>
+    public override bool CanBeGeneratedByModifiers =>
+        !Spire1PowersGate.ContentUnavailableActive
+        && Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Cards);
 
-    public override string CustomPortraitPath => $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".BigCardImagePath();
-    public override string PortraitPath => $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".CardImagePath();
+    /// <summary>
+    /// Keep curse transformation and other combat-factory paths closed with the same group gate.
+    /// </summary>
+    public override bool CanBeGeneratedInCombat =>
+        !Spire1PowersGate.ContentUnavailableActive
+        && Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Cards);
 }

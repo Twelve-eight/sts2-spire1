@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using Spire1.Spire1Code.Powers;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -13,7 +14,13 @@ public class Flex() : Spire1Card(0, CardType.Skill, CardRarity.Common, TargetTyp
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<FlexPower>(2)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
-        => await CommonActions.ApplySelf<FlexPower>(choiceContext, this);
+    {
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
+        await CommonActions.ApplySelf<FlexPower>(choiceContext, this);
+    }
 
     protected override void OnUpgrade() => DynamicVars.Power<FlexPower>().UpgradeValueBy(2m);
 }

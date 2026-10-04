@@ -28,6 +28,10 @@ namespace Spire1.Spire1Code.Interop;
 /// Retry liveness: retry sources are retained until Apply returns settled=true.
 /// A missing or cancelled CallDeferred callback is detected by a generation
 /// watchdog and resubmitted; late callbacks from older generations are ignored.
+/// A terminal core reflection failure (incompatible AutoAnthony bytes) is
+/// reported by AutoAnthonyCompatBridge.NeedsRetryWithoutAssemblyLoad as false:
+/// the periodic source stops, while the AssemblyLoad hook stays installed for
+/// late Watcher/AutoAnthonyWatcher observation.
 /// </summary>
 internal static class AutoAnthonyLoadHook
 {
@@ -454,6 +458,8 @@ internal static class AutoAnthonyLoadHook
                 // Keep AssemblyLoad as the cheap late-capability source. A
                 // periodic source is reserved for core/registration/unpatch
                 // states that can make progress without another assembly load.
+                // The terminal incompatible-core latch reports no such progress,
+                // so only the AssemblyLoad hook remains for optional addons.
                 HookAssemblyLoad();
                 if (NeedsPeriodicRetry())
                 {
@@ -863,6 +869,9 @@ internal static class AutoAnthonyLoadHook
            || assemblyName == "Watcher"
            || assemblyName == "AutoAnthonyWatcher";
 
+    /// <summary>Consults the bridge state. Returns false for the terminal
+    /// incompatible-core latch and for the ordinary "AutoAnthony present,
+    /// optional mods absent" state; both keep only the AssemblyLoad hook.</summary>
     private static bool NeedsPeriodicRetry()
     {
         if (ShouldStopNotifications())

@@ -1,8 +1,10 @@
 using BaseLib.Abstracts;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -32,11 +34,22 @@ public sealed class EstablishmentPower : Spire1Power
     {
         if (player != Owner.Player || Amount <= 0 || retainedCards.Count == 0)
             return Task.CompletedTask;
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            // C12 r5 stale cleanup: wind the disabled instance down at its own next relevant hook
+            // (a retain flush) instead of leaving it inert on the creature forever.
+            return RemoveStaleAsync();
+        }
         Flash();
         foreach (CardModel card in retainedCards)
         {
             card.EnergyCost.AddThisCombat(-Amount);
         }
         return Task.CompletedTask;
+    }
+
+    private async Task RemoveStaleAsync()
+    {
+        await PowerCmd.Remove(this);
     }
 }

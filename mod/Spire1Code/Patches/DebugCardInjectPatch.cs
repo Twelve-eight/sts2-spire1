@@ -7,6 +7,8 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Runs;
+using Spire1.Spire1Code.Cards;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Patches;
 
@@ -20,7 +22,7 @@ namespace Spire1.Spire1Code.Patches;
 internal static class DebugCardInjectPatch
 {
     // 夜间工具：绝对路径。游戏进程 CWD 是游戏目录，相对路径会静默找不到文件。
-    private const string QueuePath = "G:\\omp works\\sts2-spire1\\.tmp\\night\\inject-queue.txt";
+    private const string QueuePath = "G:\\omp works\\Sts\\sts2-spire1\\.tmp\\night\\inject-queue.txt";
 
     static void Postfix(CombatState state)
     {
@@ -62,6 +64,12 @@ internal static class DebugCardInjectPatch
                     c.Id.Entry.Replace("_", "").Equals(id.Replace("_", ""), StringComparison.OrdinalIgnoreCase));
                 if (model == null)
                 {
+                    continue;
+                }
+                if (model is Spire1Card
+                    && !Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Cards))
+                {
+                    MainFile.Logger.Info($"[Spire1] Card inject skipped by cards content gate: {model.Id.Entry}");
                     continue;
                 }
                 batch.Add(model);

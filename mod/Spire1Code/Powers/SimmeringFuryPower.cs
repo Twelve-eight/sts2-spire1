@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using Spire1.Spire1Code.Extensions;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -27,9 +28,25 @@ public class SimmeringFuryPower : CustomPowerModel
     {
         if (player != Owner.Player)
             return;
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            // C12 r5 stale cleanup: this one-shot "next turn" power must not draw or enter Wrath
+            // while the powers group is off; remove it at its own next relevant hook.
+            await PowerCmd.Remove(this);
+            return;
+        }
         Flash();
         int toDraw = Amount;
         await StanceCmd.Enter<WrathPower>(choiceContext, player, null);
+        // C12 r5: only pay the "enter Wrath and draw" effect when Wrath is actually mounted.
+        // A drifted/blocked mount returns without attaching, and this one-shot power must not
+        // draw from a request that did not happen; it is still wound down so it cannot retry
+        // every turn.
+        if (player.Creature.GetPower<WrathPower>() == null)
+        {
+            await PowerCmd.Remove(this);
+            return;
+        }
         if (toDraw > 0)
             await CardPileCmd.Draw(choiceContext, toDraw, player);
         await PowerCmd.Remove(this);

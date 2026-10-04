@@ -4,7 +4,7 @@
 
 **Versions covered:**
 - **Shipped binary (what the game loads):** `G:/steam/steamapps/common/Slay the Spire 2/mods/BaseLib/BaseLib.dll`, manifest `BaseLib.json` -> `"version": "v3.3.5"` (installed mod folder). Assembly version metadata is `0.0.0.0`, so the manifest is the only version evidence.
-- **Source tree:** `G:/omp works/sts2-spire1/research/BaseLib-StS2/`, git tag `v3.4.5` (HEAD `2275793`). Richer (XML docs) but **ahead of the binary**.
+- **Source tree:** `G:/omp works/Sts/sts2-spire1/research/BaseLib-StS2/`, git tag `v3.4.5` (HEAD `2275793`). Richer (XML docs) but **ahead of the binary**.
 
 **Availability markers used throughout:**
 - `SHIPPED` - present in the installed v3.3.5 DLL (verified against a full ilspycmd decompile; signatures copied from it).
@@ -12,9 +12,9 @@
 - `ENGINE` - part of the base game (`MegaCrit.Sts2.Core.*`), documented here because BaseLib code builds on it.
 
 **Citation convention:** every entry cites where it was read from:
-- `dll <path>` - decompiled shipped binary, file under `G:/omp works/sts2-spire1/.tmp/baselib-dll/` (path + line).
+- `dll <path>` - decompiled shipped binary, file under `G:/omp works/Sts/sts2-spire1/.tmp/baselib-dll/` (path + line).
 - `src <path>` - source tree file under `research/BaseLib-StS2/` (path + line).
-- `engine <path>` - decompiled base game under `G:/omp works/sts2-spire1/.tmp/dllsrc/`.
+- `engine <path>` - decompiled base game under `G:/omp works/Sts/sts2-spire1/.tmp/dllsrc/`.
 - `prior-audit` - `research/BaseLib-unused-surface.md` (a verified audit of this same library; reuse of its citations).
 
 Signatures are copied verbatim from the shipped decompile (or from source for SOURCE-ONLY members, and marked as such). Where a member exists in both but differs, the shipped signature wins and the drift is noted.

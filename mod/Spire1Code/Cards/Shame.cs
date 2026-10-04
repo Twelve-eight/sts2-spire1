@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -27,6 +28,10 @@ public class Shame() : Spire1Curse()
 
     protected override async Task OnTurnEndInHand(PlayerChoiceContext choiceContext)
     {
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
         bool alreadyHasFrail = Owner.Creature.HasPower<FrailPower>();
         var power = await CommonActions.Apply<FrailPower>(choiceContext, Owner.Creature, this);
         if (power != null && !alreadyHasFrail)

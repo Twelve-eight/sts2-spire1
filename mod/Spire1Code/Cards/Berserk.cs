@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Spire1.Spire1Code.Powers;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -16,6 +17,10 @@ public class Berserk() : Spire1Card(0, CardType.Power, CardRarity.Rare, TargetTy
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
         await CommonActions.ApplySelf<VulnerablePower>(choiceContext, this);
         await CommonActions.ApplySelf<BerserkPower>(choiceContext, this);
     }

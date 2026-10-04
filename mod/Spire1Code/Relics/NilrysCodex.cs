@@ -8,6 +8,8 @@ using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 
+using Spire1.Spire1Code.Config;
+
 namespace Spire1.Spire1Code.Relics;
 
 /// <summary>
@@ -46,6 +48,14 @@ public class NilrysCodex : Spire1Relic
         // running" (CombatManager.cs:218-222); CardCmd.cs:174 guards the same way.
         if (CombatManager.Instance.IsOverOrEnding)
             return;
+
+        // Cards content group gate (C18 r2, 2026-10-03): this Spire1 relic opens the choice screen and then grants the chosen card directly through AddGeneratedCardToCombat; the relic stays obtained and cleanup semantics are unchanged.
+        // Fail closed before any card is constructed or added; the card is not granted.
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Cards))
+        {
+            MainFile.Logger.Warn("[Spire1] Nilry's Codex card grant skipped: cards content group is off");
+            return;
+        }
 
         // CardFactory.GetDistinctForCombat (CardFactory.cs:119-129) is distinct by construction, which is
         // the equivalent of StS1's "loop returnTrulyRandomCardInCombat() until 3 distinct cardIDs are held".

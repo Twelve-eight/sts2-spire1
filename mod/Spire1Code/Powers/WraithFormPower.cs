@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Spire1.Spire1Code.Config;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,6 +29,14 @@ public class WraithFormPower : CustomPowerModel
     {
         if (!participants.Contains(Owner))
             return;
+        // C16: the per-turn Dexterity loss is an effect triggered by this Spire1 power; when the
+        // powers group is off, remove the stale instance at this first relevant hook instead of
+        // leaving it on the creature forever. Removal does not touch vanilla Dexterity.
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            await PowerCmd.Remove(this);
+            return;
+        }
         Flash();
         await PowerCmd.Apply<DexterityPower>(choiceContext, Owner, -Amount, Owner, null);
     }

@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Relics;
 
@@ -25,7 +26,7 @@ public class Girya : Spire1Relic
     public override async Task BeforeCombatStart()
     {
         // FLAG: rest-site lift option not wired (passive only - StrengthBonus has no in-game way to increase yet).
-        if (StrengthBonus > 0)
+        if (StrengthBonus > 0 && Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
         {
             Flash();
             await PowerCmd.Apply<StrengthPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, StrengthBonus, Owner.Creature, null);

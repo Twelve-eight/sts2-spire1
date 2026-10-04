@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using Spire1.Spire1Code.Character;
 using Spire1.Spire1Code.Powers;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -18,6 +19,10 @@ public class Blur() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, TargetT
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         await CommonActions.CardBlock(this, DynamicVars.Block, play);
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
         await CommonActions.ApplySelf<BlurPower>(choiceContext, this);
     }
 

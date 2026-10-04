@@ -1,4 +1,4 @@
-﻿<Project Sdk="Godot.NET.Sdk/4.5.1" InitialTargets="CheckDependencyPaths">
+<Project Sdk="Godot.NET.Sdk/4.5.1" InitialTargets="CheckDependencyPaths">
     <Import Project=".\Sts2PathDiscovery.props"/>
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
@@ -91,28 +91,133 @@
                  Importance="high" />
     </Target>
 
-    <Target Name="CopyToModsFolderOnBuild" AfterTargets="PostBuildEvent">
+        <!-- ===================== Research write boundary (A09, 2026-10-02) =====================
+         Template builds must never write into a game install by default. Before A09
+         CopyToModsFolderOnBuild ran on every build and GodotPublish exported with
+         ContinueOnError=WarnAndContinue, so an explicit /p:Sts2Path=<Steam> or
+         /p:ModsPath=<Steam> wrote into the user's install and a failed export could
+         still leave an old PCK behind.
+
+         A09 contract (fail closed):
+           - Writes require an explicit /p:ResearchWriteOptIn=true.
+           - The destination must pass an allowlist/reparse chain restricted to test or
+             scratch roots (E:/Slay the Spire 2/mods, .../sts2-test-client-B/mods,
+             G:/omp works/.tmp/). Steam installs and C: are never allowed.
+           - A plain template build is compile-only: no copy, no export.
+           - Godot export must return 0 and produce a non-empty PCK; WarnAndContinue is gone.
+         ============================================================================== -->
+    <PropertyGroup>
+        <ResearchWriteOptIn Condition="'$(ResearchWriteOptIn)' == ''">false</ResearchWriteOptIn>
+    </PropertyGroup>
+
+    <Target Name="AssertResearchWriteDestination" BeforeTargets="UpdateDependencyVersions;CopyToModsFolderOnBuild;CopyQuickPck;GodotPublish"
+            Condition="'$(CopyToModsFolderOnBuild)' != 'false' And ('$(ResearchWriteOptIn)' == 'true' Or '$(CopyToModsFolderOnBuild)' == 'true')">
+        <PropertyGroup>
+            <_RwModsNorm>$([System.IO.Path]::GetFullPath('$(ModsPath)').TrimEnd('\').TrimEnd('/').ToLowerInvariant())</_RwModsNorm>
+            <_RwAllowed>false</_RwAllowed>
+            <_RwAllowed Condition="$(_RwModsNorm) == 'e:\slay the spire 2\mods' Or $(_RwModsNorm.StartsWith('e:\slay the spire 2\mods\'))">true</_RwAllowed>
+            <_RwAllowed Condition="$(_RwModsNorm) == 'g:\omp works\sts\_runtime\sts2-test-client-b\mods' Or $(_RwModsNorm.StartsWith('g:\omp works\sts\_runtime\sts2-test-client-b\mods\'))">true</_RwAllowed>
+            <_RwAllowed Condition="$(_RwModsNorm) == 'g:\omp works\.tmp' Or $(_RwModsNorm.StartsWith('g:\omp works\.tmp\'))">true</_RwAllowed>
+            <_RwDestNorm>$([System.IO.Path]::GetFullPath('$(ModsPath)/$(MSBuildProjectName)/').TrimEnd('\').TrimEnd('/').ToLowerInvariant())</_RwDestNorm>
+            <_RwDestAllowed>false</_RwDestAllowed>
+            <_RwDestAllowed Condition="$(_RwDestNorm.StartsWith('e:\slay the spire 2\mods\'))">true</_RwDestAllowed>
+            <_RwDestAllowed Condition="$(_RwDestNorm.StartsWith('g:\omp works\sts\_runtime\sts2-test-client-b\mods\'))">true</_RwDestAllowed>
+            <_RwDestAllowed Condition="$(_RwDestNorm.StartsWith('g:\omp works\.tmp\'))">true</_RwDestAllowed>
+            <_RwGameRoot>$([System.IO.Path]::GetDirectoryName('$(_RwModsNorm)'))</_RwGameRoot>
+            <_RwSteamMarker>false</_RwSteamMarker>
+            <_RwSteamMarker Condition="Exists('$(_RwGameRoot)\steam_appid.txt')">true</_RwSteamMarker>
+            <_RwPathHasDotDot>false</_RwPathHasDotDot>
+            <_RwPathHasDotDot Condition="$(ModsPath.Contains('..')) Or $(Sts2Path.Contains('..'))">true</_RwPathHasDotDot>
+            <_RwPathNotRooted>false</_RwPathNotRooted>
+            <_RwPathNotRooted Condition="!$([System.IO.Path]::IsPathRooted('$(ModsPath)'))">true</_RwPathNotRooted>
+            <_RwL0>$(_RwDestNorm)</_RwL0>
+            <_RwL1 Condition="'$(_RwL0)' != ''">$([System.IO.Path]::GetDirectoryName('$(_RwL0)'))</_RwL1>
+            <_RwL2 Condition="'$(_RwL1)' != ''">$([System.IO.Path]::GetDirectoryName('$(_RwL1)'))</_RwL2>
+            <_RwL3 Condition="'$(_RwL2)' != ''">$([System.IO.Path]::GetDirectoryName('$(_RwL2)'))</_RwL3>
+            <_RwL4 Condition="'$(_RwL3)' != ''">$([System.IO.Path]::GetDirectoryName('$(_RwL3)'))</_RwL4>
+            <_RwL5 Condition="'$(_RwL4)' != ''">$([System.IO.Path]::GetDirectoryName('$(_RwL4)'))</_RwL5>
+            <_RwL6 Condition="'$(_RwL5)' != ''">$([System.IO.Path]::GetDirectoryName('$(_RwL5)'))</_RwL6>
+            <_RwL7 Condition="'$(_RwL6)' != ''">$([System.IO.Path]::GetDirectoryName('$(_RwL6)'))</_RwL7>
+            <_RwL8 Condition="'$(_RwL7)' != ''">$([System.IO.Path]::GetDirectoryName('$(_RwL7)'))</_RwL8>
+            <_RwL9 Condition="'$(_RwL8)' != ''">$([System.IO.Path]::GetDirectoryName('$(_RwL8)'))</_RwL9>
+            <_RwL10 Condition="'$(_RwL9)' != ''">$([System.IO.Path]::GetDirectoryName('$(_RwL9)'))</_RwL10>
+            <_RwL11 Condition="'$(_RwL10)' != ''">$([System.IO.Path]::GetDirectoryName('$(_RwL10)'))</_RwL11>
+            <_RwL12 Condition="'$(_RwL11)' != ''">$([System.IO.Path]::GetDirectoryName('$(_RwL11)'))</_RwL12>
+            <_RwR0>false</_RwR0>
+            <_RwR0 Condition="'$(_RwL0)' != '' And Exists('$(_RwL0)')">$([System.IO.File]::GetAttributes('$(_RwL0)').ToString().Contains('ReparsePoint'))</_RwR0>
+            <_RwR1>false</_RwR1>
+            <_RwR1 Condition="'$(_RwL1)' != '' And Exists('$(_RwL1)')">$([System.IO.File]::GetAttributes('$(_RwL1)').ToString().Contains('ReparsePoint'))</_RwR1>
+            <_RwR2>false</_RwR2>
+            <_RwR2 Condition="'$(_RwL2)' != '' And Exists('$(_RwL2)')">$([System.IO.File]::GetAttributes('$(_RwL2)').ToString().Contains('ReparsePoint'))</_RwR2>
+            <_RwR3>false</_RwR3>
+            <_RwR3 Condition="'$(_RwL3)' != '' And Exists('$(_RwL3)')">$([System.IO.File]::GetAttributes('$(_RwL3)').ToString().Contains('ReparsePoint'))</_RwR3>
+            <_RwR4>false</_RwR4>
+            <_RwR4 Condition="'$(_RwL4)' != '' And Exists('$(_RwL4)')">$([System.IO.File]::GetAttributes('$(_RwL4)').ToString().Contains('ReparsePoint'))</_RwR4>
+            <_RwR5>false</_RwR5>
+            <_RwR5 Condition="'$(_RwL5)' != '' And Exists('$(_RwL5)')">$([System.IO.File]::GetAttributes('$(_RwL5)').ToString().Contains('ReparsePoint'))</_RwR5>
+            <_RwR6>false</_RwR6>
+            <_RwR6 Condition="'$(_RwL6)' != '' And Exists('$(_RwL6)')">$([System.IO.File]::GetAttributes('$(_RwL6)').ToString().Contains('ReparsePoint'))</_RwR6>
+            <_RwR7>false</_RwR7>
+            <_RwR7 Condition="'$(_RwL7)' != '' And Exists('$(_RwL7)')">$([System.IO.File]::GetAttributes('$(_RwL7)').ToString().Contains('ReparsePoint'))</_RwR7>
+            <_RwR8>false</_RwR8>
+            <_RwR8 Condition="'$(_RwL8)' != '' And Exists('$(_RwL8)')">$([System.IO.File]::GetAttributes('$(_RwL8)').ToString().Contains('ReparsePoint'))</_RwR8>
+            <_RwR9>false</_RwR9>
+            <_RwR9 Condition="'$(_RwL9)' != '' And Exists('$(_RwL9)')">$([System.IO.File]::GetAttributes('$(_RwL9)').ToString().Contains('ReparsePoint'))</_RwR9>
+            <_RwR10>false</_RwR10>
+            <_RwR10 Condition="'$(_RwL10)' != '' And Exists('$(_RwL10)')">$([System.IO.File]::GetAttributes('$(_RwL10)').ToString().Contains('ReparsePoint'))</_RwR10>
+            <_RwR11>false</_RwR11>
+            <_RwR11 Condition="'$(_RwL11)' != '' And Exists('$(_RwL11)')">$([System.IO.File]::GetAttributes('$(_RwL11)').ToString().Contains('ReparsePoint'))</_RwR11>
+            <_RwR12>false</_RwR12>
+            <_RwR12 Condition="'$(_RwL12)' != '' And Exists('$(_RwL12)')">$([System.IO.File]::GetAttributes('$(_RwL12)').ToString().Contains('ReparsePoint'))</_RwR12>
+            <_RwAnyReparse>false</_RwAnyReparse>
+            <_RwAnyReparse Condition="$(_RwR0) == 'true' Or $(_RwR1) == 'true' Or $(_RwR2) == 'true' Or $(_RwR3) == 'true' Or $(_RwR4) == 'true' Or $(_RwR5) == 'true' Or $(_RwR6) == 'true' Or $(_RwR7) == 'true' Or $(_RwR8) == 'true' Or $(_RwR9) == 'true' Or $(_RwR10) == 'true' Or $(_RwR11) == 'true' Or $(_RwR12) == 'true'">true</_RwAnyReparse>
+            <_RwRootParent Condition="'$(_RwL12)' != ''">$([System.IO.Path]::GetDirectoryName('$(_RwL12)'))</_RwRootParent>
+            <_RwChainUnproven>false</_RwChainUnproven>
+            <_RwChainUnproven Condition="'$(_RwL12)' != '' And '$(_RwRootParent)' != ''">true</_RwChainUnproven>
+            <_RwFileAnyReparse>false</_RwFileAnyReparse>
+            <_RwFileAnyReparse Condition="Exists('$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).dll') And $([System.IO.File]::GetAttributes('$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).dll').ToString().Contains('ReparsePoint'))">true</_RwFileAnyReparse>
+            <_RwFileAnyReparse Condition="Exists('$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).json') And $([System.IO.File]::GetAttributes('$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).json').ToString().Contains('ReparsePoint'))">true</_RwFileAnyReparse>
+            <_RwFileAnyReparse Condition="Exists('$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).pdb') And $([System.IO.File]::GetAttributes('$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).pdb').ToString().Contains('ReparsePoint'))">true</_RwFileAnyReparse>
+            <_RwFileAnyReparse Condition="Exists('$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).pck') And $([System.IO.File]::GetAttributes('$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).pck').ToString().Contains('ReparsePoint'))">true</_RwFileAnyReparse>
+        </PropertyGroup>
+        <Error Condition="'$(ResearchWriteOptIn)' != 'true'"
+               Text="RESEARCH-WRITE-DENY [no-opt-in]: a copy/export was requested (/p:CopyToModsFolderOnBuild=true) without /p:ResearchWriteOptIn=true. A plain template build is compile-only; pass the opt-in only for an intentional isolated test/scratch deployment." />
+        <Error Condition="'$(_RwAllowed)' != 'true' Or '$(_RwDestAllowed)' != 'true' Or '$(_RwSteamMarker)' == 'true' Or '$(_RwAnyReparse)' == 'true' Or '$(_RwChainUnproven)' == 'true' Or '$(_RwPathHasDotDot)' == 'true' Or '$(_RwPathNotRooted)' == 'true' Or '$(_RwDestNorm)' == '' Or '$(_RwFileAnyReparse)' == 'true'"
+               Text="RESEARCH-WRITE-DENY [destination]: ModsPath '$(_RwModsNorm)' -> final '$(_RwDestNorm)' is not an approved isolated test/scratch destination. allowlist=[mods=$(_RwAllowed) final=$(_RwDestAllowed)] steamMarker=$(_RwSteamMarker) reparse=$(_RwAnyReparse) chainUnproven=$(_RwChainUnproven) dotDot=$(_RwPathHasDotDot) notRooted=$(_RwPathNotRooted). The Steam install and C: are never valid targets." />
+    </Target>
+
+    <Target Name="CopyToModsFolderOnBuild" AfterTargets="PostBuildEvent"
+            Condition="'$(CopyToModsFolderOnBuild)' != 'false' and '$(ResearchWriteOptIn)' == 'true'">
         <Message Text="Copying .dll .pdb and .json to mods folder." Importance="high" />
-        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/" />
-        <Copy SourceFiles="$(AssemblyName).json" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/" />
-        <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/" />
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModsPath)/$(MSBuildProjectName)/" />
+        <Copy SourceFiles="$(AssemblyName).json" DestinationFolder="$(ModsPath)/$(MSBuildProjectName)/" />
+        <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(ModsPath)/$(MSBuildProjectName)/" />
     </Target>
 
-    <Target Name="CopyQuickPck" AfterTargets="PackPck" Condition="Exists('$(PckPackerOutputPath)') And '$(PckPackerSkipped)' != 'true'">
-        <Message Text="Copying quick .pck to mods folder." Importance="high"/>
-        <Copy SourceFiles="$(PckPackerOutputPath)"
-              DestinationFolder="$(ModsPath)/$(MSBuildProjectName)" />
+    <Target Name="CopyQuickPck" AfterTargets="PackPck" Condition="'$(CopyToModsFolderOnBuild)' != 'false' And '$(ResearchWriteOptIn)' == 'true' And Exists('$(PckPackerOutputPath)') And '$(PckPackerSkipped)' != 'true'">
+        <Error Text="RESEARCH-PCK-DENY [quick-pack-unbound]: this reference template refuses to copy an ungated PckPacker artifact. Use the fail-closed GodotPublish path, which deletes the old PCK and verifies the new export before copying." />
     </Target>
 
-    <Target Name="NeedGodotForPublish" BeforeTargets="Publish">
+    <Target Name="NeedGodotForPublish" BeforeTargets="Publish" Condition="'$(CopyToModsFolderOnBuild)' != 'false' and '$(ResearchWriteOptIn)' == 'true'">
         <Error Text=" Godot path must be set up before publishing; Godot not found at path '$(GodotPath)'. Check Directory.Build.props file."
                Condition="'$(GodotPath)' == '' or !Exists('$(GodotPath)')"/>
     </Target>
 
-    <Target Name="GodotPublish" AfterTargets="Publish" Condition="'$(GodotPath)' != '' and Exists('$(GodotPath)') and '$(IsInnerGodotExport)' != 'true'">
+    <Target Name="GodotPublish" AfterTargets="Publish"
+            Condition="'$(GodotPath)' != '' and Exists('$(GodotPath)') and '$(IsInnerGodotExport)' != 'true' and '$(CopyToModsFolderOnBuild)' != 'false' and '$(ResearchWriteOptIn)' == 'true'">
         <Message Text="Exporting Godot .pck to mods folder" Importance="high"/>
-        <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;BasicExport&quot; &quot;$(ModsPath)$(MSBuildProjectName)/$(MSBuildProjectName).pck&quot;"
-              EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"
-              ContinueOnError="WarnAndContinue"/>
+        <PropertyGroup>
+            <_RwPckPath>$(ModsPath)/$(MSBuildProjectName)/$(MSBuildProjectName).pck</_RwPckPath>
+        </PropertyGroup>
+        <Delete Files="$(_RwPckPath)" TreatErrorsAsWarnings="false" />
+        <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;BasicExport&quot; &quot;$(_RwPckPath)&quot;"
+              EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"/>
+        <Error Condition="!Exists('$(_RwPckPath)')"
+               Text="RESEARCH-PCK-DENY [missing]: Godot export-pack 返回 0 但目标 PCK 不存在: $(_RwPckPath). 发布中止, 不得沿用旧 PCK." />
+        <GetFileHash Files="$(_RwPckPath)" Algorithm="SHA256" HashEncoding="hex">
+            <Output TaskParameter="Items" ItemName="_RwPckHashItem" />
+        </GetFileHash>
+        <Error Condition="'@(_RwPckHashItem)' == '' Or '@(_RwPckHashItem->'%(FileHash)')' == 'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855'"
+               Text="RESEARCH-PCK-DENY [empty-or-unreadable]: Godot export-pack 产出为空或不可读; 发布中止." />
     </Target>
 </Project>

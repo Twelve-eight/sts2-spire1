@@ -6,6 +6,8 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using Spire1.Spire1Code.Character;
 using System.Linq;
 
+using Spire1.Spire1Code.Config;
+
 namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Silent - Distraction (Uncommon Skill). Add a random Skill into your hand; it costs 0 this turn. Exhaust (0 cost upgraded).</summary>
@@ -16,6 +18,14 @@ public class Distraction() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, 
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
+        // Cards content group gate (C18 r2, 2026-10-03): this Spire1 card adds the chosen Skill directly through AddGeneratedCardToCombat, so the candidate pool gate cannot close the grant.
+        // Fail closed before any card is constructed or added; the card is not granted.
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Cards))
+        {
+            MainFile.Logger.Warn("[Spire1] Distraction card grant skipped: cards content group is off");
+            return;
+        }
+
         // Pick a random Skill from the owner's card pool (game Distraction idiom).
         var skill = CardFactory.GetDistinctForCombat(Owner,
                 Owner.Character.CardPool.GetUnlockedCards(Owner.UnlockState, Owner.RunState.CardMultiplayerConstraint)

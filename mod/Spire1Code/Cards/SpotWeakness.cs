@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -15,7 +16,13 @@ public class SpotWeakness() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon,
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         if (play.Target?.Monster?.IntendsToAttack == true)
+        {
+            if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+            {
+                return;
+            }
             await CommonActions.ApplySelf<StrengthPower>(choiceContext, this);
+        }
     }
 
     protected override void OnUpgrade() => DynamicVars.Power<StrengthPower>().UpgradeValueBy(1m);

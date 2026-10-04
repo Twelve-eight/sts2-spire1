@@ -66,7 +66,7 @@
 
 ## 4. Repo layout
 ```
-G:/omp works/sts2-spire1/
+G:/omp works/Sts/sts2-spire1/
 +- DEVELOP.md  DEVLOG.md  NuGet.config
 +- mod/    Spire1.csproj  Spire1.json  Directory.Build.props  Sts2PathDiscovery.props  project.godot  export_presets.cfg
 |  +- Spire1Code/ (Character/ Cards/ Relics/ Powers/ Potions/ Monsters/ Encounters/ Acts/ Config/ Extensions/ MainFile.cs)
@@ -216,3 +216,117 @@ Most of the original list is now closed - resolved in session 5 and documented i
 ## 2026-09-23 事件移除与默认注入新契约
 
 用户本轮要求, 原版字节码证据与隔离失败复现见 G:\omp works\Sts\sts2-spire1\docs\DEVELOP-events-20260923.md. 本段不覆盖已有 staged/unstaged 设计记录. 事件默认关闭, 永恒卡牌遵循二代 IsRemovable, 不操作共享配置或 Steam 安装.
+
+
+## 2026-09-28 姿态形态可玩化
+
+本轮当前契约见 docs/DEVELOP-form-playable-20260928.md. 六形态规格沿用 2026-09-26 用户确认值; 默认构建接入, 每局自定义模式入口与 Watcher 可选反射桥接按新契约实现. 旧摘要中的缺研究文件和缺姿态基类判断已由本轮文件检查纠正. 不发布 Workshop, 不写 Steam 或共享配置, 不操作前台窗口.
+
+## 2026-10-02 C01 内容组开关与统一 gate 契约
+
+本轮为 Spire1 建立"总开关 + 按内容组开关 + 单一 gate API"的稳定契约, 供 C02-C07 与后续审查使用. 本节是 2c 节旧开关表在内容组维度上的补充与覆盖; 不修改已有 staged/unstaged 设计记录, 不删除任何 held-back 门禁 (AFTP compat / Debug / Experimental / character.txt 分装).
+
+### 已实现的开关 (Spire1Config)
+
+| 配置键 | 属性 | 默认 | 语义 |
+|---|---|---|---|
+| `EnableSts1Content` | master | true | 关闭时全部组关闭 |
+| `EnableSts1Characters` | 角色可见性 | true | 选人期决策, 不绑定每局快照 |
+| `EnableSts1Cards` | 卡牌 | true | 共享无色池过滤 + 角色池过滤 + 每局快照 |
+| `EnableSts1Relics` | 遗物 | true | 遗物池过滤 + IsAllowed + 每局快照 |
+| `EnableSts1Powers` | 力量/效果 | true | 运行期效果应用入口 + 每局快照 |
+| `EnableSts1Potions` | 药水 | true | 药水池过滤 + 每局快照 |
+| `EnableSts1Events` | 事件 | false | 运行期事件池剥离 + 每局快照 |
+| `RegisterContentNextRun` | 每局登记 | true | 新局创建时快照锁存; 旧存档缺快照按 true |
+
+死开关处置: `ENABLE_STS1_DUNGEON` / `USE_STS1_DUNGEON` 的 eng/zhs 本地化键已删除 (代码中早于 2026-09-10 移除); `EnableSts1Characters` 此前没有消费者, 本轮接到 `CharacterGate.IroncladEnabled/SilentEnabled/DefectEnabled`, 即角色可见性 = 分装标记 AND 总开关 AND 角色组开关.
+
+### 统一 gate API
+
+- `Spire1Config.Spire1ContentGroup` 枚举: `Characters / Cards / Relics / Powers / Potions / Events / Monsters / Encounters / Acts / Scenes`.
+- `Spire1Config.IsEnabled(Spire1ContentGroup)`: 单一查询入口; 未知组与当前无实体的组 (Monsters/Encounters/Acts/Scenes) 一律返回 false (fail closed).
+- 现有计算属性 `CharactersEnabled / CardsEnabled / RelicsEnabled / PowersEnabled / PotionsEnabled / EventsEnabled` 是 API 的实现体; C02-C07 不得再自行组合 AND 链, 也不得修改 `Spire1Config.cs` (单一 gate 文件).
+- `Monsters / Encounters / Acts / Scenes` 在当前产品树中没有实体 (`mod/Spire1Code` 无 Monsters/Encounters/Acts 目录, `mod/Spire1.json` 也未声明); 不创建空开关. 若未来恢复 M2/M3 内容, 必须接入 `IsEnabled` 而不是新增第二套门控.
+
+### 注册入口与运行期入口的双落点
+
+引擎在 `ModelDb.Init` 里对 `AllAbstractModelSubtypes` (含所有 mod 类型) 逐个 `Activator.CreateInstance`, 该时机晚于所有 mod initializer. 因此"关闭组 = 不实例化类"在引擎层不可达; 契约定义如下:
+
+- 注册入口 (MainFile.Phase2 / 内容构造器 / `[Pool]`): 仍无条件注册, 保证旧存档的 ModelId 可解析; 注册本身不决定可见性.
+- 运行期入口 (pool 查询 / 事件池 / 授予路径 / 效果应用): 必须读 `Spire1Config.IsEnabled(group)` 或对应计算属性; 目标方法/字段漂移时 fail closed, 不注册补丁、不放行内容、不把失败记成成功.
+- 每局快照: `Run.Spire1RunContent.ContentActiveThisRun` 由 `RunState.CreateForNewRun` postfix 锁存、`FromSerializable` prefix 恢复、`RunManager.ToSave` postfix 写回 (Patches/Spire1ContentSnapshotPatch.cs). 运行中改设置不改变当前局; 进入/离开菜单与 load/save 不残留上一局状态.
+
+### 兼容与边界
+
+- 配置属性均为 static get/set, 由 BaseLib 自动进 cfg 与 Settings -> Mod Settings; 计算属性带 `[ConfigIgnore]`, 不序列化、不进 UI.
+- eng/zhs `settings_ui.json` 必须为每个配置属性提供 `SPIRE1-<SLUG>.title` 与 `.hover.desc`; 两个文件键集合保持对称.
+- MP: 每局快照随 `SerializableRun` 传输, 双端以房主值为准; 未新增任何同步机制, 也未改动 `mod_configs` 共享文件.
+- 本节不覆盖 C02-C07 各自写集的实现细节; 各代理在自己的报告与 (若允许的) 文档段落里描述具体消费者.
+
+## 2026-10-02 C03 运行期门控契约 (snapshot / shared pool / event filter)
+
+本轮在 C01 的 `Spire1Config.IsEnabled(Spire1ContentGroup)` 单一 gate API 之上, 收紧 Spire1 的每局内容快照与两个运行期过滤器的生命周期和 fail-closed 语义。本节只描述已落盘的运行期契约, 不修改 C01 的开关表, 也不释放任何 held-back 门禁 (AFTP compat / Debug / Experimental / character.txt 分装)。
+
+### 每局快照 (Spire1RunContent + Spire1ContentSnapshotPatch)
+
+- 新局: `RunState.CreateForNewRun` 后缀把 `RegisterContentNextRun` 锁存进 `Spire1RunContent.ContentActiveThisRun`。
+- 读档: `RunState.FromSerializable` 前缀从 `SerializableRun.Modifiers` 里的 `Spire1ContentSnapshotModifier.ContentRegistered` 恢复该局决定; 缺快照的旧存档回落 true (保持既有可见行为, 属于显式设计取舍, 不是静默降级)。后缀把该快照从活动 `RunState.Modifiers` 剥离, 使它不参与玩法修正显示/生效。
+- 保存: `RunManager.ToSave` 后缀先按 id 移除旧快照再重建, 因此反复保存/同帧多次保存都是幂等, 且快照始终反映当前局闩锁。联机读档路径 `RunManager.CanonicalizeSave` 内部经 `RunState.FromSerializable` (其后缀剥离活动局快照) 后用 `runState.Modifiers` 重建 SerializableRun, 因此同样在后缀补写快照, 保证 canonicalize 后不丢失每局登记决定。
+- 离开对局: `RunManager.CleanUp` 前缀记录清理前是否有活动对局, Finalizer 在清理后把闩锁复位为默认 true。这样主菜单/图鉴期间不会保留上一局的 enabled 状态; 每局决定已随存档持久化, 复位不改变任何存档语义, 异常路径同样复位 (幂等)。
+- 关闭组语义: 设置关闭只影响"下一次新局"; 进行中的存档始终以它创建时的快照运行。运行中改设置不改变当前局的确定性池。
+
+### 共享无色池 (Spire1SharedPoolGatePatch)
+
+- gate: `Spire1Config.IsEnabled(Spire1ContentGroup.Cards)`。
+- 目标: 仅从 `CardPoolModel.GetUnlockedCards` 结果中移除 `[Pool(typeof(ColorlessCardPool))]` 的 Spire1 卡; 角色专属池与官方卡不动 (角色池由 C02 的消费者负责)。
+- fail-closed: 类型扫描失败时集合为空, 过滤器不伪造过滤, 原样返回原版结果并记录一次 Error 明确"过滤未生效"; 成功过滤首次记录一次 Info (数量)。日志只描述实际发生的过滤。
+
+### 事件过滤 (Sts1EventToggleFilterPatch)
+
+- gate: `Spire1Config.IsEnabled(Spire1ContentGroup.Events)`。
+- 落点 1: `ActModel.GenerateRooms` 后缀 (进幕生成事件池后剥离 Spire1Event)。
+- 落点 2: `ActModel.PullNextEvent` 前缀 (读档经 `ActModel.FromSave` 直接恢复 RoomSet 不重跑 GenerateRooms, 因此抽取前再过滤一次)。
+- fail-closed: `_rooms` 字段解析失败时以 Error 明确"过滤未生效", 不改变原版行为; 过滤会使事件池变空时保留原池并记录 Error, 避免引擎 `RoomSet.NextEvent` 的 `events[eventsVisited % events.Count]` 除零路径。
+- 日志: 记录 source (GenerateRooms/PullNextEvent)、实际移除数与剩余数; 不做"已过滤"的虚假声明。
+
+### 未覆盖边界
+
+- 本轮不构建、不启动游戏、不部署; 上述契约的实机验证 (新局/读档/返回菜单/事件抽取/无色池奖励) 由主会话集中执行。
+- SpireHeart 仍是 autoAdd:false 的不可达内容, 本轮不改变其可达性。
+
+
+## 2026-10-02 C14 LargeCapsule 旧档加载与 fail-closed 收紧
+
+- `mod/Spire1Code/Patches/Spire1LargeCapsuleGatePatch.cs` 新增 `Player.FromSerializable(SerializablePlayer)` 的严格单目标作用域补丁，以及 `RelicModel.FromSerializable(SerializableRelic)` 的精确实例标记补丁。
+- 普通旧档链虽然以 `silent:false` 进入 `AddRelicInternal`, 现在只有被反序列化方法实际返回的同一 `RelicModel` 引用才能消费放行令牌；FromSerializable 作用域内重入的全新 `RelicCmd.Obtain` 不再能借用宽泛标记。
+- `AsyncLocal` 父作用域、锁保护令牌集合和 Harmony Finalizer 对称清理覆盖嵌套/异常退出；任一目标解析或安装失败都保持 fail-closed。
+- 集中 Release 编译: `Spire1.csproj`, 0 errors / 61 warnings；静态文本检查通过。无正式 Spire1 PCK/digest，未部署、未启动游戏、未通过 Workshop VerifyOnly。
+- 首轮 DeepSeek 路由记录: `global:deepseek-v4.1-flash` / `gateway/wb2api` / `max`。请求的监督路由为 `ovoapi:6.1sol` / `ovoapi` / `xhigh`, 但本轮没有收获其完成标记；不把集中复核冒充监督模型 PASS。
+
+
+## 2026-10-02 C14 r4c silent:true 边界收紧
+
+- 监督发现仅以 `silent:true` 放行会留下公共 `AddRelicInternal` 重入边界。本轮新增 `Player.SyncWithSerializedPlayer(SerializablePlayer)` 的严格 load-context patch，并让 `AddRelicInternal` 只接受 `RelicModel.FromSerializable` 产生的精确引用令牌。
+- 因此普通旧档和多人同步都保持兼容；新的直接 `AddRelicInternal(..., silent:true)`、重入调用和目标漂移路径不再凭参数本身绕过 Cards 关闭时的 fail-closed guard。
+- Release 编译再次通过: 0 errors / 61 warnings。真实 Harmony/旧档/多人运行时仍未验证，未部署到测试副本，未写 Steam 或共享 `mod_configs`。
+
+
+## 2026-10-03 姿态形态 P0 实机闭环与可选依赖复核
+
+当前 Release DLL 已完成中央构建、结构门禁、真实 Watcher 三形态卡路径和部分 mod 交叉启动复核。Calm、Wrath、Divinity 三个隔离 native smoke 场景均通过;Wrath 的 Reaper 证据为目标 `DoomPower=7`。最新依赖门禁确认发布 DLL 的 mod AssemblyRef 只有 `BaseLib`, Watcher/AutoAnthony/AutoAnthonyWatcher 等保持可选反射路径。
+
+交叉挂载五场景也已完成: BaseLib+Spire1 无 Watcher 可初始化, BaseLib+Watcher 无 Spire1 可初始化, BaseLib-only 可启动, Spire1 无 BaseLib 按 manifest 显式拒绝,三 mod 全挂载时 bridge 正常绑定。所有 staging 平面无嵌套 manifest,共享 `mod_configs` 未变化,测试 mods 和 settings 已清理恢复。
+
+证据与边界见 `docs/DEVELOP-form-playable-20260928.md` 及 `docs/reports/form-playable-20260928/`。本结论仍不覆盖可见 UI、视觉、长战斗、存档重载、重连、多人同步、性能和完整平衡。
+
+## 2026-10-03 可选 Mod 交叉挂载契约收紧
+
+- Spire1 的 `Spire1.json` 只声明 `BaseLib`; Watcher、AutoAnthony、AutoAnthonyWatcher、DirectConnectIP、ActsFromThePast 不得出现在发布 DLL 的 mod AssemblyRef 或 manifest 前置项中。
+- 可选能力只允许通过运行时反射和程序集加载观察接入。缺少可选程序集时,Spire1 必须继续完成自身 initializer,并以 disabled/pending/fail-closed 记录能力状态;不得因可选程序集缺失导致 `FileNotFoundException`、`TypeLoadException` 或 ModLoader 级硬前置失败。
+- AssemblyLoad 事件是晚加载的廉价唤醒源。只有 core/partial/registration/unpatch 状态确实需要没有新 AssemblyLoad 也能推进时,才创建周期 Timer 或 fallback thread。Godot/进程退出期间所有通知必须静默退出,不得访问已释放原生对象。
+- 真实部分 Mod 交叉启动矩阵以 `docs/reports/form-playable-20260928/partial-mod-launch-matrix-central-run-r29-20261003.md` 为准;报告中的源码推理、隔离启动日志和实机行为必须分开表述。
+## 2026-10-03 交叉挂载后的退出生命周期契约
+
+- `AssemblyLoad` 订阅必须与 `ProcessExit` 共享串行 gate。入口快速检查不能替代 gate 内二次检查,否则 in-flight unsettled Apply 可能在 shutdown 标记后重新订阅。
+- Retry timer/fallback thread 的失败 bookkeeping 不得在 AssemblyLoad gate 内调用会锁 RetryGate 的路径,避免 shutdown 时锁反转。所有退出期间回调必须 fail-closed。
+- 最终 Release 与 r30 隔离矩阵证据以 `docs/reports/form-playable-20260928/partial-mod-launch-matrix-central-run-r30-20261003.md` 为准;此前 r29 是修复前的基线,不再作为最终产物证据。

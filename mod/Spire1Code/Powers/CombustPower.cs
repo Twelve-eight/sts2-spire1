@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -34,6 +35,10 @@ public class CombustPower : CustomPowerModel
     {
         if (!participants.Contains(Owner))
             return;
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
         Flash();
         await CreatureCmd.Damage(choiceContext, Owner, Amount, ValueProp.Unblockable | ValueProp.Unpowered | ValueProp.Move, Owner);
         await CreatureCmd.Damage(choiceContext, Owner.CombatState.HittableEnemies, Amount * DynamicVars.Damage.BaseValue, ValueProp.Unpowered, Owner);

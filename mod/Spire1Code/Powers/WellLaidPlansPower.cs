@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using System.Linq;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -31,6 +32,10 @@ public class WellLaidPlansPower : CustomPowerModel
     {
         if (!participants.Contains(Owner))
             return;
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
         Flash();
         var prefs = new CardSelectorPrefs(new LocString("cards", "SPIRE1-WELL_LAID_PLANS.selectionScreenPrompt"), 0, Amount);
         var picked = (await CardSelectCmd.FromHand(choiceContext, Owner.Player, prefs, null, this)).ToList();

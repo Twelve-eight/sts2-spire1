@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Spire1.Spire1Code.Character;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -19,6 +20,10 @@ public class BulletTime() : Spire1Card(3, CardType.Skill, CardRarity.Rare, Targe
             {
                 card.SetToFreeThisTurn();
             }
+        }
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
         }
         await CommonActions.ApplySelf<NoDrawPower>(choiceContext, this, 1m);
     }

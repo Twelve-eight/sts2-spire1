@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Relics;
 
@@ -69,6 +70,12 @@ public class MutagenicStrength : Spire1Relic
 
     public override async Task BeforeCombatStart()
     {
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            // Powers group off: never grant the +3, and keep StrengthGranted false so the
+            // matching end-of-turn -3 cannot fire either (no orphan subtraction).
+            return;
+        }
         Flash();
         await PowerCmd.Apply<StrengthPower>(
             new ThrowingPlayerChoiceContext(), Owner.Creature, DynamicVars.Strength.BaseValue, Owner.Creature, null);
@@ -83,6 +90,9 @@ public class MutagenicStrength : Spire1Relic
         if (Owner.PlayerCombatState?.TurnNumber != 1)
             return;
         StrengthGranted = false;
+        // The paired -3 is the wind-down of the +3 granted at combat start; it must stay unconditional
+        // (C08 rule: offset <= 0 removals are never gated) so a mid-combat toggle-off cannot freeze a
+        // permanent +3. It only ever fires when StrengthGranted was set, i.e. the +3 really went on.
         Flash();
         // StrengthPower.AllowNegative is true (StrengthPower.cs:12), so this is a real -3, exactly like
         // LoseStrengthPower, and can push the player below 0 Strength if they started the combat debuffed.

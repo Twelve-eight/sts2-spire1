@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using Spire1.Spire1Code.Character;
 using Spire1.Spire1Code.Powers;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -14,7 +15,13 @@ public class StaticDischarge() : Spire1Card(1, CardType.Power, CardRarity.Uncomm
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<StaticDischargePower>(1)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
-        => await CommonActions.ApplySelf<StaticDischargePower>(choiceContext, this);
+    {
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
+        await CommonActions.ApplySelf<StaticDischargePower>(choiceContext, this);
+    }
 
     protected override void OnUpgrade() => DynamicVars.Power<StaticDischargePower>().UpgradeValueBy(1m);
 }

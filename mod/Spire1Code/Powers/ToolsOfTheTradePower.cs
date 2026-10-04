@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using System.Linq;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -24,7 +25,7 @@ public class ToolsOfTheTradePower : CustomPowerModel
     // turn-start hand draw, then the discard happens after the turn starts (needs a real choice context).
     public override decimal ModifyHandDraw(Player player, decimal count)
     {
-        if (player != Owner.Player)
+        if (player != Owner.Player || !Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
             return count;
         return count + Amount;
     }
@@ -33,6 +34,10 @@ public class ToolsOfTheTradePower : CustomPowerModel
     {
         if (player != Owner.Player)
             return;
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
         var picked = (await CardSelectCmd.FromHandForDiscard(choiceContext, player, new CardSelectorPrefs(CardSelectorPrefs.DiscardSelectionPrompt, Amount), null, this)).ToList();
         if (picked.Count != 0)
         {

@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Rooms;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Relics;
 
@@ -85,6 +86,8 @@ public class Kunai : Spire1Relic
         if (AttacksPlayedThisTurn % DynamicVars.Cards.IntValue == 0)
         {
             TaskHelper.RunSafely(DoActivateVisuals());
+            if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+                return;
             await PowerCmd.Apply<DexterityPower>(choiceContext, Owner.Creature, DynamicVars.Dexterity.BaseValue, Owner.Creature, null);
         }
     }

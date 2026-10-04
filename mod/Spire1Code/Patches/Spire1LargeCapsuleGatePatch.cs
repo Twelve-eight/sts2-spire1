@@ -90,6 +90,10 @@ namespace Spire1.Spire1Code.Patches;
 /// the engine Basic card cannot be resolved. It never calls the original helper in that state. The helper
 /// fast path keeps its existing fail-closed abort. The fallback preserves the vanilla
 /// TestMode/Deprived behavior for Spire1 characters by reproducing the same engine cards.
+/// C14 r14: the helper fast path additionally requires the direct AfterObtained operation-scope
+/// patch (layer 8) to be proven mounted, so a direct virtual call cannot complete an engine
+/// AllCards read while the live gate could have been toggled open mid-call. The primary
+/// replacement remains independently complete without the scope patch.
 /// Mount state is only recorded from [HarmonyCleanup] after a successful install; a target that
 /// was not resolved or whose installation threw is never reported as installed. A missing,
 /// ambiguous or drifted AddRelicInternal early guard additionally invalidates every closed-gate
@@ -309,24 +313,29 @@ internal static class Spire1LargeCapsuleGate
         => character is Spire1Ironclad or Spire1Silent or Spire1Defect;
 
     /// <summary>
-    /// C14 r3/r6: true when no closed-gate path can read character.CardPool.AllCards. The
+    /// C14 r3/r6/r14: true when no closed-gate path can read character.CardPool.AllCards. The
     /// AddRelicInternal early guard MUST be mounted first, because it is the only layer that
     /// stops the new-run PopulateRelics path before the relic is added; while it is missing,
     /// no other layer counts as a complete replacement. Given the guard, there are exactly two
-    /// sufficient proofs:
+    /// sufficient proofs (r14: both are evaluated through the single-read snapshot below, so a
+    /// concurrent install cannot produce a torn proof):
     /// (a) the AfterObtained prefix is mounted: it replaces the whole engine method body for the
     ///     three Spire1 placeholder characters while the cards group is closed, so
     ///     GetStrikeForCharacter / GetDefendForCharacter are never called - this holds for both
     ///     RelicCmd.Obtain (RelicCmd.cs:53) and RunManager.FinalizeStartingRelics
     ///     (RunManager.cs:735), which is why the RelicCmd.Obtain funnel alone is NOT sufficient;
-    /// (b) the AfterObtained prefix is NOT mounted, but BOTH helper prefixes are: the engine body
-    ///     runs, yet each of its two AllCards reads is intercepted and replaced before execution.
+    /// (b) the AfterObtained prefix is NOT mounted, but BOTH helper prefixes are AND the direct
+    ///     AfterObtained operation-scope patch is mounted: the engine body runs, yet each of its
+    ///     two AllCards reads is intercepted and replaced before execution, and the direct
+    ///     AfterObtained call carries the frozen gate snapshot the helper prefixes read. r14: the
+    ///     scope patch is part of this proof because without it a direct virtual AfterObtained
+    ///     call has no EnterScoped and a mid-call toggle could make the helper prefixes observe a
+    ///     live-open gate. The scope patch is NOT required for proof (a): the primary replacement
+    ///     never calls the engine helper at all and is independently complete.
     /// A single mounted helper is never sufficient (the unmounted sibling still reads AllCards).
     /// </summary>
     internal static bool HasCompleteClosedGateReplacement
-        => AddRelicInternalGuardMounted
-           && (AfterObtainedGateMounted
-               || (StrikeHelperMounted && DefendHelperMounted));
+        => HasClosedGateReplacementProofSnapshot(out _);
 
     internal static bool TryReplaceBasic(
         CharacterModel character,
@@ -351,9 +360,9 @@ internal static class Spire1LargeCapsuleGate
         // guard must be part of that proof (r6): without the AddRelicInternal early guard, the
         // new-run FinalizeStartingRelics path can reach the engine body before any funnel or
         // sibling helper applies. Refuse the grant instead of completing it.
-        if (!HasCompleteClosedGateReplacement)
+        if (!HasClosedGateReplacementProofSnapshot(out string proof))
         {
-            LogPartialCoverageBlockOnce(character, tag);
+            LogPartialCoverageBlockOnce(character, tag, proof);
             throw new InvalidOperationException(
                 $"[Spire1] LargeCapsule gate refused to grant a card for {character.GetType().Name}: " +
                 "no complete closed-gate replacement is proven mounted.");
@@ -475,6 +484,15 @@ internal static class Spire1LargeCapsuleGate
         _ => throw new InvalidOperationException("not a Spire1 character"),
     };
 
+    /// <summary>
+    /// C14 r12: true only when the canonical Spire1 deck-grant subscriber is proven present in
+    /// ModHelper._runHookSubscribers. The probe is read-only and never mutates the engine list.
+    /// While this is false, no closed-gate path may rely on the model-level ShouldAddToDeck
+    /// boundary, so the lifecycle gates treat the replacement proof as incomplete.
+    /// </summary>
+    internal static bool DeckGrantSubscriberConfirmed =>
+        Spire1.Spire1Code.Cards.Spire1DeckGrantGuard.IsSubscriberConfirmed;
+
     internal static void RecordAfterObtainedGateMounted()
     {
         AfterObtainedGateMounted = true;
@@ -498,6 +516,23 @@ internal static class Spire1LargeCapsuleGate
         FinalizeStartingRelicsGateMounted = true;
         MainFile.Logger.Info("[Spire1] LargeCapsule gate: RunManager.FinalizeStartingRelics fail-closed guard installed (single target).");
     }
+    /// <summary>
+    /// C14 r12/r14: set only from [HarmonyCleanup] of the direct AfterObtained scope patch after a
+    /// successful install. Since r14 this flag is part of the helper-fallback completeness proof:
+    /// without the scope patch a direct public virtual AfterObtained call has no EnterScoped and a
+    /// mid-call settings toggle could make a helper prefix complete the engine AllCards read under
+    /// a live-open gate. The primary AfterObtained replacement does not require this flag because
+    /// it replaces the whole engine body.
+    /// </summary>
+    internal static bool AfterObtainedScopePatchMounted;
+
+    internal static void RecordAfterObtainedScopePatchMounted()
+    {
+        AfterObtainedScopePatchMounted = true;
+        MainFile.Logger.Info(
+            "[Spire1] LargeCapsule gate: direct AfterObtained operation-scope patch installed (single target).");
+    }
+
     internal static void RecordAfterObtainedSafetyGateMounted()
     {
         AfterObtainedSafetyGateMounted = true;
@@ -520,11 +555,18 @@ internal static class Spire1LargeCapsuleGate
     }
 
     /// <summary>
-    /// C14 r10: one consistent snapshot of the closed-gate replacement proof. Each mount flag is
-    /// read exactly once so a concurrent installation cannot produce a torn proof. The r7 safety
-    /// boundary's own mount state is deliberately NOT part of this proof (r9b supervisor
+    /// C14 r10/r14: one consistent snapshot of the closed-gate replacement proof. Each mount flag
+    /// is read exactly once so a concurrent installation cannot produce a torn proof. The r7
+    /// safety boundary's own mount state is deliberately NOT part of this proof (r9b supervisor
     /// SUP-C14-P0-02): a boundary cannot certify the very completeness it protects, so including
     /// it would be a self-trust loop. Safety remains an independent interceptor only.
+    /// <para>
+    /// C14 r14: the direct AfterObtained scope patch mount is part of the helper-fallback proof.
+    /// Without that patch, a direct public virtual AfterObtained call has no EnterScoped, so a
+    /// mid-call settings toggle could make a helper prefix read a live-open gate and complete the
+    /// engine AllCards read. The primary replacement (AfterObtainedGateMounted) does not require
+    /// the scope patch: it replaces the whole engine body and never calls the engine helpers.
+    /// </para>
     /// <para>
     /// This proof is also no longer the only closed-gate guarantee. Spire1Card.Tags carries a
     /// patch-independent total fuse that reads the atomic Cards gate at the engine point of use,
@@ -536,14 +578,18 @@ internal static class Spire1LargeCapsuleGate
     /// </summary>
     internal static bool HasClosedGateReplacementProofSnapshot(out string detail)
     {
+        bool subscriber = DeckGrantSubscriberConfirmed;
         bool addGuard = Volatile.Read(ref AddRelicInternalGuardMounted);
         bool primary = Volatile.Read(ref AfterObtainedGateMounted);
         bool strike = Volatile.Read(ref StrikeHelperMounted);
         bool defend = Volatile.Read(ref DefendHelperMounted);
-        bool complete = addGuard && (primary || (strike && defend));
+        bool scope = Volatile.Read(ref AfterObtainedScopePatchMounted);
+        bool complete = subscriber
+                        && addGuard
+                        && (primary || (strike && defend && scope));
         detail =
-            $"earlyGuard={addGuard}, afterObtained={primary}, " +
-            $"strikeHelper={strike}, defendHelper={defend}";
+            $"subscriber={subscriber}, earlyGuard={addGuard}, afterObtained={primary}, " +
+            $"strikeHelper={strike}, defendHelper={defend}, scopePatch={scope}";
         return complete;
     }
 
@@ -561,16 +607,17 @@ internal static class Spire1LargeCapsuleGate
             "AllCards grant is never reached.");
     }
 
-    internal static void LogLifecycleObtainBlockedOnce(CharacterModel character, string detail)
+    internal static void LogLifecycleObtainBlockedOnce(CharacterModel? character, string detail)
     {
         if (_lifecycleObtainBlockedLogged)
         {
             return;
         }
         _lifecycleObtainBlockedLogged = true;
+        string shape = character is null ? "the target shape" : character.GetType().Name;
         MainFile.Logger.Error(
             "[Spire1] LargeCapsule gate BLOCKED at RelicCmd.Obtain (independent lifecycle boundary): " +
-            $"no closed-gate replacement proof is available ({detail}) while {character.GetType().Name} " +
+            $"no closed-gate replacement proof is available ({detail}) while {shape} " +
             "is a Spire1 placeholder and the cards content group is off. The engine AllCards grant is " +
             "never reached.");
     }
@@ -582,14 +629,30 @@ internal static class Spire1LargeCapsuleGate
             return;
         }
         _afterObtainedSafetyBlockedLogged = true;
+        HasClosedGateReplacementProofSnapshot(out string proof);
         MainFile.Logger.Error(
             "[Spire1] LargeCapsule gate BLOCKED at LargeCapsule.AfterObtained (safety boundary): " +
-            "no complete closed-gate replacement is proven mounted " +
-            $"(afterObtained={AfterObtainedGateMounted}, strikeHelper={StrikeHelperMounted}, " +
-            $"defendHelper={DefendHelperMounted}, earlyGuard={AddRelicInternalGuardMounted}, " +
-            $"finalizeStartingRelics={FinalizeStartingRelicsGateMounted}); refusing to run the engine body " +
-            $"for {character.GetType().Name} while the cards content group is off. " +
+            $"no complete closed-gate replacement is proven mounted ({proof}); refusing to run the " +
+            $"engine body for {character.GetType().Name} while the cards content group is off. " +
             "The engine AllCards grant is never reached.");
+    }
+
+    /// <summary>
+    /// C14 r12: abnormal-shape variant. Used when the relic Owner / Owner.Character cannot be
+    /// read at all; the caller has already committed to a faulted Task, so this only records
+    /// the one-time error and never needs a CharacterModel.
+    /// </summary>
+    internal static void LogAfterObtainedSafetyBlockedOnce(string detail)
+    {
+        if (_afterObtainedSafetyBlockedLogged)
+        {
+            return;
+        }
+        _afterObtainedSafetyBlockedLogged = true;
+        MainFile.Logger.Error(
+            "[Spire1] LargeCapsule gate BLOCKED at LargeCapsule.AfterObtained (safety boundary): " +
+            $"the relic owner shape is abnormal ({detail}); refusing to run the engine body while " +
+            "the cards content group is off. The engine AllCards grant is never reached.");
     }
 
     internal static void LogFinalizeStartingRelicsBlockedOnce(CharacterModel character, string missing)
@@ -735,9 +798,13 @@ internal static class Spire1LargeCapsuleGate
                     $"RunState.Players[{i}].Character could not be read safely.", e);
             }
 
-            if (character is null || !IsSpire1Character(character))
+            // C14 r12 fail-closed: a null Character is an abnormal run-state shape. It may not
+            // be treated as "no holder"; the engine body would iterate this same player's Relics.
+            if (character is null)
             {
-                continue;
+                LogFinalizeStartingRelicsReadFailedOnce($"RunState.Players[{i}].Character was null");
+                throw new InvalidOperationException(
+                    $"[Spire1] LargeCapsule gate refused to finalize starting relics: RunState.Players[{i}] had a null Character.");
             }
 
             IReadOnlyList<RelicModel> relics;
@@ -772,14 +839,21 @@ internal static class Spire1LargeCapsuleGate
                 if (relic is null)
                 {
                     LogFinalizeStartingRelicsReadFailedOnce(
-                        $"Spire1 player ({character.GetType().Name}) Relics[{r}] was null");
+                        $"player ({character.GetType().Name}) Relics[{r}] was null");
                     throw new InvalidOperationException(
-                        "[Spire1] LargeCapsule gate refused to finalize starting relics: the " +
-                        $"target Spire1 player's Relics[{r}] was null.");
+                        $"[Spire1] LargeCapsule gate refused to finalize starting relics: the player's Relics[{r}] was null.");
                 }
 
                 if (relic is LargeCapsule)
                 {
+                    if (!IsSpire1Character(character))
+                    {
+                        // A non-Spire1 holder does not trigger the gate; its shape is still
+                        // validated above so an abnormal non-target slot can never be silently
+                        // treated as safe.
+                        continue;
+                    }
+
                     return character;
                 }
             }
@@ -838,24 +912,25 @@ internal static class Spire1LargeCapsuleGate
             $"{character.GetType().Name} ({detail}); the grant is aborted and the original helper is not called.");
     }
 
-    internal static void LogFunnelBlockedOnce(CharacterModel character)
+    internal static void LogFunnelBlockedOnce(CharacterModel? character)
     {
         if (_funnelBlockedLogged)
         {
             return;
         }
         _funnelBlockedLogged = true;
+        string shape = character is null ? "the target shape" : character.GetType().Name;
         MainFile.Logger.Error(
             "[Spire1] LargeCapsule gate BLOCKED: no complete closed-gate replacement is proven mounted " +
             $"(afterObtained={AfterObtainedGateMounted}, funnel={FunnelGateMounted}, " +
             $"strikeHelper={StrikeHelperMounted}, defendHelper={DefendHelperMounted}, " +
             $"earlyGuard={AddRelicInternalGuardMounted}, finalizeStartingRelics={FinalizeStartingRelicsGateMounted}, " +
-            $"safety={AfterObtainedSafetyGateMounted}); " +
-            $"refusing to obtain LargeCapsule for {character.GetType().Name} while the cards content group is off. " +
+            $"safety={AfterObtainedSafetyGateMounted}, subscriber={DeckGrantSubscriberConfirmed}); " +
+            $"refusing to obtain LargeCapsule for {shape} while the cards content group is off. " +
             "The engine AllCards grant is never reached.");
     }
 
-    internal static void LogPartialCoverageBlockOnce(CharacterModel character, CardTag tag)
+    internal static void LogPartialCoverageBlockOnce(CharacterModel character, CardTag tag, string detail)
     {
         if (_partialCoverageBlockedLogged)
         {
@@ -864,8 +939,9 @@ internal static class Spire1LargeCapsuleGate
         _partialCoverageBlockedLogged = true;
         MainFile.Logger.Error(
             $"[Spire1] LargeCapsule gate BLOCKED ({tag}) for {character.GetType().Name}: " +
-            "the AddRelicInternal early guard, the AfterObtained layer or a helper prefix is missing; " +
-            "no complete closed-gate replacement is proven, so the engine AllCards grant is refused.");
+            $"the AddRelicInternal early guard, the AfterObtained layer, a helper prefix or the " +
+            $"direct scope patch is missing; no complete closed-gate replacement is proven " +
+            $"({detail}), so the engine AllCards grant is refused.");
     }
 }
 
@@ -1237,8 +1313,28 @@ internal static class Spire1LargeCapsuleAfterObtainedPatch
             return true;
         }
 
-        CharacterModel? character = __instance.Owner?.Character;
-        if (character is null || !Spire1LargeCapsuleGate.IsSpire1Character(character))
+        // C14 r12: null Owner / Owner.Character are abnormal shapes. Fail closed with a faulted
+        // task instead of treating them as "not the target" and letting the engine body run.
+        CharacterModel? character;
+        try
+        {
+            character = __instance.Owner?.Character;
+        }
+        catch (Exception e)
+        {
+            throw new InvalidOperationException(
+                "[Spire1] LargeCapsule gate refused to replace AfterObtained: the relic Owner " +
+                $"could not be read safely ({e.GetType().Name}).", e);
+        }
+
+        if (character is null)
+        {
+            throw new InvalidOperationException(
+                "[Spire1] LargeCapsule gate refused to replace AfterObtained: the relic Owner or " +
+                "Owner.Character was null while the cards content group is off.");
+        }
+
+        if (!Spire1LargeCapsuleGate.IsSpire1Character(character))
         {
             return true;
         }
@@ -1417,8 +1513,31 @@ internal static class Spire1LargeCapsuleAfterObtainedSafetyPatch
 
         // Closed group: scope is exactly the three Spire1 placeholder characters, mirroring the
         // primary layer. Vanilla characters and other mods keep the engine behavior.
-        CharacterModel? character = __instance?.Owner?.Character;
-        if (character is null || !Spire1LargeCapsuleGate.IsSpire1Character(character))
+        // C14 r12: null Owner / Owner.Character must fail closed, never pass as non-target.
+        CharacterModel? character;
+        try
+        {
+            character = __instance?.Owner?.Character;
+        }
+        catch (Exception e)
+        {
+            Spire1LargeCapsuleGate.LogAfterObtainedSafetyBlockedOnce("null Owner/Character");
+            __result = Task.FromException(new InvalidOperationException(
+                "[Spire1] LargeCapsule gate refused to run the engine AfterObtained body: the " +
+                $"relic Owner could not be read safely ({e.GetType().Name}).", e));
+            return false;
+        }
+
+        if (character is null)
+        {
+            Spire1LargeCapsuleGate.LogAfterObtainedSafetyBlockedOnce("null Owner/Character");
+            __result = Task.FromException(new InvalidOperationException(
+                "[Spire1] LargeCapsule gate refused to run the engine AfterObtained body: the " +
+                "relic Owner or Owner.Character was null while the cards content group is off."));
+            return false;
+        }
+
+        if (!Spire1LargeCapsuleGate.IsSpire1Character(character))
         {
             return true;
         }
@@ -1441,6 +1560,139 @@ internal static class Spire1LargeCapsuleAfterObtainedSafetyPatch
             "closed-gate replacement is proven mounted while a Spire1 placeholder owns a " +
             "LargeCapsule and the cards content group is off; the engine AllCards grant is never reached."));
         return false;
+    }
+}
+
+/// <summary>
+/// C14 r12 independent operation snapshot, single target: the same public virtual
+/// LargeCapsule.AfterObtained method. This class exists only to own the gate-decision scope for
+/// DIRECT callers of the public virtual method (third-party or future engine callers that never
+/// pass through RunManager.FinalizeStartingRelics or RelicCmd.Obtain). Without it those callers
+/// would read the live gate at every point of the body and could observe a mid-call settings
+/// toggle. The scope patch runs at the highest prefix priority so the frozen decision exists
+/// before the r7 safety prefix and the primary replacement prefix evaluate anything, and its
+/// finalizer restores the caller context after the kickoff returns. The async body's await
+/// continuations captured the entered AsyncLocal value, so the whole operation keeps one
+/// decision (normal, faulted or canceled completion).
+/// </summary>
+[HarmonyPatch]
+internal static class Spire1LargeCapsuleAfterObtainedScopePatch
+{
+    private static bool _targetResolved;
+    private static MethodInfo? _target;
+    private static bool _targetVerified;
+
+    private static MethodInfo? Target
+    {
+        get
+        {
+            if (!_targetResolved)
+            {
+                _targetResolved = true;
+                _target = Resolve();
+            }
+            return _target;
+        }
+    }
+
+    private static MethodInfo? Resolve()
+    {
+        try
+        {
+            MethodInfo[] candidates = AccessTools.GetDeclaredMethods(typeof(LargeCapsule))
+                .Where(m => m.Name == nameof(LargeCapsule.AfterObtained))
+                .ToArray();
+            if (candidates.Length != 1)
+            {
+                return null;
+            }
+
+            MethodInfo method = candidates[0];
+            return Spire1LargeCapsuleGate.IsExpectedAfterObtainedSignature(method) ? method : null;
+        }
+        catch (Exception e)
+        {
+            MainFile.Logger.Error(
+                "[Spire1] LargeCapsule AfterObtained scope patch NOT mounted: target resolution " +
+                $"threw ({e.GetType().Name}: {e.Message}).");
+            return null;
+        }
+    }
+
+    [HarmonyPrepare]
+    private static bool Prepare()
+    {
+        _targetVerified = false;
+        if (Target is null)
+        {
+            MainFile.Logger.Error(
+                "[Spire1] LargeCapsule AfterObtained scope patch NOT mounted: target was missing, " +
+                "ambiguous or drifted; direct AfterObtained calls have no frozen gate decision.");
+            return false;
+        }
+        _targetVerified = true;
+        return true;
+    }
+
+    [HarmonyCleanup]
+    private static void Cleanup(Exception? __exception)
+    {
+        if (!_targetVerified)
+        {
+            return;
+        }
+        if (__exception is null)
+        {
+            Spire1LargeCapsuleGate.RecordAfterObtainedScopePatchMounted();
+            return;
+        }
+        MainFile.Logger.Error(
+            "[Spire1] LargeCapsule AfterObtained scope patch NOT mounted: installation threw " +
+            $"({__exception.GetType().Name}: {__exception.Message}).");
+    }
+
+    [HarmonyTargetMethod]
+    private static MethodInfo TargetMethod() => Target!;
+
+    // Priority.First (800) runs before the r7 safety boundary's Priority.First because this
+    // patch is applied later and Harmony orders equal priorities by patch index (the later
+    // index sorts first). The scope must exist before any gate prefix reads the snapshot.
+    // Only the three Spire1 placeholder identities enter the operation scope; vanilla and
+    // other-mod characters keep the original engine behavior byte-for-byte. 900 is above
+    // Priority.First (800) so the scope prefix always runs before the r7 safety boundary's
+    // Priority.First prefix regardless of patch index tie-breaking.
+    [HarmonyPriority(900)]
+    [HarmonyPrefix]
+    private static void EnterScope(LargeCapsule __instance, out Spire1CardsGateSnapshot.SnapshotToken __state)
+    {
+        bool entered = false;
+        try
+        {
+            CharacterModel? character = __instance?.Owner?.Character;
+            entered = character is not null && Spire1LargeCapsuleGate.IsSpire1Character(character);
+        }
+        catch (Exception)
+        {
+            // An abnormal owner shape is handled (fail closed) by the gate prefixes; the scope
+            // itself stays inactive so the exception is reported there, not masked here.
+            entered = false;
+        }
+
+        __state = entered
+            ? Spire1CardsGateSnapshot.EnterScoped(Spire1Config.LiveCardsGateClosed)
+            : default;
+    }
+
+    [HarmonyPriority(Priority.Last)]
+    [HarmonyFinalizer]
+    private static Exception? ExitScope(Exception? __exception, Spire1CardsGateSnapshot.SnapshotToken __state)
+    {
+        // The kickoff prefix entered the scope in the caller's execution context. The async
+        // body captured that context; restoring here removes the nested depth from the caller
+        // so no other call on the same context observes the operation scope. A default token
+        // (scope not entered, e.g. vanilla owner) restores to a no-op.
+        Spire1CardsGateSnapshot.Restore(__state);
+        return __exception;
     }
 }
 
@@ -1667,13 +1919,46 @@ internal static class Spire1LargeCapsuleObtainFunnelPatch
             return true;
         }
 
-        if (relic is not LargeCapsule || player is null)
+        if (relic is not LargeCapsule)
         {
             return true;
         }
 
-        CharacterModel? character = player.Character;
-        if (character is null || !Spire1LargeCapsuleGate.IsSpire1Character(character))
+        // C14 r12: a null player or an unreadable/null Character is an abnormal shape for a
+        // LargeCapsule obtain; fail closed instead of letting the engine dereference it.
+        if (player is null)
+        {
+            Spire1LargeCapsuleGate.LogFunnelBlockedOnce(null);
+            __result = Task.FromException<RelicModel>(new InvalidOperationException(
+                "[Spire1] LargeCapsule gate refused to obtain the relic: the player argument was " +
+                "null while the cards content group is off."));
+            return false;
+        }
+
+        CharacterModel? character;
+        try
+        {
+            character = player.Character;
+        }
+        catch (Exception e)
+        {
+            Spire1LargeCapsuleGate.LogFunnelBlockedOnce(null);
+            __result = Task.FromException<RelicModel>(new InvalidOperationException(
+                "[Spire1] LargeCapsule gate refused to obtain the relic: the player Character " +
+                $"could not be read safely ({e.GetType().Name}) while the cards content group is off.", e));
+            return false;
+        }
+
+        if (character is null)
+        {
+            Spire1LargeCapsuleGate.LogFunnelBlockedOnce(null);
+            __result = Task.FromException<RelicModel>(new InvalidOperationException(
+                "[Spire1] LargeCapsule gate refused to obtain the relic: the player Character was " +
+                "null while the cards content group is off."));
+            return false;
+        }
+
+        if (!Spire1LargeCapsuleGate.IsSpire1Character(character))
         {
             return true;
         }
@@ -1963,8 +2248,26 @@ internal static class Spire1LargeCapsuleAddRelicInternalPatch
             return true;
         }
 
-        CharacterModel? character = __instance?.Character;
-        if (character is null || !Spire1LargeCapsuleGate.IsSpire1Character(character))
+        CharacterModel? character;
+        try
+        {
+            character = __instance?.Character;
+        }
+        catch (Exception e)
+        {
+            throw new InvalidOperationException(
+                "[Spire1] LargeCapsule gate refused to obtain the relic at Player.AddRelicInternal: " +
+                $"the player Character could not be read safely ({e.GetType().Name}).", e);
+        }
+
+        if (character is null)
+        {
+            throw new InvalidOperationException(
+                "[Spire1] LargeCapsule gate refused to obtain the relic at Player.AddRelicInternal: " +
+                "the player Character was null while the cards content group is off.");
+        }
+
+        if (!Spire1LargeCapsuleGate.IsSpire1Character(character))
         {
             return true;
         }
@@ -2266,9 +2569,20 @@ internal static class Spire1LargeCapsuleObtainLifecycleGatePatch
         // Hot path: every relic obtain. Non-LargeCapsule obtains pay only this type check and
         // never touch the snapshot scope; the config and character checks run only for the one
         // relic type this gate protects.
-        if (relic is not LargeCapsule || player is null)
+        if (relic is not LargeCapsule)
         {
             return true;
+        }
+
+        // C14 r12: a null player is an abnormal shape for a LargeCapsule obtain. The engine
+        // would dereference it immediately; fail closed with a faulted task instead.
+        if (player is null)
+        {
+            Spire1LargeCapsuleGate.LogLifecycleObtainBlockedOnce(null, "player=null");
+            __result = Task.FromException<RelicModel>(new InvalidOperationException(
+                "[Spire1] LargeCapsule gate refused to obtain the relic at RelicCmd.Obtain: the " +
+                "player argument was null while the cards content group is off."));
+            return false;
         }
 
         // C14 r11: freeze one gate decision for this whole obtain. The scope also covers the
@@ -2283,8 +2597,30 @@ internal static class Spire1LargeCapsuleObtainLifecycleGatePatch
             return true;
         }
 
-        CharacterModel? character = player.Character;
-        if (character is null || !Spire1LargeCapsuleGate.IsSpire1Character(character))
+        CharacterModel? character;
+        try
+        {
+            character = player.Character;
+        }
+        catch (Exception e)
+        {
+            Spire1LargeCapsuleGate.LogLifecycleObtainBlockedOnce(null, $"character threw {e.GetType().Name}");
+            __result = Task.FromException<RelicModel>(new InvalidOperationException(
+                "[Spire1] LargeCapsule gate refused to obtain the relic at RelicCmd.Obtain: the " +
+                "player Character could not be read safely while the cards content group is off.", e));
+            return false;
+        }
+
+        if (character is null)
+        {
+            Spire1LargeCapsuleGate.LogLifecycleObtainBlockedOnce(null, "player.Character was null");
+            __result = Task.FromException<RelicModel>(new InvalidOperationException(
+                "[Spire1] LargeCapsule gate refused to obtain the relic at RelicCmd.Obtain: the " +
+                "player Character was null while the cards content group is off."));
+            return false;
+        }
+
+        if (!Spire1LargeCapsuleGate.IsSpire1Character(character))
         {
             return true;
         }

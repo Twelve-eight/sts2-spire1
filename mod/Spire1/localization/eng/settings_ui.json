@@ -11,12 +11,12 @@
   "SPIRE1-ENABLE_STS1_RELICS.title": "StS1 Relics",
   "SPIRE1-ENABLE_STS1_RELICS.hover.title": "StS1 Relics",
   "SPIRE1-ENABLE_STS1_RELICS.hover.desc": "Inject StS1 relics into the shared reward pools.",
-  "SPIRE1-ENABLE_STS1_DUNGEON.title": "StS1 Dungeon Content",
-  "SPIRE1-ENABLE_STS1_DUNGEON.hover.title": "StS1 Dungeon Content",
-  "SPIRE1-ENABLE_STS1_DUNGEON.hover.desc": "Register the StS1 dungeon acts, monsters and encounters. Does NOT change what a new run plays by itself - see the next option.",
-  "SPIRE1-USE_STS1_DUNGEON.title": "Play StS1 Dungeon",
-  "SPIRE1-USE_STS1_DUNGEON.hover.title": "Play StS1 Dungeon",
-  "SPIRE1-USE_STS1_DUNGEON.hover.desc": "The next NEW singleplayer run plays the StS1 act sequence instead of the StS2 acts. Off by default so installing this mod never silently changes a vanilla run. Multiplayer is not affected.",
+  "SPIRE1-ENABLE_STS1_POWERS.title": "StS1 Powers",
+  "SPIRE1-ENABLE_STS1_POWERS.hover.title": "StS1 Powers",
+  "SPIRE1-ENABLE_STS1_POWERS.hover.desc": "Allow StS1 custom power models to be applied during a run. When OFF, this gate blocks StS1 custom powers and PowerCmd effects whose cardSource is a Spire1 card, including vanilla power effects triggered by Spire1 cards (for example Strength or Poison). It does not block unrelated vanilla powers or effects from other mods' cards. Default ON, matching the behavior before this switch existed. Read at effect application time and snapshotted per run: changing it only affects runs started afterwards, and loading a save always uses that save's value.",
+  "SPIRE1-ENABLE_STS1_POTIONS.title": "StS1 Potions",
+  "SPIRE1-ENABLE_STS1_POTIONS.hover.title": "StS1 Potions",
+  "SPIRE1-ENABLE_STS1_POTIONS.hover.desc": "Inject StS1 potions into the reward pools. Default ON, matching the behavior before this switch existed. Read at pool/query time and snapshotted per run: changing it only affects runs started afterwards, and loading a save always uses that save's value.",
   "SPIRE1-PURE_STS1_POOLS.title": "Pure StS1 Pools",
   "SPIRE1-PURE_STS1_POOLS.hover.title": "Pure StS1 Pools",
   "SPIRE1-PURE_STS1_POOLS.hover.desc": "Custom character pools skip identical official StS2 cards and fill with our StS1-faithful implementations instead. Reward counts are clamped to what the pool can actually offer.",
@@ -36,5 +36,8 @@
   "SPIRE1-ENABLE_SKIP_NODE_BUTTON.hover.title": "Map Skip-Node Button",
   "SPIRE1-ENABLE_SKIP_NODE_BUTTON.hover.desc": "Show a rescue button on the map screen: if you are stuck in a room, unlock map travel and click your next node. Uses the native vote pipeline - no desync risk.",
   "SPIRE1-ENABLE_STS1_EVENTS.title": "Inject StS1 events into event pools",
-  "SPIRE1-ENABLE_STS1_EVENTS.hover.desc": "Off by default; existing explicit settings are preserved. Requires the master content switch to be on. When on: StS1 events (Fountain of Curse Removal, Note For Yourself, Addict, Drug Dealer, Back to Basics) are registered into the shared/act event pools and can appear in any run. When off: they are removed from all event pools at startup and never roll. (SpireHeart is never auto-registered.)"
+  "SPIRE1-ENABLE_STS1_EVENTS.hover.desc": "Off by default; existing explicit settings are preserved. Requires the master content switch to be on. When on: StS1 events (The Divine Fountain, A Note For Yourself, Pleading Vagrant, Augmenter, Ancient Writing) are registered into the shared/act event pools and can appear in any run. When off: they are filtered out of every act event pool at room-generation / next-event time and never roll. (Spire Heart is never auto-registered.)",
+  "SPIRE1-REGISTER_CONTENT_NEXT_RUN.title": "Register Content Into Next Run",
+  "SPIRE1-REGISTER_CONTENT_NEXT_RUN.hover.title": "Register Content Into Next Run",
+  "SPIRE1-REGISTER_CONTENT_NEXT_RUN.hover.desc": "On by default. Controls what NEW runs register: cards / relics / events / potions are injected into their reward or event pools, while custom powers are applied at effect time by the runtime powers gate. Unlike the switches above, this choice is snapshotted into each run's save when the run is created: changing it only affects runs you start afterwards, and loading any save always uses the value that save was created with. Saves made before this option existed are treated as ON. Character visibility is decided at character-select (before a run exists) and is unaffected."
 }

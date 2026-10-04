@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Spire1.Spire1Code.Character;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -16,7 +17,13 @@ public class Terror() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, Targe
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
-        => await CommonActions.Apply<VulnerablePower>(choiceContext, play.Target!, this);
+    {
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
+        await CommonActions.Apply<VulnerablePower>(choiceContext, play.Target!, this);
+    }
 
     protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
 }

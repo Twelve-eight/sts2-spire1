@@ -11,35 +11,72 @@ namespace FormEffectsProbe;
 // This is a narrow lifecycle check, not a save/load or native engine clone conformance test.
 internal static class CloneScenarios
 {
+    private static readonly ResourceInfo ZeroResources = new()
+    {
+        EnergySpent = 0,
+        EnergyValue = 0,
+        StarsSpent = 0,
+        StarValue = 0
+    };
+
     public static void Register(ProbeSuite suite)
     {
         suite.Add("clone.void_consumed_state_is_not_shared", async () =>
         {
             var f = new Fixture();
             var original = f.Attach<VoidFormEffectPower>();
-            await f.Complete(original, Fixture.Play(f.Card()));
-            var clone = f.CloneAndAttach(original);
+            CardModel originalCard = f.Card();
+            await PlayManual(f, original, originalCard, Fixture.Play(originalCard));
+            var clone = f.CloneAndAttach(original, f.Other);
             Check.FreshInternalData(original, clone);
             Check.Cost(original, f.Card(), false, "original remains consumed");
-            Check.Cost(clone, f.Card(), true, "clone starts unconsumed");
-            await f.Complete(clone, Fixture.Play(f.Card()));
+            CardModel cloneCard = f.Card(f.OtherPlayer);
+            Check.Cost(clone, cloneCard, true, "clone starts unconsumed");
+            await PlayManual(f, clone, cloneCard, Fixture.Play(cloneCard));
             await f.StartSide(original, f.Owner);
             Check.Cost(original, f.Card(), true, "original resets independently");
-            Check.Cost(clone, f.Card(), false, "original reset cannot reset clone");
+            Check.Cost(clone, cloneCard, false, "original reset cannot reset clone");
         });
 
         suite.Add("clone.void_pending_play_is_not_shared", async () =>
         {
             var f = new Fixture();
             var original = f.Attach<VoidFormEffectPower>();
-            CardPlay play = Fixture.Play(f.Card());
-            await original.BeforeCardPlayed(play);
-            var clone = f.CloneAndAttach(original);
-            Check.FreshInternalData(original, clone);
-            await clone.AfterCardPlayed(f.Context, play);
-            Check.Cost(clone, f.Card(), true, "clone did not see the original Before");
-            await original.AfterCardPlayed(f.Context, play);
-            Check.Cost(original, f.Card(), false, "original completed its own pending play");
+            CardModel originalCard = f.Card();
+            CardPlay play = Fixture.Play(originalCard);
+            object action = VoidFormPlayTransaction.ProbeBeginAction(originalCard);
+            try
+            {
+                await ProductionPatchCalls.SpendResources(
+                    originalCard,
+                    () => Task.FromResult((3, 0)));
+                var clone = f.CloneAndAttach(original, f.Other);
+                Check.FreshInternalData(original, clone);
+                originalCard.ProbeOnPlayBody = async () =>
+                {
+                    await original.BeforeCardPlayed(play);
+                    await clone.AfterCardPlayed(f.Context, play);
+                    Check.Cost(clone, f.Card(f.OtherPlayer), true, "clone did not see the original Before");
+                    await original.AfterCardPlayed(f.Context, play);
+                    Check.Cost(original, originalCard, false, "original completed its own pending play");
+                };
+                try
+                {
+                    await originalCard.OnPlayWrapper(
+                        f.Context,
+                        null,
+                        isAutoPlay: false,
+                        ZeroResources);
+                }
+                finally
+                {
+                    originalCard.ProbeOnPlayBody = null;
+                }
+            }
+            finally
+            {
+                VoidFormPlayTransaction.ProbeEndAction(action);
+            }
         });
 
         suite.Add("clone.serpent_started_play_set_is_not_shared", async () =>
@@ -124,5 +161,42 @@ internal static class CloneScenarios
             Check.Sequence(new[] { f.Owner, f.Other }, Journal.PowerRequests.Select(r => r.Applier!), "independent Doom appliers");
             Check.Sequence(new[] { 3m, 4m }, Journal.PowerRequests.Select(r => r.Amount), "independent target totals");
         });
+    }
+
+    private static async Task PlayManual(
+        Fixture fixture,
+        VoidFormEffectPower power,
+        CardModel card,
+        CardPlay play)
+    {
+        object action = VoidFormPlayTransaction.ProbeBeginAction(card);
+        try
+        {
+            await ProductionPatchCalls.SpendResources(
+                card,
+                () => Task.FromResult((3, 0)));
+
+            card.ProbeOnPlayBody = async () =>
+            {
+                await power.BeforeCardPlayed(play);
+                await power.AfterCardPlayed(fixture.Context, play);
+            };
+            try
+            {
+                await card.OnPlayWrapper(
+                    fixture.Context,
+                    null,
+                    isAutoPlay: false,
+                    ZeroResources);
+            }
+            finally
+            {
+                card.ProbeOnPlayBody = null;
+            }
+        }
+        finally
+        {
+            VoidFormPlayTransaction.ProbeEndAction(action);
+        }
     }
 }

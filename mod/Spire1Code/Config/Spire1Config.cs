@@ -20,6 +20,16 @@ internal class Spire1Config : SimpleModConfig
     private static readonly object CardsGateSync = new();
 
     /// <summary>
+    /// C14 r13 (2026-10-04): run-latch publish version. Bumped only by
+    /// SetRunContentLatch/SetRunContentLatchFromLoad and by a lifecycle gate rewind, always under
+    /// CardsGateSync. A lifecycle capture/restore pair uses it to rewind only the run-latch write
+    /// it made itself while that write is still the latest one, so a failed load can never roll
+    /// back a newer latch publish from another thread. A concurrent settings toggle does not bump
+    /// it, so a rewind still picks up the newest switch values.
+    /// </summary>
+    private static long _cardsLatchVersion;
+
+    /// <summary>
     /// C14 r11 (2026-10-03): subscribe the deck-grant guard while this type is initialized.
     /// Spire1Config is constructed from MainFile Phase 1, before ModelDb.Init, any run or any pool
     /// consumer; the guard itself resolves its representative lazily on first hook use. Failure is
@@ -221,7 +231,74 @@ internal class Spire1Config : SimpleModConfig
                 Volatile.Read(ref _enableSts1Content),
                 Volatile.Read(ref _enableSts1Cards),
                 value);
-            Spire1.Spire1Code.Run.Spire1RunContent.WriteContentActiveThisRun(value);
+            _cardsLatchVersion++;
+            Spire1.Spire1Code.Run.Spire1RunContent.WriteContentActiveThisRun(
+                value, _cardsLatchVersion, ownedByActiveCapture: false);
+        }
+    }
+
+    /// <summary>
+    /// C14 r13: load-path latch used by RunState.FromSerializable. Identical to
+    /// SetRunContentLatch, but the combined gate and fallback writes are attributed to the
+    /// active lifecycle capture, so a failed load (or the canonicalize wrapper) can rewind
+    /// exactly this temporary write while it is still the latest publish.
+    /// </summary>
+    internal static void SetRunContentLatchFromLoad(bool value)
+    {
+        lock (CardsGateSync)
+        {
+            PublishCardsGate(
+                Volatile.Read(ref _enableSts1Content),
+                Volatile.Read(ref _enableSts1Cards),
+                value);
+            _cardsLatchVersion++;
+            Spire1.Spire1Code.Run.Spire1RunContent.WriteContentActiveThisRun(
+                value, _cardsLatchVersion, ownedByActiveCapture: true);
+        }
+    }
+
+    /// <summary>
+    /// C14 r13: read the current run-latch publish version for a lifecycle capture/restore pair.
+    /// Read under CardsGateSync so it is consistent with any concurrent latch publish; the
+    /// fallback carrier is written by latch publishers inside the same lock.
+    /// </summary>
+    internal static long CaptureRunLatchVersion()
+    {
+        lock (CardsGateSync)
+        {
+            return _cardsLatchVersion;
+        }
+    }
+
+    /// <summary>
+    /// C14 r13: rewind the combined Cards gate to the captured process-wide latch. The rewind
+    /// only happens while the captured latch is still the latest published one (nothing
+    /// published since the capture, or the latest publish is this operation's own write); a
+    /// newer latch publish from another thread wins and is left untouched. Current switch values
+    /// are read fresh, so a concurrent settings toggle is preserved, and the gate is recomputed
+    /// as !(master &amp;&amp; cards &amp;&amp; capturedRunLatch) instead of restoring a stale raw
+    /// value. This keeps the Cards gate consistent with the other gates, which read the restored
+    /// Spire1RunContent latch directly.
+    /// </summary>
+    internal static void RestoreCardsGateFromRunLatch(
+        bool capturedRunLatch, long capturedVersion, long ownVersion)
+    {
+        lock (CardsGateSync)
+        {
+            long current = _cardsLatchVersion;
+            if (current != capturedVersion && current != ownVersion)
+            {
+                return;
+            }
+            bool closed = !(Volatile.Read(ref _enableSts1Content)
+                && Volatile.Read(ref _enableSts1Cards)
+                && capturedRunLatch);
+            if (Volatile.Read(ref _cardsGateClosedThisRun) == closed)
+            {
+                return;
+            }
+            Volatile.Write(ref _cardsGateClosedThisRun, closed);
+            _cardsLatchVersion++;
         }
     }
 

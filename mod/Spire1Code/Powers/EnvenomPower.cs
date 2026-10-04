@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -27,6 +28,10 @@ public class EnvenomPower : CustomPowerModel
     {
         if (dealer == Owner && props.IsPoweredAttack() && result.UnblockedDamage > 0)
         {
+            if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+            {
+                return;
+            }
             Flash();
             await PowerCmd.Apply<PoisonPower>(choiceContext, target, Amount, Owner, null);
         }

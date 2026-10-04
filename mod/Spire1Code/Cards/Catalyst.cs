@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Spire1.Spire1Code.Character;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -27,6 +28,10 @@ public class Catalyst() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, Tar
         }
         // Base: apply 1x more so the total doubles. Upgraded: apply 2x more so the total triples.
         int add = IsUpgraded ? current * 2 : current;
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
         await CommonActions.Apply<PoisonPower>(choiceContext, target, this, add);
     }
 }

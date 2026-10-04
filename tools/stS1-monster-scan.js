@@ -7,7 +7,7 @@ const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const javap = 'C:/Program Files/Zulu/zulu-21/bin/javap.exe';
-const root = 'G:/omp works/sts2-spire1/research/sts1-kb/.tmp-javap/cls/com/megacrit/cardcrawl/monsters';
+const root = 'G:/omp works/Sts/sts2-spire1/research/sts1-kb/.tmp-javap/cls/com/megacrit/cardcrawl/monsters';
 const rows = [];
 (function walk(d) {
   for (const e of fs.readdirSync(d, { withFileTypes: true })) {
@@ -33,7 +33,7 @@ const rows = [];
   }
 })(root);
 rows.sort((a, b) => a.monster.localeCompare(b.monster));
-fs.writeFileSync('G:/omp works/sts2-spire1/research/sts1-kb/monsters-scan.json', JSON.stringify(rows, null, 1));
+fs.writeFileSync('G:/omp works/Sts/sts2-spire1/research/sts1-kb/monsters-scan.json', JSON.stringify(rows, null, 1));
 const agg = {};
 for (const k of Object.keys(rows[0]).filter(k => k !== 'monster')) agg[k] = rows.filter(r => r[k]).length;
 console.log('monsters:', rows.length);

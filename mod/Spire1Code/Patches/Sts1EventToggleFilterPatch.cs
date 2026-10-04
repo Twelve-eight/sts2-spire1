@@ -75,7 +75,9 @@ internal static class Sts1EventFilter
 
     internal static void OnRoomsGenerated(ActModel act)
     {
-        if (Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Events))
+        // r8d: 独立不可用状态优先于任何 Spire1Config 静态读取 (类型初始化失败时不得把异常传播到引擎).
+        if (!Spire1PowersGate.ContentUnavailableActive
+            && Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Events))
         {
             return;
         }
@@ -84,7 +86,9 @@ internal static class Sts1EventFilter
 
     internal static void BeforePull(ActModel act)
     {
-        if (Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Events))
+        // r8d: 独立不可用状态优先于任何 Spire1Config 静态读取.
+        if (!Spire1PowersGate.ContentUnavailableActive
+            && Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Events))
         {
             return;
         }
@@ -98,7 +102,9 @@ internal static class Sts1EventFilter
     /// </summary>
     internal static void AfterPull(ref EventModel __result)
     {
-        if (Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Events))
+        // r8d: 独立不可用状态优先于任何 Spire1Config 静态读取.
+        if (!Spire1PowersGate.ContentUnavailableActive
+            && Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Events))
         {
             return;
         }
@@ -136,18 +142,18 @@ internal static class Sts1EventFilter
         {
             // 关闭状态下不能把空池交给 RoomSet.NextEvent (其实现执行 eventsVisited % events.Count).
             // 使用同一确定性 vanilla fallback 保持池非空; fallback 解析失败则显式 fail closed.
-            List<EventModel> fallback = GetVanillaFallbackEvents();
-            if (fallback.Count == 0)
+            List<EventModel> emptyPoolFallback = GetVanillaFallbackEvents();
+            if (emptyPoolFallback.Count == 0)
             {
                 throw new InvalidOperationException(
                     $"[Spire1] StS1 event filter: {act.GetType().Name} event pool was empty while the " +
                     "events content group is off, and no vanilla fallback event could be resolved.");
             }
 
-            rooms.events.AddRange(fallback);
+            rooms.events.AddRange(emptyPoolFallback);
             MainFile.Logger.Warn(
                 $"[Spire1] StS1 event filter ({source}): {act.GetType().Name} event pool was empty; " +
-                $"added {fallback.Count} vanilla fallback event(s) to prevent an empty RoomSet.NextEvent pool.");
+                $"added {emptyPoolFallback.Count} vanilla fallback event(s) to prevent an empty RoomSet.NextEvent pool.");
             return;
         }
 
@@ -170,8 +176,8 @@ internal static class Sts1EventFilter
         // The next line would divide by events.Count, so an empty pool must be filled before the engine reads it.
         // Resolve the same deterministic vanilla fallback; if resolution fails, throw fail-closed.
         // This never passes a disabled event or an empty pool to the engine.
-        List<EventModel> fallback = GetVanillaFallbackEvents();
-        if (fallback.Count == 0)
+        List<EventModel> allGen1Fallback = GetVanillaFallbackEvents();
+        if (allGen1Fallback.Count == 0)
         {
             throw new InvalidOperationException(
                 $"[Spire1] StS1 event filter: {act.GetType().Name} event pool contained only gen-1 events, " +
@@ -180,13 +186,13 @@ internal static class Sts1EventFilter
         }
 
         rooms.events.Clear();
-        rooms.events.AddRange(fallback);
+        rooms.events.AddRange(allGen1Fallback);
         if (!_allGen1ReplacedLogged)
         {
             _allGen1ReplacedLogged = true;
             MainFile.Logger.Warn(
                 $"[Spire1] StS1 event filter ({source}): {act.GetType().Name} event pool was 100% gen-1 " +
-                $"events; replaced all {before} with {fallback.Count} vanilla fallback event(s) to keep " +
+                $"events; replaced all {before} with {allGen1Fallback.Count} vanilla fallback event(s) to keep " +
                 "the pool non-empty (events content group off).");
         }
     }
@@ -293,6 +299,25 @@ internal static class Sts1EventFilter
 [HarmonyPatch(typeof(ActModel), nameof(ActModel.GenerateRooms))]
 internal static class Sts1EventToggleGenerateRoomsPatch
 {
+    internal static MethodInfo? TargetMethod { get; } = ResolveTarget();
+    internal static MethodInfo? PostfixMethod { get; } = ResolvePostfix();
+
+    private static MethodInfo? ResolveTarget()
+    {
+        try { return AccessTools.DeclaredMethod(typeof(ActModel), nameof(ActModel.GenerateRooms)); }
+        catch (Exception) { return null; }
+    }
+
+    private static MethodInfo? ResolvePostfix()
+    {
+        try
+        {
+            MethodInfo? method = typeof(Sts1EventToggleGenerateRoomsPatch).GetMethod(
+                nameof(Postfix), BindingFlags.Static | BindingFlags.NonPublic);
+            return Spire1PowersGate.IsDeclaredPostfixMethod(method) ? method : null;
+        }
+        catch (Exception) { return null; }
+    }
     [HarmonyPostfix]
     private static void Postfix(ActModel __instance) => Sts1EventFilter.OnRoomsGenerated(__instance);
 }
@@ -304,6 +329,25 @@ internal static class Sts1EventToggleGenerateRoomsPatch
 [HarmonyPatch(typeof(ActModel), nameof(ActModel.PullNextEvent))]
 internal static class Sts1EventTogglePullNextEventPrefixPatch
 {
+    internal static MethodInfo? TargetMethod { get; } = ResolveTarget();
+    internal static MethodInfo? PrefixMethod { get; } = ResolvePrefix();
+
+    private static MethodInfo? ResolveTarget()
+    {
+        try { return AccessTools.DeclaredMethod(typeof(ActModel), nameof(ActModel.PullNextEvent)); }
+        catch (Exception) { return null; }
+    }
+
+    private static MethodInfo? ResolvePrefix()
+    {
+        try
+        {
+            MethodInfo? method = typeof(Sts1EventTogglePullNextEventPrefixPatch).GetMethod(
+                nameof(Prefix), BindingFlags.Static | BindingFlags.NonPublic);
+            return Spire1PowersGate.IsDeclaredPatchMethod(method) ? method : null;
+        }
+        catch (Exception) { return null; }
+    }
     [HarmonyPrefix]
     private static void Prefix(ActModel __instance) => Sts1EventFilter.BeforePull(__instance);
 }
@@ -312,6 +356,25 @@ internal static class Sts1EventTogglePullNextEventPrefixPatch
 [HarmonyPatch(typeof(ActModel), nameof(ActModel.PullNextEvent))]
 internal static class Sts1EventTogglePullNextEventPostfixPatch
 {
+    internal static MethodInfo? TargetMethod { get; } = ResolveTarget();
+    internal static MethodInfo? PostfixMethod { get; } = ResolvePostfix();
+
+    private static MethodInfo? ResolveTarget()
+    {
+        try { return AccessTools.DeclaredMethod(typeof(ActModel), nameof(ActModel.PullNextEvent)); }
+        catch (Exception) { return null; }
+    }
+
+    private static MethodInfo? ResolvePostfix()
+    {
+        try
+        {
+            MethodInfo? method = typeof(Sts1EventTogglePullNextEventPostfixPatch).GetMethod(
+                nameof(Postfix), BindingFlags.Static | BindingFlags.NonPublic);
+            return Spire1PowersGate.IsDeclaredPostfixMethod(method) ? method : null;
+        }
+        catch (Exception) { return null; }
+    }
     [HarmonyPostfix]
     private static void Postfix(ref EventModel __result) => Sts1EventFilter.AfterPull(ref __result);
 }

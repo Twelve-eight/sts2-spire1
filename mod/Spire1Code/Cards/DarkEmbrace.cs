@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -16,7 +17,13 @@ public class DarkEmbrace() : Spire1Card(2, CardType.Power, CardRarity.Uncommon, 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<DarkEmbracePower>(1)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
-        => await CommonActions.ApplySelf<DarkEmbracePower>(choiceContext, this);
+    {
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
+        await CommonActions.ApplySelf<DarkEmbracePower>(choiceContext, this);
+    }
 
     protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
 }

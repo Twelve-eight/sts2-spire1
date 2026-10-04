@@ -2926,3 +2926,73 @@ r22 的 Calm/Divinity 已通过,Wrath 失败原因是唯一测试敌人带 Artif
 ### 未关闭边界
 
 可见 UI/图像/动画、长战斗全部回合、战中存档/读档、重连、多人同步、性能、完整平衡和朋友环境的可见安装仍未验收。headless 的 crashpad、Dummy renderer RID/resource leak 仍作为环境噪声单列，不冒充业务通过。
+
+## 2026-10-03 发布包重构增量
+
+- 用户要求: 下一版发布清除未使用/已弃用资产; 本轮选择源码驱动 staging + allowlist + PCK 重建, 不直接盲删源目录.
+- 契约: `docs/RELEASE-PACKAGE-CONTRACT-20261003.md`.
+- 工具: `tools/release/Build-Spire1Release.ps1` 与 `tools/release/Verify-Spire1Pck.ps1`.
+- plan-only 快照: `G:\omp works\.tmp\spire1-release-plan-20261003d`.
+  - 源文件 1010, 保留 744, 排除 266.
+  - 保留源资产 33,803,542 bytes, 排除源资产 17,127,986 bytes.
+  - 排除目录面: card portraits 206, relics 42, potions 12, charui 4, omega power 2.
+- PCK 隔离验证: 1464 entries, 720 CTEX, 720 import, 24 JSON; PCK v3 / Godot 4.5.1 / 112-byte header / relative file base / 32-byte alignment; directory path set exact; all entry MD5 verified; every CTEX has GST2 header.
+- PCK SHA256: `70CCBB4D1A2DD1439152F030E40B4C1A8BCA775547EB4F8273C956F62BB51C79`.
+- 当前边界: 没有执行 `-Promote`; 没有写 Steam 或 shared `mod_configs`; 没有声明游戏实机加载通过; MegaDot export-pack 仍未验证.
+- 代码监督未收尾前不发布: C14 LargeCapsule r12 与 sts2-perfect r3 正在由指定 DeepSeek 实现, 后续由 `ovoapi:6.1sol` 监督.
+
+## 2026-10-03 Beta r4 精简 payload 发布与最终字节烟测
+
+- 已生成朋友测试包: G:\omp works\Sts\sts2-spire1\dist\Spire1-Forms-Beta-20261003-r4.zip; ZIP SHA256 31D77F8E3B70456D5B14359444CA97E0B31F5EF0B3682C0174756AEBF3C40B8B; sidecar G:\omp works\Sts\sts2-spire1\dist\Spire1-Forms-Beta-20261003-r4.zip.sha256。
+- 包内只有 mods/Spire1/Spire1.dll、Spire1.pck、Spire1.json 与 README-安装说明.txt;没有 PDB、deps、pck.sha256、日志、配置或 Steam 文件。
+- 源码来自隔离树 G:\omp works\.tmp\spire1-beta-r4-clean; HEAD 为 a6e46e53ae891e4faa7b640a64c1000a9e566c9a,工作树仍 dirty,所以 HEAD 不能单独代表完整源码身份。最终清单 G:\omp works\.tmp\spire1-beta-r4-release-evidence-20261003\evidence\release-manifest-final.json 记录了状态快照和关键源文件 SHA256。
+- Release DLL 883CD438435A651DF8BF0A1DE5D9C28467E5A7CF8B14B561015C436E70FFF519,PCK 3AA0BD39173C491301BCF42F3FB5ADA25A4762794F0C86B119239824A8CFC545,manifest CDBD57D54374285503538D866551B897938A5D540C2285CE5068019565BB9305;PCK 结构门禁 1464 entries / 744 source files / MD5 verified;AssemblyRef/manifest/TypeDef 三项门禁 PASS,manifest 只有 BaseLib 依赖。
+- 使用最终精简 payload 在真实隔离非 Steam 游戏副本跑三形态单场景 smoke: Calm、Wrath、Divinity 全部 passed;外层 exitCode=0、无超时、日志排空、共享配置不变、Steam settings 恢复、mods 清理完成,无 CanonicalModelException。
+- 长回合 turns smoke 保留为 partial/blocked: Divinity 的 EndTurnDeathPower 在下一回合杀死玩家并结束战斗,不能宣称完整长回合通过。
+- 未关闭: 可见 UI/视觉、多人、存档读写、重连、性能、完整平衡、完整长战斗和朋友机器可见安装。
+- 详细报告: G:\omp works\Sts\sts2-spire1\docs\reports\form-playable-20260928\release-beta-r4-20261003.md。
+- 追加完成最终 Beta 字节的可选 Mod 交叉启动 r33: G:\omp works\.tmp\form-playable-20260928-01a0e7ad\partial-mod-matrix-r33-final-beta-r2-20261003。9/9 组合 exitCode=0,无超时/窗口,日志排空,共享配置不变,无嵌套 manifest;BaseLib+Spire1 在无 Watcher 时 initializer 成功并 fail-closed,AutoAnthony/AutoAnthonyWatcher 缺失或晚挂载不连带阻塞 Spire1。该结果已写入 release-manifest-final.json 的 OptionalBridgeCrossLaunch。
+- 发布构建后的四个核心代码文件已备份并推送到 origin/codex/form-beta-r4-20261003,commit 0682f94864ce02e6296d9f4593c09dcc5782f0a7。发布清单保留构建时 HEAD=a6e46e5,并用 Source.BackupAfterBuild 记录后置备份,未把代理请求报告纳入代码提交。
+
+## 2026-10-04 r15 current byte release gates, optional bridge matrix and native smoke
+
+### 子代理路由和监督
+
+- 本轮实现与监督子代理均使用 `global:deepseek-v4.1-flash`, provider route `gateway/wb2api`, reasoning `max`.
+- U+3002 返工实现报告: `docs/reports/form-playable-20260928/release-gates-u3002-worker-r15-20261004.md`.
+- U+3002 返工监督报告: `docs/reports/form-playable-20260928/release-gates-u3002-supervisor-r15-20261004.md`, verdict `SUPERVISION_PASS`.
+- 缺失 DLL exit code 修复实现报告: `docs/reports/form-playable-20260928/release-gates-code3-worker-r16-20261004.md`.
+- 缺失 DLL exit code 修复监督报告: `docs/reports/form-playable-20260928/release-gates-code3-supervisor-r16-20261004.md`, verdict `SUPERVISION_PASS`.
+
+### 门禁脚本修复和中央验证
+
+- `tools/build-gates/run-release-gates.ps1` 的 9 个 U+3002 已替换为 ASCII `.`,保持 no BOM,CRLF=96,LF-only=0,C0=0.
+- 中央真实测试发现缺失 DLL 路径原先因 `Write-Error` 和 `$ErrorActionPreference=Stop` 实际返回 1,与注释声明的 3 不符. L35 已改为 `[Console]::Error.WriteLine(...)`,L36 `exit 3` 可达.
+- 修复后缺失 DLL 中央实测 exit=3,stderr 有错误文本,JSON sentinel 未改变.
+- PASS 门禁 exit=0,FAIL 门禁 exit=2,两条 JSON 均包含与同一 DLL 快照一致的 `dllSha256` 和 `dllLength`.
+
+### r15 Release 和 payload
+
+- 中央 Release 输出: `G:\omp works\.tmp\spire1-release-r15-20261004-central`.
+- Build: 0 errors / 64 warnings.
+- PCK: `PCK_VERIFY_PASS`,entries=1464,sourceFiles=744,sha256=`70CCBB4D1A2DD1439152F030E40B4C1A8BCA775547EB4F8273C956F62BB51C79`.
+- DLL: length=900608,sha256=`8C7CA3DB1AE21FACB4A982287535ED89E25EBB3C369F5C346C68373FC4962F06`.
+- manifest: length=548,sha256=`CDBD57D54374285503538D866551B897938A5D540C2285CE5068019565BB9305`.
+- AssemblyRef,manifest consistency,TypeDef 三项门禁全部 PASS;发布 DLL 的 mod AssemblyRef 只有 `BaseLib`.
+- `Build-Spire1Release.ps1 -SkipBuild -Promote` 已执行成功,Workshop payload 现只含 `Spire1.dll`,`Spire1.json`,`Spire1.pck`,三者 hash 与 promote 输出一致.
+- 已删除明确遗留备份 `mod/Spire1Code/Run/Spire1RunContent.cs.r9bak`.
+
+### 当前字节真实运行证据
+
+- 可选 Mod 矩阵报告: `docs/reports/form-playable-20260928/partial-mod-launch-matrix-current-r15-20261004.md`.
+- 当前 r15 payload 的 9/9 隔离交叉启动场景 exitCode=0,无超时,无非零窗口句柄,日志排空,共享 `mod_configs` 未变化,Steam safe=true.
+- AutoAnthony bridge 状态: m6 `Pending`,m7 `LegacyBridge`,m8 `OfficialAddon, settled=true`; m9 缺 AutoAnthony 时 addon 被拒绝而 Spire1 仍启动.
+- 原生三形态 smoke 报告: `docs/reports/form-playable-20260928/form-native-smoke-current-r15-20261004.md`.
+- Calm 两次 strike 各 9 伤害;Wrath strike 7 伤害,Strength=1,Doom=7,energy 1 -> 0;Divinity 总伤害 12,Echo play counts=[2,2],energy 5 -> 4.
+- 三场景 status=passed,formGateAfter.passed=true,effectVerification.passed=true,unobservedFaults=[],共享配置未变,Steam settings 恢复,cleanup 完成.
+- AutoAnthony 自身 `Expected 65 complete v111 Colorless cards, found 76` 仍存在,只归因于第三方资源版本自检,不归因于 Spire1.
+
+### 尚未关闭边界
+
+- 未验证可见 UI/视觉资源,完整长战斗,战中存档重载,重连,多人同步,性能,完整平衡和用户 Steam 安装.
+- 当前证据是隔离 non-Steam headless 真实运行,不是用户 Steam 安装的 UI 验收.

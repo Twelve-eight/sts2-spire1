@@ -16,7 +16,7 @@
 
 重建步骤:
 1. 重新构建 Spire1 (workshop/content/Spire1 已是 v1.1.0 payload) 与 AFTP fork
-   (G:/omp works/aftp-ActsFromThePast -> G:/omp works/aftp-stage).
+   (G:/omp works/Sts/aftp-ActsFromThePast -> G:/omp works/Sts/_staging/aftp-stage).
 2. 用两者覆盖 dist/friends-pack/mods/ 下的对应目录 (AFTP 的 pck 必须用完整工坊
    资源文件, 不能用本地化精简 pck).
 3. 更新 README-安装说明.txt 的版本/日期/内容描述.

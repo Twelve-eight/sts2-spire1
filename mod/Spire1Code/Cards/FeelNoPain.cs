@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -15,7 +16,13 @@ public class FeelNoPain() : Spire1Card(1, CardType.Power, CardRarity.Uncommon, T
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<FeelNoPainPower>(3)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
-        => await CommonActions.ApplySelf<FeelNoPainPower>(choiceContext, this);
+    {
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
+        await CommonActions.ApplySelf<FeelNoPainPower>(choiceContext, this);
+    }
 
     protected override void OnUpgrade() => DynamicVars.Power<FeelNoPainPower>().UpgradeValueBy(1m);
 }

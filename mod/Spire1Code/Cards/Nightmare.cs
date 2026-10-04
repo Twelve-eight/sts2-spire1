@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Spire1.Spire1Code.Config;
 using Spire1.Spire1Code.Character;
 
 namespace Spire1.Spire1Code.Cards;
@@ -17,6 +18,21 @@ public class Nightmare() : Spire1Card(3, CardType.Skill, CardRarity.Rare, Target
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
+        // Cards content group gate (C18, 2026-10-03): the engine NightmarePower clones the stored card in
+        // BeforeHandDraw and adds it with AddGeneratedCardToCombat, bypassing the pool filters that carry
+        // the cards gate. Fail closed before the selection/power is created; the card itself stays played
+        // and exhausts normally, so the play cost is not refunded.
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Cards))
+        {
+            MainFile.Logger.Warn("[Spire1] Nightmare delayed copy grant skipped: cards content group is off");
+            return;
+        }
+        // C12 r5: NightmarePower is the vanilla power that performs the delayed grant; with the
+        // powers group off the card must not open the selection screen at all.
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
         var selected = await CommonActions.SelectSingleCard(this, SelectionScreenPrompt, choiceContext, PileType.Hand);
         if (selected != null)
         {

@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Rooms;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Relics;
 
@@ -27,7 +28,9 @@ public class BurningBlood : Spire1Relic
     /// hardcoded <c>RefinementUpgrades</c> dictionary - keyed on the BASE-GAME BurningBlood id -
     /// misses our SPIRE1-* id and falls back to the placeholder <c>Circlet</c> ("头环").
     /// </summary>
-    public override RelicModel? GetUpgradeReplacement() => ModelDb.Relic<BlackBlood>();
+    public override RelicModel? GetUpgradeReplacement() => Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Relics)
+        ? ModelDb.Relic<BlackBlood>()
+        : null;
 
     public override async Task AfterCombatVictory(CombatRoom _)
     {

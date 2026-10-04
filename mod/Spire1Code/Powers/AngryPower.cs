@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -42,6 +43,13 @@ public class AngryPower : CustomPowerModel
             return;
         }
 
+        // C12: the Strength grant is a new Spire1-triggered effect; when the powers group is off this
+        // power becomes inert. Negative offsets/removals stay allowed through the central gate so an
+        // existing instance can still wind down (no permanent freeze).
+        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
+        {
+            return;
+        }
         Flash();
         await PowerCmd.Apply<StrengthPower>(choiceContext, Owner, Amount, Owner, null);
     }

@@ -1,4 +1,6 @@
+using System.Runtime.CompilerServices;
 using System.Threading;
+using MegaCrit.Sts2.Core.Runs;
 using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Run;
@@ -46,56 +48,308 @@ internal static class Spire1CardsGateSnapshot
     /// operation. AsyncLocal flows into await continuations, so the engine body after an
     /// await still reads the same decision the prefix captured.</summary>
     internal static void EnterLive() => Enter(Spire1Config.LiveCardsGateClosed);
+
+    /// <summary>
+    /// C14 r12: scoped entry used by the direct LargeCapsule.AfterObtained boundary. Returns a
+    /// token that restores the caller's AsyncLocal state exactly, so the kickoff prefix can hand
+    /// the frozen decision to the async body and then restore the calling context without
+    /// leaving a depth leak behind. The body's await continuations captured the entered value
+    /// and keep it until the operation completes; the patch's paired Harmony finalizer restores
+    /// the caller context after the kickoff returns (normal, faulted or canceled).
+    /// </summary>
+    internal static SnapshotToken EnterScoped(bool closed)
+    {
+        SnapshotToken token = new(Depth.Value, ClosedValue.Value);
+        if (token.PreviousDepth == 0)
+        {
+            ClosedValue.Value = closed;
+        }
+        Depth.Value = token.PreviousDepth + 1;
+        return token;
+    }
+
+    /// <summary>Restores the exact AsyncLocal state captured by <see cref="EnterScoped"/> in the
+    /// current execution context. Called by the AfterObtained scope finalizer after the async
+    /// body has captured the entered context, so the caller never sees the nested depth. A
+    /// default token (scope not entered) is a strict no-op.</summary>
+    internal static void Restore(SnapshotToken token)
+    {
+        if (!token.Entered)
+        {
+            return;
+        }
+        Depth.Value = token.PreviousDepth;
+        ClosedValue.Value = token.PreviousClosedValue;
+    }
+
+    internal readonly struct SnapshotToken
+    {
+        internal SnapshotToken(int previousDepth, bool previousClosedValue)
+        {
+            Entered = true;
+            PreviousDepth = previousDepth;
+            PreviousClosedValue = previousClosedValue;
+        }
+
+        internal bool Entered { get; }
+
+        internal int PreviousDepth { get; }
+
+        internal bool PreviousClosedValue { get; }
+    }
 }
 
 /// <summary>
-/// 本会话内"当前这一局是否登记了 Spire1 奖励内容"的运行期闩锁。
+/// C14 r13 (2026-10-04): per-run "did this run register Spire1 reward content" decision.
 /// <para>
-/// 单一事实来源: 新对局在 <see cref="Patches.Spire1ContentSnapshotPatch"/> 里由全局设置
-/// Spire1Config.RegisterContentNextRun 锁存; 读档时由该局存档内的
-/// <see cref="Spire1ContentSnapshotModifier"/> 恢复; 缺快照的旧存档回落为 true。
-/// 这样切换全局设置只影响之后新开的对局, 而任一存档始终以它创建时的值运行。
+/// The decision has three carriers instead of one process-wide field:
+/// 1) an AsyncLocal ambient binding, set while a run is created, loaded or canonicalized and
+///    restored by the matching Harmony finalizer when that operation fails;
+/// 2) a ConditionalWeakTable binding from the concrete RunState instance to its own value,
+///    used by save-time code that has the instance but not the ambient context;
+/// 3) a versioned process-wide fallback that keeps the previous behaviour for execution
+///    contexts the AsyncLocal value does not flow into (Godot callbacks that run in a fresh
+///    ExecutionContext).
 /// </para>
 /// <para>
-/// 默认 true: 尚无对局时(主菜单/图鉴)与旧存档都表现为"内容开启", 保持既有可见行为不变。
-/// 卡牌/遗物/事件的三个 gate helper AND 上本闩锁; 角色可见性属选人期决策, 不经此处。
+/// The fallback and the combined Cards gate are process-wide, so a failed load or a canonicalize
+/// only rewinds the exact write this operation made while it is still the latest publish. A
+/// newer write from another thread (or a settings toggle) is preserved, so an interleaved
+/// operation can never be clobbered by an older capture.
 /// </para>
 /// <para>
-/// 生命周期: 新局创建与读档都会覆盖该值; 离开对局 (RunManager.CleanUp) 由
-/// <see cref="Patches.Spire1ContentSnapshotPatch"/> 复位为 true, 因此主菜单期间不会保留
-/// 上一局的 enabled 状态。复位只影响下一次建局前的默认值, 不影响任何已保存的每局快照。
+/// Default true: with no binding at all (main menu, compendium, saves created before this
+/// feature existed) the mod behaves exactly as before. The per-run value only ever narrows
+/// that default after a run is actually created or loaded.
+/// </para>
+/// <para>
+/// Cards/relics/events/powers/potions AND this value into their gates; character visibility is
+/// a select-time decision and deliberately does not consult it. Leaving a run (RunManager.CleanUp)
+/// resets the binding to the default true, so the menu never inherits the previous run's value.
 /// </para>
 /// </summary>
 internal static class Spire1RunContent
 {
-    private static bool _contentActiveThisRun = true;
+    private sealed class AmbientBinding
+    {
+        internal AmbientBinding(bool value)
+        {
+            Value = value;
+        }
 
-    /// <summary>当前对局是否登记了本 mod 的奖励内容。默认 true(见类型注释)。</summary>
-    public static bool ContentActiveThisRun => Volatile.Read(ref _contentActiveThisRun);
+        internal bool Value { get; }
+    }
+
+    private static readonly object BindingGate = new();
+    private static readonly AsyncLocal<AmbientBinding?> Ambient = new();
+    private static readonly AsyncLocal<AmbientSnapshot?> ActiveCapture = new();
+    private static readonly ConditionalWeakTable<object, StrongBox<bool>> InstanceBindings = new();
+    private static bool _processFallback = true;
+    private static long _processFallbackVersion;
+
+    /// <summary>Process-wide fallback used when the current execution context has no ambient
+    /// binding. Defaults to true (old-save / menu semantics).</summary>
+    public static bool ProcessFallback => Volatile.Read(ref _processFallback);
+
+    /// <summary>Current run's registration decision. Returns the ambient binding when the
+    /// current execution context has one, otherwise the process fallback (default true).</summary>
+    public static bool ContentActiveThisRun =>
+        Ambient.Value is { } ambient ? ambient.Value : ProcessFallback;
 
     /// <summary>
-    /// C14 r10: publish-first writer. Spire1Config.SetRunContentLatch writes the combined Cards
-    /// gate before calling this, so a concurrent reader never sees a torn master/cards/run chain.
-    /// Do not call directly; every latch/restore/reset goes through Spire1Config.
+    /// C14 r10/r13: single write point used by <see cref="Spire1Config.SetRunContentLatch"/>.
+    /// Publishes the ambient binding first and the process fallback second; the combined Cards
+    /// gate is published by the caller before this runs, so a reader that takes one atomic gate
+    /// read never observes a torn master/cards/run chain. Do not call directly; latch/restore/reset
+    /// go through Spire1Config.
     /// </summary>
-    internal static void WriteContentActiveThisRun(bool value) =>
-        Volatile.Write(ref _contentActiveThisRun, value);
+    internal static void WriteContentActiveThisRun(bool value, long cardsLatchVersion, bool ownedByActiveCapture)
+    {
+        Ambient.Value = new AmbientBinding(value);
+        long fallbackVersion;
+        lock (BindingGate)
+        {
+            Volatile.Write(ref _processFallback, value);
+            fallbackVersion = ++_processFallbackVersion;
+        }
 
-    /// <summary>新对局创建时调用: 用全局设置锁存本局的登记决定。</summary>
-    public static void LatchForNewRun(bool registerContent)
+        if (!ownedByActiveCapture)
+        {
+            return;
+        }
+
+        // Record this write as owned by every capture active in this execution context. A later
+        // restore may undo exactly this write, but never a newer write made by another thread.
+        for (AmbientSnapshot? node = ActiveCapture.Value; node is not null; node = node.Parent)
+        {
+            node.LastOwnFallbackVersion = fallbackVersion;
+            node.LastOwnCardsLatchVersion = cardsLatchVersion;
+        }
+    }
+
+    /// <summary>
+    /// Snapshot of the lifecycle carriers captured by <see cref="CaptureAmbient"/>: the ambient
+    /// binding for this execution context, the process-wide fallback that readers without an
+    /// ambient binding observe, and the run-latch version the combined Cards gate was published
+    /// from. The fallback carrier stores only the version this operation itself last wrote; the
+    /// latch carrier additionally stores the version it had at capture time. A restore only rewinds
+    /// its own temporary write and never a newer publish made by another thread. The Cards gate is
+    /// recomputed from the restored process-wide latch and the current switch values, so a
+    /// concurrent settings toggle is preserved.
+    /// </summary>
+    private sealed class AmbientSnapshot
+    {
+        internal AmbientSnapshot(
+            AmbientBinding? ambient,
+            bool processFallback,
+            long cardsLatchVersion,
+            AmbientSnapshot? parent)
+        {
+            AmbientValue = ambient;
+            ProcessFallbackValue = processFallback;
+            CardsLatchVersion = cardsLatchVersion;
+            Parent = parent;
+        }
+
+        internal AmbientBinding? AmbientValue { get; }
+
+        internal bool ProcessFallbackValue { get; }
+
+        internal long CardsLatchVersion { get; }
+
+        internal AmbientSnapshot? Parent { get; }
+
+        internal long LastOwnFallbackVersion { get; set; }
+
+        internal long LastOwnCardsLatchVersion { get; set; }
+    }
+
+    /// <summary>Snapshot the current execution context's binding, the process fallback and the
+    /// run-latch version behind the combined Cards gate, so a Harmony finalizer can restore the
+    /// exact pre-call state when the guarded engine call fails. Captures nest: an inner capture
+    /// (FromSerializable inside CanonicalizeSave) is attributed together with the outer one and
+    /// popped independently.</summary>
+    internal static object? CaptureAmbient()
+    {
+        long cardsLatchVersion = Spire1Config.CaptureRunLatchVersion();
+        bool fallbackValue;
+        lock (BindingGate)
+        {
+            fallbackValue = _processFallback;
+        }
+
+        var snapshot = new AmbientSnapshot(
+            Ambient.Value,
+            fallbackValue,
+            cardsLatchVersion,
+            ActiveCapture.Value);
+        ActiveCapture.Value = snapshot;
+        return snapshot;
+    }
+
+    /// <summary>
+    /// Release a capture marker after a successful guarded call without rewinding any carrier: a
+    /// successful load must keep the value it latched. Only the ownership bookkeeping is popped,
+    /// so later writes are no longer attributed to this capture.
+    /// </summary>
+    internal static void CommitAmbient(object? capture)
+    {
+        if (capture is AmbientSnapshot snapshot && ReferenceEquals(ActiveCapture.Value, snapshot))
+        {
+            ActiveCapture.Value = snapshot.Parent;
+        }
+    }
+
+    /// <summary>
+    /// Restore a snapshot captured by <see cref="CaptureAmbient"/> after a failed load or a
+    /// finished CanonicalizeSave. The ambient binding is per-execution-context and is always
+    /// rewound. The process fallback and the combined Cards gate are process-wide: they are
+    /// rewound only while this operation's own write is still the latest publish; a newer latch
+    /// publish from another thread has a different version and is deliberately left untouched.
+    /// The gate is recomputed from the restored process-wide latch and the current switch values,
+    /// so it stays consistent with the other content gates and a concurrent settings toggle is
+    /// preserved. A null or foreign snapshot cannot be attributed, so it only clears this
+    /// context's ambient binding and never overwrites a process-wide publish from another thread.
+    /// </summary>
+    internal static void RestoreAmbient(object? previous)
+    {
+        if (previous is not AmbientSnapshot snapshot)
+        {
+            Ambient.Value = null;
+            return;
+        }
+
+        CommitAmbient(snapshot);
+        Ambient.Value = snapshot.AmbientValue;
+        lock (BindingGate)
+        {
+            long current = _processFallbackVersion;
+            if (current == snapshot.LastOwnFallbackVersion
+                && _processFallback != snapshot.ProcessFallbackValue)
+            {
+                Volatile.Write(ref _processFallback, snapshot.ProcessFallbackValue);
+                _processFallbackVersion++;
+            }
+        }
+
+        // Recompute the combined Cards gate from the restored latch and the current switches.
+        // Taken after BindingGate is released: latch publishers take CardsGateSync first and
+        // BindingGate second, so the two locks are never nested in reverse order here.
+        Spire1Config.RestoreCardsGateFromRunLatch(
+            snapshot.ProcessFallbackValue,
+            snapshot.CardsLatchVersion,
+            snapshot.LastOwnCardsLatchVersion);
+    }
+
+    /// <summary>Bind a value to one concrete RunState instance. The table holds the key weakly,
+    /// so a discarded RunState can still be collected and no static strong reference leaks.</summary>
+    internal static void BindToInstance(object instance, bool value)
+    {
+        if (instance is null)
+        {
+            throw new System.ArgumentNullException(nameof(instance));
+        }
+        lock (BindingGate)
+        {
+            InstanceBindings.AddOrUpdate(instance, new StrongBox<bool>(value));
+        }
+    }
+
+    /// <summary>Read the value bound to one concrete RunState instance, or null when that
+    /// instance has no binding (unknown context: callers must fail closed, never guess).</summary>
+    internal static bool? TryReadInstanceBinding(object? instance)
+    {
+        if (instance is null)
+        {
+            return null;
+        }
+        lock (BindingGate)
+        {
+            return InstanceBindings.TryGetValue(instance, out StrongBox<bool>? box) ? box.Value : null;
+        }
+    }
+
+    /// <summary>New run created: latch the global setting for that run and bind it to the
+    /// concrete RunState instance so later save-time reads cannot pick up another run's value.</summary>
+    public static void LatchForNewRun(RunState runState, bool registerContent)
     {
         Spire1Config.SetRunContentLatch(registerContent);
+        BindToInstance(runState, registerContent);
     }
 
-    /// <summary>读档时调用: 用该存档快照恢复本局的登记决定(缺快照按 true)。</summary>
+    /// <summary>Save loaded: adopt the value carried by that save (absent snapshot -> true) and
+    /// bind it to the concrete RunState instance in the FromSerializable postfix. The latch write
+    /// is marked as owned by the active lifecycle capture, so a failed load or a canonicalize can
+    /// rewind exactly this write while it is still the latest publish.</summary>
     public static void RestoreFromSave(bool registeredInSave)
     {
-        Spire1Config.SetRunContentLatch(registeredInSave);
+        Spire1Config.SetRunContentLatchFromLoad(registeredInSave);
     }
 
     /// <summary>
-    /// 离开对局(主菜单/结束/回放)时调用: 清除上一局的登记状态, 回到默认开启。
-    /// 幂等; 不触碰任何存档快照 (每局决定已随 SerializableRun.Modifiers 持久化)。
+    /// Leaving a run (menu / end / replay): clear the binding and return to the default true.
+    /// Idempotent; never touches a save, because each run's decision travels with its own
+    /// SerializableRun.Modifiers entry.
     /// </summary>
     public static void ResetForMenu()
     {
