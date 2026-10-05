@@ -3031,6 +3031,16 @@ r22 的 Calm/Divinity 已通过,Wrath 失败原因是唯一测试敌人带 Artif
 - 新隔离freshness矩阵还确认原excludes用绝对FullName, 合法.tmp Root祖先让全部新生产cs/csproj/props/json被忽略, 7个负例错误Exit0. DLL与新源文件真实UTCmtime已核对, 非未来fixture. docs正例在该隔离Root被同一漏洞掩盖, 不能采信为旧版文档误报复现; 真实Sts日志是文档误报证据.
 - 同批Euler实现与Socrates监督只修rootdocs JSON区分及repo相对排除路径. 保留docs中的CS/项目/props与mod/.../docs中的runtime JSON, 不抹去生产输入检查. 唯一模型global:deepseek-v4.1-flash/max, 无临时取证写入, 由hubwait激活独立监督后集中跑13项矩阵/既有11项/全量入口.
 - 受保护文件清单290项的长度与真实UTC ticks核对无差异. 初版比较字符串和ConvertFrom-Json自动DateTime造成290条假阳性, 已保留invalid-string-comparison.json并更正验证器, 未改任何受保护文件元数据. 该清单检查不是整个Steam安装字节审计.
+
+## 2026-10-05 Forms独立化接续 round3 (尚未验收)
+
+- 当前时间核对 2026-10-05T05:44:07.8362030+08:00, 从 docs/HANDOFF-forms-current-20261005.md 接续. 用户本轮唯一指定global:deepseek-v4.1-flash/wb2api, 原生Codex子代理并发上限4, reasoning xhigh, 禁止子代理再委派.
+- round2旧实现保留. Forms首轮真实构建在Logger歧义处失败, 没有独立新DLL实机证据. 新Forms根 G:\omp works\Sts\sts2-forms; Spire1默认排除原Forms源码和原smoke runner. 这仍是进行中的切分, 当前canonical/Workshop r15未变.
+- 安全turn_context核对发现round2两监督恢复后为ovoapi:6.1sol/max, 违规监督结论无效. 已原生close所有4个旧代理, 未再恢复这些监督. 不把交接摘要关于全部路由正确的表述作为证据. round2-routes.json已保留原有冲突字段.
+- round3显式spawn两实现与两监督, 全4个实际元数据均global:deepseek-v4.1-flash/xhigh/provider gateway. 请求路由wb2api, 细子路由未暴露仍Unknown; 证据 G:\omp works\.tmp\forms-independent-20261005\round3-routes.json. 同批身份和门禁见 docs/reports/forms-independent-20261005/dsv41f-round3/coordination.md.
+- 本轮修编译/主线程晚加载消费/关闭续体门禁/部分安装回滚/两侧桥失败传播. 主会话中央输出独占G:\omp works\.tmp\forms-independent-20261005, 不写Steam/共享mod_configs, 不覆盖另一个发布会话的canonical/Workshop/脚本.
+- 原r15的首回合和启动矩阵只能覆盖原r15字节. 新源码尚待监督和中央验收, 不上传Workshop;可见UI/长战斗/战中读档/重连/多人/性能和平衡未关闭.
+
 ## 2026-10-05 Workshop准备r4中央收尾与真实源码阻塞
 
 - 本机UTC+8记录2026-10-05 06:49, 对应UTC2026-10-04 22:49; 不因UTC日期差将合法报告判为未来. 子代理仅global:deepseek-v4.1-flash/max, 原生multi_agent_v1. 安全session_meta/turn_context核对包含激活后的监督轮次, 实际provider gateway, 更细wb2api路由未暴露仍Unknown. 两代理已完成并close.
@@ -3048,3 +3058,15 @@ r22 的 Calm/Divinity 已通过,Wrath 失败原因是唯一测试敌人带 Artif
 
 - 七仓本轮发布脚本/暂存和日志增量已精确提交并推送GitHub, 各实际push exit0且当时ahead/behind为0/0. Spire1代码/快照/报告提交212d40d; 六暂存提交Perfect c057060, ChaosBridge 65641c7, RegentFXFastBoot 8092443, MpConfigSync d58563f, HeartShake c13d583, QuriousCraftingRelics b36a452.
 - 详细收据docs/reports/workshop-prep-20261004/backup-completion-r4.json. 保留旧dirty与并行Forms源码/日志, 不声称全工作树clean. 该GitHub备份不等于Workshop上传, 正式全量provenance仍仅被Spire1真实源码/旧DLL不一致阻塞.
+## 2026-10-05T15:46:54.5671853+08:00 姿态形态独立 Forms r40 接续结果
+
+- 旧交接中的 r15 是 Spire1 内置形态的历史快照; 本轮接续目标已切换为独立 `G:\omp works\Sts\sts2-forms`. 当前 Forms DLL 无 Spire1/Watcher AssemblyRef, manifest 只依赖 BaseLib, 由 `G:\omp works\.tmp\forms-independent-20261005\forms-independent-r40-gates.json` 新鲜门禁确认.
+- r40 中央构建结果为 1 warning / 0 errors. 生产候选 hash: DLL C3E697F6CFFAAD69AF94EF5EA6227E193C161E2F8C3B94B66E48E5FC27FAB7AC, PCK DD8794346A6820DB278499DE45A35058F48F0194AA6FFF2DEFC28254C6056A74.
+- `native-r40-effects-r40`, `native-r40-lifecycle-r40`, `native-r40-runtime-safety-r40`, `native-r40-unselected-r40`, `native-r40-shutdown-r40`, `native-r40-terminal-r40`, `native-r40-r8-startup-matrix-r40` 全部通过, 包含 Forms 独立和 Forms+Spire1 的启动/首回合/失效安全路径.
+- Beta 包已落盘 `G:\omp works\.tmp\forms-independent-20261005\Forms-Beta-20261005-r40.zip`, SHA256 187BAE55A0B8F7E31E0C9FE5775CDBBA45EA65364AE70E57FCAC0B59E116228B. 包内仅三文件, 不含 Spire1 或测试载体.
+- 本次没有覆盖或写入 G:\steam\steamapps\common\Slay the Spire 2, shared mod_configs, canonical Release 或 Workshop. 旧交接中的 Spire1 r15 hash 不与 r40 Forms DLL 混用.
+## 2026-10-05T15:52:09.557684+08:00 当前批只读审查代理路由取证
+
+- 当前批 4 个原生 Codex 子代理的真实 `turn_context` 均为 `global:deepseek-v4.1-flash` / `xhigh`, `model_provider=gateway`, `thread_source=subagent`, `multi_agent_version=v1`, `spawn depth=1`.
+- 4 个 JSONL 中记录的函数调用只有 `exec_command`, `write_stdin` 和 1 次 `js` 工具调用; 未记录 `spawn_agent`, `create_thread`, `fork_thread`, `send_message_to_thread`, `handoff_thread` 或其它子代理/其它 harness 调用.
+- 用户请求中的细路由为 wb2api, 但安全 JSONL 元数据没有暴露 wb2api 字段; 因此本轮精确子路由按规则记为 Unknown, 不从请求文本冒充实际 provider. 证据: G:\omp works\.tmp\forms-independent-20261005\agent-route-r40-current.json.

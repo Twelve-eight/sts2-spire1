@@ -82,3 +82,12 @@
 ## 接手最短路径
 
 先读本文件, 源码/hash快照和当前 r15 两份运行报告; 再按上述未验收面选择工作. 不重做已关闭的三姿态首回合 smoke, 不把启动矩阵当长战斗. 本文是核对时点快照, 后续发布准备状态以 `G:\omp works\Sts\sts2-spire1\DEVLOG.md` 的新段落和 `G:\omp works\Sts\sts2-spire1\docs\reports\workshop-prep-20261004\coordination-20261005.md` 为准.
+## 2026-10-05T15:46:54.5671853+08:00 Forms 独立化 r40 已落盘, 旧交接身份不再是当前候选
+
+本段是对本文件旧 r15 快照的接续更正, 不删除历史记录。当前 Forms 已作为独立仓 G:\omp works\Sts\sts2-forms 构建, 不再依赖 Spire1 编译引用或 manifest 前置。
+
+- r40 独立 Forms 构建: G:\omp works\.tmp\forms-independent-20261005\forms-build-r40; DLL C3E697F6CFFAAD69AF94EF5EA6227E193C161E2F8C3B94B66E48E5FC27FAB7AC, PCK DD8794346A6820DB278499DE45A35058F48F0194AA6FFF2DEFC28254C6056A74, 编译 1 warning / 0 errors.
+- r40 静态门禁 G:\omp works\.tmp\forms-independent-20261005\forms-independent-r40-gates.json 通过: 无 Spire1/Watcher AssemblyRef, manifest 仅 BaseLib, 10 个历史 SPIRE1-* CustomID 保持, 无测试 carrier, PCK 源资源门禁通过.
+- r40 无窗口隔离回归以独立 Forms DLL 产生: effects 独立与 Forms+Spire1 通过; lifecycle, runtime safety, 未选局, shutdown, terminal 以及 8/8 交叉启动矩阵通过. 这些证据不能扩大到可见 UI, 长战斗, 存档/重连/多人, 性能或真正热替换.
+- 朋友测试副本: G:\omp works\.tmp\forms-independent-20261005\Forms-Beta-20261005-r40.zip; SHA256 187BAE55A0B8F7E31E0C9FE5775CDBBA45EA65364AE70E57FCAC0B59E116228B. 包内只有 Forms.dll, Forms.pck, Forms.json; 依赖 BaseLib >= 3.4.5, Watcher 是运行时可选桥, 不是 manifest 前置.
+- 本次没有覆盖或写入 G:\steam\steamapps\common\Slay the Spire 2, shared mod_configs, canonical Release 或 Workshop. 旧交接中的 Spire1 r15 hash 不与 r40 Forms DLL 混用.
