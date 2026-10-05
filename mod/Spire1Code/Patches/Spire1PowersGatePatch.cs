@@ -14,7 +14,7 @@ using MegaCrit.Sts2.Core.Models;
 using Spire1.Spire1Code.Potions;
 using Spire1.Spire1Code.Relics;
 using Spire1.Spire1Code.Config;
-using Spire1.Spire1Code.Forms;
+using Spire1.Spire1Code.Interop;
 
 namespace Spire1.Spire1Code.Patches;
 
@@ -42,15 +42,10 @@ namespace Spire1.Spire1Code.Patches;
 /// 其它 mod 一律不碰.
 /// </para>
 /// <para>
-/// Forms 例外 (必须, 否则形成硬故障): <c>Spire1.Spire1Code.Forms</c> 的力量由形态子系统自持生命周期.
-/// <c>WatcherFormStancePower.ApplyEffect</c> 在 Apply 被拦截时会因 <c>!owner.Powers.Contains(effect)</c>
-/// 抛 <c>InvalidOperationException("A power hook rejected a required form effect")</c>,
-/// <c>FormStanceWatcherBridge.AfterMarkerApplied</c> 同样对 carrier 抛
-/// "A power hook rejected the required Watcher form carrier". Forms/ 不在本任务写集内, 无法在那里
-/// 补优雅降级. 因此: 当该局带有 <c>FormStanceModifier</c> (即 <see cref="FormStanceMode.IsSelected"/>
-/// 为真, 形态子系统正在运行) 时, Forms 命名空间的 power 不受本门控拦截; 普通局 (无该修正) 的
-/// Forms 命名空间 power 仍然被门控 -- 覆盖 <c>Cards/DemonForm.cs</c> 经
-/// <c>CommonActions.ApplySelf&lt;DemonFormPower&gt;</c> 的普通局授予路径.
+/// Forms 例外 (独立程序集, 自持生命周期): 独立 Forms 程序集声明的 power 由 Forms 自己管理挂载/移除,
+/// 不属于 Spire1 powers gate. 本文件只通过 <see cref="Spire1.Spire1Code.Interop.FormsCompatibilityBridge"/>
+/// 的运行时程序集身份判定识别它们, 不使用命名空间字符串, 也不做任何 Forms 编译期类型引用.
+/// Forms 程序集缺失 (或类型为 null) 时该判定为 false; 签名校验失败/Retryable/Terminal/ShuttingDown 期间仍按程序集身份识别为 Forms 类型, 不按普通外部 mod power 重新纳入前缀门控.
 /// </para>
     /// <para>
     /// 语义边界 (已在报告中记录):
@@ -108,7 +103,9 @@ internal static class Spire1PowersGate
 {
     private const string ModNamespacePrefix = "Spire1.";
     private const string CardsNamespace = "Spire1.Spire1Code.Cards";
-    private const string FormsNamespace = "Spire1.Spire1Code.Forms";
+    // Forms is a separate assembly with no stable namespace contract from Spire1's side. The
+    // powers gate keeps independent Forms powers out of its scope by assembly identity, never by
+    // a hardcoded namespace string or a compile-time Forms type reference.
 
     private static bool _blockedApplyLogged;
     private static bool _blockedModifyLogged;
@@ -696,14 +693,15 @@ internal static class Spire1PowersGate
                 || ns.StartsWith(CardsNamespace + ".", StringComparison.Ordinal));
     }
 
-    /// <summary>True = 该 power 属于 Forms 形态子系统命名空间.</summary>
-    private static bool IsFormsPower(PowerModel power)
-    {
-        string? ns = power.GetType().Namespace;
-        return ns is not null
-            && (ns.Equals(FormsNamespace, StringComparison.Ordinal)
-                || ns.StartsWith(FormsNamespace + ".", StringComparison.Ordinal));
-    }
+    /// <summary>
+    /// True = 该 power 实例由已加载的独立 Forms 程序集声明. 判定只依据程序集 simple name (以及
+    /// collectible 程序集是否仍在载), 与 Forms entry point 的签名校验或运行期 IsAvailable 无关:
+    /// 签名校验失败/Retryable/Terminal/ShuttingDown 期间, 独立 Forms power 仍被识别为 Forms 类型.
+    /// 独立 Forms power 不属于 Spire1 powers gate: 普通局也不拦截它 (它由 Forms 自持生命周期).
+    /// Forms 程序集缺失 (或类型为 null) 时返回 false, 该 power 就按普通外部 mod power 处理
+    /// (Spire1 前缀不命中).
+    /// </summary>
+    private static bool IsFormsPower(PowerModel power) => FormsCompatibilityBridge.IsFormsType(power.GetType());
 
     /// <summary>新挂载门控: powers 组关闭时拦截 Spire1 power 的 Apply.</summary>
     internal static bool ShouldBlockApply(PowerModel? power, Creature? target, CardModel? cardSource)
@@ -713,11 +711,11 @@ internal static class Spire1PowersGate
             return false; // 无 power 实例: 交给原方法自身的空值语义
         }
 
-        // Forms 例外最先判定 (r6-B 语义): 形态子系统自持生命周期, 即使处于硬熔断状态也
-        // 不得拦截其必需的效果挂载, 否则 FormStanceWatcherBridge 会抛 "rejected a required form effect".
-        if (IsFormsPower(power!) && FormStanceMode.IsSelected(target?.Player))
+        // 独立 Forms 程序集的 power 不属于 Spire1 powers gate: 它由 Forms 自持生命周期,
+        // 即使是普通局 (未选形态修正) 也不应被 Spire1 的前缀门控拦截.
+        if (IsFormsPower(power!))
         {
-            return false; // 形态子系统自持生命周期, 见类型注释
+            return false; // 独立 Forms 程序集, 见类型注释
         }
 
         if (!IsGatedPower(power) && !IsSpire1CardSource(cardSource))
@@ -784,9 +782,8 @@ internal static class Spire1PowersGate
             }
         }
 
-        // Forms 例外与 Apply 相同; Owner 在 ModifyAmount 的原方法体首句即被读取,
-        // 这里直接读取不改变失败语义 (原方法对无 Owner 的实例同样会抛).
-        if (IsFormsPower(power!) && FormStanceMode.IsSelected(power!.Owner?.Player))
+        // 独立 Forms 程序集的 power 与 Apply 相同: 不属于 Spire1 powers gate, 直接放行.
+        if (IsFormsPower(power!))
         {
             return false;
         }

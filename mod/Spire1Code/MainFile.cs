@@ -66,6 +66,26 @@ public partial class MainFile : Node
                 "registration fuse installation exception (" + e.GetType().Name + ": " + e.Message + ")");
         }
 
+        // r8: Forms 旧档 raw modifier guard 是独立 save 安全面, 不受 powers gate 的
+        // ContentUnavailableActive 支配. 必须早于 Phase1/Phase2 显式安装, 并由 guard 自身用
+        // Harmony.GetPatchInfo 精确证明 owner+prefix+priority; 证明失败只如实记录未闭合, 不把
+        // 内容熔断当成 save 保护已生效.
+        try
+        {
+            if (!FormsMissingModifierSaveGuardPatch.EnsureInstalled(Phase3Harmony()))
+            {
+                Logger.Error(
+                    "[Spire1] Forms save guard NOT proven installed at earliest safe stage; raw " +
+                    "SPIRE1-FORM_STANCE_MODIFIER save protection is incomplete.");
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Error(
+                "[Spire1] Forms save guard installation threw (" + e.GetType().Name + ": " + e.Message +
+                "); raw SPIRE1-FORM_STANCE_MODIFIER save protection is incomplete.");
+        }
+
         try
         {
             Phase1AssetReadinessAndConfig();
@@ -253,7 +273,10 @@ public partial class MainFile : Node
                     {
                         continue;
                     }
-                    if (Spire1PowersGate.IsGateManagedPatchType(type))
+                    // r8: guard 已由 Initialize 最早安全阶段显式安装/证明; 通用扫描精确跳过它,
+                    // 避免重复挂载相同 owner+prefix+priority, 也避免不可用分支的漏装回退.
+                    if (type == typeof(FormsMissingModifierSaveGuardPatch)
+                        || Spire1PowersGate.IsGateManagedPatchType(type))
                     {
                         continue;
                     }

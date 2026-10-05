@@ -62,6 +62,18 @@
         <EmbeddedResource Remove="images/**" />
     </ItemGroup>
 
+    <!-- Forms independence (2026-10-05): the Forms stance/form content lives in the standalone
+         Forms mod assembly and is NEVER compiled into Spire1.dll. Removing the whole Forms source
+         directory is what makes the no-Forms-AssemblyRef / no-Forms-TypeDef guarantee real; the
+         Spire1 side reaches Forms only through Interop/FormsCompatibilityBridge.cs (string +
+         reflection). The form-native smoke runner and its patch are test-only carriers and must
+         not ship in the production Spire1.dll either. -->
+    <ItemGroup>
+        <Compile Remove="Spire1Code/Forms/**" />
+        <Compile Remove="Spire1Code/Run/FormNativeSmokeRunner.cs" />
+        <Compile Remove="Spire1Code/Patches/FormNativeSmokePatch.cs" />
+    </ItemGroup>
+
     <!-- HELD-BACK COMPAT LAYERS: deliberately NOT part of the shipped assembly.
          Each of these needs evidence this release cannot produce, so shipping it would put an
          unverified change on the Workshop through a one-way door:

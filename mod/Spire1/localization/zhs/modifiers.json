@@ -1,4 +1,2 @@
 {
-  "SPIRE1-FORM_STANCE_MODIFIER.title": "姿态形态",
-  "SPIRE1-FORM_STANCE_MODIFIER.description": "仅本次自定义对局启用形态姿态. Watcher的平静对应虚空与群蛇, 愤怒对应恶魔与死神, 神格对应回响与天人. 替换而非叠加原愤怒和神格倍伤, 保留原姿态卡牌和切换联动. 需要兼容的Watcher模组. 普通对局不变."
 }

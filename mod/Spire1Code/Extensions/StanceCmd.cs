@@ -6,8 +6,8 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using Spire1.Spire1Code.Config;
+using Spire1.Spire1Code.Interop;
 using Spire1.Spire1Code.Powers;
-using Spire1.Spire1Code.Forms;
 using MegaCrit.Sts2.Core.Models;
 
 namespace Spire1.Spire1Code.Extensions;
@@ -19,11 +19,17 @@ public static class StanceCmd
 
     public static bool IsIn<TStance>(Player player) where TStance : StancePower
     {
-        if (FormStanceMode.IsEnabled(player))
+        // Forms 独立 mod 可选桥接: 只在签名校验通过、运行可用, 且本局选择了形态修正时转发.
+        // 未选 Forms 时 IsSelected 返回 false, 普通 Spire1 姿态路径不受影响; 已选 Forms 而桥不可用时显式失败.
+        if (FormsCompatibilityBridge.IsSelected(player))
         {
-            FormStanceKind kind = FormStanceMode.KindOf(typeof(TStance));
-            if (kind != FormStanceKind.None)
-                return FormStanceWatcherBridge.CurrentKind(player) == kind;
+            int kind = FormsCompatibilityBridge.KindOf(typeof(TStance));
+            if (kind == FormsCompatibilityBridge.KindNone)
+            {
+                throw new System.NotSupportedException(
+                    "This stance has no form-mode mapping: " + typeof(TStance).FullName);
+            }
+            return FormsCompatibilityBridge.CurrentKind(player) == kind;
         }
         // C12 r5 (content-layer fail-closed): a stale stance left on a creature must not be
         // treated as the live stance while the powers group is off, otherwise stance-driven
@@ -43,16 +49,15 @@ public static class StanceCmd
     public static async Task Enter<TStance>(PlayerChoiceContext ctx, Player player, CardModel? source)
         where TStance : StancePower
     {
-        if (FormStanceMode.IsEnabled(player))
+        // Forms 独立 mod 可选桥接: 未选 Forms 时 IsSelected=false 走普通路径; 已选 Forms 而桥不可用时显式失败.
+        if (FormsCompatibilityBridge.IsSelected(player))
         {
-            FormStanceKind kind = FormStanceMode.KindOf(typeof(TStance));
-            if (kind == FormStanceKind.None)
+            int kind = FormsCompatibilityBridge.KindOf(typeof(TStance));
+            if (kind == FormsCompatibilityBridge.KindNone)
                 throw new System.NotSupportedException("This stance has no form-mode mapping: " + typeof(TStance).FullName);
-            await FormStanceWatcherBridge.Enter(player, kind, source);
+            await FormsCompatibilityBridge.Enter(ctx, player, typeof(TStance), source);
             return;
         }
-        if (typeof(WatcherFormStancePower).IsAssignableFrom(typeof(TStance)))
-            throw new System.InvalidOperationException("Form stances require the custom-run modifier");
 
         StancePower? current = Current(player);
         // C12 r5 (content-layer fail-closed): the engine-level PowerCmd gate can drift or fail to
@@ -99,9 +104,10 @@ public static class StanceCmd
 
     public static async Task Exit(PlayerChoiceContext ctx, Player player, CardModel? source)
     {
-        if (FormStanceMode.IsEnabled(player))
+        // Forms 独立 mod 可选桥接: 只有 Forms 存在、签名通过且本局选择形态修正时才转发.
+        if (FormsCompatibilityBridge.IsSelected(player))
         {
-            await FormStanceWatcherBridge.Exit(player);
+            await FormsCompatibilityBridge.Exit(ctx, player, source);
             return;
         }
         StancePower? current = Current(player);
@@ -182,9 +188,9 @@ public static class StanceCmd
     {
         // C12 r5: second line of defence. Any future caller of this fan-out must also respect the
         // powers group gate; current callers already gate, so this is a no-op on the enabled path.
-        // Form runs reach this method through FormStanceWatcherBridge; their Forms-namespace
-        // carrier/effect powers are exempt at the central gate, while the Powers-namespace
-        // listeners (Mental Fortress / Rushdown) correctly stay silent when the group is off.
+        // Independent Forms runs drive their own carrier/effect lifecycle through the reflection
+        // bridge; the Powers-namespace listeners (Mental Fortress / Rushdown) correctly stay silent
+        // when the group is off.
         if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
         {
             return;
