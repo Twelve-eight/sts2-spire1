@@ -160,3 +160,15 @@ Forms 需要自己的 `Forms.pck`, 只包含 Forms 资源和本地化. Spire1.pc
 - R10源码审查确认战中Terminal/Shutdown撤patch后会放回原生规则, 尚待实际复现. 在此面关闭前不把独立包称为重加载已验收.
 - 先用r5生产字节和新增test-only载体复现已选局的下一张牌/姿态变更, 再改产品并用同一载体复测. 超时或未执行不能算拒绝.
 - 修复须有不依赖Watcher旧程序集delegate且不因其patch清理而失效的已选局外层保护, 非Forms局继续原生规则. 明确带重启原因的拒绝且无原生副作用是安全门, 不宣称真正热替换.
+
+## 2026-10-05 持续战中保护增量契约 (待实现/待验收)
+
+依据: runtime-loss-audit-r10, stable-guard-api-scout-r15, cleanup-guard-scout-r17. r17标题与最小建议在IsEnding单独判据上有不一致, 以权威引擎IsCurrentLiveCombat/IsInProgress组合为准, 不采用只看IsEnding的判定. 所有该面结论目前是源码证据; 先修测试原始marker证据并用r5真实复现, 然后才进入生产实现.
+
+1. 本局规则身份只能来自RunState.Modifiers中的FormStanceModifier. Watcher桥可用性不是规则切换开关. 本局已选而桥Terminal/ShuttingDown/pending不可用时, 不得继续支付/出牌/原生变姿态/伤害落地并静默回退原生倍率.
+2. 保护必须在Watcher桥的patch撤销后仍存活. 优先使用FormStanceModifier的原生model hooks覆盖支付前ShouldPlay, 伤害落地前, power amount修改前与回合边界. BeforeCardPlayed已在支付之后不能冒充支付前防线. 精确签名以本机当前引擎源码为准, 不造API或stub.
+3. 原生marker的PowerCmd.Remove没有amount-change hook, 须有仅引用稳定引擎/本项目类型的独立进程生命周期安全owner, 名称Forms.FormStanceSafety. 不持有Watcher Assembly/MethodInfo/delegate, 只按权威FullName识别marker. MainFile常规扫描必须跳过此显式安装类型; 重复Initialize不叠patch, 精确目标/owner/prefix身份由Harmony元数据证明. 安装/证明失败不能发布Bound.
+4. live判定不使用CombatState.IsLiveCombat(), 该实现恒true. 至少同时检查当前CombatState, CombatManager.IsCurrentLiveCombat(combat id)或等价的当前identity+IsInProgress, 并排除IsEnding. 无本局modifier, 非当前战斗, 已结束/正在结束或拆除的清理路径必须放行, 不截断正常teardown. 未证明的quit专用路径仍写未知.
+5. MainFile.Shutdown/桥Terminal会撤两个原owner并清Watcher动态引用, 但安全owner故意驻留至进程退出, 不属于可热卸载对象. 已选局下一实际动作须有明确Forms不可用与重启进程的异常理由, 无原生副作用; timeout/pending/无故障cancelled不是安全通过. 不承诺异常自动将用户送回菜单或整局终止; 交互ActionExecutor可能记录异常后继续队列, 故必须检查真实action执行/完成/fault与日志排空.
+6. 生命周期验收需分开验证两个原owner为0和独立安全owner精确仍在PowerCmd.Remove上且不重复. 实机覆盖独立/同挂正常玩法, terminal与shutdown已选局两张实际牌被拒绝且无能量/HP/marker变化, 以及不选Forms时保留原生行为. 核心remove prefix与伤害/回合边界需独立证据, 不能只以卡牌拒绝替代全部路径验收.
+7. 新字节集中Release构建, 结构门禁, 无窗口隔离烟测, 交叉启动与精准Git备份完成后才生成独立Beta. 不写Steam/共享mod_configs/C:/canonical Release/Workshop/另一发布会话脚本. 未验收UI/长战斗/跨进程读档/多人/真正热替换/性能仍明确保留.

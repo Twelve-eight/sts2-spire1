@@ -1,0 +1,21 @@
+{
+  "ObservedAt": "2026-10-05T09:46:23.4296922+08:00",
+  "Tool": "multi_agent_v1.wait_agent",
+  "Worker": "01a109b5-993b-7ea1-88b9-ab5c3a9b8cdd",
+  "Status": "completed",
+  "TimedOut": false,
+  "CallId": "Unavailable",
+  "WorkerReport": "G:\\omp works\\Sts\\sts2-spire1\\docs\\reports\\forms-independent-20261005\\binding-loss-marker-r16\\worker.md",
+  "Files": [
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\BindingLossSmokeRunner.cs",
+      "SHA256": "BF461E204E0B088CDECDD122C31E353C3B98CB2884C9F1BD8C73DACE5A176A40",
+      "Bytes": 46357
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\README.md",
+      "SHA256": "4C5994A7CCC1F67173E0513D5FD25509FE813655F29AA2756F216B3024AA8E6A",
+      "Bytes": 5570
+    }
+  ]
+}

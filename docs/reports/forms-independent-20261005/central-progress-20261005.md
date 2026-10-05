@@ -22,3 +22,17 @@
 - UI/完整长战斗/跨进程读档/多人/真正热替换/性能未知. 新独立Beta尚未生成和交付, 未上传Workshop.
 - 不沿用2026-10-03前台授权. 当前只用G:独占headless非Steam隔离载体/新APPDATA/GSE/TEMP, 不写Steam/共享mod_configs/C:/canonical/Workshop/另一发布会话脚本.
 - Forms HEAD4101731已推送私有远端;Spire1本任务生产修改仍待精准git备份, 全仓有其它会话及历史dirty, 不git add -A/reset/clean.
+## 2026-10-05 09:35 接续收割
+
+- 已读HANDOFF和本轮增量报告; 生产Forms仍r5, 拆分Spire1仍r8; 三姿态独立/同挂首回合, 8场启动, 3场raw反序列化已有真实证据, 不是完整读档或战中关闭验收.
+- r14监督已真实完成并收割SUPERVISION_NEEDS_REWORK. R14-01失效桥CurrentKind导致unknown被当成姿态变化, 恒回归且安全门不可达; R14-02README失效后补3与实际失效前补2漂移. 不用此载体作安全结论. 已关闭旧监督01a1096f-5c33-79f3-bf0b-2b82515cf003.
+- r16同批窄修测试原始native marker证据与README, 生产代码不变. 之后必须先用r5真实负例, 再实施持续保护. 本轮仅Codex原生global:deepseek-v4.1-flash/wb2api/xhigh, 并发不超4, 不再委派或fallback. 实际模型/路由待安全元数据核对.
+- 所有旧工具游戏会话已收割, 无沿用前台授权. 仅现有独占G:headless隔离客户端; 不写Steam/共享mod_configs/C:/canonical Release/Workshop/另一发布会话脚本. 独立新Beta尚未生成.
+## 2026-10-05 09:55 r16与控制器断点
+
+- r16测试原始marker窄修已真实wait completed, 同批监督SUPERVISION_PASS. BindingLossSmokeRunner.cs=BF461E204E0B088CDECDD122C31E353C3B98CB2884C9F1BD8C73DACE5A176A40, README=4C5994A7CCC1F67173E0513D5FD25509FE813655F29AA2756F216B3024AA8E6A. 已不把失效桥unknown当姿态变化, 不确定/冲突不能让安全门通过.
+- 中央r16测试构建6 warnings/0 errors/exit0, 生产r5字节未变. Test carrier DLL=6A2481E8028E7985BB916578F305500BA03BE3D1659E3F8E97127B8B0A4C0737, 无Spire1/Watcher AssemblyRef. 编译证据不是绑定丢失实机证据.
+- 启动r5 terminal负例时r13控制器在进程Start之前因PowerShell自动只读变量$Error赋值失败, exit1. 无游戏进程启动, 不能称mod运行失败. 挂载证据安全移动到native-r5-bindingloss-terminal-r16/staging-retained-controller-prelaunch-failure, 故障记录controller-failure.json. r20同批只新建控制器窄修, 原r13保留.
+- r16监督另确认TaskHelper.RunSafely对GameAction异常仍发布UnobservedFault, 当前runner会把将来的预期重启拒绝也判失败. 这是待补的测试关联面, 未实机验证, 不为变绿吞掉其它fault.
+- r17当前live/teardown只读研究完成并已收割. 不使用CombatState.IsLiveCombat恒true或单独IsEnding判live. 持续保护契约已写入DEVELOP. r18同批只研究等待BASELINE_CONFIRMED, 还未获r5真实负例门禁, 不准提前改生产.
+- 所查原生会话实际模型global:deepseek-v4.1-flash, effort xhigh, provider gateway; 工具目录声明wb2api, 更细子路由未暴露记Unknown. 并发最多4, 禁止子代理再委派/其它harness/模型回退.
