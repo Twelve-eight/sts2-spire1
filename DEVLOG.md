@@ -3115,3 +3115,31 @@ r22 的 Calm/Divinity 已通过,Wrath 失败原因是唯一测试敌人带 Artif
   两张 `CanBeGeneratedInCombat => false`.
 - 事实核对脚本 `q10_audit_doc.py` 扩到 **50/50 PASS** (新增 RitsuLib 导出路径、netIdMap 逐行比对、
   差异字段计数模型、first-mismatch 全 00、池组成与枚举序)。
+
+### 追加 2 (2026-10-09, 差 3 的精确算术与 ChecksumTracker 会话范围)
+
+- **`ChecksumTracker` 是每会话新建的**: `RunManager.cs:472` `ChecksumTracker = new ChecksumTracker(NetService, State)`,
+  `NextId` 从 0 自增 (`ChecksumTracker.cs:57,167`). 实测包 #5 房主 `State divergence detected` 的 ID 序列为
+  `336, 337, 1, 1, 34, 34, 82` => **重连后 ID 从 1 重新开始**.
+- **推论**: "分歧于 ID=N" 等价于 "该会话 ID 1..N-1 **全部匹配**"; 而 RNG 在校验和载荷内
+  (`NetFullCombatState.cs:473` `writer.Write(Rng)`; `FromRun` 设 `Rng = runState.Rng.ToSerializable()`)
+  => 差 3 是在**该分歧动作内一次产生**的. 包 #1(335 个先前匹配)/#4(33)/#5(81) 均支持;
+  包 #2/#3 的 ID=1 无更早比较点, 对它们无法判断.
+  (**前一版"差值在加载时就已存在"的推断作废**; 早前"恒定 3 说明不是累积"的推理也作废——两次自我纠正.)
+- **差 3 的精确算术 (逐位吻合)**: `TakeRandom` = `collection.ToList().UnstableShuffle(rng).Take(count)`
+  (`IEnumerableExtensions.cs:17-20`), `UnstableShuffle` 是 Fisher-Yates 消耗 `list.Count - 1` 次 `NextInt`
+  (`ListExtensions.cs:45-60`), `NextInt` 每次只 `_counter++` 一次 (`Rng.cs:83-85`).
+  - 原版观者池: 83 张声明, `FilterForCombat` 后 **73** 张 => 一次 shuffle 消耗 **72** 次
+  - chaos 池: `SlotCount = 82`, 减 Basic 10 + Ancient 2 => **70** 张 => 一次 shuffle 消耗 **69** 次
+  - **72 - 69 = 3 == 观测到的恒定 +3**
+- **70 已是可完整推导的数, 不是上界猜测**: AA 全仓 `grep` 无 `CanBeGeneratedInCombat`
+  (引擎默认 `CardModel.cs:643` `=> true`), rarity 映射为 `Basic => 1, Ancient => 5`
+  (即 CardRarity.Basic=1/Ancient=5, 被 `FilterForCombat` 排除).
+- **两个分歧动作都指向同一结论**:
+  - 包 #4 `SPIRE1-DISCOVERY` 用 `ModelDb.AllCharacterCardPools` **并集** (`mod/Spire1Code/Cards/Discovery.cs:48-55`),
+    两端除观者池外全同 => 并集大小差 == 观者池战斗内可生成数之差 == 73-70 == 3
+  - 包 #1 Power Potion 用"观者池 ∩ Power"; 原版 Power 战斗内可生成 **12** 张 (逐张点算,
+    含 `WatcherMasterReality`, 与房主实际抽到的卡一致)
+- **结论改为同源**: chaos 池同时改变候选集**内容**(选到不同的卡)与**长度**(多抽 3 次);
+  仅卡身份差异或仅 RNG 差异都足以触发断开 (包 #2/#3/#5 即纯 RNG 不一致而断).
+- 事实核对扩到 **68/68 PASS**.

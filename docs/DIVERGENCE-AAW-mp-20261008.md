@@ -407,10 +407,11 @@ internal static bool Enabled => ComponentRunSettingsApi.Local is { Enabled: true
 | AAW `ChaosWatcherCardPool`（`ChaosWatcherCardRegistry.Types`，Slot 0..81） | 82 | 生成器按 `Rarities` = 10 Basic/20 Common/32 Uncommon/18 Rare/2 Ancient |
 
 `WatcherChaosRun.SlotCount = 82`，`Rarities` = 10+20+32+18+2。`ChaosWatcherCardBase` 的 rarity 由
-`Generated.Rarity` 映射（`AutoAnthony.decompiled.cs:39580`）：Basic→1、Ancient→5，
-`FilterForCombat` 排除这两档 ⇒ chaos 池战斗内可生成 `82-10-2 = 70`（AA 自己的造卡路径还会再叠一层
-`RandomCombatGenerationCandidates`，即 `CanBeRandomlyGeneratedInCombat`；原版路径没有这一层，
-所以 73 与 70 都是**静态上界估计**，精确值需运行时打印）。
+`Generated.Rarity` 映射（`AutoAnthony.decompiled.cs`：`Basic => 1, Ancient => 5`），
+`FilterForCombat` 排除这两档；且 AA **从未覆写** `CanBeGeneratedInCombat`
+（全仓 `grep` 无该标识符，引擎默认 `CardModel.cs:643` `=> true`），
+⇒ chaos 池战斗内可生成 **`82 − 10(Basic) − 2(Ancient) = 70`**（此数已可完整推导，非上界猜测）。
+原版侧 73 亦为逐张点算（见上表）。
 
 > 附带观测（支持"池内容不同"）：原版观者 **Power** 卡战斗内可生成 12 张
 > （`WatcherBattleHymn`/`Fasting2`/`Foresight`/`LikeWater`/`MentalFortress`/`Nirvana`/`Rushdown`/`Study`/`DevaForm`/`Devotion`/`Establishment`/`MasterReality`）；
