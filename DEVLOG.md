@@ -3087,3 +3087,31 @@ r22 的 Calm/Divinity 已通过,Wrath 失败原因是唯一测试敌人带 Artif
 - **待验证**: 客机具体经哪条路径启用 (carrier 未达 fallback `FromLocalSettings()` vs carrier 到达后被读档路径翻回开); 需下一局开局日志或客机 `AutoAnthony/settings.json`. 差 3 的精确来源 (哪一次调用 / 是否回退时机) 未定论.
 - **未复现**: 未在测试副本同 seed 隔离复现 (本轮全程只读未启动游戏); 未验证 `netIdMap` 的 `118 SavedProperty net-id slot(s) differ.` (两端 118 行文本逐行相同且 mapHash 相同, 疑为 RitsuLib 报告口径, 不作结论).
 - 可重跑脚本全部在 `G:\tmp\div-20261008`: `analyze.py`, `full_diff.py`, `aaw_trace.py`, `q3_pools.py`, `q4_realdiff.py`, `q5_chaos_pos.py`, `q6_hands.py`, `q7_final.py`, `logscan.py`, `q8_rng_offset.py`, `q9_draw_windows.py`.
+
+### 追加 (2026-10-09, 复核与定论)
+
+- **`118 SavedProperty net-id slot(s) differ.` 定论为 RitsuLib 导出措辞问题, 非真实差异** (源码级).
+  `STS2-RitsuLib.Runtime.dll` -> `STS2RitsuLib.Networking.StateDivergence.StateDivergenceDiagnosticReportBuilder`:
+  同一份数据构造两遍, 弹窗 `BuildSections(..., includeMatching: false)`, 导出 `.txt`
+  (`StateDivergenceLogBundleWriter` -> `StateDivergenceDiagnosticsPanel.BuildExportReport` -> `report.ExportSections`)
+  用 `includeMatching: true`; `AddSavedPropertyMapRows` 在 true 下收录**全部**条目, 而该行文案用 `list.Count`
+  => 显示 118 = 列出 118 条, 不是 118 条不同. 实测 5 包两端 118 行逐行相同, `mapHash` 同为 `0x0FBB1978`.
+- **同一机制导致导出文件里 `first mismatch: index NN` 恒为 `index 00`**: `AddFieldIfDifferent` 在
+  `includeMatching: true` 下对每个字段无条件加入 `Differences`, 于是 `FormatFirstMismatch` 必返回首条目.
+  实测包 #1 的 12 个 pile 行 / 包 #2 的 9 个 pile 行全部为 `index 00`. => **该行不可用作分歧位置证据**,
+  真实卡身份差异必须逐条自比对 (本次两处差异即如此得出).
+- **校验模型**: 声明差异字段数 == 3 (概览: checksum.value / context.local / network.remotePeer)
+  + RNG 差异行 + 真实卡身份差异数, 5/5 吻合 (9=3+5+1, 8=3+5+0, 8=3+5+0, 9=3+5+1, 8=3+5+0).
+- **RNG 差 3 归因修正 (前一提交)**: 作废"73-70=3 与恒定差吻合". 分歧在**首次**校验和不一致时房主即
+  `DisconnectClient(..., StateDivergence)` (`ChecksumTracker.cs:150-152`), 客机被踢、本局结束,
+  差值**无机会累积** => 恒定 3 无法区分"池差"与"调用次数差". 且 `NetFullCombatState` 含 RNG
+  (`NetFullCombatState.cs:473`), 故 RNG 差 3 **本身**即可触发断开: 包 #2/#3/#5 卡身份零差异仍断.
+- **5 包非独立样本**: 包 #1/#2/#3 的 `CombatCardGeneration` 四个 state 字与计数器完全相同 (379/376),
+  只有 `checksum.value`、校验和 ID、触发动作不同 => 独立样本只有 3 组.
+- **池组成实测** (从 `WatcherCardPool.cs` 声明的 83 张逐文件解析 ctor): CardRarity 分布
+  1/4/19/38/18/4 (Basic 4 / Common 19 / Uncommon 38 / Rare 18 / Ancient 4, Event 4 实为 Ancient 档位),
+  `FilterForCombat` 后战斗内可生成 **73** 张; 其中 Power **12** 张
+  (含 `WatcherMasterReality`, 与包 #1 房主抽到的卡一致); 排除项为 `WatcherLessonLearned`/`WatcherWish_P`
+  两张 `CanBeGeneratedInCombat => false`.
+- 事实核对脚本 `q10_audit_doc.py` 扩到 **50/50 PASS** (新增 RitsuLib 导出路径、netIdMap 逐行比对、
+  差异字段计数模型、first-mismatch 全 00、池组成与枚举序)。
