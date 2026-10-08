@@ -450,6 +450,15 @@ internal static bool Enabled => ComponentRunSettingsApi.Local is { Enabled: true
 - **未取得开局阶段的完整日志**：本次 5 个包的 debug-log 均被截断在 run 后段
   （5000 条上限，覆盖 14:04–14:10）。开局行（`Installed the generated Watcher pool`、
   `Captured the host generation carrier`、`Host selected multiplayer generation mode`）**不在窗口内**。
+- **两端日志里连一条 `[AutoAnthonyWatcher]` 行都没有**（实测：5 包 × 2 侧，含
+  `AutoAnthonyWatcher` 字样的 body **全为 0**；`Watcher` 源只含贴图/视觉行，`AutoAnthony` 源只含
+  AA 本体的 `Treated ... as a vanilla run`）。
+  ⇒ 无法从现有材料判断客机走的是 carrier 分支、`TryFromMultiplayer` 分支、还是
+  `FromLocalSettings()` fallback（`WatcherSeedBeforeMultiplayerPatch.cs:38` 那条 `Log.Warn`
+  是唯一能直接指认 fallback 的证据，但它也不在窗口内）。
+  **这是"客机激活路径未验证"这一结论的完整理由**——不是没找，是材料里根本没有。
+- **可观测的最早比较点仍是 ID=1**（包 #2/#3），没有更早的中间状态可用来区分
+  "加载时带进来"与"会话第一个动作一次造成"。
 - **`118 SavedProperty net-id slot(s) differ.` 已定论：RitsuLib 的措辞问题，不是真实差异**（源码级证据）。
   5 个包的两侧 118 行**逐行完全相同**（逐条比对 0 处不同），`savedProperties.mapHash` 两端都是
   `0x0FBB1978`、`count` 两端 118。
