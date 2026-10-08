@@ -3070,3 +3070,20 @@ r22 的 Calm/Divinity 已通过,Wrath 失败原因是唯一测试敌人带 Artif
 - 当前批 4 个原生 Codex 子代理的真实 `turn_context` 均为 `global:deepseek-v4.1-flash` / `xhigh`, `model_provider=gateway`, `thread_source=subagent`, `multi_agent_version=v1`, `spawn depth=1`.
 - 4 个 JSONL 中记录的函数调用只有 `exec_command`, `write_stdin` 和 1 次 `js` 工具调用; 未记录 `spawn_agent`, `create_thread`, `fork_thread`, `send_message_to_thread`, `handoff_thread` 或其它子代理/其它 harness 调用.
 - 用户请求中的细路由为 wb2api, 但安全 JSONL 元数据没有暴露 wb2api 字段; 因此本轮精确子路由按规则记为 Unknown, 不从请求文本冒充实际 provider. 证据: G:\omp works\.tmp\forms-independent-20261005\agent-route-r40-current.json.
+
+## 2026-10-09T03:30:00+08:00 联机 StateDivergence 根因定位 (AutoAnthonyWatcher 观者生成池两端不一致)
+
+- 事故: 2026-10-08 22:10 (+08) Steam 副本联机局, 3 人 (Watcher/Regent/Ironclad). RitsuLib 0.6.7 判定两端校验和不一致并断开客机 76561199033460852, 反复重连反复复现. 唯一事实来源 = `G:\appdata\C-Users-o_Obl\Roaming\SlayTheSpire2\logs\ritsulib_state_divergence_20261008_*` 5 个包 (已解包 `G:\tmp\div-20261008\`). 全程只读, 未写 Steam 副本 / 未改共享 mod_configs / 未重启游戏.
+- 结论文档: `docs/DIVERGENCE-AAW-mp-20261008.md` (分"已确认/待验证/未复现"三段, 含 §1.1-1.11).
+- **已确认**: 房主按原版观者牌池跑, 客机按 chaos 生成池跑; 同一 choice 索引在两端解析成不同卡 -> 校验和不一致. 两处直接证据: 包 ...221012 的 `UsePotionAction index:2`(Power Potion) 房主 Hand[04]=`CARD.WATCHER_MASTER_REALITY` vs 客机 `CARD.CHAOS_WATCHER_CARD051`(两端 dump 各 59 张, 仅此 1 张不同); 包 ...221302 的 `SPIRE1-DISCOVERY` 房主 `CARD.SPIRE1-DUAL_WIELD` vs 客机 `CARD.SPIRE1-GENETIC_ALGORITHM`(各 61 张, 仅此 1 张不同).
+- **已确认 (RNG)**: 两端 `rng.run.seed` 同为 `0HR24G6AS5PS`, 13 个 run 级流里只有 `CombatCardGeneration` 不同且恒定 host=client+3 (379/376, 1080/1077, 487/484). 用 xoshiro256** 逐步推进客机状态 3 次, **5 个包全部逐位等于房主状态** (`q8_rng_offset.py` -> `Q8_RNG_OFFSET.txt`) => 同一条流上恰好相差 3 次抽取, 不是不同随机源. 计数器跨包非单调 (1080 -> 487) 是 TurnRewind 回退 + `CombatStateSynchronizer.cs:181` 的 `Rng.LoadFromSerializable` 所致.
+- **已确认 (方向)**: 房主权威. 房主 `run_options.json` 本 seed 记录 `Enabled=false` (SavedAt=1791467498=2026-10-08 21:51:38+08), 房主 dump 0 张 chaos 卡, 房主日志 9 次 `Treated RunState.FromSerializable as a vanilla run`.
+- **已确认 (版本假设被推翻)**: 两端 `AutoAnthonyWatcher` 均 0.3.3 (workshop 3794876718), `AutoAnthony` 均 0.3.139 (3786611028), `Watcher` 均 0.10.0, `Spire1` 均 1.2.2. 差异不在版本号.
+- **已确认 (机制)**: AAW 0.3.3 `WatcherSeedBeforeLoadPatch` 在通过守卫后写 `options with { Enabled = true }`, 使 `Enabled=false` 被无条件改写为 true; 且守卫只看"存档牌组有无 chaos 卡 ID"或"`ChaosSettingsBridge.Enabled`"(= 本地 AA `Enabled && AddGeneratedCards`), **不看** `run_options.json` 记录的开关.
+- **已确认 (排除)**: "客机误读房主 carrier" 不成立. 房主 `ChaosModSettings.Enabled=false` -> `EffectiveGeneratedCardsEnabled=false` -> AA 走提前返回分支 `AddGenerationMarker(..., ChaosModSettings.Enabled /*false*/, ...)`, carrier 的 `MultiplayerModEnabled` 必然为 false; 而 `From(settings)` 里 `settings.Enabled && settings.AddGeneratedCards` 无法由 AddGeneratedCards 把 false 变成 true. 客机要装 chaos 池只能靠它自己的本地 AA 设置为开.
+- **已确认 (重连)**: 5 个包不是 5 次独立事故, 而是同一次池不一致在每次重连后立刻复现的连续快照. 房主日志有 4 轮 `Initializing Steam host` -> `Player connected` -> 6-30 秒内再次 `State divergence`. 每次重连走 `NMultiplayerLoadGameScreen.StartRun()` -> `RunState.FromSerializable` -> 读档路径.
+- **已确认 (本仓 Spire1 桥)**: 客机日志 4 次出现本仓 `Spire1` 的 `AutoAnthony bridge: Watcher -> generated pool #0.` (源 `AutoAnthonyCompatBridge.FromCharacterPostfix`, `mod/Spire1Code/Interop/AutoAnthonyCompatBridge.cs:868`), 房主 0 次. 说明客机上 `ChaosCharacterMapping.From(Watcher)` 返回 null 被本桥补成 Ironclad(0). 该行每次都在重连后约 1 秒打印. **未确认**是否参与本次分歧 (AAW 观者池不走该映射).
+- **修正**: 早期"客机日志源里没有 AutoAnthony"的结论作废. 客机在后 4 个包都有 `source=AutoAnthony` 行 (4/8/14/18 条), 内容是同样的 `Treated ... as a vanilla run` -> 客机 AA 本体同样未激活, 客机 chaos 观者池只能由 AAW 负责.
+- **待验证**: 客机具体经哪条路径启用 (carrier 未达 fallback `FromLocalSettings()` vs carrier 到达后被读档路径翻回开); 需下一局开局日志或客机 `AutoAnthony/settings.json`. 差 3 的精确来源 (哪一次调用 / 是否回退时机) 未定论.
+- **未复现**: 未在测试副本同 seed 隔离复现 (本轮全程只读未启动游戏); 未验证 `netIdMap` 的 `118 SavedProperty net-id slot(s) differ.` (两端 118 行文本逐行相同且 mapHash 相同, 疑为 RitsuLib 报告口径, 不作结论).
+- 可重跑脚本全部在 `G:\tmp\div-20261008`: `analyze.py`, `full_diff.py`, `aaw_trace.py`, `q3_pools.py`, `q4_realdiff.py`, `q5_chaos_pos.py`, `q6_hands.py`, `q7_final.py`, `logscan.py`, `q8_rng_offset.py`, `q9_draw_windows.py`.
