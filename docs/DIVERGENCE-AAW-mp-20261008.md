@@ -19,6 +19,12 @@
 已排除"客机误读房主 carrier"。AAW 0.3.3 的读档路径 `options with { Enabled = true }`
 会把"关"强制改写成"开"，使本地开关形同虚设。
 
+**第二个独立症状（§1.4）**：`CombatCardGeneration` 的 RNG 计数器两端差 3
+（`host = client + 3`，`advance(client_state, 3) == host_state` 逐位相等）。
+`NetFullCombatState` 包含 RNG，所以**仅此一项**就足以触发断开——
+包 #2/#3/#5 正是"卡身份零差异、纯 RNG 不一致"而断的。
+⇒ 修好"池不同"**不一定**能消除分歧，RNG 差 3 必须单独处理。
+
 修复方向见 §4（未改动任何文件）。
 
 ---
@@ -94,7 +100,12 @@ neither an AutoAnthony pool snapshot nor pool-managed generated card IDs.
   **5 个包里 `advance(client_state, 3) == host_state` 全部成立**（逐位相等，非近似）。
   ⇒ 两端不是"用了不同的随机源"，而是**同一条流上相差恰好 3 次抽取**。
 - **方向**：`host.counter > client.counter`（379>376 等），且 `host = advance(client, 3)`，
-  即**房主多抽了 3 次**。这与"房主候选池更大"方向一致（原版 73 > chaos 70，见 §2.2）。
+  即**房主多抽了 3 次**。
+  ⚠️ 但这**不能**顺势推出"因为房主候选池更大"：`advance` 逐位相等只证明"同一条流相差 3 次抽取"，
+  不证明这 3 次的来源。池差与调用次数差两种模型都与观测相容（见 §2.2）。
+- **差值恒为 3 不能用来排除累积性池差**：本作在**第一次**校验和不一致时房主就
+  `DisconnectClient(..., StateDivergence)`（`ChecksumTracker.cs:150-152`），客机随即被踢、本局结束，
+  ⇒ 差值**没有机会累积**，我们只能看到"首次不一致"那一刻的快照。见 §2.2。
 - **计数器不是单调的**：`...221302` = 1080/1077，而更晚的 `...221545` = 487/484（变小）。
   这是 `TurnRewind`（`sts2.piyixiajiuhenfen.rewind`）回退 + `CombatStateSynchronizer.cs:181`
   `_runState.Rng.LoadFromSerializable` 的结果：**本局发生过多次状态回退**（房主日志 14:10–14:15
@@ -104,6 +115,34 @@ neither an AutoAnthony pool snapshot nor pool-managed generated card IDs.
   (i) 某次走**整池/大子池**的调用两端候选集大小差 3（如一次 73 vs 70 的调用）；
   (ii) 回退/读档时机差异导致某一端少补了 3 次抽取。
   要定论需在测试副本上打印每次 `FilterForCombat` 后的实际列表大小。
+- **新证据（校验和 ID 与计数器的对照，指向"差值在加载时就已存在"）**：
+
+  | 包 | 校验和 ID | 触发动作 | `CombatCardGeneration` | 卡身份差异 |
+  |---|---|---|---|---|
+  | `...221012` | 336 | `UsePotionAction`（Power Potion） | 379 / 376 | **1 张** |
+  | `...221040` | **1** | `GenericHookGameAction id 0` | 379 / 376 | 0 |
+  | `...221115` | **1** | `GenericHookGameAction id 0` | 379 / 376 | 0 |
+  | `...221302` | 34 | `PlayCardAction CARD.SPIRE1-DISCOVERY` | 1080 / 1077 | **1 张** |
+  | `...221545` | 82 | `PlayCardAction CARD.FALLING_STAR` | 487 / 484 | 0 |
+
+  包 #2/#3 在**校验和 ID = 1**（会话内第 1 个校验和，`lastExecutedActionId=2`）就触发断开，
+  计数器却已是 `379 / 376` —— 与包 #1 在会话中段（ID 336，`lastExecutedActionId=462`）
+  观测到的**同一对数值**。可得的结论：
+  1. 差值在**该会话最早的比较点**就已存在（这是可观测的最早点），即它**不是**在该会话里
+     经过多个动作逐步累积出来的 —— 要么在加载/开局时就带进来，要么由该会话第一个动作一次造成。
+     （**注**：计数器是随存档累积的序列化值，所以"ID=1 时计数 379"本身并不能区分这两者；
+     真正的判据是"没有中间状态可观测"。）
+  2. 包 #2/#3/#5 的**卡身份零差异**、却依然因 RNG 字段不一致而断开 —— 说明"RNG 差 3"本身
+     就足以触发 `StateDivergence`（`NetFullCombatState` 含 RNG，`NetFullCombatState.cs:473`），
+     **不需要**先出现卡身份分歧。即卡身份差异是"池不同"的**表现**，而 RNG 差是**独立**的第二个症状。
+  ⇒ 修好"池不同"不一定能消除 RNG 差 3；两者都要处理。
+
+- **注意：5 个包不是 5 个独立样本**。包 #1/#2/#3 的 `CombatCardGeneration` **四个 state 字与计数器完全相同**
+  （`379/376`，`state0..3` 逐字相同），只有 `checksum.value`、校验和 ID、触发动作不同
+  ⇒ 三者是**同一份 RNG 状态**在三次重连后被反复比对。真正独立的样本只有 3 个：
+  `379/376`（#1/#2/#3）、`1080/1077`（#4）、`487/484`（#5）。
+  统计上只能说"三次独立观测都恰好 +3"，**不足以**据此断定差值不会随调用累积
+  （每次重连都会用 `LoadFromSerializable` 把客机 RNG 重置回房主值，累积会被清零）。
 
 ### 1.5 两端装的 mod 清单不同（但三个相关 mod 版本串相同）
 
@@ -346,9 +385,9 @@ internal static bool Enabled => ComponentRunSettingsApi.Local is { Enabled: true
 **最快的验证**：直接向客机玩家索取 `%APPDATA%\SlayTheSpire2\AutoAnthony\settings.json`
 （或 Godot 的 `user://AutoAnthony/settings.json`）——若其 `Enabled` 为 `true`，(A) 即被证实。
 
-### 2.2 差 3 的算术解释
+### 2.2 池大小与计数器差 3 的关系（两个症状分开归因）
 
-`CombatCardGeneration` 恒定差 3，最可能是"候选池大小差 3"。已算出的两侧池大小（反编译静态计数）：
+两侧池大小（反编译静态计数）：
 
 | 池 | 成员数 | 战斗内可生成（`FilterForCombat` 后，排除 Basic/Ancient/Event + `CanBeGeneratedInCombat=false`） |
 |---|---|---|
@@ -357,15 +396,44 @@ internal static bool Enabled => ComponentRunSettingsApi.Local is { Enabled: true
 
 `WatcherChaosRun.SlotCount = 82`，`Rarities` = 10+20+32+18+2。`ChaosWatcherCardBase` 的 rarity 由
 `Generated.Rarity` 映射（`AutoAnthony.decompiled.cs:39580`）：Basic→1、Ancient→5，
-`FilterForCombat` 排除这两档 ⇒ chaos 池战斗内可生成 **`82-10-2 = 70`**（AA 自己的造卡路径还会再叠一层
+`FilterForCombat` 排除这两档 ⇒ chaos 池战斗内可生成 `82-10-2 = 70`（AA 自己的造卡路径还会再叠一层
 `RandomCombatGenerationCandidates`，即 `CanBeRandomlyGeneratedInCombat`；原版路径没有这一层，
-所以 73 vs 70 是"同一条调用下两端候选集大小"的**上界估计**，精确值需运行时打印）。
-**73 - 70 = 3**，与恒定 +3 吻合。此推断**未在运行中验证**（需打印两端 `FilterForCombat` 后的实际候选集大小）。
+所以 73 与 70 都是**静态上界估计**，精确值需运行时打印）。
 
-> 附带观测（支持该算术）：原版观者 **Power** 卡战斗内可生成 12 张
+> 附带观测（支持"池内容不同"）：原版观者 **Power** 卡战斗内可生成 12 张
 > （`WatcherBattleHymn`/`Fasting2`/`Foresight`/`LikeWater`/`MentalFortress`/`Nirvana`/`Rushdown`/`Study`/`DevaForm`/`Devotion`/`Establishment`/`MasterReality`）；
 > 包 #1 的分歧正是 **Power Potion** 选牌，房主抽到 `WATCHER_MASTER_REALITY`（原版 Power 池成员），
 > 客机抽到 `CHAOS_WATCHER_CARD051`（chaos 池成员）——两端候选集**内容**不同，与"池不同"一致。
+
+#### 池大小差与计数器差 3 的关系（**不能**用"恒定 3"排除池差）
+
+一条看起来很强、实则无效的推理是："若两端候选表长度持续相差 3，差值应随抽取累积增长；
+但观测到的差值恒为 3，所以池差不成立。"**该推理作废**，原因是本作的分歧检测方式：
+
+1. 校验和在**每个动作结束后**产生（`RunManager.cs:572`
+   `GenerateChecksum($"finished action execution {action}", action)`），并且 `NetFullCombatState`
+   **包含 RNG**（`NetFullCombatState.cs:473` `writer.Write(Rng)`；`FromRun` 里 `Rng = runState.Rng.ToSerializable()`）。
+   ⇒ 抽取次数差 3 本身**就足以**让校验和不一致。
+2. 一旦不一致，房主立即 `DisconnectClient(senderId, NetError.StateDivergence)`
+   （`ChecksumTracker.cs:150-152`），**客机被踢出，本局结束**。
+   ⇒ 差值**没有机会累积**：我们只能观测到"第一次出现不一致"的那一瞬间的快照，
+   而那一刻的差值取决于"从上一次成功比较到首次不一致之间发生了多少次两端消耗不同的调用"。
+3. 因此 `+3` 恒定**与**"每次 shuffle 都差 3"**完全相容**（第一次出现时就已被踢，看不到第二次）；
+   同样也与"只在某一次调用上差 3"相容。**观测无法区分这两种模型**——这正是 §1.4 里
+   "哪一次调用造成这 3 次差，包内材料判定不了"的根据。
+4. 另一条路（用 `advance(client_state, 3) == host_state` 逐位相等）证明的是
+   "同一条流、相差 3 次抽取"，**不能**证明"这 3 次来自池大小"。
+
+**⇒ 两个症状必须分开归因**：
+
+| 症状 | 归因 | 状态 |
+|---|---|---|
+| 同一 choice 索引两端解析成**不同卡** | 两端牌池**内容**不同（原版 vs chaos） | 已确认（§1.1/§1.2） |
+| `CombatCardGeneration` 计数器差 3 | 房主多消耗 3 次抽取（池大小差或调用次数差） | **机制未定** |
+
+**判别方法**（下一步，测试副本）：按调用点打印候选表长度与 `_counter` 增量，
+对比两端每次 `GetDistinctForCombat`/`GetForCombat` 前后的计数器差值；
+若每次 shuffle 的 `Δcounter` 都相差 3 ⇒ 池差模型成立；若只有一次相差 3 ⇒ 调用次数差模型成立。
 
 ### 2.3 客机那份 `run_options.json` 不可见
 
@@ -400,9 +468,17 @@ internal static bool Enabled => ComponentRunSettingsApi.Local is { Enabled: true
    会静默造成两端不一致；建议 fallback 时**直接不激活**（fail-closed），并把 fallback 记为显式告警。
 3. **开局把"本局是否启用生成池"写进存档**（AA 的 `ChaosPoolSnapshotModifier.PoolSnapshot` 已有此机制），
    使 `RunState.FromSerializable` 的读档路径能据此恢复，而不是靠"牌组里有没有 chaos 卡"反推。
-4. 复现与验收：测试副本同 seed 双端开局，断言两端
-   `rng.run.rngs.CombatCardGeneration.counter` 与 `FilterForCombat` 候选集大小一致。
-5. **本仓 `AutoAnthonyCompatBridge` 待排查（§1.10）**：客机 4 次打印
+4. **RNG 差 3 必须单独修**（§1.4：包 #2/#3/#5 卡身份零差异仍断开）。
+   在两端**对齐 `CombatCardGeneration` 的消耗序列**：所有走 `GetDistinctForCombat`/`GetForCombat`
+   的调用必须两端候选表长度一致（即先修"池内容/池大小"，因为 `TakeRandom` → `UnstableShuffle`
+   的消耗 = `list.Count − 1`，候选表长度直接决定抽取次数）。
+   若池必须不同（设计如此），则**不要让生成池走 `run.Rng.CombatCardGeneration`**，
+   改用不参与校验和的本地流，或把生成结果作为确定性输入同步。
+5. 复现与验收：测试副本同 seed 双端开局，断言两端
+   `rng.run.rngs.CombatCardGeneration.counter` 与 `FilterForCombat` 候选集大小一致；
+   并按调用点打印每次 `GetDistinctForCombat`/`GetForCombat` 的 `Δcounter`
+   （用于判别"池差"还是"调用次数差"，见 §2.2）。
+6. **本仓 `AutoAnthonyCompatBridge` 待排查（§1.10）**：客机 4 次打印
    `AutoAnthony bridge: Watcher -> generated pool #0.`，房主 0 次。这说明客机上
    `ChaosCharacterMapping.From(Watcher)` 返回 null 被本桥补成 `Ironclad(0)`，即**客机的 AA 认不出观者角色**。
    桥本身对 AAW 观者池无因果（AAW 不走该映射），但**它证明客机与房主的 AA/Watcher 装配状态不同**，
