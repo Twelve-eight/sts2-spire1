@@ -45,7 +45,8 @@
 
 ### 1.2 客机日志直接显示它在生成 chaos 卡，房主没有
 
-客机 debug-log（`remote-debug-log.records.json`，日志源含 `Watcher`、`Spire1`，**不含 `AutoAnthony`**）：
+客机 debug-log（`remote-debug-log.records.json`；包 #1 的窗口里日志源只有 `Watcher`、`Spire1`
+等，**尚未出现 `AutoAnthony`**——客机的 `AutoAnthony` 行从包 #2 起才出现，见 §1.9）：
 
 ```
 14:07:33  Player 76561199466878739 chose cards [CHAOS_WATCHER_CARD038]
@@ -449,9 +450,26 @@ internal static bool Enabled => ComponentRunSettingsApi.Local is { Enabled: true
 - **未取得开局阶段的完整日志**：本次 5 个包的 debug-log 均被截断在 run 后段
   （5000 条上限，覆盖 14:04–14:10）。开局行（`Installed the generated Watcher pool`、
   `Captured the host generation carrier`、`Host selected multiplayer generation mode`）**不在窗口内**。
-- **未验证 `netIdMap` 那行 `118 SavedProperty net-id slot(s) differ.`**：该段 local/remote 两侧 118 行
-  文本**逐行完全相同**，且 `savedProperties.mapHash` 两端都是 `0x0FBB1978`、`count` 两端 118。
-  疑为 RitsuLib 报告口径问题（把"被比较"写成"differ"），**不作为结论**。
+- **`118 SavedProperty net-id slot(s) differ.` 已定论：RitsuLib 的措辞问题，不是真实差异**（源码级证据）。
+  5 个包的两侧 118 行**逐行完全相同**（逐条比对 0 处不同），`savedProperties.mapHash` 两端都是
+  `0x0FBB1978`、`count` 两端 118。
+  机制（`STS2-RitsuLib.Runtime.dll` → `STS2RitsuLib.Networking.StateDivergence.*`）：
+  - 同一份数据构造两遍：**弹窗**用 `BuildSections(..., includeMatching: false)`，
+    **导出文件**用 `BuildSections(..., includeMatching: true)`（`StateDivergenceDiagnosticReportBuilder`；
+    导出走 `StateDivergenceLogBundleWriter` → `StateDivergenceDiagnosticsPanel.BuildExportReport(report)`
+    → `report.ExportSections`，即 `.txt` 用的是 **includeMatching: true** 那份）。
+  - `includeMatching: true` 时 `AddSavedPropertyMapRows` 把**全部**条目都收进列表
+    （`if (includeMatching || !string.Equals(text, text2, Ordinal))`），
+    而该行的说明文字用的是 **`list.Count`**（"被列出"的条数）：
+    `rows.Add(new StateDivergenceDiagnosticRow("savedProperties.netIdMap", ..., F("detail.savedPropertyMapMismatch", "{0} SavedProperty net-id slot(s) differ.", list.Count)))`
+    ⇒ 导出文件里显示 118 = **列出的 118 条**，**不是**"118 条不同"。
+  - 同理，卡牌列表行的 `first mismatch: index NN` 也是同一机制的产物：`AddFieldIfDifferent` 在
+    `includeMatching: true` 下对**每个**字段都无条件加入 `Differences`（`if (includeMatching || !Equals(...))`），
+    于是每个卡牌条目的 `Differences.Count > 0` 恒成立，`FormatFirstMismatch` 必然返回**第一个条目**。
+    实测：包 #1 的 12 个 pile 行、包 #2 的 9 个 pile 行**全部**报告 `index 00`。
+    ⇒ **导出 `.txt` 里的 `first mismatch: index 00` 不代表真实分歧位置**，
+    真实卡身份差异必须自己逐条比对（本文档 §1.1 的两处即如此得出）。
+  ⇒ **不要**把该行当作差异证据。（弹窗路径的 `includeMatching: false` 才是"只列差异"的那份。）
 
 ---
 
