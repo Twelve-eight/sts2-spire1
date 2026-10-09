@@ -172,3 +172,7 @@ Forms 需要自己的 `Forms.pck`, 只包含 Forms 资源和本地化. Spire1.pc
 5. MainFile.Shutdown/桥Terminal会撤两个原owner并清Watcher动态引用, 但安全owner故意驻留至进程退出, 不属于可热卸载对象. 已选局下一实际动作须有明确Forms不可用与重启进程的异常理由, 无原生副作用; timeout/pending/无故障cancelled不是安全通过. 不承诺异常自动将用户送回菜单或整局终止; 交互ActionExecutor可能记录异常后继续队列, 故必须检查真实action执行/完成/fault与日志排空.
 6. 生命周期验收需分开验证两个原owner为0和独立安全owner精确仍在PowerCmd.Remove上且不重复. 实机覆盖独立/同挂正常玩法, terminal与shutdown已选局两张实际牌被拒绝且无能量/HP/marker变化, 以及不选Forms时保留原生行为. 核心remove prefix与伤害/回合边界需独立证据, 不能只以卡牌拒绝替代全部路径验收.
 7. 新字节集中Release构建, 结构门禁, 无窗口隔离烟测, 交叉启动与精准Git备份完成后才生成独立Beta. 不写Steam/共享mod_configs/C:/canonical Release/Workshop/另一发布会话脚本. 未验收UI/长战斗/跨进程读档/多人/真正热替换/性能仍明确保留.
+### 10:19增量: 真实Shutdown负例门禁已成立, 战中通知消费仍待修复
+- r5-shutdown-baseline-confirmed.json为生产实现前的真实负例门禁, terminal负例尚未到达. Terminal消费者不得由测试直接调用TryBind绕过生产pump来冒充修复.
+- 持续pump挂SceneTree.Root但应能在战中暂停树仍消费AssemblyLoad通知; 核对Godot ProcessMode与真实paused/process状态后按最小方式修复, 不强行解除游戏暂停/抢前台. 源注释不得仍写仅Retryable存活.
+- Shutdown发布ShuttingDown同时应写明确非空的重启理由; 不保留上次Bound的空UnavailableReason. 生产写集新增FormStanceWatcherBridge.cs/FormStanceBridgePump.cs, 同批监督覆盖真实native terminal收敛、无重复pump、线程和成本.
