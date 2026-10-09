@@ -1,0 +1,14 @@
+{
+  "CheckedAt": "2026-10-05T15:02:07.1328715+08:00",
+  "Worker": "local-codex-worker-r39",
+  "NativeTool": "local-request-file-execution",
+  "Status": "completed",
+  "TimedOut": false,
+  "WorkerResult": "CODE_COMPLETE",
+  "Source": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\LifecycleSmokeRunner.cs",
+  "SHA256": "A5DE9B1C28AA2487016E3F2DF4D68FE6DCD00106AB5AF3EDA29A8E86A79DDFA7",
+  "Report": "G:\\omp works\\Sts\\sts2-spire1\\docs\\reports\\forms-independent-20261005\\lifecycle-safety-cardinality-r39\\worker.md",
+  "NotBuilt": true,
+  "NotTested": true,
+  "NotRun": true
+}

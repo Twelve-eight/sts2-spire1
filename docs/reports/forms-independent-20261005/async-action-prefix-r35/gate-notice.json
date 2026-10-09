@@ -1,0 +1,10 @@
+{
+  "CheckedAt": "2026-10-05T13:51:30.6334717+08:00",
+  "Worker": "01a10a98-a015-79a0-9844-263a4f37554e",
+  "NativeTool": "multi_agent_v1.wait_agent",
+  "Status": "completed",
+  "TimedOut": false,
+  "WorkerResult": "CODE_COMPLETE",
+  "Source": "G:\\omp works\\Sts\\sts2-forms\\mod\\FormsCode\\FormStanceSafetyGuard.cs",
+  "SHA256": "5088D2E6E906CF7B22EF0F95B42A60EFBC09170E871E419A89801E391986C929"
+}

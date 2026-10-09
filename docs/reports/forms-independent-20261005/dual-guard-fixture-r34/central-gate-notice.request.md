@@ -1,0 +1,1 @@
+r34本批worker真实multi_agent_v1.wait_agent已completed/CODE_COMPLETE, gate-notice.json已记录3个冻结hash与等待证据. 请按supervisor.request.md门禁后窄审并每面落盘, 6分钟有界收尾, 唯一可写supervisor.md. 只准global:deepseek-v4.1-flash/wb2api/xhigh, 不委派/peer/harness/model/close/resume. 不改代码/构建测试/Git/游戏. 原r32门禁不替代本批, worker自报的语法检查也不算中央验证. 重点真实before计数负例与两target exact proof /重复Initialize/Shutdown, r33生产4文件另由同批监督负责.

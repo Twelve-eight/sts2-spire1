@@ -1,0 +1,1 @@
+中央诊断编译core r21部分产物已真实失败0warnings/8errors. 权威日志 G:\omp works\.tmp\forms-independent-20261005\native-smoke-build-r19-phase3-r21-diag.log . RuntimeSafetySmokeRunner.cs:38 CS8954重复file-scoped namespace, 其它private partial helper类型未找到为CS0246, 当前不得通过或部署. 主hub正显式Compile exclude该PARTIAL文件单独验证r19 phase3, 不把排除后的构建当core通过. 请记录8errors及缺SHA字段阻断并继续有界静态监督, 不改源码, 不自行构建测试/peer/委派.

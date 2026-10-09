@@ -1,0 +1,34 @@
+{
+  "RecordedAt": "2026-10-05T10:35:07.6794895+08:00",
+  "Status": "NATIVE_WORKER_COMPLETED",
+  "NativeTool": "multi_agent_v1.wait_agent",
+  "Target": "01a109cb-2810-7463-b8c0-eccd6b48ff4f",
+  "ReturnedStatus": "completed",
+  "TimedOut": false,
+  "CallId": "Unavailable",
+  "Supervisor": "01a109cb-4e3e-7fe1-82dc-41594288b07f",
+  "Report": "G:\\omp works\\Sts\\sts2-spire1\\docs\\reports\\forms-independent-20261005\\binding-loss-faults-r19\\worker-fixture.md",
+  "Files": [
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\FormNativeSmokeRunner.cs",
+      "Bytes": 161533,
+      "SHA256": "0543ABC68E4A3CBD7A85276C21AA5969D692B9CC52F0AA8F721EF4098E1C3DB3"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\BindingLossSmokeRunner.cs",
+      "Bytes": 58477,
+      "SHA256": "E496F79DCFE15579ED705ECB2C3395F13F544C8579FF4933850B59D3E99BCD0F"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\LifecycleSmokeRunner.cs",
+      "Bytes": 23901,
+      "SHA256": "3457BCDED4BED87C2815822D002F57E9BFE74655550726218CA0FF33269B8CCA"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\README.md",
+      "Bytes": 7492,
+      "SHA256": "D6F404EC0868E9EE7AB4CC2B84BE122DC2598F16804FAA5A07143DE039CA9DC1"
+    }
+  ],
+  "Scope": "实现者原生完成后开始同批静态监督; 不代表编译或实机通过"
+}

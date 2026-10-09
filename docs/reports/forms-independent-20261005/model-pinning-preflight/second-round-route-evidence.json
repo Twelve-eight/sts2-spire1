@@ -1,0 +1,21 @@
+{
+  "CheckedAt": "2026-10-05T11:41:14.9750850+08:00",
+  "Id": "01a10a24-8aae-7353-bf70-bc75cbaaa282",
+  "Contexts": [
+    {
+      "Timestamp": "2026-10-05T03:38:49.615Z",
+      "Model": "global:deepseek-v4.1-flash",
+      "Effort": "xhigh"
+    },
+    {
+      "Timestamp": "2026-10-05T03:40:42.383Z",
+      "Model": "global:deepseek-v4.1-flash",
+      "Effort": "xhigh"
+    }
+  ],
+  "AssistantTimestamps": [
+    "2026-10-05T03:39:12.18Z",
+    "2026-10-05T03:40:53.395Z"
+  ],
+  "AllSpecifiedModel": true
+}

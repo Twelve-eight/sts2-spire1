@@ -1,0 +1,1 @@
+请按 G:\omp works\Sts\sts2-spire1\docs\reports\forms-independent-20261005\native-safety-recovery-r26\worker.request.md 执行, baseline-gate.json已冻结r25完成面. 只改RuntimeSafetySmokeRunner.cs与RUNTIME-SAFETY.md和唯一报告, 不构建测试/peer/委派/其它harness. 当前显式global:deepseek-v4.1-flash/wb2api/xhigh, 首条结论先落盘. 同批监督由hub安排.

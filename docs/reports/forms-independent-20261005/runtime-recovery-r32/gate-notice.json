@@ -1,0 +1,10 @@
+{
+  "CheckedAt": "2026-10-05T13:17:55.5859134+08:00",
+  "Worker": "01a10a7d-236b-7d43-8b94-772aa19d4560",
+  "NativeTool": "multi_agent_v1.wait_agent",
+  "Status": "completed",
+  "TimedOut": false,
+  "WorkerResult": "CODE_COMPLETE",
+  "Source": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\RuntimeSafetySmokeRunner.cs",
+  "SHA256": "007C2A515D49EF460B20C5AB5FAAD2C9F3DB9FFB4BAD79142C9125D0CF134DFC"
+}

@@ -1,0 +1,20 @@
+{
+  "ObservedAt": "2026-10-05T10:08:02.6121414+08:00",
+  "Tool": "multi_agent_v1.wait_agent",
+  "Worker": "01a109cb-2810-7463-b8c0-eccd6b48ff4f",
+  "Status": "completed",
+  "TimedOut": false,
+  "Phase": "FIXTURE_ONLY",
+  "Files": [
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\BindingLossSmokeRunner.cs",
+      "SHA256": "DF1C081877F7675BCEBDB1E7BF22D2AEFE791EB376AA2026990E4FDAA6446063",
+      "Bytes": 51275
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\README.md",
+      "SHA256": "FCE44D0324092F5B822523B453B4F40A8E033ED9974246B2DC39B0A3616F3083",
+      "Bytes": 6304
+    }
+  ]
+}

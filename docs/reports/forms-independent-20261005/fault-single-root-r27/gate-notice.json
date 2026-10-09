@@ -1,0 +1,15 @@
+{
+  "CheckedAt": "2026-10-05T12:25:30.6633901+08:00",
+  "NativeTool": "multi_agent_v1.wait_agent",
+  "Worker": "01a10a4c-2e1b-7723-bead-c370c0899e83",
+  "Status": "completed",
+  "TimedOut": false,
+  "WorkerResult": "CODE_COMPLETE",
+  "Files": [
+    {
+      "SHA256": "5A00ACB99846CDD8DFEF8D690B4F200C5367A3C028ADD6C98CED3E55C5BAF0EA",
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\FormNativeSmokeRunner.cs"
+    }
+  ],
+  "Approval": "实现完成门禁, 尚待静态监督/中央验证"
+}

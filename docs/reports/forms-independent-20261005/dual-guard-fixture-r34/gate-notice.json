@@ -1,0 +1,22 @@
+{
+  "CheckedAt": "2026-10-05T13:39:24.0402082+08:00",
+  "Worker": "01a10a7d-236b-7d43-8b94-772aa19d4560",
+  "NativeTool": "multi_agent_v1.wait_agent",
+  "Status": "completed",
+  "TimedOut": false,
+  "WorkerResult": "CODE_COMPLETE",
+  "Sources": [
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\RuntimeSafetySmokeRunner.cs",
+      "SHA256": "45C4E599F66AFDB3044D8BBFCBB52B5EDE4615E7990E5EB109BA073AF8FEB946"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\RUNTIME-SAFETY.md",
+      "SHA256": "A72EB63A5FC717AFB83E11B4383310C04BDF0B19D25F3ED8BCFAECB2A61BC62D"
+    },
+    {
+      "Path": "G:\\omp works\\.tmp\\forms-independent-20261005\\run-isolated-smoke-r34.ps1",
+      "SHA256": "DC61A5C7F79A190E6132362387597925B2F39F7343CC3CD9F8690FA2243B04A3"
+    }
+  ]
+}

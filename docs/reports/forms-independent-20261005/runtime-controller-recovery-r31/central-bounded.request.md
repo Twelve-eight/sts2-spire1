@@ -1,0 +1,1 @@
+请有界完成当前r31实现, 保持唯一脚本run-isolated-smoke-r31.ps1及worker.md白名单, 不再开新范围. 已有静态发现继续分面落盘. 3分钟内将已改候选冻结并报告CODE_COMPLETE, 若仍有未实现项明确INCOMPLETE与精确行号, 不用stub或假通过. 不构建/lint/test/game/Git/委派/peer/harness/模型. 只准global:deepseek-v4.1-flash/wb2api/xhigh, 不close/resume. PowerShell显式shell="powershell.exe",login=false. r29 schema不会在本批冻结时提前变化; 下一批只会将Environment.Exit限定为System.Environment.Exit, 不改字段.

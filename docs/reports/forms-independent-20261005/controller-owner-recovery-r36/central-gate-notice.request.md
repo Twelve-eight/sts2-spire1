@@ -1,0 +1,1 @@
+r36本批worker真实native multi_agent_v1.wait_agent已completed/CODE_COMPLETE, gate-notice.json已记录新hash与实际等待. 请按supervisor.request.md进行门禁后窄审和旧未审完主体收尾, 每面立即落盘, 4分钟有界收尾, 唯一可写supervisor.md. 只准global:deepseek-v4.1-flash/wb2api/xhigh, 不委派/peer/harness/model/close/resume, 不改源/构建测试/Git/游戏. r34旧门禁不替代本批.

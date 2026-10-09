@@ -1,0 +1,1 @@
+请按 G:\omp works\Sts\sts2-spire1\docs\reports\forms-independent-20261005\native-safety-recovery-r26\supervisor.request.md 执行, worker-id.txt由hub同步补. 现在只在supervisor.md写WAITING_GATE并直接最终回复, 不调用任何等待/peer工具, 不读在写产物. 主hub实际native wait最新completed落gate通知后才审. 只global:deepseek-v4.1-flash/wb2api/xhigh, 不委派/其它harness/构建测试.

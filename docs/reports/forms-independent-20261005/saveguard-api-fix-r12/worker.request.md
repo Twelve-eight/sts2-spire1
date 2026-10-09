@@ -1,0 +1,5 @@
+你是 实现者, 范围: G:\omp works\Sts\sts2-forms\tests\FormsSaveGuardSmoke\SaveGuardSmokeRunner.cs.
+用户唯一指定 global:deepseek-v4.1-flash / wb2api / xhigh, 只用原生Codex, 不换模型/路由/fallback, 不再委派, 不运行codex exec/omp.
+唯一报告 G:\omp works\Sts\sts2-spire1\docs\reports\forms-independent-20261005\saveguard-api-fix-r12\worker.md.
+唯一代码白名单为上述SaveGuardSmokeRunner.cs. 首个可用结论立即落盘, 每面写一次, 报告分已确认/进行中/未知. 完成写CODE_COMPLETE, 源码hash与精确改动/未知边界. 不构建/lint/测试/运行游戏/部署/git, 不写C:/Steam/共享配置/标准Release/Workshop. 同批监督须主会话原生wait后通知.
+真实中央r9编译失败: G:\omp works\.tmp\forms-independent-20261005\saveguard-smoke-build-r9.log, status JSON同目录. 行140 lambda `() => game.GameStartupComplete` 不能转换Func<bool>: 实际GameStartupComplete为Task, 错误CS0029和CS1662. 按本机引擎真实API修正这一个启动等待. 必须await实际Task及超时, 不能仅IsCompleted把fault/cancel当成功. 启动状态等待不得不经Godot主线程直接访问engine节点. 复用既有timeout/mainthread helpers, 最小diff保持四项engine FromSerializable检查/patch owner/vanilla roundtrip/unknown DeprecatedModifier和最终finalPassed语义不变. 不做任何产品代码修改. 不虚构API, 必要时查本机权威decompile.

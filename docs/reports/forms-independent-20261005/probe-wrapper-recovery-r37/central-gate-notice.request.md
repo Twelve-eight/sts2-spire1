@@ -1,0 +1,1 @@
+r37 worker真实native multi_agent_v1.wait_agent已completed/CODE_COMPLETE, gate-notice.json已落盘, 当前源hash C638B984846E91B269018332CCFEB60A4F69C309C3BAA48DDA5CE0D6468A9F92. 请按supervisor.request.md执行门禁后窄审. 只准global:deepseek-v4.1-flash/wb2api/xhigh, 不再委派/peer/harness/model/close/resume. 唯一可写supervisor.md, 不改代码/构建/测试/游戏/Git. 重点确认三行删除保留原wrapper与r36 parser schema.

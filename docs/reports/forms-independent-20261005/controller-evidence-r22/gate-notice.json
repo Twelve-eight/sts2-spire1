@@ -1,0 +1,21 @@
+{
+  "RecordedAt": "2026-10-05T10:56:22.1032537+08:00",
+  "NativeTool": "multi_agent_v1.wait_agent",
+  "Target": "01a109ed-ebd7-7df2-812b-28c22e7b4d8e",
+  "ReturnedStatus": "completed",
+  "TimedOut": false,
+  "CallId": "Unavailable",
+  "Files": [
+    {
+      "Path": "G:\\omp works\\.tmp\\forms-independent-20261005\\run-isolated-smoke-r22.ps1",
+      "SHA256": "1B8865E6F1AD826B250923727B639807E3383493C2CB04A2C4CC7A2130C454E1",
+      "Bytes": 29863
+    },
+    {
+      "Path": "G:\\omp works\\.tmp\\forms-independent-20261005\\run-independent-matrix-r22.ps1",
+      "SHA256": "BAF24B6C270F6EEE9329713F538070AFDE55E1316009AC81207229291A477D95",
+      "Bytes": 9338
+    }
+  ],
+  "Scope": "同批监督门禁, phase3 schema仍须完成后复核"
+}

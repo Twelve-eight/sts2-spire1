@@ -1,0 +1,3 @@
+中央构建已得到真实新证据: native-smoke-build-r6.log有6errors/5warnings, 两处显式HarmonyLib.PatchInfo变量与Harmony.GetPatchInfo真实返回HarmonyLib.Patches不符. 旧r6静态PASS不是编译验收.
+本批r7实现白名单窄扩展, 你可额外只改 G:\omp works\Sts\sts2-forms\tests\FormsNativeSmoke\MainFile.cs:120 与 LifecycleSmokeRunner.cs:252 两处变量声明: 改为 var 或真实返回类型, 保留所有owner条目验证及业务不动. 同样检查你自己r7写集中的显式PatchInfo变量, 若同样错误就修正. 不改其它r6代码/runner/project, 不构建测试不再委派.
+新增勘误和修改hash追加你原唯一worker.md, 重新CODE_COMPLETE后结束. 同批r7监督将同时复核这两个声明窄增量, hub重新真实wait门禁. 唯一global:deepseek-v4.1-flash/wb2api/xhigh保持.

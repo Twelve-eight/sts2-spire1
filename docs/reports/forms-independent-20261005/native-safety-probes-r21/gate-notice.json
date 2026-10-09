@@ -1,0 +1,22 @@
+{
+  "RecordedAt": "2026-10-05T11:10:32.4379658+08:00",
+  "NativeTool": "multi_agent_v1.wait_agent",
+  "Target": "01a109f7-d41f-7a93-822f-53fee6f9f8bd",
+  "ReturnedStatus": "completed",
+  "TimedOut": false,
+  "CallId": "Unavailable",
+  "ArtifactState": "PARTIAL_CODE_COMPLETE",
+  "Files": [
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\RuntimeSafetySmokeRunner.cs",
+      "Bytes": 43134,
+      "SHA256": "1F57F1FD31C2F069EBF0BC87C38EB408159B6B3151A6BCD34E04B00E04C8CB43"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\RUNTIME-SAFETY.md",
+      "Bytes": 4037,
+      "SHA256": "AEC2DE98781D6A5E3296F0068149120B3C03D07B3BBFEF83D42BBE33C5D97FA4"
+    }
+  ],
+  "Scope": "只允许开始同批静态监督, 不表示代码完整性/构建/实机通过"
+}

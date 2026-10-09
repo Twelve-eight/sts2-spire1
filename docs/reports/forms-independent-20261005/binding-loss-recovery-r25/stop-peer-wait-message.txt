@@ -1,0 +1,1 @@
+立即停止全部wait_threads/list_threads/read_thread等peer工具调用. 它们被本请求禁止, 不构成native hub门禁. 现在只向supervisor.md记录你尚未开审以及已发生的三次禁止等待调用, 写WAITING_GATE并直接最终回复结束本轮, 不执行任何等待或轮询. 本模型仍须global:deepseek-v4.1-flash/wb2api/xhigh, 不委派/其它harness. 后续只能主hub完成原生wait后明确再发审核通知.

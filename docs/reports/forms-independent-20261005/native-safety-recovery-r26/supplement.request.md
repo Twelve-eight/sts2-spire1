@@ -1,0 +1,8 @@
+你是同批r26监督者, 继续补原冻结产物未查完的窄静态面. 只用global:deepseek-v4.1-flash / wb2api / xhigh, 禁止再委派, peer, 其它harness或模型. 唯一可写报告仍为本目录supervisor.md. 已确认结论立即落盘, 每完成一面写一次, 最多4分钟结束. 不构建/lint/测试/代码/Git/游戏. 不再通读1360行或重复完成面. gate-notice.json已由hub真实native wait生成, 原worker completed/CODE_COMPLETE. RuntimeSafetySmokeRunner.cs冻结hash F416D053F38022F08046FEBC753A65A7E5BD6E2B82AD9AA97E37611244046919仍未改. r27对共享FormNativeSmokeRunner.cs的单root helper在独立返工审核中, 不将旧leaf并集问题重新当core finding.
+
+必须补完以下三个静态面, 每面分别PASS/P1/Unknown与准确行号. 没有实机证据不是静态监督阻断; 实机一直由hub集中做, 不因没有游戏报告使静态审核无法收尾.
+1. ValueProp.Move与IsPoweredAttack及Wrath判据: 权威文件 G:\omp works\Sts\sts2-spire1\research\engine-dllsrc\MegaCrit.Sts2.Core.ValueProps\ValueProp.cs 和 ValuePropExtensions.cs, G:\omp works\Sts\sts2-spire1\research\engine-dllsrc\MegaCrit.Sts2.Core.Models.Powers\StrengthPower.cs, G:\omp works\Sts\sts2-spire1\research\engine-dllsrc\MegaCrit.Sts2.Core.Commands.Builders\AttackCommand.cs, G:\omp works\Sts\sts2-spire1\.tmp\watchermod\WatcherMod\Wrath.cs. 明确判断未选局两牌期望值的静态合法性, 不从桥patch推断Wrath倍率.
+2. ownerCounts只统计Harmony而非model hook是语义边界还是实际false-pass. 检查通过条件是否额外要求真实命令调用settled, 明确Forms restart异常完整root, before/after严格无副作用, 精确resident remove guard. 若检查面依赖真实model hook异常即可证明所测路径, 不要求model hook出现在Harmony计数. 按实际控制流判定, 不造更强文字契约.
+3. RuntimeSafetySmokeRunner.cs:149-222 post-quit收尾. 晚fault是否同时改变passed/status/exitCode且持久化全部raw. scene Quit已提交后late fault或postQuitWrite失败是否仍可能进程exit0或预退出成功报告被误当final. 最小修复建议须具体; 若只是process退出码无法改但controller严格final校验可fail closed, 仍要说明是否违反当前RUNTIME-SAFETY.md非零退出契约. 不自行修代码.
+
+最后追加静态监督整体结论SUPERVISION_PASS或NEEDS_REWORK; 尚未查完则SUPERVISION_INCOMPLETE. 报告三段已确认/进行中/未知自洽, 不攒到最后.

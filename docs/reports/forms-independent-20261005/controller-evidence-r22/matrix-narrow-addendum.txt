@@ -1,0 +1,1 @@
+追加一个独立机械写集: 只新增 G:\omp works\.tmp\forms-independent-20261005\run-independent-matrix-r22.ps1 , 从原run-independent-matrix.ps1复制, 仅将4处普通变量$error改为$launchError, 原件保留, 其它字节语义不动. 原矩阵也含自动变量冲突风险, 不再用原件启动新实机. 你的本阶段已超过10分钟, 现在停止扩展研究, 已有raw/expected/lifecycle修复能落盘就先完整写盘并报告. 当前只剩待phase3 schema的新proof面可标进行中, 不空等不造字段. 请3分钟内提交可用控制器与明确未完成点, 不自行测试/再委派/peer轮询. 同批监督后续由hub唤醒.

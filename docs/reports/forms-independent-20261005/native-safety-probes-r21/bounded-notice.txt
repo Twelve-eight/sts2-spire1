@@ -1,0 +1,1 @@
+本任务已到10分钟, 请停止扩展研究, 立即落盘新增RuntimeSafetySmokeRunner.cs与报告, 按已确认API完成最小可执行范围, 最多3分钟. 未能完成面必须flag而非stub或假passed, 最终CODE_COMPLETE或PARTIAL_CODE_COMPLETE和精确接续点. 未完成的代码不可伪装成实机通过. 不改原文件, 不构建/测试/运行或再委派. 报告自撰中文标点只用ASCII, 当前已确认续标题含全角括号需修报告自己的标点, 不改未知原文证据.

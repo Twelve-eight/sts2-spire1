@@ -1,0 +1,26 @@
+{
+  "CheckedAt": "2026-10-05T13:34:48.5067713+08:00",
+  "Worker": "01a10a88-1734-7040-8c2f-f1906f8dbfc5",
+  "Status": "completed",
+  "TimedOut": false,
+  "NativeTool": "multi_agent_v1.wait_agent",
+  "WorkerResult": "CODE_COMPLETE",
+  "Sources": [
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\mod\\FormsCode\\FormStanceMode.cs",
+      "SHA256": "15271CF355E6303C09D0FCE56286CF5137385AD788ABEB48D1871CCE490F5034"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\mod\\FormsCode\\FormStanceModifier.cs",
+      "SHA256": "CDA047A214E93CBDBFB21C524A2DEC79204ABCC4157CB0F778F8600DE824F5E2"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\mod\\FormsCode\\FormStanceSafetyGuard.cs",
+      "SHA256": "B722AD5770D8D4DA02EB51EC5D0DA395157A728AD38873B71DA2A330B41AFAB7"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\mod\\FormsCode\\MainFile.cs",
+      "SHA256": "156227F421F446480930E1C184182C86C641746D8DAED9908A6A8BF254A14F8C"
+    }
+  ]
+}

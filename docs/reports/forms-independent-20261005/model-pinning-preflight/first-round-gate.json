@@ -1,0 +1,13 @@
+{
+  "CheckedAt": "2026-10-05T11:40:33.8464911+08:00",
+  "NativeTool": "multi_agent_v1.wait_agent",
+  "Target": "01a10a24-8aae-7353-bf70-bc75cbaaa282",
+  "Status": "completed",
+  "TimedOut": false,
+  "FirstActualModel": "global:deepseek-v4.1-flash",
+  "FirstActualEffort": "xhigh",
+  "Provider": "gateway",
+  "ActualWb2apiSubroute": "Unknown",
+  "ReportHash": "682E8A23BD17783F09BDCE2D0117050DF42907B757D3F1AF5AC93C3E21B04A57",
+  "Scope": "一阶段只读路径可达预检, 非生产修改"
+}

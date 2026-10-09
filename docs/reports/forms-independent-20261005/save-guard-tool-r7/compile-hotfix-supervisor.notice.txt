@@ -1,0 +1,2 @@
+本批r7监督范围窄扩展: 除原r7测试工具, worker追加修r6测试工具 MainFile.cs:120 与 LifecycleSmokeRunner.cs:252 的两处显式PatchInfo变量类型错误. 中央真实native-smoke-build-r6.log有6errors/5warnings, Harmony.GetPatchInfo返回HarmonyLib.Patches不是PatchInfo. 本批仅允许这两处声明窄改, 不改原效果runner控制流/工程.
+保持WAITING_GATE, 必须等hub对worker 01a1094d-ddcc-7a81-ad68-0a7c0e348f56新一轮真实completed通知后审原r7产物和这两个编译修复. 唯一报告仍supervisor.md, 不构建测试不改代码不再委派, global:deepseek-v4.1-flash/wb2api/xhigh保持.

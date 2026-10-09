@@ -1,0 +1,10 @@
+{
+  "ObservedAt": "2026-10-05T09:56:55.9392232+08:00",
+  "Tool": "multi_agent_v1.wait_agent",
+  "Worker": "01a109c5-4859-7380-881e-1539f74abf42",
+  "Status": "completed",
+  "TimedOut": false,
+  "CallId": "Unavailable",
+  "File": "G:\\omp works\\.tmp\\forms-independent-20261005\\run-isolated-smoke-r20.ps1",
+  "SHA256": "AFBE52076154176890F6291574B63CFEF315D76729F20706AB8C176AC3F83EA2"
+}

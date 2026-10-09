@@ -1,0 +1,27 @@
+{
+  "CheckedAt": "2026-10-05T11:54:25.1366314+08:00",
+  "NativeTool": "multi_agent_v1.wait_agent",
+  "Worker": "01a10a2a-1efb-7891-b79f-5b1dddda746f",
+  "Status": "completed",
+  "TimedOut": false,
+  "WorkerResult": "CODE_COMPLETE",
+  "Files": [
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\BindingLossSmokeRunner.cs",
+      "SHA256": "1C6E990E46A22434DA7921E212CECD680AEB12563B0AB8EF714998476242750D"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\FormNativeSmokeRunner.cs",
+      "SHA256": "51E79681D39A1A188F02545679A5E6D286BA7EAA9DD676C0C7A8DA3352DB5B99"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\LifecycleSmokeRunner.cs",
+      "SHA256": "0224CFEBE15147F6F0E9C8CC0E4C5034BA651EEDBC67FF0549C981765C065DE9"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\README.md",
+      "SHA256": "3EEF6B54D97943A172856FE8798EF25B98D2BBDDE360939528BB56564FF3C64C"
+    }
+  ],
+  "Approval": "只完成原生等待, 尚待监督与中央验证"
+}

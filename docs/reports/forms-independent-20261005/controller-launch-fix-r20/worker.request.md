@@ -1,0 +1,49 @@
+# 子代理派发与增量汇报模板 (AGENTS.md Sec 8b, 2026-09-22)
+
+派发前: 逐字复制下面模板, 只替换 `<...>` 占位符, 并把内容写成本地请求文件后交给子代理
+(不要直接把大段中文多语言内容贴进模型请求; 引本地路径).
+
+---
+
+你是 实现者, 范围: G:\omp works\.tmp\forms-independent-20261005.
+用户本轮唯一指定模型 `global:deepseek-v4.1-flash`, 路由 `wb2api`. 只准使用当前 harness 的原生子代理设施,
+不得更换模型, 不得启动其它代理运行时(omp/codex 等), 不得再委派.
+
+## 唯一可写路径
+
+报告文件: `G:\omp works\Sts\sts2-spire1\docs\reports\forms-independent-20261005\controller-launch-fix-r20\worker.md` (只可写这一个文件; 不改产品代码/构建/部署/游戏/共享配置, 不写 C:).
+
+## 增量落盘 (硬要求, 违反则结果不作交付证据)
+
+1. 拿到第一条可用结论(发现, 证据, 文件与行号, 复现命令, 失败原因)后 **立即** 追加写入报告文件, 然后才做下一步.
+2. 每完成一个检查面(一个文件 / 一个不变量 / 一个项目面)写一次盘; 结论未定时也要写入已排除的可能性与证据.
+3. 报告文件固定三段: `## 已确认`(有证据), `## 进行中`(半成品, 需复核), `## 未知`(未覆盖).
+4. 不要攒到最后一次性输出; 最终回复允许只是摘要, 并给出报告绝对路径.
+
+## 输出每项包含
+
+优先级, 绝对路径与准确行号, 触发条件, 宣称或权威契约, 当前控制流, 可复现命令, 最小修复范围, 尚缺的实机证据.
+最多 2 项, 有证据就停; 不凑数量, 不把源码推理称为实机复现.
+
+## 语言
+
+只允许中文, 英文, 法文, 德文, 俄文与 ASCII 标点. 未知多语言原文只引本地路径与行号.
+
+---
+
+## 主会话收割方法
+
+```powershell
+Get-ChildItem -LiteralPath '<报告目录>' -File | Sort-Object LastWriteTime |
+  Select-Object Name,Length,LastWriteTime
+```
+
+- 子代理超时/中断/额度耗尽时: 先读报告文件, 把 `已确认` 当作可用证据, `进行中` 当作半成品复核, 不得当作无产出.
+- 收到第一批落盘结果后即向用户汇报一次, 后续增量补充.
+## 唯一代码写集
+只新建 G:\omp works\.tmp\forms-independent-20261005\run-isolated-smoke-r20.ps1 . 原r13保留, 不改其它文件.
+只准wb2api指定模型, reasoning xhigh, 不再委派/其它harness/模型/fallback. 不构建/lint/测试/运行脚本/游戏/git/部署. 本批有同批监督, hub真实wait completed后审.
+实际启动失败证据 G:\omp works\.tmp\forms-independent-20261005\native-r5-bindingloss-terminal-r16\controller-failure.json . 游戏还未启动.
+复制已审核r13脚本到r20, 唯一语义修复将local $error 变量改为非保留名 $launchError (PowerShell变量大小写不敏感, $Error自动只读变量不能赋值); 必须改全读写点但不改函数catch $_.Exception/.Error或JSON LaunchError字段. 其它字节尽可能保持.
+禁止降低Parsed JSON bool/finalPassed/fault/drain/expected initializer/退出码/无窗口/共享config/路径白名单门禁. baseline RegressionObserved不能变Passed.
+立即报告首发现, 完成CODE_COMPLETE列hash与修改行号, 不声称脚本已运行或烟测通过. 任务很窄, 2分钟内完成.

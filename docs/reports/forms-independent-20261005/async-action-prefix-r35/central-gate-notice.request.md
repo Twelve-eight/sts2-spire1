@@ -1,0 +1,1 @@
+r35本批worker真实native multi_agent_v1.wait_agent已completed/CODE_COMPLETE, gate-notice.json已记录实际等待及新源hash5088D2E6E906CF7B22EF0F95B42A60EFBC09170E871E419A89801E391986C929. 请按本批supervisor.request.md进行门禁后PlayPrefix Task边界窄审, 3分钟收尾, 唯一可写supervisor.md. 只准global:deepseek-v4.1-flash/wb2api/xhigh, 不委派/peer/harness/model/close/resume, 不改源/构建测试/Git/游戏. r33门禁不替代本批.

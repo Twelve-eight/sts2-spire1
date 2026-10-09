@@ -1,0 +1,19 @@
+{
+  "CheckedAt": "2026-10-05T12:09:49.9861462+08:00",
+  "NativeTool": "multi_agent_v1.wait_agent",
+  "Worker": "01a10a33-e88b-7c02-9cda-ab5181bd3b0d",
+  "Status": "completed",
+  "TimedOut": false,
+  "WorkerResult": "CODE_COMPLETE",
+  "Files": [
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\RuntimeSafetySmokeRunner.cs",
+      "SHA256": "F416D053F38022F08046FEBC753A65A7E5BD6E2B82AD9AA97E37611244046919"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\RUNTIME-SAFETY.md",
+      "SHA256": "891FE834C0ECC6D4C5A0FA746531153BC05D74472C165E914973490B649B08FC"
+    }
+  ],
+  "Approval": "只完成等待门禁, 尚待监督/中央编译/实机"
+}

@@ -1,0 +1,1 @@
+本轮已超过10分钟有界时限. 现在停止扩展研究, 立即把每个已完成检查面的结论与准确行号增量写入supervisor.md, 未完成面单列未知. 随后在2分钟内给最终SUPERVISION_PASS或NEEDS_REWORK并停止; 不因时间到强行PASS. 不再做Parser/lint/测试或peer等待. 你已收到有效native门禁, 不重新等待实现者.

@@ -1,0 +1,22 @@
+{
+  "RecordedAt": "2026-10-05T11:10:32.4198009+08:00",
+  "NativeTool": "multi_agent_v1.wait_agent",
+  "Target": "01a109cb-2810-7463-b8c0-eccd6b48ff4f",
+  "ReturnedStatus": "completed",
+  "TimedOut": false,
+  "CallId": "Unavailable",
+  "ArtifactState": "CODE_COMPLETE",
+  "Files": [
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\BindingLossSmokeRunner.cs",
+      "Bytes": 61778,
+      "SHA256": "DE9956D6664426FDC48477C083B07E698E35BE16CA7ACFD1F178D4B1BC6B272A"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\FormNativeSmokeRunner.cs",
+      "Bytes": 163311,
+      "SHA256": "4796BC487413BDE0C54E64159FF175FA88B2C67709E102E9D09BE30ADD86362D"
+    }
+  ],
+  "Scope": "只允许开始同批静态监督, 不表示代码完整性/构建/实机通过"
+}

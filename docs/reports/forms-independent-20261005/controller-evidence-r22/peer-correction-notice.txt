@@ -1,0 +1,1 @@
+立即停止所有peer/thread工具轮询. 安全会话元数据已记录你调用了peer工具, 这些只算状态观察, 绝不算监督门禁, 不得据此提前审代码. 本监督现在只在唯一supervisor.md落盘等待, 然后直接最终回复等待主hub门禁即可. 只有主hub真实multi_agent_v1.wait_agent返回指定worker completed并落盘gate-notice后发送send_input才开始审核. 你无需也不准自行wait_threads/read_thread/list_threads/create_thread/send_message_to_thread, 不再委派或补工具. 当前模型与路由保持指定值, 禁止fallback.

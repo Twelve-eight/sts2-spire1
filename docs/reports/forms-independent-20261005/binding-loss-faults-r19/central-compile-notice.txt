@@ -1,0 +1,1 @@
+中央诊断编译已真实失败6 warnings/2 errors, 权威日志 G:\omp works\.tmp\forms-independent-20261005\native-smoke-build-r19-final.log . BindingLossSmokeRunner.cs:789 CS0103 GameActionState不存在当前上下文; :849 CS1739 record构造命名参数actionExecutedAndSettled大小写不匹配. 先记录编译面与待返工边界, 继续本批静态监督其它不变量尤其final raw故障不能误判预期拒绝. 不改代码, 不构建测试, 不自行peer轮询或再委派. 生产r18中央编译1 warning/0 errors, 结构门禁通过, 未实机.

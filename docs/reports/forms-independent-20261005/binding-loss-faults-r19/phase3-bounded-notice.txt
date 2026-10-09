@@ -1,0 +1,1 @@
+phase3已到10分钟, 请立即先落盘两个确定编译窄修, 再落盘已经完成的双action proof, 每完成一面更新worker-phase3.md. 不再全量读取160KB文件或扩展API研究. 当前helper/signature时序已在phase2监督中确认, 可按必要行范围改动. final证明若尚未完成, 请把未完成点和精确接续范围写盘, 最迟3分钟内CODE_COMPLETE或PARTIAL_CODE_COMPLETE返回, 不自行测试/再委派/peer工具/其它harness. 不用stub假字段或强制通过. 本局订阅应尽力覆盖post-quit, 无法准确实现就flag.

@@ -1,0 +1,1 @@
+主hub实际multi_agent_v1.wait_agent已返回本目录worker最新completed/CODE_COMPLETE且TimedOut=false. 本阶段gate-notice.json记录精确worker/time/hash, 现在可按supervisor.request.md开始最终冻结静态审查. 只写supervisor.md, 首条结论先落盘, 不构建测试/peer/委派/其它harness, 10分钟有界. 不继承旧错误模型阶段PASS. 当前显式global:deepseek-v4.1-flash/wb2api/xhigh, 真实metadata由hub逐轮核验.

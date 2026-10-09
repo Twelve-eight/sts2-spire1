@@ -1,0 +1,9 @@
+你是 实现者, 范围: G:\omp works\Sts\sts2-forms\tests\FormsNativeSmoke.
+用户唯一指定 global:deepseek-v4.1-flash / wb2api / xhigh, 只用本轮原生Codex, 不换模型/路由/fallback, 不再委派, 不运行codex exec/omp.
+先读 G:\omp works\AGENTS.md, G:\omp works\Sts\sts2-spire1\docs\reports\forms-independent-20261005\runtime-loss-audit-r10\review.md 与独立化契约. 本批只写测试, 不写产品代码. 主会话先用现有生产r5字节复现, 再派下一批产品修复.
+唯一报告 G:\omp works\Sts\sts2-spire1\docs\reports\forms-independent-20261005\binding-loss-repro-r11\worker.md.
+可写代码白名单: tests\FormsNativeSmoke\FormNativeSmokeRunner.cs, 新文件tests\FormsNativeSmoke\BindingLossSmokeRunner.cs, tests\FormsNativeSmoke\README.md. 仅在现有runner做必要分支或partial声明, 其余测试逻辑放新文件. 不改MainFile/patch/csproj/其它载体/生产源码.
+首个结论立即增量落盘, 每完成一面写一次. 报告固定 已确认/进行中/未知. 不构建/lint/测试/运行游戏/部署/git, 不写C:/Steam/共享配置/标准Release/Workshop. 遇API未知需查本机权威decompile, 不编造声明. 完成写CODE_COMPLETE, 路径/源码hash/入口参数/未验证边界. 同批监督由主会话真实wait完成后通知, 不自行通知或再委派.
+任务: 新增显式opt-in真实引擎已选Forms局Bound后绑定丢失的烟测. 两种独立进程场景 terminal 和 shutdown, 支持明确的命令行入口, 非请求状态不运行. 复用现有创建RunState/StartCombat/真实Watcher牌/PlayCardAction/scheduler/主线程与超时/快照/退出排空逻辑, 不复制整套3600行runner. 先真实入愤怒并证明Forms carrier/effects及IsAvailable, 再terminal场景Assembly.Load(byte[])载入同名Watcher副本并等待真实主线程pump进入不可用, shutdown场景调用Forms生产Shutdown. 不伪造桥状态. 记录真实下一张Watcher strike及至少一个变姿态行为: 明确带重启理由的拒绝, 且未执行原生倍率/能量/stance mutation才是安全通过. 未拦截并产生伤害或姿态变化为 regressionObserved=true/安全门失败. 超时/未知/未执行均不算通过或复现. 故障Task必须被观测和排空, 不留下unobserved fault, 不删除生产即时死亡语义. 旧r5预计会真实继续出牌, 但不得把预计写成复现.
+JSON固定记录 testOnly, status, scenario, formsBoundBefore, selectedBefore, bindingStateAfter, unavailableReason, before/after快照, action/exception证据, explicitRejection, noNativeMutation, regressionObserved, safetyPassed. 最终退出码按安全通过0/失败1, baseline失败可作为已复现但不能标为安全通过. 避免反复启动或卡住主线程. 不修改现有effects/lifecycle入口语义.
+只做此复现载体, 不实现产品修复. 最多10分钟, 首条证据立即落盘.

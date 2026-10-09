@@ -1,0 +1,1 @@
+请读取 G:\omp works\Sts\sts2-spire1\docs\reports\forms-independent-20261005\controller-recovery-r24\supervisor.request.md 和 worker-id.txt, 只在唯一supervisor.md记录等待, 不提前审代码. 必须主hub原生wait最新completed落gate-notice后send_input再审. 不peer/再委派/其它harness/构建测试, 只使用global:deepseek-v4.1-flash/wb2api/xhigh.

@@ -1,0 +1,19 @@
+{
+  "RelatedRuntimeSource": {
+    "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\RuntimeSafetySmokeRunner.cs",
+    "SHA256": "48499CDCBFC2ECD427118BE1EC2B6105CF57F19E42BBE9B1CF63BA09259EAB9C"
+  },
+  "CheckedAt": "2026-10-05T12:42:52.4722573+08:00",
+  "NativeTool": "multi_agent_v1.wait_agent",
+  "Approval": "代码完成门禁, 尚待监督/中央验证",
+  "Files": [
+    {
+      "Path": "G:\\omp works\\.tmp\\forms-independent-20261005\\run-isolated-smoke-r28.ps1",
+      "SHA256": "E476A110A08D127E0D467CBE056818D30A273ED41ABFF6118A6DAE42339E9EF6"
+    }
+  ],
+  "WorkerResult": "CODE_COMPLETE",
+  "Worker": "01a10a51-2e30-73c0-8a6c-4e4400442df4",
+  "Status": "completed",
+  "TimedOut": false
+}

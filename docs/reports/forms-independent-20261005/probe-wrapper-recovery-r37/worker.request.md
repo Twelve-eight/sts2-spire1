@@ -1,0 +1,12 @@
+Only use global:deepseek-v4.1-flash, wb2api, xhigh, native Codex, no fallback. Do not delegate again, use peer tools, other harnesses or models, resume closed sessions, or touch Git, build, lint, parser, game, config, Steam, shared config, C drive, Workshop, or release scripts. PowerShell must use shell powershell.exe and login=false. Read G:\omp works\.tooling\subagent-report-protocol.md first. First useful evidence must be appended immediately. Keep report sections 已确认, 进行中, 未知. Use Chinese, English, French, German, or Russian text only with ASCII punctuation.
+你是 r37 implementation worker. Unique code write path:
+G:\omp works\Sts\sts2-forms\tests\FormsNativeSmoke\RuntimeSafetySmokeRunner.cs
+Unique report path:
+G:\omp works\Sts\sts2-spire1\docs\reports\forms-independent-20261005\probe-wrapper-recovery-r37\worker.md
+Do not change the controller, production code, other tests, docs, or config. Skip build, lint, parser, test, game, and Git. Work directly in the source and report incrementally. Finish within 3 minutes with CODE_COMPLETE or INCOMPLETE.
+
+Current source SHA256 is 45C4E599F66AFDB3044D8BBFCBB52B5EDE4615E7990E5EB109BA073AF8FEB946. Current real evidence:
+G:\omp works\.tmp\forms-independent-20261005\native-r35-core-r34-r36\r1-runtime-safety\forms-runtime-safety.json
+The report is completed and all three command probes are real, but the JSON objects removeProbe, damageProbe, and powerAmountProbe contain only passed, failure, stateUnchanged, markerPreserved. The wrapper fields command, evidence, before, after, and afterPending were overwritten by lines 397, 411, and 424 after RuntimeSafetyFinalizeProbe mutated the original Dictionary. The r36 controller correctly rejects this with Missing evidence property command.
+
+Minimal fix only: keep the original wrapper Dictionary stored in result and do not replace it with RuntimeSafetyProbeEvidence.ToJson() after each finalize call. Delete only the three result assignments at the exact lines corresponding to the current source. RuntimeSafetyFinalizeProbe already mutates the original dictionary with after, afterPending, passed, failure, stateUnchanged, and markerPreserved. Preserve the RuntimeSafetyProbeEvidence local value for the if check. Do not change probe semantics, raw faults, command scheduling, cleanup, or any other field. If you find another required wrapper loss, flag it and stop rather than expanding scope. Record before and after hashes and the exact three-line delta. No stub.

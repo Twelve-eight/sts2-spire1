@@ -1,0 +1,14 @@
+{
+  "CheckedAt": "2026-10-05T14:45:29.2815706+08:00",
+  "Worker": "local-codex-worker-r38",
+  "NativeTool": "local-request-file-execution",
+  "Status": "completed",
+  "TimedOut": false,
+  "WorkerResult": "CODE_COMPLETE",
+  "Source": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\RuntimeSafetySmokeRunner.cs",
+  "SHA256": "9522D2E43D694FAA9AD5157EF83AA878C407C8AFEBE2BC51662FAC04004F5F79",
+  "Report": "G:\\omp works\\Sts\\sts2-spire1\\docs\\reports\\forms-independent-20261005\\unselected-card-id-r38\\worker.md",
+  "NotBuilt": true,
+  "NotTested": true,
+  "NotRun": true
+}

@@ -1,0 +1,12 @@
+{
+  "CheckedAt": "2026-10-05T13:14:47.9875158+08:00",
+  "Worker": "01a10a63-7912-7d23-9dfb-f6e34285a91a",
+  "NativeTool": "multi_agent_v1.wait_agent",
+  "Status": "completed",
+  "TimedOut": false,
+  "WorkerResult": "CODE_COMPLETE",
+  "ScriptSHA256": "25E049A0E228861736F6CEA2569A49926AF71B6A485666CEED69D23574EF14EE",
+  "FrozenSchema": "G:\\omp works\\.tmp\\forms-independent-20261005\\RuntimeSafetySmokeRunner-r29-frozen-for-r31.cs",
+  "FrozenSchemaSHA256": "48499CDCBFC2ECD427118BE1EC2B6105CF57F19E42BBE9B1CF63BA09259EAB9C",
+  "Scope": "真实原生完成门禁, 非审核或实机通过"
+}

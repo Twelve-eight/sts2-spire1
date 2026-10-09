@@ -1,0 +1,30 @@
+{
+  "CheckedAt": "2026-10-05T11:29:48.7807759+08:00",
+  "NativeTool": "multi_agent_v1.wait_agent",
+  "Worker": "01a109ed-ebd7-7df2-812b-28c22e7b4d8e",
+  "Status": "completed",
+  "TimedOut": false,
+  "WorkerResult": "CODE_COMPLETE",
+  "Files": [
+    {
+      "Path": "G:\\omp works\\.tmp\\forms-independent-20261005\\run-isolated-smoke-r23.ps1",
+      "SHA256": "AF007F9F785AA4877377B3A94374F33D6B9CDEACBDB9271D709B99E18272B049"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\BindingLossSmokeRunner.cs",
+      "SHA256": "DE9956D6664426FDC48477C083B07E698E35BE16CA7ACFD1F178D4B1BC6B272A"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\FormNativeSmokeRunner.cs",
+      "SHA256": "4796BC487413BDE0C54E64159FF175FA88B2C67709E102E9D09BE30ADD86362D"
+    },
+    {
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\tests\\FormsNativeSmoke\\LifecycleSmokeRunner.cs",
+      "SHA256": "3457BCDED4BED87C2815822D002F57E9BFE74655550726218CA0FF33269B8CCA"
+    }
+  ],
+  "Approval": "仅完成等待门禁, 尚非监督或运行通过",
+  "Model": "global:deepseek-v4.1-flash",
+  "Route": "wb2api",
+  "Effort": "xhigh"
+}

@@ -1,0 +1,1 @@
+主hub实际multi_agent_v1.wait_agent已返回worker 01a10a33-e88b-7c02-9cda-ab5181bd3b0d最新completed/CODE_COMPLETE且TimedOut=false. gate-notice.json记录精确时间与两源hash, 现在按supervisor.request.md审冻结r26产物, 只写supervisor.md并逐面立即落盘. 10分钟有界, 原生API/settled/线程/原始副作用及真实控制局/最终报告收尾三面. 不自行构建/Parser/lint/测试/peer/委派/其它harness, 不继承旧PASS.

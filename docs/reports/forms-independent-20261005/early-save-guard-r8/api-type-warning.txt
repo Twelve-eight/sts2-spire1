@@ -1,0 +1,1 @@
+中央编译发现独立test helper的API误记: Harmony.GetPatchInfo真实返回HarmonyLib.Patches而非HarmonyLib.PatchInfo. 你新增EnsureInstalled证明路径请用var推断或经本机程序集确认的类型, 不复制错误声明. 仍只改原白名单, 不构建测试不再委派, 原模型保持.

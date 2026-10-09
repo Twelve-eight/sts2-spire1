@@ -1,0 +1,19 @@
+{
+  "Files": [
+    {
+      "SHA256": "2253452C50E3688906DE4DDD035B4AEA669E6DD7DFA4AA095B74F52C4440ADA8",
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\mod\\FormsCode\\FormStanceWatcherBridge.cs"
+    },
+    {
+      "SHA256": "35EAABCAA7191CEE31F8AA7EB8960CC8B80A850F2B34FA72F3505FF6904BA1DC",
+      "Path": "G:\\omp works\\Sts\\sts2-forms\\mod\\FormsCode\\FormStanceBridgePump.cs"
+    }
+  ],
+  "Approval": "代码完成门禁, 尚待监督/新字节实机",
+  "Worker": "01a10a59-9d7d-78a0-a0ca-8da361f017e4",
+  "TimedOut": false,
+  "NativeTool": "multi_agent_v1.wait_agent",
+  "CheckedAt": "2026-10-05T12:51:48.9875515+08:00",
+  "Status": "completed",
+  "WorkerResult": "CODE_COMPLETE"
+}

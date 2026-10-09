@@ -1,0 +1,1 @@
+主会话已在coordination.md末尾记录worker摘要勘误及真实live文件SHA256, 已冻结forms-r5-review-snapshot. 不用错误的worker摘要作验收, 按live文件独立审, hashfinding保留为报告诚实性记录. 请重新读取协调末段, 区分源码问题与已由主会话勘误的报告锚点. 不要求提前通过.

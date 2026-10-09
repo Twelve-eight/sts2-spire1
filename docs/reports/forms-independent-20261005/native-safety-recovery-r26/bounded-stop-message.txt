@@ -1,0 +1,1 @@
+本轮r26已超过10分钟, 请立即把当前已落源码的实际文件/hash和未完成面追加worker.md, 然后停止本阶段; 若未改代码则明确说明. 不在本阶段开始一次整体重写. 先收割已落事实, 主hub将把核心selected和普通局unselected拆成两个独立写集同批配监督继续. 不构建/测试/peer/委派/其它harness, 不将PARTIAL称CODE_COMPLETE.
