@@ -3143,3 +3143,54 @@ r22 的 Calm/Divinity 已通过,Wrath 失败原因是唯一测试敌人带 Artif
 - **结论改为同源**: chaos 池同时改变候选集**内容**(选到不同的卡)与**长度**(多抽 3 次);
   仅卡身份差异或仅 RNG 差异都足以触发断开 (包 #2/#3/#5 即纯 RNG 不一致而断).
 - 事实核对扩到 **68/68 PASS**.
+
+## 2026-10-09T06:30:00+08:00 复核: MpConfigSync 能否/应否解决本次分歧 (结论: 不能, 且不应扩展为通用方案)
+
+背景: 用户问 "MpConfigSync 能解决, 或应当解决这个问题吗?". 结论 **不能解决, 且其当前范围本就不覆盖本案**;
+但存在一条**属于它范围**的隐患值得记下.
+
+### 事实 (全部来自 5 个分歧包 + 两端反编译)
+
+- **MpConfigSync 两端都装了且正常工作**: 包内 loadedMods 两端均 `MpConfigSync version=0.1.2
+  workshop=3799210379` (host #41 / client #24). 日志: host `Config sync: pushed 72 entries to all peers`
+  (每轮重连 2 次: load-lobby begin + initialize-shared backstop), client
+  `Config sync outcome=OK applied=57/72 entries (skipped=15 unknown mod/property, failed=0), 7 mods touched`.
+- **它同步的 7 个 cfg**: `ActToggler2, ActsFromThePast, BaseLib, HeartShake, MpConfigSync, Spire1, intentgraph2`
+  (来自 client 侧 `Config sync: <X>.cfg frozen for this session`).
+  **AutoAnthony 与 AutoAnthonyWatcher 都不在其中.**
+- **根因不在它的作用域内**: 它的扫描面是 `ModConfigRegistry.GetAll()` 里的 `ModConfig` 子类
+  (`ConfigPropertyScanner.cs:22`), 即 **BaseLib 的 `mod_configs/*.cfg`**.
+  而 AA/AAW **完全不使用 BaseLib 配置**: 反编译 AAW 0.3.3 与 AA 0.3.139, `SimpleModConfig` /
+  `ModConfigRegistry` / `ICustomMessage` / `BaseLib` 出现次数**全为 0**;
+  `mod_configs/` 下也**没有** `AutoAnthony.cfg` / `AutoAnthonyWatcher.cfg`.
+  两者各自读自己的 JSON: AA = `Path.Combine(OS.GetUserDataDir(), "AutoAnthony", "settings.json")`
+  (`ChaosModSettings.SettingsPath`), AAW = `user://AutoAnthonyWatcher/run_options.json`
+  (`WatcherRunOptionsStore.RelativePath`).
+  ⇒ 本次分歧的开关 (`AutoAnthony/settings.json` 的 `Enabled`) **物理上不在** MpConfigSync 的可见面里.
+- **交叉验证**: `Spire1.cfg` **已**被同步 (在 7 个之内), 但包 #4 的 `SPIRE1-DISCOVERY` 分歧**照样发生**.
+  即"配置同步成功"不等于"分歧消失" —— 这直接证明配置同步不是本案的解法.
+- **方向性**: 即使扩展覆盖, 也只能修"两端读同一份配置文件、值不同"这一类;
+  本案是**一端根本没读那份配置**(房主 `Enabled=false` → 原版池; 客机 `Enabled=true` → chaos 池),
+  属于"池激活状态"差异, 不是"同一配置值不同".
+
+### 应否扩展它去覆盖 AA/AAW? (建议: 不要)
+
+- AA/AAW 的配置**不是** BaseLib cfg, 要覆盖必须为它们写**逐个 mod 的适配器**(读 JSON、理解 schema、
+  处理 `run_options.json` 这种**以 seed 为 key 的历史表**——同步"当前值"无意义),
+  与 MpConfigSync "零适配、全量镜像 BaseLib cfg" 的设计前提冲突.
+- 更根本的是: **本案的正确修法在 AAW 内部**(见 `docs/DIVERGENCE-AAW-mp-20261008.md` §4):
+  联机以房主 carrier 为唯一权威、读档路径不得 `with { Enabled = true }` 强改、fallback 应 fail-closed.
+  用"外部工具把两端配置刷成一样"去绕开"mod 自身的联机语义缺陷", 只是把 bug 藏起来:
+  房主下次以不同设置开局, 同一个缺陷会以另一种形态复现.
+- 若仍想加一道防线, 更合适的位置是**引擎/BaseLib 层的"配置不一致即拒绝开局"**, 而不是静默改写用户配置.
+
+### 记下的隐患 (属于 MpConfigSync 范围, 值得单独跟进)
+
+- `LobbySnapshotPushPatches.cs` 的 host 推送点是 `LoadRunLobby.TryBeginRunForAllPlayers` **prefix**,
+  其依据是"可靠有序通道上, 前缀发送先于引擎的 begin-run 消息到达客机" ⇒ 客机在
+  `SetUpSavedMultiplayer → RunState.FromSerializable` **之前**已应用配置.
+  实测日志符合该顺序 (14:10:54 两条 `Config sync accepted` → 14:10:54 `Loading a multiplayer run`).
+  但同一时间戳内两条 `accepted` 说明**重连时会连收两包** (load-lobby begin + initialize-shared backstop);
+  backstop 的注释已自承"到那时首个消费者已跑过, 该次推送不再保证 MCS-1".
+  ⇒ 若将来出现"**首个配置消费者早于 lobby 推送**"的 mod, 该 backstop 不构成保护. 现有 7 个 cfg 未见此问题.
+- 未验证: 本轮**未**做实机双端联机验收 (MpConfigSync 自身的 DEVELOP.md §4 也仍标"实机双端验证未执行").
