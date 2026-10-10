@@ -3212,3 +3212,32 @@ r22 的 Calm/Divinity 已通过,Wrath 失败原因是唯一测试敌人带 Artif
 - `workshop-push.ps1 -Vdf <vdf> -GuardCode <2FA>` 单目标推送, steamcmd `Committing update... Success.`
 - 结果 `workshop-push-result.json`: `ExpectedOldId=3799031900`, `PublishedId=3799031900`, `Ok=true`.
 - Payload 三字节: DLL `F4E3B4BD`, PCK `42BD9067`, manifest `CDBD57D5`; changenote `v1.2.3` 含全部新增条目 (Forms decoupling + save guard + stance cmd + MP dep fix).
+
+## 2026-10-11 Strike Canonical Bug — 不应出现的自产故障
+
+**Bug**: `Spire1Card.ConfirmRepresentatives` (`mod\Spire1Code\Cards\Spire1Card.cs:451`) 把
+**canonical** `ModelDb.Card<Strike>()` 注册为 `RunState` hook listener。引擎每次
+`Hook.AfterDeath` 遍历所有 listener → 构造 `HookPlayerChoiceContext` → 调
+`source.Owner` → `AbstractModel.AssertMutable()` → **CanonicalModelException**
+(canonical 模型不可读 Owner)。
+
+**症状**: 任何 mod 的卡片触发 kill → `CreatureCmd.Damage → Kill → AfterDeath` 就炸。
+用户 Steam 实机: Watcher `STRIKE_P`/`CONCLUDE` 打出杀怪 → `Combat #1 turn loop died`
+(战斗 loop 死, 出牌动画看似"卡死" — 实是引擎 combat thread 被异常杀死)。
+日志 `G:\appdata\...\SlayTheSpire2\logs\godot.log` 重复 CanonicalModelException。
+
+**根因**: Spire1 在 "deck-grant guard" 路径把 canonical card 塞进 hook listeners,
+违反引擎 "hook listener 必须 mutable" 契约。Rewind 的 FileCantWrite 是**另一个无关的
+次因** (junction+Preallocate 假"disk full"), 之前误判为主要嫌疑。
+
+**修复** (`89239ca`): `representative = ModelDb.Card<Strike>().ToMutable()` — mutable
+副本 `_owner=null` → `GetOwner` fallback `combatState.Players.FirstOrDefault()`, 不抛。
+
+**教训**: (a) `ModelDb.X<T>()` 返回 canonical, 用作 listener/subscriber/挂在 mutable
+上下文前必须 `.ToMutable()`/`MutableClone()`; (b) 引擎 `HookPlayerChoiceContext`
+ctor 强制 `GetOwner → AssertMutable` 每个 listener 都走 — canonical 进
+`IterateHookListeners` 就炸; (c) "card play 动画 hang" 的真凶几乎总是
+`CanonicalModelException → Combat turn loop died`, 不是 UI 层 bug。
+
+**部署**: 新 dll `3c074066...` 已覆盖到本地 `3799031900\Spire1\` (用户实机), pck
+未变 (dll-only 修复)。等 Workshop push v1.2.4 同步云。
