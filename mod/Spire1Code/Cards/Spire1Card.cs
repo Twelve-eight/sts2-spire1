@@ -448,7 +448,7 @@ internal static class Spire1DeckGrantGuard
         {
             try
             {
-                representative = ModelDb.Card<Strike>();
+                representative = ModelDb.Card<Strike>().ToMutable();
                 _representative = representative;
             }
             catch (Exception e)
