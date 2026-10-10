@@ -3203,5 +3203,6 @@ r22 的 Calm/Divinity 已通过,Wrath 失败原因是唯一测试敌人带 Artif
 - **验证**: assemblyref/manifest/typedef 三门禁全 PASS; PCK_VERIFY_PASS; refresh -VerifyOnly 全 7 行 OK; workshop-push-all -GuardsOnly 全守卫过 (provenance/release-content/VDF quote/size/drift/Markdown).
 - **未验证**: 本批字节**没有实机运行证据**——`FormsMissingModifierSaveGuardPatch.cs` 等新增源是上次 r15/r8 之后提交的, 三姿态/启动矩阵/失效安全均针对旧字节. 按 §9 如实记为"门禁通过, 无新增实机".
 - **提交**: `7af3043 release(spire1): canonical release staging for 1.2.3 push` 已推 origin/master. 此前 workshop/content 字节漂移未提交 (DLL 8C7CA3DB→F4E3B4BD, PCK 70CCBB4D→42BD9067) 现已闭合.
-- **仍阻塞**: 真 push 需 Steam `STEAM_ACCOUNT`/`STEAM_PASSWORD` + 实时 `--2FACode` (~30s 有效), 用户在场时手动跑 `workshop-push.ps1 -Vdf <vdf> --2FACode XXXXX`. 登录冷却 30 分钟窗口已过 (last attempt `2026-10-04 20:53:44`), 不需 `-Force`.
+- **仍阻塞**: 真 push 需 Steam `STEAM_ACCOUNT`/`STEAM_PASSWORD` + 实时 `-GuardCode` (~30s 有效), 用户在场时手动跑 `workshop-push.ps1 -Vdf <vdf> -GuardCode XXXXX`. 登录冷却 30 分钟窗口已过 (last attempt `2026-10-04 20:53:44`), 不需 `-Force`. 注意: shell 参数名是 `-GuardCode` 不是 `--2FACode` (后者是受控入口 `workshop-push-all.ps1` 的内部参数).
 - **本次未做**: 未写 Steam 安装 / shared mod_configs / canonical Release 之外的脚本, 未启动/停止用户游戏, 未消耗 Steam 登录冷却.
+- **后续修正**: `changenote` 首版本号曾写 `v1.2.4` 与 manifest `1.2.3` 不一致; 已合并进 v1.2.3 条目 (commit `25a648b`), 现 staging + VDF + manifest 均 1.2.3 对齐.
