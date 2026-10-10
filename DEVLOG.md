@@ -3194,3 +3194,14 @@ r22 的 Calm/Divinity 已通过,Wrath 失败原因是唯一测试敌人带 Artif
   backstop 的注释已自承"到那时首个消费者已跑过, 该次推送不再保证 MCS-1".
   ⇒ 若将来出现"**首个配置消费者早于 lobby 推送**"的 mod, 该 backstop 不构成保护. 现有 7 个 cfg 未见此问题.
 - 未验证: 本轮**未**做实机双端联机验收 (MpConfigSync 自身的 DEVELOP.md §4 也仍标"实机双端验证未执行").
+
+## 2026-10-10T05:15:00+08:00 Spire1 canonical Release 重建 + Workshop staging 提交
+
+- **动机**: Workshop prep 链路因 `PCK_STALE` 停滞 (staging `Spire1.pck` mtime `2026-10-04` < DLL `2026-10-09`), 需先 rebuild canonical 再 promote 到 workshop/content.
+- **执行**: `Build-Spire1Release.ps1` (无 -SkipBuild 无 -Promote) → `Build-Spire1Release.ps1 -SkipBuild -Promote` → `refresh-workshop-payloads.ps1 -VerifyOnly`.
+- **新字节**: `Spire1.dll` SHA256 `F4E3B4BD7FB7772A38C9B6473922901B9A25C58CBABAA7C229777CAC52D0A08E` (619520 B), `Spire1.pck` `42BD9067C10A22FAA3598D33A8A2C0CA5068DC6385ADCD4A55A25E11C7591C8A` (19655050 B, entries=1464/sourceFiles=744), `Spire1.json` `CDBD57D5` (manifest 字节未变).
+- **验证**: assemblyref/manifest/typedef 三门禁全 PASS; PCK_VERIFY_PASS; refresh -VerifyOnly 全 7 行 OK; workshop-push-all -GuardsOnly 全守卫过 (provenance/release-content/VDF quote/size/drift/Markdown).
+- **未验证**: 本批字节**没有实机运行证据**——`FormsMissingModifierSaveGuardPatch.cs` 等新增源是上次 r15/r8 之后提交的, 三姿态/启动矩阵/失效安全均针对旧字节. 按 §9 如实记为"门禁通过, 无新增实机".
+- **提交**: `7af3043 release(spire1): canonical release staging for 1.2.3 push` 已推 origin/master. 此前 workshop/content 字节漂移未提交 (DLL 8C7CA3DB→F4E3B4BD, PCK 70CCBB4D→42BD9067) 现已闭合.
+- **仍阻塞**: 真 push 需 Steam `STEAM_ACCOUNT`/`STEAM_PASSWORD` + 实时 `--2FACode` (~30s 有效), 用户在场时手动跑 `workshop-push.ps1 -Vdf <vdf> --2FACode XXXXX`. 登录冷却 30 分钟窗口已过 (last attempt `2026-10-04 20:53:44`), 不需 `-Force`.
+- **本次未做**: 未写 Steam 安装 / shared mod_configs / canonical Release 之外的脚本, 未启动/停止用户游戏, 未消耗 Steam 登录冷却.
