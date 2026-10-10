@@ -1,5 +1,5 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
-using Spire1.Spire1Code.Forms;
+using Forms.FormsCode;
 
 namespace FormEffectsProbe;
 

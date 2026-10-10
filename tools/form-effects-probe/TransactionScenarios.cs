@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
-using Spire1.Spire1Code.Forms;
+using Forms.FormsCode;
 
 namespace FormEffectsProbe;
 

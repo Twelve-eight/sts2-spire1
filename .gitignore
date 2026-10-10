@@ -14,6 +14,9 @@ MSBuildTemp/
 packages/
 http-cache/
 
+# Tools build output (probe + helper csproj)
+tools/*/bin/
+tools/*/obj/
 # Godot/C# build output
 mod/.godot/
 mod/bin/

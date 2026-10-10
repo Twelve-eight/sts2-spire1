@@ -9,7 +9,7 @@
     <UseSharedCompilation>false</UseSharedCompilation>
     <NuGetAudit>false</NuGetAudit>
     <RestoreSources>$(MSBuildThisFileDirectory)</RestoreSources>
-    <FormsSourceRoot Condition="'$(FormsSourceRoot)' == ''">$(MSBuildThisFileDirectory)../../mod/Spire1Code/Forms</FormsSourceRoot>
+    <FormsSourceRoot Condition="'$(FormsSourceRoot)' == ''">$(MSBuildThisFileDirectory)../../../sts2-forms/mod/FormsCode</FormsSourceRoot>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />

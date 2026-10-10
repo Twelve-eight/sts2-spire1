@@ -2,18 +2,18 @@
 // Engine provenance: G:\omp works\Sts\sts2-spire1\research\engine-dllsrc.
 // No Godot, native history subscribers, full hook enumeration, network, save, HP or deck simulation.
 global using MegaCrit.Sts2.Core.Models;
-using FormEffectsProbe;
-using MegaCrit.Sts2.Core.Combat;
-using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Creatures;
-using MegaCrit.Sts2.Core.Entities.Players;
-using MegaCrit.Sts2.Core.Entities.Powers;
-using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Random;
-using MegaCrit.Sts2.Core.Runs;
-using MegaCrit.Sts2.Core.Rooms;
-using MegaCrit.Sts2.Core.ValueProps;
-using Spire1.Spire1Code.Forms;
+global using FormsNs = Forms.FormsCode;
+global using FormEffectsProbe;
+global using MegaCrit.Sts2.Core.Combat;
+global using MegaCrit.Sts2.Core.Entities.Cards;
+global using MegaCrit.Sts2.Core.Entities.Creatures;
+global using MegaCrit.Sts2.Core.Entities.Players;
+global using MegaCrit.Sts2.Core.Entities.Powers;
+global using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+global using MegaCrit.Sts2.Core.Random;
+global using MegaCrit.Sts2.Core.Runs;
+global using MegaCrit.Sts2.Core.Rooms;
+global using MegaCrit.Sts2.Core.ValueProps;
 
 namespace BaseLib.Abstracts
 {
@@ -27,6 +27,16 @@ namespace BaseLib.Abstracts
     {
         public PowerLoc(string title, string description, string smartDescription)
             : base(new[] { ("title", title), ("description", description), ("smartDescription", smartDescription) }) { }
+    }
+}
+
+namespace BaseLib.Utils.Attributes
+{
+    [System.AttributeUsage(System.AttributeTargets.Class)]
+    public sealed class CustomIDAttribute : System.Attribute
+    {
+        public CustomIDAttribute(string id) { Id = id; }
+        public string Id { get; }
     }
 }
 
@@ -291,7 +301,7 @@ namespace MegaCrit.Sts2.Core.Models
             if (change == 0) return;
             _amount = amount;
             // The real SetAmount transpiler callback is linked at the exact storage boundary.
-            DemonFormStrengthTransaction.CaptureStoredAmount(this);
+            Forms.FormsCode.DemonFormStrengthTransaction.CaptureStoredAmount(this);
             DisplayAmountChanged?.Invoke();
             Owner.InvokePowerModified(this, change, silent);
         }
