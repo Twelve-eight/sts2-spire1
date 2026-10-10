@@ -3206,3 +3206,9 @@ r22 的 Calm/Divinity 已通过,Wrath 失败原因是唯一测试敌人带 Artif
 - **仍阻塞**: 真 push 需 Steam `STEAM_ACCOUNT`/`STEAM_PASSWORD` + 实时 `-GuardCode` (~30s 有效), 用户在场时手动跑 `workshop-push.ps1 -Vdf <vdf> -GuardCode XXXXX`. 登录冷却 30 分钟窗口已过 (last attempt `2026-10-04 20:53:44`), 不需 `-Force`. 注意: shell 参数名是 `-GuardCode` 不是 `--2FACode` (后者是受控入口 `workshop-push-all.ps1` 的内部参数).
 - **本次未做**: 未写 Steam 安装 / shared mod_configs / canonical Release 之外的脚本, 未启动/停止用户游戏, 未消耗 Steam 登录冷却.
 - **后续修正**: `changenote` 首版本号曾写 `v1.2.4` 与 manifest `1.2.3` 不一致; 已合并进 v1.2.3 条目 (commit `25a648b`), 现 staging + VDF + manifest 均 1.2.3 对齐.
+
+## 2026-10-10T09:04:49+08:00 Spire1 1.2.3 已推送 Workshop
+
+- `workshop-push.ps1 -Vdf <vdf> -GuardCode <2FA>` 单目标推送, steamcmd `Committing update... Success.`
+- 结果 `workshop-push-result.json`: `ExpectedOldId=3799031900`, `PublishedId=3799031900`, `Ok=true`.
+- Payload 三字节: DLL `F4E3B4BD`, PCK `42BD9067`, manifest `CDBD57D5`; changenote `v1.2.3` 含全部新增条目 (Forms decoupling + save guard + stance cmd + MP dep fix).
