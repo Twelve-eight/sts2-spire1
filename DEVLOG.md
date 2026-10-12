@@ -3337,3 +3337,52 @@ catch (InvalidProgramException) {
 - 根治需两端 `Spire1.dll`/`PureSts1Pools` 对齐, 或把池决定键移到同步生效点之后.
 - 族 B (Quirk) 属 STS2_Things mod, 不在本仓; 族 C (Discovery) 正在查并集不对称的确切池差异.
 - **实机双端联机验收未执行** — 只做了构建+IL 复核+部署测试副本.
+
+## 2026-10-12T19:20:00+08:00 联机分歧全案盘点 — 进度落盘（压缩上下文前）
+
+### 一句话总纲
+全部 8 包（同一对端 76561199367055891 / Regent）归并为 **3 个根因族**，收敛到**一件事**：
+**两端 `ModelDb.AllCards`/`AllCharacterCardPools` 卡集不同 — client 比 host 多 ~61 张**。
+来源 = `SharedCardReuse`/`PureSts1Pools` own-vs-engine 注入在 mod-init 读（早于 MpConfigSync lobby 推送，
+MCS-1 启动读取盲区），叠加 `49 vs 50` mod 集差异（client 多 AnimeDefectCards/ATA_IronClad 等卡图 mod）。
+
+### 三族
+| 族 | 触发 | 差异 | 归属 |
+|---|---|---|---|
+| A FINISHER | PlayCardAction SPIRE1-FINISHER (296/20/20) | FINISHER 位置 + STOMP 费 + 怪 hp | **本仓已修**（Spire1Card.Pool 兜底）|
+| B QUIRK | After enemy turn end (96/12) | THINGS_QUIRK_POWER amount 差 61 | **STS2_Things** 的 bug（把端本地 AllCards 下标当跨端稳定 id）|
+| C DISCOVERY | PlayCardAction SCULPTING_STRIKE/SPIRE1-DISCOVERY (73/1/1) | CombatCardGeneration counter 1124 vs 1181 + 抽卡不同 | 两端卡集不对称（同根因），Discovery 可加固 |
+
+### 已完成
+- **A 已修**: `mod/Spire1Code/Cards/Spire1Card.cs` `override Pool` 三级兜底
+  `try base.Pool → catch InvalidProgramException → Spire1CardPool → catch → IroncladCardPool`(engine 池, 熔断无关)。
+  覆盖 79 张退役 `[Pool(Spire1LegacyPool)]` 卡。已编译+IL复核+部署 `E:\Slay the Spire 2\mods\Spire1\Spire1.dll`。
+  **未实机验收**。
+- **B 已确诊**（子代理 QuirkPowerDiv/dsv-dev）：`THINGS_QUIRK_POWER.amount` = 编码
+  `(playerIndex,deckIndex,cardModelIndex)`，`cardModelIndex` = 端本地 `ModelDb.AllCards.OrderBy(Id.Entry)` 下标。
+  host=682 client=743 差 61；其余 3 个 power 一致。**修复归 STS2_Things 作者**，本仓改不了。
+  最小修法: 别用全局下标 — `cardModelToken` 用常量 + `ResolveStolenDeckCard` 用 deckSlot+Id 软校验。
+  报告 `G:	mp\div-20261012\QuirkPowerDiv-report.md`。
+- **C 已确诊**（子代理 DiscoveryPoolDiv/dsv-dev，报告尚未落盘）：`Discovery.cs:48-55` 枚举
+  `ModelDb.AllCharacterCardPools.SelectMany(GetUnlockedCards)` + `GetDistinctForCombat(...,CombatCardGeneration)`。
+  候选集不同 → 同 index 不同卡（host WHIRLWIND/WATCHER_CUT_THROUGH_FATE, client GLASSWORK/DAGGER_THROW）
+  + UnstableShuffle 次数差 → counter 差 57。
+  **可选修复**: `Discovery.cs` 改为"房主广播所选卡 id、端按 id 解析"（房主权威选卡，确定性）——未实施。
+
+### git / 部署
+- 已提交推送: `aa2b5ea`（初版兜底）→ `d5c63e3`（加固二级链+全案盘点）。`origin/master..HEAD` 空。
+- 只提交自己的 `Spire1Card.cs` + `DEVLOG.md`；工作区其它 ~130 改动是用户既有状态，未动。
+- 报告落盘: `G:	mp\div-20261012\{ANALYSIS-STATE.md, DIVERGENCE-FINISHER-20261012.md, QuirkPowerDiv-report.md}`。
+- 8 个解包包: `G:	mp\div-20261012itsulib_state_divergence_20261012_*\`（源 zip 已在 logs 目录轮转，本地 extract 保留）。
+
+### 边界（如实）
+- 修的是**崩溃兜底，非根因**：两端卡集不对称未解，退役卡仍可被发出，只是不再崩。
+- **实机双端联机验收未执行**（游戏进程未跑；静态推导+构建+IL复核+部署）。
+- 根治需：①两端 Spire1.dll/PureSts1Pools/mod 集对齐；②池决定键移到配置同步生效点之后；③STS2_Things 修 quirk。
+
+### 待办（下一轮）
+- [ ] DiscoveryPoolDiv 报告落盘（仍在跑 dsv-dev, `agent://DiscoveryPoolDiv`）
+- [ ] 决策: 是否给 `Discovery.cs` 加"房主权威选卡 id"加固（确定性修法）
+- [ ] 是否整理 STS2_Things quirk 问题给作者 issue（workshop 3747607944 / GitHub Adnermo-002）
+- [ ] 实机双端联机验收族 A 修复（需用户跑一局）
+- [ ] 查 `SPIRE1-FINISHER` 为何能被发到 Regent（退役卡进发牌候选的泄漏路径, 独立 bug）
