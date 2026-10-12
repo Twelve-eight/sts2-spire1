@@ -194,7 +194,20 @@ public abstract class Spire1Card(int cost, CardType type, CardRarity rarity, Tar
             }
             catch (InvalidProgramException)
             {
-                return ModelDb.CardPool<Spire1CardPool>();
+                // Fallback chain for retired [Pool(Spire1LegacyPool)] ids (see doc comment above):
+                // 1. Spire1CardPool - this mod's Ironclad character pool; resolvable whenever the
+                //    Spire1 assembly is registered (the same condition that lets this card exist).
+                // 2. IroncladCardPool - engine Ironclad pool, hardcoded in ModelDb.AllCharacters;
+                //    resolvable even if the Spire1 registration fuse ever removes Spire1 pools, so
+                //    this path can never throw KeyNotFoundException.
+                try
+                {
+                    return ModelDb.CardPool<Spire1CardPool>();
+                }
+                catch (Exception)
+                {
+                    return ModelDb.CardPool<MegaCrit.Sts2.Core.Models.CardPools.IroncladCardPool>();
+                }
             }
         }
     }

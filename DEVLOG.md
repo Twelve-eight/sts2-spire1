@@ -3297,3 +3297,43 @@ engine `CARD.FINISHER`, `SPIRE1-FINISHER` 只在不可达的 `Spire1LegacyPool`.
   是**另一根因**: `QUIRKY_HOPPER` 怪身上第 4 个 `THINGS_QUIRK_POWER` amount 两端差 61
   (STS2_Things 的 power 赋值非确定). 与 FINISHER 无关.
 - 实机双端联机验收未执行 (游戏进程未跑; 只做了静态推导 + 构建).
+
+## 2026-10-12T18:50:00+08:00 联机分歧全案盘点 + FINISHER 兜底加固
+
+### 全量盘点 (8 包, 同一对端 76561199367055891)
+
+| 包 | 触发 | 实质差异 | 根因族 |
+|---|---|---|---|
+| checksum_296/20/20 (17:39-17:42) | PlayCardAction SPIRE1-FINISHER | FINISHER 位置+STOMP 费+creature hp | A: get_Pool 崩 (已修) |
+| checksum_96/12 (17:48-17:49) | After enemy turn end | THINGS_QUIRK_POWER amount 差 61 | B: STS2_Things quirk 非确定 (第三方 mod) |
+| checksum_73/1/1 (18:03-18:04) | PlayCardAction SCULPTING_STRIKE / SPIRE1-DISCOVERY | CombatCardGeneration counter 1124 vs 1181 + state0-3 + 选卡结果不同 | C: Discovery 池并集不对称 (RNG 真分歧) |
+
+- A 与 C 同根 but 不同表现: A 是"卡进堆但池索引缺" → 抛; C 是"两端池并集不同" → 同 index 抽出不同卡。
+- C 的 Discovery 枚举 `ModelDb.AllCharacterCardPools` 并集; host 抽出 WATCHER_CUT_THROUGH_FATE (Watcher 卡) 说明 host 并集含 Watcher 池, client 没有/顺序不同。
+- 三个族都收敛到同一总因: **两端对"某 mod 卡是否注入到角色/共享池"的判定不一致** — `PureSts1Pools`/`SharedCardReuse` 在 mod-init 读, 早于 MpConfigSync lobby 推送 (MCS-1 启动读取盲区), 第三方 mod 同理。
+
+### FINISHER 兜底加固 (评审反馈驱动)
+
+初版 `catch(InvalidProgramException) → ModelDb.CardPool<Spire1CardPool>()` 有隐患:
+`Spire1ModelDbInitFusePatch` (Spire1PowersGatePatch.cs:2155) 在 `ContentUnavailableActive` 时把
+**整个 Spire1 程序集类型**从 `ModelDb.Init` 剔除 → `Spire1CardPool` 也会缺 → `CardPool<Spire1CardPool>()`
+抛 `KeyNotFoundException` (非 InvalidProgramException, catch 不到)。
+
+加固为二级兜底:
+```csharp
+try { return base.Pool; }
+catch (InvalidProgramException) {
+    try { return ModelDb.CardPool<Spire1CardPool>(); }
+    catch (Exception) { return ModelDb.CardPool<IroncladCardPool>(); }   // engine 池, 硬编码 AllCharacters, 熔断无关
+}
+```
+- `IroncladCardPool` 是 `MegaCrit.Sts2.Core.Models.CardPools` 的 engine 池, `AllCharacters` 硬编码 5 项, 与 Spire1 程序集/熔断无关, **恒可解析**。
+- 已编译部署 `E:\Slay the Spire 2\mods\Spire1\Spire1.dll` (18:44), IL 复核三级链在场。
+
+### 边界 (如实)
+
+- 这修的是**崩溃兜底**, 不是根因: 两端池注册不对称(PureSts1Pools/SharedCardReuse 时序)未解,
+  退役卡仍可能被发出, STOMP 费用仍按两端各自逻辑算 — 只是不再因 get_Pool 崩溃.
+- 根治需两端 `Spire1.dll`/`PureSts1Pools` 对齐, 或把池决定键移到同步生效点之后.
+- 族 B (Quirk) 属 STS2_Things mod, 不在本仓; 族 C (Discovery) 正在查并集不对称的确切池差异.
+- **实机双端联机验收未执行** — 只做了构建+IL 复核+部署测试副本.
