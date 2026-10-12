@@ -3241,3 +3241,59 @@ ctor 强制 `GetOwner → AssertMutable` 每个 listener 都走 — canonical �
 
 **部署**: 新 dll `3c074066...` 已覆盖到本地 `3799031900\Spire1\` (用户实机), pck
 未变 (dll-only 修复)。等 Workshop push v1.2.4 同步云。
+
+## 2026-10-12T18:30:00+08:00 联机分歧: SPIRE1-FINISHER get_Pool() 抛错 — 与 10-08 AAW 池问题不同根因
+
+### 事实 (2026-10-12 三包 + 后两包)
+
+三包 `..._173953_checksum_296` / `..._174101_checksum_20` / `..._174250_checksum_20`
+(同局,后两个是重连后计数器重置):
+- 触发动作均为 `PlayCardAction card: CARD.SPIRE1-FINISHER`, 对端 `76561199367055891` (Regent).
+- **RNG 全部一致** (所有 counter/state 两端相同) — 不是 RNG/牌池分歧.
+- 唯一实质差异:
+  - `players[1].piles.Hand` host 4 张(含 FINISHER) vs client 3 张;
+  - `players[1].piles.Discard` host 8 张 vs client 9 张(多的即 FINISHER);
+  - `Hand` 里 `STOMP` 费用 host=2 client=1 (STOMP 按"本回合已完成攻击数"减费,
+    FINISHER 是攻击牌 → host 把它当"没出完"算 1 攻, client 算 2 攻).
+- 总卡数 20=20, 卡多重集一致 → 只是"FINISHER 是否已打出"判定相反.
+
+### 根因 (已验证)
+
+host 端执行 `PlayCardAction(SPIRE1-FINISHER)` 时抛
+`System.InvalidProgramException: Card ... is not in any card pool!`,
+栈 = `CardModel.get_Pool()` → `get_EnergyIcon` → `NCard.Reload/set_Model` →
+`CardPileCmd.CreateCardNodeAndUpdateVisuals` → `AddDuringManualCardPlay`.
+→ host 端该动作 "completed with exception", 卡留在手牌; client 正常进弃牌堆.
+
+`get_Pool()` (`CardModel.cs:298-318`) 扫 `ModelDb.AllCardPools`
+(=`AllCharacterCardPools` + 7 个 `AllSharedCardPools`) 找 `AllCardIds` 含该 id 的池.
+`Spire1LegacyPool` (79 张退役卡的 `[Pool]` 归属) **不在其中** — 它无角色持有且 `IsShared=false`
+(`Spire1LegacyPool.cs` 注释本就写明"不surfacing"). 故 `SPIRE1-*` 退役 id 一旦进牌堆,
+在"该 id 未同时注入可达池"的一端 `get_Pool()` 必抛.
+
+为何 `SPIRE1-FINISHER` 进了 Regent 牌堆: 退役 id 本不该被发牌, 但
+`SharedCardReuse` 的 own/engine 孪生注入由 **`PureSts1Pools`** 决定 — client 端 own `Finisher`
+被注入 `SilentCardPool` → 可作 `SPIRE1-FINISHER` 发牌并正常解析; host 端 (非 pure) 只注入
+engine `CARD.FINISHER`, `SPIRE1-FINISHER` 只在不可达的 `Spire1LegacyPool`.
+**`PureSts1Pools` 在 mod-init 读 (注册池内容), 早于 MpConfigSync 的 lobby-begin 推送** —
+即使两端 cfg 文件值相同, 注册时点的本地值仍可能不同步 → 池内容不对称. 这是启动读取缺口
+(MpConfigSync DEVELOP 已知的 MCS-1 盲区) 的又一例.
+
+### 修复 (本仓已实施)
+
+`mod/Spire1Code/Cards/Spire1Card.cs` 新增 `override CardPoolModel Pool`:
+`try { return base.Pool; } catch (InvalidProgramException) { return ModelDb.CardPool<Spire1CardPool>(); }`.
+让所有 `[Pool(Spire1LegacyPool)]` 的退役子类 `get_Pool()` 兜底到可达的 Ironclad 角色池,
+不再抛. 覆盖全部 79 张, 不动注册/`modelsToAdd`/奖励枚举, MP 确定性.
+代价: 退役卡走到兜底时以 Ironclad 池的框/图标渲染 (次要不一致 vs 硬分歧).
+
+### 残留 / 待查
+
+- `SPIRE1-FINISHER` 如何被发到 Regent (非 Silent) 的"选卡"流程 (rest-site 后 choice 18)
+  — 发牌路径本身的泄漏是另一 bug, 与 `get_Pool()` 崩溃相互独立.
+- `PureSts1Pools` 启动读取缺口的根治应在配置侧 (开局拒绝不一致 或 把池决定键移到
+  同步生效点之后). 本仓 `Pool` 兜底只是止血.
+- 后两包 (`..._174854_checksum_96`, `..._174939_checksum_12`, `After enemy turn end`)
+  是**另一根因**: `QUIRKY_HOPPER` 怪身上第 4 个 `THINGS_QUIRK_POWER` amount 两端差 61
+  (STS2_Things 的 power 赋值非确定). 与 FINISHER 无关.
+- 实机双端联机验收未执行 (游戏进程未跑; 只做了静态推导 + 构建).

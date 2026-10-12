@@ -147,6 +147,57 @@ public abstract class Spire1Card(int cost, CardType type, CardRarity rarity, Tar
         }
         return base.ShouldAddToDeck(card);
     }
+
+    /// <summary>
+    /// MP-2026-10-12 divergence fix: make <see cref="CardModel.Pool"/> resilient for the retired
+    /// <see cref="Spire1LegacyPool"/> ids.
+    /// <para>
+    /// ENGINE FACT: <c>CardModel.Pool</c> (CardModel.cs:298-318) resolves a card's pool by scanning
+    /// <c>ModelDb.AllCardPools</c> (= <c>AllCharacterCardPools</c> + the 7 hardcoded
+    /// <c>AllSharedCardPools</c>) for the first pool whose <c>AllCardIds</c> contains this id, then
+    /// falls back to <c>MockCardPool</c>, then throws <see cref="InvalidProgramException"/>.
+    /// <see cref="Spire1LegacyPool"/> is in NEITHER list (no character exposes it, IsShared=false),
+    /// so a concrete card tagged <c>[Pool(typeof(Spire1LegacyPool))]</c> whose own class was never
+    /// ALSO injected into a character pool is unresolvable: the engine throws the moment a UI or
+    /// combat-visual path touches <c>Pool</c>/<c>VisualCardPool</c>
+    /// (<c>NCard.Reload -&gt; EnergyIcon -&gt; VisualCardPool.EnergyIconPath</c>,
+    /// <c>CardPileCmd.AddDuringManualCardPlay</c>). In multiplayer that aborts the whole
+    /// <c>PlayCardAction</c> on the peer that lacks the registration ("completed with exception"),
+    /// while the peer that has it plays normally - a deterministic state divergence.
+    /// </para>
+    /// <para>
+    /// The retired ids exist only so old saves can still resolve their <c>SPIRE1-*</c> ModelId via
+    /// <c>ModelDb.GetById</c>; they are never meant to be dealt. If one nonetheless lands in a pile
+    /// (config-driven pool-content asymmetry: <c>PureSts1Pools</c> is read at mod-init, before the
+    /// config-sync barrier, so two peers can disagree on whether the own class is in a character
+    /// pool), the resolution must degrade to a REACHABLE pool instead of throwing. This override
+    /// returns the base result when it resolves, and otherwise the base class's own
+    /// <see cref="Spire1CardPool"/> - the Ironclad character pool, which is always in
+    /// <c>AllCharacterCardPools</c> and therefore always resolvable on every peer.
+    /// </para>
+    /// <para>
+    /// Scope/cost: identical on all peers (purely a function of the shared registry), so it is
+    /// MP-deterministic; it only fires for an id that would otherwise crash, so open-group and
+    /// normally-registered cards are unaffected. Cosmetic note: a retired Silent/Defect card that
+    /// reaches this path renders with the Ironclad pool's frame/icon instead of its own - a minor
+    /// cosmetic mismatch versus a hard divergence, and only for a card that should not have been
+    /// dealt at all.
+    /// </para>
+    /// </summary>
+    public override CardPoolModel Pool
+    {
+        get
+        {
+            try
+            {
+                return base.Pool;
+            }
+            catch (InvalidProgramException)
+            {
+                return ModelDb.CardPool<Spire1CardPool>();
+            }
+        }
+    }
 }
 
 /// <summary>
