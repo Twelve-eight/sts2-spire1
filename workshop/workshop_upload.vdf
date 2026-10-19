@@ -5,7 +5,7 @@
 	"previewfile"		"G:\\omp works\\Sts\\sts2-spire1\\workshop\\preview.png"
 	"visibility"		"0"
 	"title"		"杀戮尖塔一代角色：铁甲战士，静默猎手，故障机器人"
-	"description"		"[h1]Spire1: StS1 Characters(一代三角色)[/h1]
+	"description"		"[h1]杀戮尖塔一代角色：铁甲战士，静默猎手，故障机器人[/h1]
 
 [b]测试中[/b] -- 本模组仍在测试中, 内容与数值可能随版本调整, 欢迎反馈问题.
 [i]WORK IN PROGRESS - still being tested; content and numbers may change between versions.[/i]
@@ -51,6 +51,6 @@
 [/list]
 
 [i]The Workshop BaseLib often lags behind the official GitHub. If BaseLib errors after a game update, grab the latest release from GitHub (link above), unzip into the mods folder, and unsubscribe from the Workshop copy to avoid double-loading.[/i]"
-	"changenote"		"v1.2.4: 修复 Strike canonical bug (战斗 hang) + 补齐 4 张缺卡图 + 1 张缺悬停大图. (1) Strike canonical bug: deck-grant guard 把 ModelDb.Card&lt;Strike&gt;() canonical 注册为 RunState hook listener, Hook.AfterDeath 每次迭代都炸 CanonicalModelException 然后 combat turn loop 死, 表现为出牌动画卡死. 改为 .ToMutable() 实例. (2) 补 apotheosis/discovery/slimed/the_bomb 四张无色卡图 (250x190 + 500x380), dark_shackles 补 500x380 悬停大图. (3) 移除无用 parasite.png. (4) 移除 Spire1 内置 Forms 源码 (迁往独立 Forms mod 仓库)."
+	"changenote"		"v1.2.4: 修复 Strike canonical bug (战斗 hang) + 补齐 4 张缺卡图 + 1 张缺悬停大图. (1) Strike canonical bug: deck-grant guard 把 ModelDb.Card&lt;Strike&gt;() canonical 注册为 RunState hook listener, Hook.AfterDeath 每次迭代都炸 CanonicalModelException 然后 combat turn loop 死, 表现为出牌动画卡死. 改为 .ToMutable() 实例. (2) 补 apotheosis/discovery/slimed/the_bomb 四张无色卡图 (250x190 + 500x380), dark_shackles 补 500x380 悬停大图. (3) 移除无用 parasite.png. (4) 移除 Spire1 内置 Forms 源码 (迁往独立 Forms mod 仓库). (5) 修联机分歧: 79 张退役 SPIRE1 卡在 get_Pool() 抛 InvalidProgramException, 使两端对“卡是否已打出”判定相反、校验和分叉; 现加可达池兜底 (Spire1CardPool → Ironclad 池), 属于崩溃兜底而非根因修复, 走到兜底时卡框/图标以铁甲池渲染."
 	"publishedfileid"		"3799031900"
 }
