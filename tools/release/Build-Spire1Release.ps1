@@ -13,6 +13,21 @@ param(
     [switch]$KeepScratch
 )
 
+# --- Get-FileHash shim -------------------------------------------------------------------------
+# This machine's PowerShell 5.1 has Microsoft.PowerShell.Utility loaded but the cmdlet itself is
+# missing (Import-Module does not restore it). The script calls it 10 times, so provide a shim that
+# shells out to certutil and returns the same shape the call sites expect (.Hash, upper-case).
+if (-not (Get-Command Get-FileHash -ErrorAction SilentlyContinue)) {
+    function Get-FileHash {
+        param([Parameter(Mandatory=$true)][string]$LiteralPath, [string]$Algorithm = "SHA256")
+        $out = & certutil.exe -hashfile $LiteralPath $Algorithm 2>&1
+        if ($LASTEXITCODE -ne 0) { throw "certutil failed for $LiteralPath : $out" }
+        $hash = ($out | Where-Object { $_ -match "^[0-9a-fA-F]{64}$" } | Select-Object -First 1)
+        if (-not $hash) { throw "could not parse hash for $LiteralPath" }
+        return [pscustomobject]@{ Algorithm = $Algorithm; Hash = $hash.Trim().ToUpperInvariant(); Path = $LiteralPath }
+    }
+}
+
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
