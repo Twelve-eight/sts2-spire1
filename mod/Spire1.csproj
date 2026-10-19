@@ -51,6 +51,20 @@
         <AdditionalFiles Include="Spire1/localization/**/*.json"/> <!-- Used by analyzer -->
     </ItemGroup>
 
+    <!-- Shared mod conventions (single source, compiled in — no assembly reference).
+         See Sts/_shared/ModConventions/ConsoleDisplay.cs and docs/knowledge/CONSOLE-DISPLAY-FORMAT.md.
+         The path is overridable so a checkout with a different layout still builds:
+           dotnet build -p:SharedModConventions=/path/to/_shared/ModConventions
+         Deliberately no Exists() condition: if the shared file disappears the build must fail
+         loudly rather than silently drop the console display-name feature. -->
+    <PropertyGroup>
+        <SharedModConventions Condition="'$(SharedModConventions)' == ''">$(MSBuildThisFileDirectory)../../_shared/ModConventions</SharedModConventions>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="$(SharedModConventions)/ConsoleDisplay.cs"
+                 Link="ModConventions/ConsoleDisplay.cs" />
+    </ItemGroup>
+
     <ItemGroup>
         <Compile Remove="Spire1/**" />
         <Compile Remove="materials/**" />
@@ -97,7 +111,7 @@
          Default (release) build keeps them excluded.
 
          TO RELEASE A LAYER: delete its Remove line here AND wire its TryApply call in MainFile.cs
-         in the same commit, then update docs/PUSH-INSTRUCTIONS-2026-09-15.md. Wiring without
+         in the same commit, then update docs/historical/PUSH-INSTRUCTIONS-2026-09-15.md. Wiring without
          removing the line fails loudly at compile time with CS0103 (the type will not exist) - the
          intended failure direction. The refresh script asserts the same list against the compiled
          bytes, so the two checks agree; a build made with IncludeHeldBackLayers=true will trip that

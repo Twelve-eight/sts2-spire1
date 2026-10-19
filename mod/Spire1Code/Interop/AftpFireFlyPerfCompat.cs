@@ -7,7 +7,7 @@ namespace Spire1.Spire1Code.Interop;
 
 /// <summary>
 /// AFTP(创意工坊 3746969593 "Acts from the Past",mod manifest version 1.0.5)FireFly
-/// 拖尾分配/抖动兼容层(AFTP-2,docs/STS-PERFORMANCE-PLAN-2026-09-15.md).
+/// 拖尾分配/抖动兼容层(AFTP-2,docs/project/STS-PERFORMANCE-PLAN-2026-09-15.md).
 ///
 /// 缺口(反编译实锤,工坊 DLL 1.0.5 与两份源码树一致):<c>FireFlyEffect.Update</c> 每
 /// 0.04 秒(<c>TrailTime</c>)采一个拖尾样本 -- new Sprite2D + 逐属性赋值 + AddChild +

@@ -11,7 +11,7 @@ namespace Spire1.Spire1Code.Interop;
 
 /// <summary>
 /// AFTP(创意工坊 3746969593 "Acts from the Past",mod manifest version 1.0.5)卡牌状态
-/// 兼容层(AFTP-R4,docs/STS-PERFORMANCE-PLAN-2026-09-15.md).
+/// 兼容层(AFTP-R4,docs/project/STS-PERFORMANCE-PLAN-2026-09-15.md).
 ///
 /// 缺口一 R4-01(已复现的崩溃,本层的存在理由):AFTP 把 <c>Burn.MaxUpgradeLevel</c>
 /// 后置改成 <c>(AllowBurnUpgrade ? 1 : 0)</c>(反编译 :22783-22791,类级

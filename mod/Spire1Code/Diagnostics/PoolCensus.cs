@@ -64,6 +64,15 @@ internal static class PoolCensus
 {
     private static int _menuRunStarted; // one-shot latch for the menu trigger
 
+    /// <summary>
+    /// Renders an id for the census line. The same string is logged to godot.log and shown to the
+    /// player through <c>CmdResult</c>, so localization is opt-in per call site:
+    /// spec §5.4 requires machine logs to keep the bare <c>Id.Entry</c> (grep-able), while the
+    /// console command's output is player-facing (§2).
+    /// </summary>
+    private static string ConsoleId(string id, bool localized)
+        => localized ? Sts2.ModConventions.ModConsole.CardLoc(id) : id;
+
     /// <summary>Menu-enter trigger entry: runs the census at most once per session.</summary>
     internal static void TryRunOnceFromMenu()
     {
@@ -79,7 +88,7 @@ internal static class PoolCensus
     /// Never throws: each pool is an independent failure boundary - a failed pool is
     /// reported and the census continues with the others.
     /// </summary>
-    internal static string Run(string trigger)
+    internal static string Run(string trigger, bool localized = false)
     {
         long t0 = Stopwatch.GetTimestamp();
         var sb = new StringBuilder(4096);
@@ -92,11 +101,11 @@ internal static class PoolCensus
         // Engine colorless pool (was materialized at initializer time by the old
         // LogPoolCensus - the SP1-1 defect) + our three character pools (the injection
         // targets of SharedCardReuse) + the retired-ids sink pool.
-        CensusPool<EngineCardPools.ColorlessCardPool>(sb);
-        CensusPool<Character.Spire1CardPool>(sb);
-        CensusPool<Character.SilentCardPool>(sb);
-        CensusPool<Character.DefectCardPool>(sb);
-        CensusPool<Character.Spire1LegacyPool>(sb);
+        CensusPool<EngineCardPools.ColorlessCardPool>(sb, localized);
+        CensusPool<Character.Spire1CardPool>(sb, localized);
+        CensusPool<Character.SilentCardPool>(sb, localized);
+        CensusPool<Character.DefectCardPool>(sb, localized);
+        CensusPool<Character.Spire1LegacyPool>(sb, localized);
 
         double ms = (Stopwatch.GetTimestamp() - t0) * 1000.0 / Stopwatch.Frequency;
         sb.AppendLine("[Spire1] PoolCensus END trigger=" + trigger
@@ -120,7 +129,7 @@ internal static class PoolCensus
     /// capability-level failure boundary: one unresolvable pool cannot kill the census or
     /// the game.
     /// </summary>
-    private static void CensusPool<TPool>(StringBuilder sb) where TPool : CardPoolModel
+    private static void CensusPool<TPool>(StringBuilder sb, bool localized) where TPool : CardPoolModel
     {
         string name = typeof(TPool).Name;
         try
@@ -181,7 +190,10 @@ internal static class PoolCensus
                     classesPerId[id] = classSet;
                 }
                 classSet.Add(typeName);
-                sb.AppendLine("[Spire1] PoolCensus " + name + " idx=" + idx + " id=" + id
+                // docs/knowledge/CONSOLE-DISPLAY-FORMAT.md §2: user-facing output carries the localized
+                // title so a Chinese client can read the name; the bare id stays first so it is
+                // still copy-pasteable into `card`/`give`.
+                sb.AppendLine("[Spire1] PoolCensus " + name + " idx=" + idx + " id=" + ConsoleId(id, localized)
                     + " cat=" + c.Id.Category + " rarity=" + c.Rarity
                     + " class=" + typeName + " origin=" + origin);
                 idx++;

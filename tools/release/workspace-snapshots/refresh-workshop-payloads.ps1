@@ -909,7 +909,7 @@ function Invoke-Verification([object[]]$verifyRows, [bool]$checkFreshness) {
 # attribute case too.
 #
 # To RELEASE a layer: delete its entry here in the same commit that wires its TryApply call, and
-# update docs/PUSH-INSTRUCTIONS-2026-09-15.md.
+# update docs/historical/PUSH-INSTRUCTIONS-2026-09-15.md.
 $heldBack = @(
     @{ Name = "Spire1"; Dll = "sts2-spire1\workshop\content\Spire1\Spire1.dll"
        Build = "sts2-spire1\mod\.godot\mono\temp\bin\Release\Spire1.dll"

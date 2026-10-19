@@ -10,7 +10,7 @@ namespace Spire1.Spire1Code.Interop;
 
 /// <summary>
 /// AFTP（创意工坊 3746969593 "Acts from the Past"，mod manifest version 1.0.5）特效节点
-/// 生命周期兼容层（AFTP-1，docs/STS-PERFORMANCE-PLAN-2026-09-15.md）。
+/// 生命周期兼容层（AFTP-1，docs/project/STS-PERFORMANCE-PLAN-2026-09-15.md）。
 ///
 /// 缺口（反编译实锤，工坊 DLL 1.0.5 与两份源码树一致）：<c>NSts1Effect.OnTreeEntered</c>
 /// 在节点进树时调 <c>Initialize()</c> 并订阅 <c>SceneTree.ProcessFrame</c>；而
