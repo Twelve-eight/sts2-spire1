@@ -101,7 +101,12 @@ namespace FormEffectsProbe
 
         private static MethodInfo? Find(string typeName, string methodName)
         {
-            Type? type = typeof(ProductionPatchCalls).Assembly.GetType("Spire1.Spire1Code.Forms." + typeName);
+            // The probe compiles the Forms sources in via FormsSourceRoot, so the patch
+            // types live in this assembly under their own namespace. This used to read
+            // "Spire1.Spire1Code.Forms." - the namespace Forms had before it was split
+            // into its own mod (2026-10-05) - so every lookup returned null and all 29
+            // Has*Patch assertions threw ProbeFailure.
+            Type? type = typeof(ProductionPatchCalls).Assembly.GetType("Forms.FormsCode." + typeName);
             if (type == null) return null;
             return type.GetMethod(methodName, BindingFlags.Static | BindingFlags.NonPublic)
                 ?? throw new InvalidOperationException($"Linked production patch is missing {typeName}.{methodName}");
