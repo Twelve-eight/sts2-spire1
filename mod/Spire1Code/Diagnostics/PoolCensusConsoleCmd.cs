@@ -36,6 +36,6 @@ public class PoolCensusConsoleCmd : AbstractConsoleCmd
 
     public override CmdResult Process(Player? issuingPlayer, string[] args)
     {
-        return new CmdResult(success: true, PoolCensus.Run("console"));
+        return new CmdResult(success: true, PoolCensus.Run("console", localized: true));
     }
 }
