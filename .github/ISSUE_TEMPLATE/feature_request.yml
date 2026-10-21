@@ -1,0 +1,70 @@
+name: "✨ Feature request / 功能建议"
+description: "Propose new content, compatibility work, or quality-of-life changes."
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Spire1 is a **faithful port**: the default answer to "change this number"
+        is the vanilla Slay the Spire value. Proposals that add new mechanics are
+        welcome, but say so explicitly.
+
+        本项目的默认原则是**忠实移植**：数值以一代原版为准。若要新增机制而非还原，
+        请在下方明确说明。
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: "Area / 范围"
+      multiple: true
+      options:
+        - "Character / 角色"
+        - "Card / 卡牌"
+        - "Relic / 遗物"
+        - "Potion / 药水"
+        - "Event / 事件"
+        - "Localization / 本地化"
+        - "Multiplayer / 联机"
+        - "Compatibility with other mods / 与其他 mod 的兼容"
+        - "Build, tooling or docs / 构建、工具或文档"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: "Problem / 要解决的问题"
+      description: "What is missing or wrong today? Concrete examples beat general wishes."
+      placeholder: "When playing ... the mod ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: "Proposed solution / 建议方案"
+      description: "Describe the behaviour you want. If it maps to a vanilla StS1 card/relic/event, name it."
+    validations:
+      required: true
+
+  - type: textarea
+    id: fidelity
+    attributes:
+      label: "Vanilla reference / 原版依据"
+      description: "If this restores StS1 behaviour, cite the vanilla value or source (desktop-1.0.jar, wiki, patch notes). Write 'new mechanic' if it is not a port."
+      placeholder: "Vanilla StS1: 6 damage, 2 Weak — desktop-1.0.jar / new mechanic"
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternatives considered / 备选方案 (optional)"
+      placeholder: "Could this be a setting instead of a default change?"
+
+  - type: textarea
+    id: context
+    attributes:
+      label: "Additional context / 补充信息 (optional)"
+      description: "Screenshots, links to other mods, or related issues."

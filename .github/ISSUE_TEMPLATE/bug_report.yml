@@ -1,0 +1,156 @@
+name: "🐞 Bug report / 错误报告"
+description: "Report a crash, freeze, localization error, or wrong behaviour in Spire1."
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please fill every required field — most reports are
+        unactionable without the game/mod/BaseLib versions and the log.
+
+        感谢反馈。请完整填写必填项；缺少版本号与日志的报告通常无法定位。
+
+        Before filing / 提交前：
+        - Update BaseLib from [GitHub Releases](https://github.com/Alchyr/BaseLib-StS2/releases) if the mod fails to load after a game update.
+        - Search existing issues / 先搜索已有 issue。
+
+  - type: input
+    id: game_version
+    attributes:
+      label: "Game version / 游戏版本"
+      description: "The StS2 version shown in the main menu (public beta 0.111.x)."
+      placeholder: "0.111.0"
+    validations:
+      required: true
+
+  - type: input
+    id: mod_version
+    attributes:
+      label: "Spire1 version / mod 版本"
+      description: "From the in-game mod list, `Spire1.json`, or the Workshop page."
+      placeholder: "1.2.5"
+    validations:
+      required: true
+
+  - type: input
+    id: baselib_version
+    attributes:
+      label: "BaseLib version / BaseLib 版本"
+      description: "Version and where it came from (Workshop or GitHub release). Both are required."
+      placeholder: "3.4.5 — GitHub release / Workshop"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install_source
+    attributes:
+      label: "How did you install Spire1? / 安装方式"
+      options:
+        - "Steam Workshop"
+        - "GitHub release (manual, mods/ folder)"
+        - "Built from source"
+        - "Other"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: "OS / 操作系统"
+      options:
+        - "Windows 10/11"
+        - "Linux"
+        - "Steam Deck (Proton)"
+        - "macOS"
+        - "Other"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: mode
+    attributes:
+      label: "Game mode / 游戏模式"
+      options:
+        - "Singleplayer"
+        - "Multiplayer / co-op 联机"
+        - "Both"
+    validations:
+      required: true
+
+  - type: input
+    id: character
+    attributes:
+      label: "Character / 角色 (optional)"
+      description: "Ironclad / Silent / Defect, and the card, relic, potion or event involved."
+      placeholder: "Silent — Nightmare+"
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: "Reproduction steps / 复现步骤"
+      description: "Numbered steps. Include seed, act and floor if the issue is run-specific."
+      placeholder: |
+        1. Start a new run as Silent
+        2. Pick up ...
+        3. Play ... on turn 2
+        4. Freeze / exception
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: "Expected behaviour / 期望行为"
+      placeholder: "What should have happened, with the vanilla StS1 value if relevant."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: "Actual behaviour / 实际行为"
+      description: "Crash message, freeze point, wrong number, unlocalized text — quote it verbatim."
+    validations:
+      required: true
+
+  - type: textarea
+    id: mod_list
+    attributes:
+      label: "Mod list / 已安装 mod 列表"
+      description: "Paste the full enabled list, or attach the game's mod list file. Singleplayer issues can still depend on other mods."
+      placeholder: "BaseLib 3.4.5, Acts from the Past, Act 4 Heart, ..."
+    validations:
+      required: true
+
+  - type: input
+    id: log_path
+    attributes:
+      label: "Log path / 日志路径"
+      description: "Windows: %APPDATA%\\SlayTheSpire2\\logs\\godot.log. On other systems, the path the game reports; paste it here."
+      placeholder: "C:\\Users\\<you>\\AppData\\Roaming\\SlayTheSpire2\\logs\\godot.log"
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Log excerpt / 日志片段"
+      description: "Attach the file and/or paste lines containing `Spire1`, `Exception`, `LocException`, `StateDivergence`. Logs are required for crashes and freezes."
+      render: text
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: "Checklist / 确认"
+      options:
+        - label: "I am on the latest Spire1 and BaseLib releases. / 已使用最新版 Spire1 与 BaseLib。"
+          required: true
+        - label: "I searched existing issues. / 已搜索已有 issue。"
+          required: true
+        - label: "I attached or pasted the log. / 已附上日志。"
+          required: true
+        - label: "I can reproduce this without other gameplay mods (or I listed them above). / 已在排除或列明其他玩法 mod 的情况下复现。"
+          required: false
