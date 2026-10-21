@@ -1,10 +1,25 @@
-# Build/runtime junk
-.tmp/
-.tmp3/
+# ============================================================================
+# Spire1 — 仓库忽略规则 / Repository hygiene
+#
+# 原则：仓库只放"无法再生成"的源码与素材。构建产物、反编译/第三方镜像、本机
+# 工具配置、开发过程文档都不进 git —— 要么一条命令能重建，要么只对维护者有意
+# 义。历史提交里仍有这些文件，那是有意保留的（不改写历史），这里只约束未来。
+# ============================================================================
+
+# --- 1. .NET / Godot 构建产物 -----------------------------------------------
+# dotnet build / publish 每次自动重建；进 git 只会制造冲突与体积。
+mod/.godot/
+mod/bin/
+mod/obj/
+mod/publish/
+mod/_staging/
+tools/*/bin/
+tools/*/obj/
 MSBuildTemp/
 *.log
 
-# Tool caches (kept on G: per AGENTS.md)
+# --- 2. 包管理器与 SDK 缓存 -------------------------------------------------
+# 本机缓存，跨机器无意义。NuGet.config 使用相对路径 .nuget/packages。
 .dotnet/
 .dotnethome/
 .nuget/
@@ -14,35 +29,82 @@ MSBuildTemp/
 packages/
 http-cache/
 
-# Tools build output (probe + helper csproj)
-tools/*/bin/
-tools/*/obj/
-# Godot/C# build output
-mod/.godot/
-mod/bin/
-mod/obj/
-mod/publish/
-mod/_staging/
+# --- 3. 发布产物 / 分发包 ---------------------------------------------------
+# 二进制包挂 GitHub Releases，不进源码树：体积大且不可 diff。
+dist/
+*.pck
+*.nupkg
+friends-pack.zip
 
-# IDE
+# --- 4. Workshop 上传暂存区 -------------------------------------------------
+# workshop/content/ 是从 mod/ 构建输出复制出的 staging 副本，可再生产
+# （见 tools/release/workspace-snapshots/refresh-workshop-payloads.ps1）。
+workshop/content/
+
+# --- 5. 反编译 / 第三方源码镜像 ---------------------------------------------
+# 体积（~23 MB）与版权原因移出仓库；用 ilspycmd 从 sts2.dll、BaseLib 包重新生成。
+# 手工整理的小型知识库（research/sts1-kb、kb、sts1data、audits）仍被跟踪。
+research/_decomp/
+research/baselib-dll/
+research/sigdump/
+research/typedump/
+research/templates/
+research/templates.zip
+research/templates.nupkg
+research/engine-dllsrc/
+research/sts1-javap/
+research/sts1-kb/.tmp-javap/cls/
+research/**/obj/
+research/**/bin/
+
+# --- 6. 无 .gitmodules 的 submodule 目录 -------------------------------------
+# 原来是指向 Alchyr/BaseLib-StS2 等仓库的 gitlink，clone 时无法初始化；
+# 本地副本保留，但不再跟踪（否则访客会看到点不开的灰色条目）。
+research/BaseLib-StS2/
+research/ModTemplate-StS2/
+research/ModTemplate-Wiki/
+
+# --- 7. 开发过程文档（放内部仓，不对外） -------------------------------------
+# docs/ 对外只提供三份：BaseLib-API.md、RELEASE-GATES-CHECKLIST.md、
+# RELEASE-PACKAGE-CONTRACT-20261003.md。其余是 agent 报告、会话交接、带日期的
+# 设计契约与轮次证据，只对维护者有意义。
+# 注意：新增对外文档时不要命中下面的模式。
+docs/reports/
+docs/historical/
+docs/evidence/
+docs/DEVELOP-*.md
+docs/HANDOFF-*
+docs/CHECKPOINT-*
+docs/CODE-REVIEW-*
+docs/KNOWLEDGE-RECHECK-*
+docs/DIVERGENCE-*
+docs/MECH-*
+docs/WORKSHOP-PREPARATION-CONTRACT-*
+docs/AFTP1-BINARY-VERIFICATION.md
+docs/chaosbridge-design.md
+docs/CORE-DEVLOG.md
+docs/FULL-DEVLOG.md
+docs/JmcModLib-API.md
+docs/RitsuLib-API.md
+docs/pandora-watcher-pool-leak.md
+docs/README.md
+# 开发流水取代 CHANGELOG：对外用根目录 CHANGELOG.md。
+DEVLOG.md
+DEVLOG-archive.md
+deprecated/
+
+# --- 8. 本机 AI 工具链配置 ---------------------------------------------------
+# 个人编辑器/代理配置，不是 mod 的一部分；留在本地未跟踪即可。
+.cursor/
+.omp/
+.tmp/
+.tmp3/
+
+# --- 9. 编辑器状态与本地备份 -------------------------------------------------
+# *.bak-* 覆盖 workshop/preview.png.bak-20261020 这类带时间戳的备份。
 .idea/
 .vs/
 *.user
-
-# Nested build artifacts from research tools
-research/**/obj/
-research/**/bin/
-friends-pack.zip
-friends-pack.zip
-dist/friends-pack/mods/
-deprecated/
-
-# javap scratch (KB research)
-research/sts1-kb/.tmp-javap/cls/
-
-research/engine-dllsrc/
-
-research/sts1-javap/
-research/typedump/bin/
-research/sigdump/bin/
-research/sigdump/obj/
+*.bak
+*.bak-*
+tmp_obj_*
