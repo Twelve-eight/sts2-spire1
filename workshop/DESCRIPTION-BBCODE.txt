@@ -5,9 +5,9 @@
 [h2]内容[/h2]
 [list]
 [*]3 个可玩角色,原版数值/机制忠实移植
-[*]233 张一代卡牌(基础牌/普通/罕见/稀有/诅咒/状态)
-[*]28 件一代遗物(含角色专属初始遗物)
-[*]一代事件,力量(power),药水
+[*]220 张一代卡牌(基础牌/普通/罕见/稀有/诅咒/状态)
+[*]24 件一代遗物(含角色专属初始遗物)
+[*]一代事件,力量(power),2 种药水
 [*]完整中英双语(简体中文 + English)
 [/list]
 
@@ -30,4 +30,4 @@
 设置 -> Mod 设置 -> Spire1:内容开关(卡牌/遗物注入,纯一代池模式,联机容错等).
 
 [h2]English[/h1]
-The three original Slay the Spire characters - Ironclad, Silent, Defect - faithfully ported to Slay the Spire 2: 233 cards, 28 relics, StS1 events, powers and potions, with full Chinese and English localization. Requires BaseLib 3.4.5+. Auto-Anthonyology compatible (per-run chaos generation works for all three characters).
+The three original Slay the Spire characters - Ironclad, Silent, Defect - faithfully ported to Slay the Spire 2: 220 cards, 24 relics, StS1 events, powers and 2 potions, with full Chinese and English localization. Requires BaseLib 3.4.5+. Auto-Anthonyology compatible (per-run chaos generation works for all three characters).
