@@ -65,9 +65,9 @@ research/ModTemplate-StS2/
 research/ModTemplate-Wiki/
 
 # --- 7. 开发过程文档（放内部仓，不对外） -------------------------------------
-# docs/ 对外只提供三份：BaseLib-API.md、RELEASE-GATES-CHECKLIST.md、
-# RELEASE-PACKAGE-CONTRACT-20261003.md。其余是 agent 报告、会话交接、带日期的
-# 设计契约与轮次证据，只对维护者有意义。
+# docs/ 对外只提供四份：README.md（索引）、BaseLib-API.md、
+# RELEASE-GATES-CHECKLIST.md、RELEASE-PACKAGE-CONTRACT-20261003.md。其余是 agent
+# 报告、会话交接、带日期的设计契约与轮次证据，只对维护者有意义。
 # 注意：新增对外文档时不要命中下面的模式。
 docs/reports/
 docs/historical/
@@ -87,7 +87,6 @@ docs/FULL-DEVLOG.md
 docs/JmcModLib-API.md
 docs/RitsuLib-API.md
 docs/pandora-watcher-pool-leak.md
-docs/README.md
 # 开发流水取代 CHANGELOG：对外用根目录 CHANGELOG.md。
 DEVLOG.md
 DEVLOG-archive.md

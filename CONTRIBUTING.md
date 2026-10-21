@@ -165,11 +165,12 @@ Forms 源码已迁出本仓库，不要重新引入。
 ### 3.3 Comments and docs / 注释与文档
 
 Comments should explain **why** (engine behaviour, a verified constraint, a
-past incident), not restate the code. Design contracts go to `DEVELOP.md` or
-`docs/DEVELOP-*.md`; chronological work goes to `DEVLOG.md`. Update the
-relevant document in the same PR when behaviour changes.
+past incident), not restate the code. Design contracts go to `DEVELOP.md`;
+dated contracts and the chronological log are internal records and are not
+distributed with this repository. Update the relevant public document in the
+same PR when behaviour changes.
 注释解释“为什么”（引擎行为、已验证约束、历史事故），不复述代码。
-行为变更时同步更新 `DEVELOP.md` / `docs/` / `DEVLOG.md`。
+行为变更时同步更新 `DEVELOP.md`（内部日志与历史契约不随仓库分发）。
 
 ---
 

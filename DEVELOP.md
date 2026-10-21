@@ -14,7 +14,7 @@
 - **Correction to earlier sessions: custom monsters were never blocked on a visuals decision.** BaseLib ships `CustomMonsterModel`/`CustomEncounterModel`/`CustomActModel`/`CustomOrbModel`/`CustomPetModel` and a real non-placeholder `CustomCharacterModel`, all confirmed present in the **shipped v3.3.5 binary**. Two cheap visual routes: point `CustomMonsterModel.CustomVisualPath` at one of the **121 shipped StS2 monster scenes** (the same trick `PlaceholderCharacterModel.cs:12` already uses for our characters, since `SceneHelper.GetScenePath` resolves against the base game's `res://`), or build an `NCreatureVisuals` from a single `Texture2D` via `NCreatureVisualsFactory`. So `Colosseum`, `MaskedBandits`, `MysteriousSphere`, `Mushrooms [Stomp]`, `DeadAdventurer`'s elite, `MindBloom [I am War]` and `SpireHeart` are all implementable now, with encounter tables already extracted in Sec 7d.
 - Remaining true gaps: the five StS1 face relics plus `Madness` (**data now fully extracted and validated** in `research/sts1data/face-relics-and-madness.json`, zero blockers, five bytecode-verified corrections recorded in `DEVLOG.md` Sec 5.2); `NlothsGift` (**may be implementable after all** - `CardRarityOdds.Roll` is a public patchable instance method, verdict in `research/BaseLib-unused-surface.md`, `DEVLOG.md` Sec 5.4); and `Girya`'s rest-site option, which BaseLib itself flags incomplete.
 - **Relic art needs no second library.** `RelicModel.IconBaseName`, `PackedIconPath`, `PackedIconOutlinePath` and `BigIconPath` are all `protected virtual`/`public virtual` (`.tmp/dllsrc/.../RelicModel.cs:128-140`), so a relic can borrow a shipped StS2 relic's atlas entry by overriding `IconBaseName`, or point at art in our own `Spire1.pck`. This is the same donor trick the characters and monsters use. The earlier note that this needed RitsuLib's `ExternalAssetOverrideRegistry` is withdrawn.
-- **Single dependency, deliberately.** `mods/BaseLib/BaseLib.json` declares `dependencies: []`, and our `Spire1.json` declares exactly `[{"id": "BaseLib", "min_version": "3.4.5"}]`. RitsuLib and JmcModLib were both surveyed in full (`docs/`) and **rejected** - a second runtime dependency costs every player an extra install for benefits we can reach through BaseLib alone. Earlier text in this file claiming "runtime deps BaseLib+RitsuLib" was wrong.
+- **Single dependency, deliberately.** `mods/BaseLib/BaseLib.json` declares `dependencies: []`, and our `Spire1.json` declares exactly `[{"id": "BaseLib", "min_version": "3.4.5"}]`. RitsuLib and JmcModLib were both surveyed in full (internal reference docs, not distributed with this repo) and **rejected** - a second runtime dependency costs every player an extra install for benefits we can reach through BaseLib alone. Earlier text in this file claiming "runtime deps BaseLib+RitsuLib" was wrong.
 - **Version skew RESOLVED (session 6).** We compile against NuGet `Alchyr.Sts2.BaseLib` **3.4.5** and the game now loads **3.4.5** as well; the three runtime files were verified byte-identical (md5) to the NuGet package's `Content/`+`lib/net9.0/` payload, and 3.3.5 is retained at `mods/BaseLib-3.3.5-backup/`. Before this, compile-time 3.4.5 against runtime 3.3.5 meant any source-only API compiled cleanly and would have thrown at load. The whole 3.4.5 surface is now legal; `docs/BaseLib-API.md` Sec 9's skew table is history, not a constraint.
 
 ## 1. Milestones
@@ -164,11 +164,11 @@ AutoAnthony 大改 API 时我们的构建当场失败，强制重新审计（比
 Clean build; smoke-test IN-GAME (character loads, run starts, cards resolve, dungeon selection works, encounters spawn, toggles work). Deliverable = playable mod. Record smoke runs in `DEVLOG.md`.
 
 ## 9. Open gaps
-Most of the original list is now closed - resolved in session 5 and documented in `docs/`. Resolve anything new via `docs/BaseLib-API.md` first, then `sts2.xml` grep, then the decompiled tree at `.tmp/dllsrc/`.
+Most of the original list is now closed - resolved in session 5 and documented in the internal engineering records (not distributed with this repo). Resolve anything new via `docs/BaseLib-API.md` first, then `sts2.xml` grep, then the decompiled tree at `.tmp/dllsrc/`.
 - **CLOSED**: `CardKeyword` members; power class names; command builders (`DamageCmd`/`PowerCmd`/`CreatureCmd`/`CardPileCmd`); per-character energy override; `MonsterModel` stat/name/art API + move-state selection (see `docs/BaseLib-API.md` Sec 2 `CustomMonsterModel` and `research/BaseLib-unused-surface.md` Sec 2).
 - **RESOLVED BY PIVOT (session 14)**: M3 dungeon-selector hook question is moot for the primary path (ecosystem supplies acts); revisit only if the fallback activates. Character-select visibility + shared-pool filter hooks stay relevant to the layer (P3).
 - **UNBLOCKED by AFTP decompilation (session 13, verify against shipped v1.0.5 dll before writing)**: `N'loth's Gift` - Prefix on `CardRarityOdds.RollWithoutChangingFutureOdds(CardRarityOddsType, ref float offset)` rewriting `offset = baseRareOdds*3 - baseRareOdds` when owned (no pity-state mutation; optional Dup-transpiler captures the roll for Flash). `FaceTrader` - implement `CultistHeadpiece`/`FaceOfCleric`/`GremlinVisage`/`NlothsHungryFace`/`SsserpentHead` as `CustomRelicModel`s pooled in `EventRelicPool`, event rolls uniformly over unowned faces. `Madness` - AFTP `Cards.Madness` is the working reference.
-- **Known deviations & dispositions (R-wave 2026-09-06, from docs/CODE-REVIEW-20260904.md)**:
+- **Known deviations & dispositions (R-wave 2026-09-06, from the internal review `CODE-REVIEW-20260904.md`, not distributed with this repo)**:
   - R10 conditional-event spawn gating: the 13 "run-condition gated" StS1 events
     (AccursedBlacksmith, Bonfire, Designer, Duplicator, FaceTrader, FountainOfCurseRemoval,
     Lab, Nloth, NoteForYourself, WeMeetAgain, WomanInBlue, KnowingSkull, TheJoust) ship
@@ -199,10 +199,10 @@ Most of the original list is now closed - resolved in session 5 and documented i
     forcing through is an explicit opt-in for cross-version play).
 
 ## 10. References
-**Library interface docs (`docs/`) - read these before writing code against a library:**
+**Public library interface docs (`docs/`) - read `docs/BaseLib-API.md` before writing code against the framework:**
 - `docs/BaseLib-API.md` - the framework we build on. Content base classes, hooks, localization, visuals, patches, and the v3.4.5-source vs v3.3.5-shipped availability table.
-- `docs/RitsuLib-API.md` - third-party framework, 1325 public types, MIT. 92-namespace index plus exact signatures for content registration, non-Spine animation, free-play, act-enter forcing, lobby staging, asset overrides.
-- `docs/JmcModLib-API.md` - third-party utility library (settings UI, reflection, logging, secrets, persistence, compat shims). No content abstractions.
+
+The full RitsuLib (1325 public types, MIT; content registration, non-Spine animation, free-play, act-enter forcing, lobby staging, asset overrides) and JmcModLib (settings UI, reflection, logging, secrets, persistence, compat shims) interface references were internal survey material and are not distributed with this repository; their adopt/skip verdicts remain in `research/RitsuLib-api.md` and `research/JmcModLib-api.md`.
 
 **Research verdicts (`research/`) - what to adopt and why:**
 - `research/BaseLib-unused-surface.md` - capabilities we are not using, with the `N'loth's Gift` and `Girya` verdicts.
@@ -215,12 +215,12 @@ Most of the original list is now closed - resolved in session 5 and documented i
 
 ## 2026-09-23 事件移除与默认注入新契约
 
-用户本轮要求, 原版字节码证据与隔离失败复现见 G:\omp works\Sts\sts2-spire1\docs\DEVELOP-events-20260923.md. 本段不覆盖已有 staged/unstaged 设计记录. 事件默认关闭, 永恒卡牌遵循二代 IsRemovable, 不操作共享配置或 Steam 安装.
+用户本轮要求, 原版字节码证据与隔离失败复现见内部记录 `DEVELOP-events-20260923.md`（不随仓库分发）. 本段不覆盖已有 staged/unstaged 设计记录. 事件默认关闭, 永恒卡牌遵循二代 IsRemovable, 不操作共享配置或 Steam 安装.
 
 
 ## 2026-09-28 姿态形态可玩化
 
-本轮当前契约见 docs/DEVELOP-form-playable-20260928.md. 六形态规格沿用 2026-09-26 用户确认值; 默认构建接入, 每局自定义模式入口与 Watcher 可选反射桥接按新契约实现. 旧摘要中的缺研究文件和缺姿态基类判断已由本轮文件检查纠正. 不发布 Workshop, 不写 Steam 或共享配置, 不操作前台窗口.
+本轮当前契约见内部文档 `DEVELOP-form-playable-20260928.md`（不随仓库分发）。六形态规格沿用 2026-09-26 用户确认值; 默认构建接入, 每局自定义模式入口与 Watcher 可选反射桥接按新契约实现. 旧摘要中的缺研究文件和缺姿态基类判断已由本轮文件检查纠正. 不发布 Workshop, 不写 Steam 或共享配置, 不操作前台窗口.
 
 ## 2026-10-02 C01 内容组开关与统一 gate 契约
 
@@ -317,20 +317,20 @@ Most of the original list is now closed - resolved in session 5 and documented i
 
 交叉挂载五场景也已完成: BaseLib+Spire1 无 Watcher 可初始化, BaseLib+Watcher 无 Spire1 可初始化, BaseLib-only 可启动, Spire1 无 BaseLib 按 manifest 显式拒绝,三 mod 全挂载时 bridge 正常绑定。所有 staging 平面无嵌套 manifest,共享 `mod_configs` 未变化,测试 mods 和 settings 已清理恢复。
 
-证据与边界见 `docs/DEVELOP-form-playable-20260928.md` 及 `docs/reports/form-playable-20260928/`。本结论仍不覆盖可见 UI、视觉、长战斗、存档重载、重连、多人同步、性能和完整平衡。
+证据与边界见内部记录 `DEVELOP-form-playable-20260928.md` 与 `reports/form-playable-20260928/`（均不随仓库分发）。本结论仍不覆盖可见 UI、视觉、长战斗、存档重载、重连、多人同步、性能和完整平衡。
 
 ## 2026-10-03 可选 Mod 交叉挂载契约收紧
 
 - Spire1 的 `Spire1.json` 只声明 `BaseLib`; Watcher、AutoAnthony、AutoAnthonyWatcher、DirectConnectIP、ActsFromThePast 不得出现在发布 DLL 的 mod AssemblyRef 或 manifest 前置项中。
 - 可选能力只允许通过运行时反射和程序集加载观察接入。缺少可选程序集时,Spire1 必须继续完成自身 initializer,并以 disabled/pending/fail-closed 记录能力状态;不得因可选程序集缺失导致 `FileNotFoundException`、`TypeLoadException` 或 ModLoader 级硬前置失败。
 - AssemblyLoad 事件是晚加载的廉价唤醒源。只有 core/partial/registration/unpatch 状态确实需要没有新 AssemblyLoad 也能推进时,才创建周期 Timer 或 fallback thread。Godot/进程退出期间所有通知必须静默退出,不得访问已释放原生对象。
-- 真实部分 Mod 交叉启动矩阵以 `docs/reports/form-playable-20260928/partial-mod-launch-matrix-central-run-r29-20261003.md` 为准;报告中的源码推理、隔离启动日志和实机行为必须分开表述。
+- 真实部分 Mod 交叉启动矩阵以内部报告 `reports/form-playable-20260928/partial-mod-launch-matrix-central-run-r29-20261003.md` 为准（不随仓库分发）;报告中的源码推理、隔离启动日志和实机行为必须分开表述。
 ## 2026-10-03 交叉挂载后的退出生命周期契约
 
 - `AssemblyLoad` 订阅必须与 `ProcessExit` 共享串行 gate。入口快速检查不能替代 gate 内二次检查,否则 in-flight unsettled Apply 可能在 shutdown 标记后重新订阅。
 - Retry timer/fallback thread 的失败 bookkeeping 不得在 AssemblyLoad gate 内调用会锁 RetryGate 的路径,避免 shutdown 时锁反转。所有退出期间回调必须 fail-closed。
-- 最终 Release 与 r30 隔离矩阵证据以 `docs/reports/form-playable-20260928/partial-mod-launch-matrix-central-run-r30-20261003.md` 为准;此前 r29 是修复前的基线,不再作为最终产物证据。
+- 最终 Release 与 r30 隔离矩阵证据以内部报告 `reports/form-playable-20260928/partial-mod-launch-matrix-central-run-r30-20261003.md` 为准（不随仓库分发）;此前 r29 是修复前的基线,不再作为最终产物证据。
 ## 2026-10-05 Workshop 推送前准备
 
-本轮契约见 docs/WORKSHOP-PREPARATION-CONTRACT-20261005.md. 修复 canonical精简 PCK接线和 digest producer,保留全量 fail-closed门禁,不发布 Workshop.
+本轮契约见内部文档 `WORKSHOP-PREPARATION-CONTRACT-20261005.md`（不随仓库分发）。修复 canonical精简 PCK接线和 digest producer,保留全量 fail-closed门禁,不发布 Workshop.
 

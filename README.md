@@ -205,14 +205,12 @@ sts2-spire1/
 │  │  ├─ Run/                   按局内容快照
 │  │  └─ Diagnostics/           卡池普查（诊断用，默认关闭）
 │  └─ Spire1/                   资源与本地化（images/、localization/{zhs,eng}/）
-├─ docs/                        内部开发文档（设计契约、评审、历史归档）
-│  ├─ historical/               已归档的阶段性文档
-│  └─ reports/                  各里程碑的验证报告
+├─ docs/                        公开文档（BaseLib API 参考、发布门禁、打包契约）
 ├─ tools/                       审计与发布工具（卡牌保真度审计、本地化标记检查、发布门、探针）
 ├─ workshop/                    创意工坊描述、封面、上传配置（workshop_upload.vdf）
 ├─ research/                    参考资料（引擎 API 索引、BaseLib 源码、一代数据）
 ├─ DEVELOP.md                   设计目标、契约与里程碑（先读这个）
-└─ DEVLOG.md                    按时间顺序的开发日志（含每次决策的证据）
+└─ DEVLOG.md                    内部开发日志（不随仓库分发）
 ```
 
 约定：内容类一律继承 `Spire1Card` / `Spire1Relic` / `Spire1Potion` / `Spire1Event`，通过 BaseLib 的池标记自动注册；ID 形如 `SPIRE1-<CLASS>`；每个内容类都必须在 `localization/{eng,zhs}` 里有对应条目。详细契约见 [`DEVELOP.md`](DEVELOP.md)。
