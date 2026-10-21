@@ -51,14 +51,13 @@
         <AdditionalFiles Include="Spire1/localization/**/*.json"/> <!-- Used by analyzer -->
     </ItemGroup>
 
-    <!-- Shared mod conventions (single source, compiled in — no assembly reference).
-         See Sts/_shared/ModConventions/ConsoleDisplay.cs and docs/knowledge/CONSOLE-DISPLAY-FORMAT.md.
-         The path is overridable so a checkout with a different layout still builds:
-           dotnet build -p:SharedModConventions=/path/to/_shared/ModConventions
-         Deliberately no Exists() condition: if the shared file disappears the build must fail
+    <!-- Shared mod conventions (vendored at shared/ModConventions — see that file).
+         Override if you keep a single upstream copy:
+           dotnet build -p:SharedModConventions=/path/to/ModConventions
+         Deliberately no Exists() condition: if the file disappears the build must fail
          loudly rather than silently drop the console display-name feature. -->
     <PropertyGroup>
-        <SharedModConventions Condition="'$(SharedModConventions)' == ''">$(MSBuildThisFileDirectory)../../_shared/ModConventions</SharedModConventions>
+        <SharedModConventions Condition="'$(SharedModConventions)' == ''">$(MSBuildThisFileDirectory)../shared/ModConventions</SharedModConventions>
     </PropertyGroup>
     <ItemGroup>
         <Compile Include="$(SharedModConventions)/ConsoleDisplay.cs"
@@ -172,18 +171,26 @@
          copy and export targets below are ON by default, so a mistyped override would write into
          the user's Steam install. This target re-checks the FINAL resolved value before any write.
 
-         Three independent deny reasons:
+         Four independent deny reasons:
            1. outside-allowlist - the resolved path is not under a known test or scratch root. This
-              is what rejects C:, a bare G:/mods, and the Steam install itself.
-           2. steam-install - the directory we would write into (the game root) holds
-              steam_appid.txt, the marker measured to exist ONLY at the Steam copy's root.
+              is the ONLY positive test for "safe to write"; everything that fails it is denied,
+              which is what makes the guard fail-closed.
+           2. steam-install - the resolved path sits inside a Steam library layout, i.e. one of its
+              segments is "steamapps". Steam always installs game content at
+              <library>/steamapps/common/<installdir> and keeps appmanifest_<appid>.acf in that
+              steamapps folder, so no test copy can match it; a match only ever over-denies.
+              This REPLACES the 2026-09-17 test "steam_appid.txt exists at the game root":
+              measured 2026-10-21, that file exists at BOTH the Steam copy
+              (G:/steam/steamapps/common/Slay the Spire 2) AND the E: Goldberg test copy, with the
+              same app id (2868840), so it cannot tell them apart and false-denied the test copy.
            3. reparse - the mods path or one of its five ancestors is a junction or symlink, so a
               path that merely LOOKS allowlisted could still resolve somewhere else.
+           4. final-destination chain - see the A09 block below.
 
-         steam_api64.dll is deliberately NOT the discriminator: it sits under
-         data_sts2_windows_x86_64 in the Steam copy AND in both local test copies, so it cannot
-         tell them apart. Opting out is unchanged: /p:CopyToModsFolderOnBuild=false skips this
-         target exactly like the copy targets it guards.
+         steam_api64.dll is deliberately NOT the discriminator either: it sits under
+         data_sts2_windows_x86_64 in the Steam copy AND in both local test copies (Goldberg ships
+         its own binary, different hash), so it cannot tell them apart. Opting out is unchanged:
+         /p:CopyToModsFolderOnBuild=false skips this target exactly like the copy targets it guards.
          ============================================================================== -->
     <Target Name="AssertModsPathIdentity"
             BeforeTargets="UpdateDependencyVersions;WritePckDigestForQuickPck;CopyToModsFolderOnBuild;CopyQuickPck;GodotPublish;CopyGodotPckToModsFolder"
@@ -211,11 +218,18 @@
             <_ModsPathGuardAllowed Condition="$(_ModsPathGuardNorm) == 'g:\omp works\.tmp' Or $(_ModsPathGuardNorm.StartsWith('g:\omp works\.tmp\'))">true</_ModsPathGuardAllowed>
         </PropertyGroup>
 
-        <!-- Deny reason 2: the Steam marker. The game root is the mods path's first ancestor. -->
+        <!-- Deny reason 2: Steam library layout. The game root is the mods path's first ancestor,
+             but the whole normalised mods path is checked because the game root is its prefix.
+             "steamapps" is the one segment Steam always creates (appmanifest_<appid>.acf lives
+             inside it, next to common/); local test copies never live below one, so this can only
+             over-deny. Anything that is NOT positively proven to be a test root is already denied
+             by reason 1, so an unrecognised layout still fails closed. The final destination is
+             checked again in the A09 block once that value exists. -->
         <PropertyGroup>
             <_ModsPathGuardGameRoot>$([System.IO.Path]::GetDirectoryName('$(_ModsPathGuardNorm)'))</_ModsPathGuardGameRoot>
-            <_ModsPathGuardSteamMarker>false</_ModsPathGuardSteamMarker>
-            <_ModsPathGuardSteamMarker Condition="Exists('$(_ModsPathGuardGameRoot)\steam_appid.txt')">true</_ModsPathGuardSteamMarker>
+            <_ModsPathGuardSteamLayout>false</_ModsPathGuardSteamLayout>
+            <_ModsPathGuardSteamLayout Condition="$(_ModsPathGuardNorm.Contains('\steamapps\'))">true</_ModsPathGuardSteamLayout>
+            <_ModsPathGuardSteamLayout Condition="$(_ModsPathGuardNorm.EndsWith('\steamapps'))">true</_ModsPathGuardSteamLayout>
         </PropertyGroup>
 
         <!-- Deny reason 3: junction or symlink in the mods path or its five ancestors. Every
@@ -253,6 +267,10 @@
              path denies the build BEFORE the first write. -->
         <PropertyGroup>
             <_ModsPathGuardDestNorm>$([System.IO.Path]::GetFullPath('$(ModsPath)/$(MSBuildProjectName)/').TrimEnd('\').TrimEnd('/').ToLowerInvariant())</_ModsPathGuardDestNorm>
+            <!-- Reason 2 applied to the real write target: same "steamapps" segment test, now on
+                 the value that CopyToModsFolderOnBuild / the PCK copies actually write into. -->
+            <_ModsPathGuardSteamLayout Condition="'$(_ModsPathGuardDestNorm)' != '' And $(_ModsPathGuardDestNorm.Contains('\steamapps\'))">true</_ModsPathGuardSteamLayout>
+            <_ModsPathGuardSteamLayout Condition="'$(_ModsPathGuardDestNorm)' != '' And $(_ModsPathGuardDestNorm.EndsWith('\steamapps'))">true</_ModsPathGuardSteamLayout>
             <_ModsPathGuardDestAllowed>false</_ModsPathGuardDestAllowed>
             <_ModsPathGuardDestAllowed Condition="$(_ModsPathGuardDestNorm) == 'e:\slay the spire 2\mods\spire1' Or $(_ModsPathGuardDestNorm.StartsWith('e:\slay the spire 2\mods\'))">true</_ModsPathGuardDestAllowed>
             <_ModsPathGuardDestAllowed Condition="$(_ModsPathGuardDestNorm) == 'g:\omp works\sts\_runtime\sts2-test-client-b\mods\spire1' Or $(_ModsPathGuardDestNorm.StartsWith('g:\omp works\sts\_runtime\sts2-test-client-b\mods\'))">true</_ModsPathGuardDestAllowed>
@@ -325,7 +343,7 @@
             <_ModsPathGuardVerdict>ALLOW</_ModsPathGuardVerdict>
             <_ModsPathGuardVerdict Condition="$(_ModsPathGuardAllowed) != 'true'">DENY-outside-allowlist</_ModsPathGuardVerdict>
             <_ModsPathGuardVerdict Condition="$(_ModsPathGuardDestAllowed) != 'true'">DENY-final-outside-allowlist</_ModsPathGuardVerdict>
-            <_ModsPathGuardVerdict Condition="$(_ModsPathGuardSteamMarker) == 'true'">DENY-steam-install</_ModsPathGuardVerdict>
+            <_ModsPathGuardVerdict Condition="$(_ModsPathGuardSteamLayout) == 'true'">DENY-steam-install</_ModsPathGuardVerdict>
             <_ModsPathGuardVerdict Condition="$(_ModsPathGuardAnyReparse) == 'true'">DENY-reparse</_ModsPathGuardVerdict>
             <_ModsPathGuardVerdict Condition="$(_ModsPathGuardDestReparse) == 'true'">DENY-final-reparse</_ModsPathGuardVerdict>
             <_ModsPathGuardVerdict Condition="$(_ModsPathGuardFileAnyReparse) == 'true'">DENY-final-file-reparse</_ModsPathGuardVerdict>
@@ -337,9 +355,9 @@
 
         <Message Importance="high"
                  Condition="'$(_ModsPathGuardVerdict)' == 'ALLOW'"
-                 Text="MODSPATH-GUARD-ALLOW: resolved '$(_ModsPathGuardNorm)' (raw '$(ModsPath)') allowlist=$(_ModsPathGuardAllowed) steamMarker=$(_ModsPathGuardSteamMarker) at gameRoot '$(_ModsPathGuardGameRoot)' reparse=[mods=$(_ModsPathGuardNormReparse) gameRoot=$(_ModsPathGuardGameRootReparse) anc2=$(_ModsPathGuardAnc2Reparse) anc3=$(_ModsPathGuardAnc3Reparse) anc4=$(_ModsPathGuardAnc4Reparse) anc5=$(_ModsPathGuardAnc5Reparse)]" />
+                 Text="MODSPATH-GUARD-ALLOW: resolved '$(_ModsPathGuardNorm)' (raw '$(ModsPath)') allowlist=$(_ModsPathGuardAllowed) steamLayout=$(_ModsPathGuardSteamLayout) at gameRoot '$(_ModsPathGuardGameRoot)' reparse=[mods=$(_ModsPathGuardNormReparse) gameRoot=$(_ModsPathGuardGameRootReparse) anc2=$(_ModsPathGuardAnc2Reparse) anc3=$(_ModsPathGuardAnc3Reparse) anc4=$(_ModsPathGuardAnc4Reparse) anc5=$(_ModsPathGuardAnc5Reparse)]" />
         <Error Condition="'$(_ModsPathGuardVerdict)' != 'ALLOW'"
-               Text="MODSPATH-GUARD-DENY [$(_ModsPathGuardVerdict)]: ModsPath resolves to '$(_ModsPathGuardNorm)' (raw '$(ModsPath)'); final file reparse=$(_ModsPathGuardFileAnyReparse); and the final destination resolves to '$(_ModsPathGuardDestNorm)'. allowlist=[mods=$(_ModsPathGuardAllowed) final=$(_ModsPathGuardDestAllowed)] - allowed roots are E:/Slay the Spire 2/mods, G:/omp works/Sts/_runtime/sts2-test-client-B/mods and G:/omp works/.tmp/. steamMarker=$(_ModsPathGuardSteamMarker) at gameRoot '$(_ModsPathGuardGameRoot)'. reparse=[mods=$(_ModsPathGuardNormReparse) gameRoot=$(_ModsPathGuardGameRootReparse) anc2=$(_ModsPathGuardAnc2Reparse) anc3=$(_ModsPathGuardAnc3Reparse) anc4=$(_ModsPathGuardAnc4Reparse) anc5=$(_ModsPathGuardAnc5Reparse)] finalChain=[any=$(_ModsPathGuardDestReparse) unproven=$(_ModsPathGuardDestChainUnproven) l0=$(_ModsPathGuardDestR0) l1=$(_ModsPathGuardDestR1) l2=$(_ModsPathGuardDestR2) l3=$(_ModsPathGuardDestR3) l4=$(_ModsPathGuardDestR4) l5=$(_ModsPathGuardDestR5) l6=$(_ModsPathGuardDestR6) l7=$(_ModsPathGuardDestR7) l8=$(_ModsPathGuardDestR8) l9=$(_ModsPathGuardDestR9) l10=$(_ModsPathGuardDestR10) l11=$(_ModsPathGuardDestR11) l12=$(_ModsPathGuardDestR12)] dotDot=$(_ModsPathGuardPathHasDotDot) notRooted=$(_ModsPathGuardPathNotRooted). The Steam install is never a valid build target. If this build really must write there, pass /p:CopyToModsFolderOnBuild=false and deploy by hand." />
+               Text="MODSPATH-GUARD-DENY [$(_ModsPathGuardVerdict)]: ModsPath resolves to '$(_ModsPathGuardNorm)' (raw '$(ModsPath)'); final file reparse=$(_ModsPathGuardFileAnyReparse); and the final destination resolves to '$(_ModsPathGuardDestNorm)'. allowlist=[mods=$(_ModsPathGuardAllowed) final=$(_ModsPathGuardDestAllowed)] - allowed roots are E:/Slay the Spire 2/mods, G:/omp works/Sts/_runtime/sts2-test-client-B/mods and G:/omp works/.tmp/. steamLayout=$(_ModsPathGuardSteamLayout) at gameRoot '$(_ModsPathGuardGameRoot)'. reparse=[mods=$(_ModsPathGuardNormReparse) gameRoot=$(_ModsPathGuardGameRootReparse) anc2=$(_ModsPathGuardAnc2Reparse) anc3=$(_ModsPathGuardAnc3Reparse) anc4=$(_ModsPathGuardAnc4Reparse) anc5=$(_ModsPathGuardAnc5Reparse)] finalChain=[any=$(_ModsPathGuardDestReparse) unproven=$(_ModsPathGuardDestChainUnproven) l0=$(_ModsPathGuardDestR0) l1=$(_ModsPathGuardDestR1) l2=$(_ModsPathGuardDestR2) l3=$(_ModsPathGuardDestR3) l4=$(_ModsPathGuardDestR4) l5=$(_ModsPathGuardDestR5) l6=$(_ModsPathGuardDestR6) l7=$(_ModsPathGuardDestR7) l8=$(_ModsPathGuardDestR8) l9=$(_ModsPathGuardDestR9) l10=$(_ModsPathGuardDestR10) l11=$(_ModsPathGuardDestR11) l12=$(_ModsPathGuardDestR12)] dotDot=$(_ModsPathGuardPathHasDotDot) notRooted=$(_ModsPathGuardPathNotRooted). The Steam install is never a valid build target. If this build really must write there, pass /p:CopyToModsFolderOnBuild=false and deploy by hand." />
     </Target>
     
     <Target Name="CopyToModsFolderOnBuild" AfterTargets="PostBuildEvent"
