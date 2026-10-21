@@ -8,10 +8,10 @@ The three original Slay the Spire characters - Ironclad, Silent, and Defect - fa
 
 [list]
 [*][b]3 playable characters[/b]: Ironclad, Silent, and Defect, each with their original mechanic (Rage / Poison / Charge) intact
-[*][b]230 cards[/b]: the full StS1 card pools (basic / common / uncommon / rare / status / curse)
-[*][b]22 exclusive relics[/b]: Burning Blood, Ring of the Snake, Cracked Core and the other signature relics, numerically adapted to StS2 engine semantics
+[*][b]220 cards[/b]: the full StS1 card pools (basic / common / uncommon / rare / status / curse)
+[*][b]24 exclusive relics[/b]: Burning Blood, Ring of the Snake, Cracked Core and the other signature relics, numerically adapted to StS2 engine semantics
 [*][b]6 exclusive events[/b]: The Addict / Back to Basics / The Drug Dealer / Fountain of Curse Removal / Note For Yourself / Spire Heart (all other StS1 events are provided by [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3746969593]Acts from the Past[/url] - drop-in, no duplication)
-[*][b]3 potions[/b]
+[*][b]2 potions[/b]
 [*][b]Full English localization[/b]: card / relic / event descriptions all support dynamic values
 [/list]
 
