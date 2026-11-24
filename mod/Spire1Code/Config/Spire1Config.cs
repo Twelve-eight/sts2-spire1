@@ -150,12 +150,16 @@ internal class Spire1Config : SimpleModConfig
     public static bool PoolCensusOnMenuEnter { get; set; } = false;
 
     /// <summary>
-    /// 联机容错（清单级）：握手时忽略双方 mod 清单差异强制放行。
-    /// 今晚实测（divergence zip #563/#249）清单差异几乎全是"本地目录 vs 工坊来源"
-    /// 假阳性；玩法安全仍依赖相同玩法 mod 二进制（哈希级另见下方开关）。
-    /// 仅当双方都装了含此补丁的构建时才完整生效。
+    /// 联机容错（清单级）：握手时忽略双方 mod 清单差异强制放行（仅当 ModelID 哈希也一致时）。
+    /// 常见场景为双方 BaseLib 来源不同（本地目录 vs 工坊来源）或各自多装非玩法 mod；
+    /// 仅当双方都装了含此补丁的构建时才完整生效，默认关。
     /// </summary>
-    public static bool IgnoreMpModDifferences { get; set; } = true;
+    public static bool IgnoreMpModDifferences { get; set; } = false;
+
+    /// <summary>
+    /// 可选开关：联机发生状态分歧时抑制 RitsuLib 的诊断弹窗（仍保留磁盘诊断包），默认关。
+    /// </summary>
+    public static bool SuppressMpDivergencePopup { get; set; } = false;
 
     /// <summary>
     /// 联机容错（哈希级，R14 2026-09-06）：游戏版本相同但 ModelID 哈希不符时

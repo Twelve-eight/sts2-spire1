@@ -7,18 +7,14 @@ using Spire1.Spire1Code.Config;
 namespace Spire1.Spire1Code.Patches;
 
 /// <summary>
-/// 联机容错补丁（Spire1Config.IgnoreMpModDifferences 门控，默认开）。
+/// 联机容错补丁（Spire1Config.IgnoreMpModDifferences 门控，默认关）。
 /// <para>
 /// 引擎事实（dllsrc HandshakeManager.cs:110-137）：握手按顺序判三道闸--
 /// 1) 游戏版本字符串不符 -> VersionMismatch（保留，不绕过）；
 /// 2) 玩法 mod 清单差异 -> ModMismatch；3) ModelIdSerializationCache.Hash 不符 -> VersionMismatch。
-/// 今晚实测（divergence zip #563/#249）：双方 BaseLib 来源不同（本地目录 vs 创意工坊）、
-/// 各自多装非玩法 mod、Spire1 分装包名不同，全部是"清单级假阳性"，玩家状态零差异。
-/// </para>
-/// <para>
-/// 本补丁把 2) 与"版本相同但哈希不符的 3)"改写为放行并记日志；
-/// RitsuLib 的 StateDivergenceDiagnosticsPopup.ShowDeferred 前缀拦截弹窗
-/// （其诊断 bundle zip 仍由独立管线写入 logs 目录）。
+/// 当双方仅因 BaseLib 来源不同（本地目录 vs 创意工坊）或各自多装非玩法 mod 而触发清单级误报、
+/// 且 ModelID 哈希一致时，开启本选项可放行并记日志。
+/// RitsuLib 失同步弹窗仅在玩家显式开启 SuppressMpDivergencePopup（默认关）时才拦截。
 /// 双方都需安装本构建才完整生效--单侧放行会被对端拒绝。
 /// </para>
 /// </summary>
@@ -133,7 +129,7 @@ internal static class RitsuLibPopupSuppressionPatch
     // __0 = ShowDeferred 的 report 实参（第三方类型无法编译期引用，用 Harmony 索引注入 + object 接收）。
     private static bool SkipPopup(object __0)
     {
-        MainFile.Logger.Info("[Spire1] RitsuLib state-divergence popup suppressed (IgnoreMpModDifferences). "
+        MainFile.Logger.Info("[Spire1] RitsuLib state-divergence popup suppressed (SuppressMpDivergencePopup). "
                              + "Diagnostics bundle still written to the logs directory.");
         return false; // 阻断弹窗；诊断 zip 由独立管线照常落盘
     }

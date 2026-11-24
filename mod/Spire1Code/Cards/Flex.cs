@@ -30,14 +30,17 @@ public class Flex() : Spire1Card(0, CardType.Skill, CardRarity.Common, TargetTyp
         {
             if (AppDomain.CurrentDomain.GetAssemblies().Any(assembly =>
                 assembly.GetName().Name == "Spire1Events"))
-                throw new InvalidOperationException("Spire1Events is loaded but its Strength-loss power is not registered.");
+            {
+                MainFile.Logger.Warn("[Spire1] Flex: Spire1Events is loaded but its Strength-loss power is not registered; falling back to FlexPower.");
+            }
             loss = ModelDb.Power<FlexPower>();
         }
         else if (loss.GetType().FullName != "Spire1Events.Rewards.MutagenicStrengthLossPower"
             || loss.GetType().Assembly.GetName().Name != "Spire1Events"
             || loss.Type != PowerType.Debuff || loss.StackType != PowerStackType.Counter)
         {
-            throw new InvalidOperationException("The registered Spire1Events Strength-loss power has an unexpected identity or contract.");
+            MainFile.Logger.Warn("[Spire1] Flex: registered Spire1Events Strength-loss power has an unexpected contract; falling back to FlexPower.");
+            loss = ModelDb.Power<FlexPower>();
         }
 
         decimal amount = DynamicVars.Power<FlexPower>().BaseValue;

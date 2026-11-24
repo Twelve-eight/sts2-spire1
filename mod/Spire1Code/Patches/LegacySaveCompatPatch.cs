@@ -1,28 +1,18 @@
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.Saves;
 using MegaCrit.Sts2.Core.Saves.Runs;
 
 namespace Spire1.Spire1Code.Patches;
 
 /// <summary>
-/// 删类旧存档兼容层（LEAN-CODE 去重批 2e405f8 的善后）。
+/// 删类 / 分拆内容旧存档兼容层。
 /// <para>
-/// 背景：该提交硬删了 8 个遗物（Anchor/BagOfMarbles/BloodVial/BronzeScales/Lantern/
-/// LetterOpener/OrnamentalFan/Akabeko--官方 StS2 均已内置同效果版本）与 6 个药水
-/// （BlockPotion/StrengthPotion/DexterityPotion/EnergyPotion/FirePotion/WeakPotion）。
-/// 引擎加载旧存档时，Player.FromSerializable -> LoadInventory -> PopulateRelics/LoadPotions
-/// 会把未知 id 解析为 DeprecatedRelic/DeprecatedPotion 占位模型（dllsrc Player.cs:362-365,
-/// RelicModel.FromSerializable -> SaveUtil.RelicOrDeprecated）--不崩溃，但背包里会留下
-/// 无图标无效果的幽灵条目。
-/// </para>
-/// <para>
-/// 修复：Prefix（非 postfix--LoadInventory 在 FromSerializable 方法体内部执行，必须赶在
-/// 它之前）把已删 id 从 SerializablePlayer 的 relics/potions 列表静默剔除。每个被剔除的
-/// id 记一行日志，方便玩家核对背包差异。官方同名遗物不受影响：它们的 id 是
-/// RELIC.ANCHOR 等原生 Category.Entry，与 SPIRE1- 前缀条目天然不冲突。
-/// MP 重连同步（SyncWithSerializedPlayer）同样消费这两个列表，但 MP 双方装同一构建时
-/// 存档里早已不含已删 id，本补丁在 MP 路径上是纯空转。
+/// 1) LEAN-CODE（2e405f8）硬删了 8 个遗物与 6 个药水（官方 StS2 均已内置），在 Player.FromSerializable 前静默剔除，避免 DeprecatedRelic/Potion 占位。
+/// 2) 1.3.0（2d3f817）将 MutagenicStrength、J.A.X. 与 6 个一代事件分拆到独立模组 Spire1Events（沿用原 SPIRE1-* ID）。
+/// 当未安装 Spire1Events（ModelDb 未注册对应 ID）时，静默剔除这批已迁出条目；若已安装 Spire1Events 则完整保留。
 /// </para>
 /// </summary>
 [HarmonyPatch(typeof(Player), nameof(Player.FromSerializable))]
@@ -52,12 +42,25 @@ internal static class LegacySaveCompatPatch
         "SPIRE1-WEAK_POTION",
     };
 
+    private static readonly HashSet<string> MovedRelicIds = new() { "SPIRE1-MUTAGENIC_STRENGTH" };
+    private static readonly HashSet<string> MovedCardIds = new() { "SPIRE1-J_A_X" };
+    internal static readonly HashSet<string> MovedEventIds = new()
+    {
+        "SPIRE1-ADDICT",
+        "SPIRE1-BACK_TO_BASICS",
+        "SPIRE1-DRUG_DEALER",
+        "SPIRE1-FOUNTAIN_OF_CURSE_REMOVAL",
+        "SPIRE1-NOTE_FOR_YOURSELF",
+        "SPIRE1-SPIRE_HEART",
+    };
+
     private static void Prefix(ref SerializablePlayer save)
     {
         try
         {
             StripRelics(save.Relics);
             StripPotions(save.Potions);
+            StripMovedCards(save.Deck);
         }
         catch (System.Exception e)
         {
@@ -75,9 +78,37 @@ internal static class LegacySaveCompatPatch
         List<string> dropped = new();
         relics.RemoveAll(r =>
         {
-            if (r.Id != null && RemovedRelicIds.Contains(r.Id.Entry))
+            if (r.Id == null)
+            {
+                return false;
+            }
+            bool remove = RemovedRelicIds.Contains(r.Id.Entry)
+                || (MovedRelicIds.Contains(r.Id.Entry) && ModelDb.GetByIdOrNull<RelicModel>(r.Id) is null);
+            if (remove)
             {
                 dropped.Add(r.Id.Entry);
+            }
+            return remove;
+        });
+        if (dropped.Count > 0)
+        {
+            MainFile.Logger.Info(
+                $"[Spire1] legacy save compat: removed {dropped.Count} deleted relic(s): {string.Join(", ", dropped)}");
+        }
+    }
+
+    private static void StripMovedCards(List<SerializableCard> deck)
+    {
+        if (deck.Count == 0)
+        {
+            return;
+        }
+        List<string> dropped = new();
+        deck.RemoveAll(c =>
+        {
+            if (c.Id != null && MovedCardIds.Contains(c.Id.Entry) && ModelDb.GetByIdOrNull<CardModel>(c.Id) is null)
+            {
+                dropped.Add(c.Id.Entry);
                 return true;
             }
             return false;
@@ -85,7 +116,7 @@ internal static class LegacySaveCompatPatch
         if (dropped.Count > 0)
         {
             MainFile.Logger.Info(
-                $"[Spire1] legacy save compat: removed {dropped.Count} deleted relic(s): {string.Join(", ", dropped)}");
+                $"[Spire1] legacy save compat: removed {dropped.Count} moved card(s) (Spire1Events absent): {string.Join(", ", dropped)}");
         }
     }
 
@@ -109,6 +140,41 @@ internal static class LegacySaveCompatPatch
         {
             MainFile.Logger.Info(
                 $"[Spire1] legacy save compat: removed {dropped.Count} deleted potion(s): {string.Join(", ", dropped)}");
+        }
+    }
+}
+
+[HarmonyPatch(typeof(RunState), nameof(RunState.FromSerializable))]
+internal static class LegacyRunSaveCompatPatch
+{
+    private static void Prefix(SerializableRun save)
+    {
+        try
+        {
+            if (save.EventsSeen.Count == 0)
+            {
+                return;
+            }
+            List<string> dropped = new();
+            save.EventsSeen.RemoveAll(id =>
+            {
+                if (id != null && LegacySaveCompatPatch.MovedEventIds.Contains(id.Entry)
+                    && ModelDb.GetByIdOrNull<EventModel>(id) is null)
+                {
+                    dropped.Add(id.Entry);
+                    return true;
+                }
+                return false;
+            });
+            if (dropped.Count > 0)
+            {
+                MainFile.Logger.Info(
+                    $"[Spire1] legacy run save compat: removed {dropped.Count} moved event id(s) from EventsSeen (Spire1Events absent): {string.Join(", ", dropped)}");
+            }
+        }
+        catch (System.Exception e)
+        {
+            MainFile.Logger.Error($"[Spire1] legacy run save strip failed: {e.Message}");
         }
     }
 }

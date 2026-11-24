@@ -254,7 +254,7 @@ if (-not $RepoRoot) {
     $RepoRoot = Resolve-FullPath $RepoRoot
 }
 
-$workspaceRoot = 'G:\omp works'
+$workspaceRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..\..\..'))
 Assert-Under $RepoRoot $workspaceRoot 'repo-root'
 
 $sourceRoot = Join-Path $RepoRoot 'mod\Spire1'
@@ -263,7 +263,15 @@ $project = Join-Path $RepoRoot 'mod\Spire1.csproj'
 $manifest = Join-Path $RepoRoot 'mod\Spire1.json'
 $gates = Join-Path $RepoRoot 'tools\build-gates\run-release-gates.ps1'
 $pckVerifier = Join-Path $RepoRoot 'tools\release\Verify-Spire1Pck.ps1'
-$packer = 'G:\omp works\Sts\.nuget\packages\bschneppe.sts2.pckpacker\0.1.1\tools\net9.0\any\StS2PckPacker.dll'
+$packerRel = 'bschneppe.sts2.pckpacker\0.1.1\tools\net9.0\any\StS2PckPacker.dll'
+$packerCandidates = @(
+    $(if ($env:NUGET_PACKAGES) { Join-Path $env:NUGET_PACKAGES $packerRel }),
+    (Join-Path $RepoRoot ('.nuget\packages\' + $packerRel)),
+    (Join-Path $workspaceRoot ('Sts\.nuget\packages\' + $packerRel)),
+    (Join-Path $workspaceRoot ('.nuget-packages\' + $packerRel))
+) | Where-Object { $_ -and (Test-Path -LiteralPath $_) }
+$packer = $packerCandidates | Select-Object -First 1
+if (-not $packer) { $packer = Join-Path $RepoRoot ('.nuget\packages\' + $packerRel) }
 
 foreach ($path in @($sourceRoot,$codeRoot,$project,$manifest,$gates,$pckVerifier,$packer)) {
     if (-not (Test-Path -LiteralPath $path)) { throw "INPUT-MISSING: '$path'." }
@@ -350,6 +358,10 @@ foreach ($file in Get-ChildItem -LiteralPath (Join-Path $sourceRoot 'images\powe
 $sourceFiles = Get-ChildItem -LiteralPath $sourceRoot -Recurse -File
 foreach ($file in $sourceFiles) {
     $rel = $file.FullName.Substring($sourceRoot.Length + 1).Replace('\','/')
+    if ($rel -like '*.import' -or $rel -like '*.uid') {
+        $excludeReasons[$rel] = 'godot-editor-sidecar'
+        continue
+    }
     if (-not $keep.Contains($rel) -and -not $excludeReasons.ContainsKey($rel)) {
         if ($rel -like 'images/charui/*') {
             $excludeReasons[$rel] = 'confirmed-unused-template: Placeholder character UI asset; runtime uses PlaceholderID/vanilla assets'

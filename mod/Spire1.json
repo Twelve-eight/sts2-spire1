@@ -1,7 +1,7 @@
 {
   "id": "Spire1",
   "name": "杀戮尖塔一代角色",
-  "version": "1.2.5",
+  "version": "1.3.0",
   "author": "Twelve-eight",
   "description": "The three original Slay the Spire 1 characters (Ironclad / Silent / Defect), with cards, relics, powers and potions. Full Chinese + English localization. BaseLib required.",
   "min_game_version": "0.113.0",

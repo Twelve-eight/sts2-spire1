@@ -10,10 +10,16 @@ repository-side summary.
 
 ---
 
-## [Unreleased] — 2026-11-17
+## [1.3.0] — 2026-11-24
 
 ### Changed
-- 依赖下界：`BaseLib` 最低版本由 3.4.5 提升至 3.4.8，与编译引用 `Alchyr.Sts2.BaseLib` 3.4.8 对齐；仅当前宿主 v0.113.1 编译成功，不等同完整可玩验收。
+- 适配游戏宿主 `v0.113.1` 与 `BaseLib >= 3.4.8`（移除 BaseLib 编译期 MVID 硬绑定，改为运行期已加载模块比对）。
+- 移除内置 6 个一代事件、`JAX` 与 `MutagenicStrength`（拆分至独立扩展 `Spire1Events`，沿用原 `SPIRE1-*` 模型 ID）；新增 `Chaos`、`EchoForm`、`Electrodynamics`、`PerfectedStrike`、`Reboot`、`Scrape`、`WhiteNoise` 与 4 种药水（`AncientPotion`、`CultistPotion`、`EssenceOfSteel`、`SmokeBomb`，现共 6 种药水）。
+- `Spire1Config.IgnoreMpModDifferences` 与新增 `SuppressMpDivergencePopup` 均默认改为关闭，避免默认隐藏联机差异与 `RitsuLib` 诊断弹窗。
+
+### Fixed
+- **RitsuLib 共存兼容**：在 `AttackCommand.Execute` 上以 `HarmonyPriority(-2)` 严格排在 `RitsuLib` (`framework-core`, `Priority.Last`) 之后并适配其 7 指令 `AttackHitHook` 包装序列，同时兼容 `CardModel.OnPlayWrapper` 的 `CardOnPlayHook` 重定向，不再触发 Harmony 补丁失败。
+- **旧存档与跨模组保护**：`LegacySaveCompatPatch` 补充对分拆条目（`SPIRE1-MUTAGENIC_STRENGTH`、`SPIRE1-J_A_X` 及 `EventsSeen` 中 6 个事件）的条件清理——仅在未安装 `Spire1Events` 时剔除，安装时保留；`Flex` 在 `Spire1Events` 力量契约异常时记录警告并回退至 `FlexPower`。
 
 ## [1.2.5] — 2026-10-20
 

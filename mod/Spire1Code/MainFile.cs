@@ -318,11 +318,11 @@ public partial class MainFile : Node
             AutoAnthonyLoadHook.TryApplyBridge(harmony);
             Interop.AftpEffectLifecycleCompat.TryApply(harmony);
 
-            if (Spire1Config.IgnoreMpModDifferences)
+            if (Spire1Config.SuppressMpDivergencePopup)
             {
                 Logger.Info(RitsuLibPopupSuppressionPatch.Apply(harmony)
-                    ? "[Spire1] MP ignore-mod-diff: RitsuLib divergence popup suppressed"
-                    : "[Spire1] MP ignore-mod-diff: RitsuLib popup type not found (mod absent?) - skipped");
+                    ? "[Spire1] MP suppress-divergence-popup: RitsuLib divergence popup suppressed"
+                    : "[Spire1] MP suppress-divergence-popup: RitsuLib popup type not found (mod absent?) - skipped");
             }
 
             _phase3Completed = true;
