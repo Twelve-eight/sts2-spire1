@@ -356,6 +356,7 @@ internal static class Spire1ContinuationIl
         internal bool FtlPresent;
         internal bool ExhaustPresent;
         internal bool ComposedIsFtl;
+        internal int RitsuAttackCallIndex = -1;
 
         internal ParseOutcome(int originalCount)
         {
@@ -432,6 +433,7 @@ internal static class Spire1ContinuationIl
         internal readonly MethodInfo GuardDispatch;
         internal readonly MethodInfo GuardNative;
         internal readonly MethodInfo DamageFromAttack;
+        internal readonly MethodInfo DamageFromAttackWithRitsu;
         internal readonly MethodInfo DispatchExhaust;
         internal readonly MethodInfo InvokeExhaustListener;
         internal readonly MethodInfo ExhaustAdd;
@@ -449,6 +451,7 @@ internal static class Spire1ContinuationIl
 
         internal ExhaustBinding(MethodInfo guardAttack, MethodInfo guardDamage, MethodInfo guardReward,
             MethodInfo guardExhaust, MethodInfo guardDispatch, MethodInfo guardNative, MethodInfo damageFromAttack,
+            MethodInfo damageFromAttackWithRitsu,
             MethodInfo dispatchExhaust, MethodInfo invokeExhaustListener, MethodInfo exhaustAdd, MethodInfo drawShuffle,
             MethodInfo afterCardDrawn, MethodInfo shuffleAdd, MethodInfo beforeDamageReceived, MethodInfo afterDamageGiven,
             MethodInfo afterDamageReceived, MethodInfo damageKill, MethodInfo killOne, MethodInfo killCreature,
@@ -461,6 +464,7 @@ internal static class Spire1ContinuationIl
             GuardDispatch = guardDispatch;
             GuardNative = guardNative;
             DamageFromAttack = damageFromAttack;
+            DamageFromAttackWithRitsu = damageFromAttackWithRitsu;
             DispatchExhaust = dispatchExhaust;
             InvokeExhaustListener = invokeExhaustListener;
             ExhaustAdd = exhaustAdd;
@@ -539,7 +543,13 @@ internal static class Spire1ContinuationIl
     private const string EchoTypeName = "Spire1.Spire1Code.Patches.Spire1EchoReplay";
 
     private static readonly Guid HostMvid = Guid.Parse("9d417b39-1d40-4fc7-b993-28acdc29e151");
-    private static readonly Guid BaseLibMvid = Guid.Parse("a92e73f7-2563-4953-a000-d3cae93f53c3");
+    private static readonly Module LoadedBaseLibModule = typeof(BaseLib.Extensions.StringExtensions).Module;
+    private static readonly Type[] RitsuAttackHookParams =
+    {
+        typeof(PlayerChoiceContext), typeof(IEnumerable<DamageTargetData>), typeof(decimal),
+        typeof(ValueProp), typeof(Creature), typeof(CardModel), typeof(CardPlay),
+        typeof(ModifyDamageHookType), typeof(AttackCommand), typeof(int), typeof(decimal)
+    };
     private static readonly BindingFlags DeclaredAll = BindingFlags.DeclaredOnly | BindingFlags.Instance |
         BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
     private static readonly object Gate = new();
@@ -667,7 +677,11 @@ internal static class Spire1ContinuationIl
                 {
                     BridgeSite site = body.BridgeByIndex[anchor];
                     int at = outcome.OriginalToEffective[anchor];
-                    AddAction(replace, at, EmitBridgeSite(body, bindings, site), body, owner);
+                    List<CodeInstruction> emitted = site.Method == BridgeMethodId.ExhaustDamageFromAttack &&
+                        outcome.RitsuAttackCallIndex == at
+                        ? new List<CodeInstruction> { new(OpCodes.Call, bindings.Exhaust!.DamageFromAttackWithRitsu) }
+                        : EmitBridgeSite(body, bindings, site);
+                    AddAction(replace, at, emitted, body, owner);
                     break;
                 }
                 default:
@@ -1736,6 +1750,10 @@ internal static class Spire1ContinuationIl
                 typeof(PlayerChoiceContext), typeof(IEnumerable<DamageTargetData>), typeof(decimal), typeof(ValueProp),
                 typeof(Creature), typeof(CardModel), typeof(CardPlay), typeof(ModifyDamageHookType),
                 typeof(AttackCommand)),
+            ExactStatic(type, "DamageFromAttackWithRitsu", typeof(Task<IEnumerable<DamageResult>>),
+                typeof(PlayerChoiceContext), typeof(IEnumerable<DamageTargetData>), typeof(decimal), typeof(ValueProp),
+                typeof(Creature), typeof(CardModel), typeof(CardPlay), typeof(ModifyDamageHookType),
+                typeof(AttackCommand), typeof(int), typeof(decimal)),
             ExactStatic(type, "DispatchExhaust", typeof(Task), typeof(ICombatState), typeof(PlayerChoiceContext),
                 typeof(CardModel), typeof(bool)),
             ExactStatic(type, "InvokeExhaustListener", typeof(Task), typeof(AbstractModel),
@@ -1921,6 +1939,14 @@ internal static class Spire1ContinuationIl
                 throw ParseError(body, oi, null,
                     "maxhand external edit is incomplete or changed: " + maxReason);
 
+            if (TryMatchExternalRitsuCardOnPlay(body, oi, incoming, ii))
+            {
+                outcome.OriginalToEffective[oi] = ii;
+                ii++;
+                oi++;
+                continue;
+            }
+
             if (body.BridgeByIndex.TryGetValue(oi, out BridgeSite? bridgeSite))
             {
                 if (TryMatchBridge(body, bindings, bridgeSite, incoming, ii, out BridgeFact bridge,
@@ -1929,6 +1955,21 @@ internal static class Spire1ContinuationIl
                     outcome.Bridges.Add(bridge);
                     outcome.OriginalToEffective[oi] = bridge.Start;
                     ii += bridge.Length;
+                }
+                else if (TryMatchExternalRitsuAttack(body, bridgeSite, incoming, ii, out int ritsuCallOffset,
+                             out int ritsuLength, out int ritsuMatched, out string ritsuReason,
+                             out MethodInfo? ritsuMethod))
+                {
+                    if (bindings.Exhaust != null && ritsuMethod != null)
+                        Spire1ExhaustTransaction.RegisterRitsuAttackDamage(ritsuMethod);
+                    outcome.RitsuAttackCallIndex = ii + ritsuCallOffset;
+                    outcome.OriginalToEffective[oi] = ii + ritsuCallOffset;
+                    ii += ritsuLength;
+                }
+                else if (ritsuMatched > 0)
+                {
+                    throw ParseError(body, oi, bridgeSite.Owner,
+                        "ritsu attack external edit is incomplete or changed: " + ritsuReason);
                 }
                 else if (TryMatchOriginal(body, oi, incoming, ii, initialInserted, commitInserted,
                              out string originalReason))
@@ -2143,9 +2184,33 @@ internal static class Spire1ContinuationIl
             method.ReturnType != typeof(int) ||
             method.DeclaringType?.FullName != "BaseLib.Patches.Hooks.MaxHandSizePatch" ||
             method.Module.Assembly.GetName().Name != "BaseLib" ||
-            method.Module.ModuleVersionId != BaseLibMvid)
+            !ReferenceEquals(method.Module, LoadedBaseLibModule))
             return false;
         return ParameterTypesEqual(method, new[] { typeof(Player), typeof(int) });
+    }
+
+    private static bool TryMatchExternalRitsuCardOnPlay(Body body, int oi, IReadOnlyList<CodeInstruction> list,
+        int index)
+    {
+        if (body.Id != 27 || index >= list.Count)
+            return false;
+        CodeInstruction original = body.Original[oi];
+        if (original.opcode != OpCodes.Callvirt || original.operand is not MethodInfo origMethod ||
+            origMethod.DeclaringType != typeof(CardModel) || origMethod.Name != "OnPlay" ||
+            !ParameterTypesEqual(origMethod, new[] { typeof(PlayerChoiceContext), typeof(CardPlay) }))
+            return false;
+        CodeInstruction candidate = list[index];
+        if (candidate.opcode != OpCodes.Call ||
+            candidate.labels.Count != original.labels.Count ||
+            !BlocksEqual(original.blocks, candidate.blocks) ||
+            candidate.operand is not MethodInfo ritsuMethod)
+            return false;
+        return ritsuMethod.IsStatic && ritsuMethod.Name == "RunCardOnPlayHooks" &&
+            ritsuMethod.ReturnType == origMethod.ReturnType &&
+            ritsuMethod.DeclaringType?.FullName == "STS2RitsuLib.Cards.CardOnPlayHook" &&
+            IsRitsuLibMethod(ritsuMethod) &&
+            ParameterTypesEqual(ritsuMethod,
+                new[] { typeof(CardModel), typeof(PlayerChoiceContext), typeof(CardPlay) });
     }
 
     private static bool TryMatchOriginal(Body body, int oi, IReadOnlyList<CodeInstruction> list, int index,
@@ -2240,6 +2305,16 @@ internal static class Spire1ContinuationIl
                     fact.Matched = length;
                     return true;
                 }
+                if (site.Method == BridgeMethodId.ExhaustDamageFromAttack &&
+                    bindings.Exhaust != null &&
+                    TryMatchRitsuDamageLoader(body, bindings.Exhaust.DamageFromAttackWithRitsu, list, index,
+                        out int ritsuLength))
+                {
+                    fact.Form = BridgeForm.Loader;
+                    fact.Length = ritsuLength;
+                    fact.Matched = ritsuLength;
+                    return true;
+                }
                 return false;
             case BridgeForm.Loader2:
                 if (bindings.Has(site.Owner) &&
@@ -2282,6 +2357,83 @@ internal static class Spire1ContinuationIl
             !Instr(list[index + 2], OpCodes.Call, replacement))
             return false;
         return true;
+    }
+
+    private static bool TryMatchExternalRitsuAttack(Body body, BridgeSite site, IReadOnlyList<CodeInstruction> list,
+        int index, out int callOffset, out int length, out int matched, out string reason, out MethodInfo? target)
+    {
+        callOffset = 6;
+        length = 0;
+        matched = 0;
+        reason = "";
+        target = null;
+        if (body.Id != 23 || site.Method != BridgeMethodId.ExhaustDamageFromAttack)
+            return false;
+        return TryMatchRitsuAttackSequence(body, list, index, IsRitsuDamageHooksCall, out target, out length,
+            out matched, out reason);
+    }
+
+    private static bool TryMatchRitsuDamageLoader(Body body, MethodInfo replacement,
+        IReadOnlyList<CodeInstruction> list, int index, out int length)
+        => TryMatchRitsuAttackSequence(body, list, index, method => Equals(method, replacement), out _, out length,
+            out _, out _);
+
+    private static bool TryMatchRitsuAttackSequence(Body body, IReadOnlyList<CodeInstruction> list, int index,
+        Func<MethodInfo, bool> acceptTarget, out MethodInfo? target, out int length, out int matched,
+        out string reason)
+    {
+        length = 0;
+        matched = 0;
+        reason = "";
+        target = null;
+        Type? stateType = body.Move.DeclaringType;
+        if (stateType == null || index + 6 >= list.Count)
+            return false;
+        if (!TryMatchStateFieldLoad(list, index, stateType, typeof(AttackCommand)) ||
+            !TryMatchStateFieldLoad(list, index + 2, stateType, typeof(int)) ||
+            !TryMatchStateFieldLoad(list, index + 4, stateType, typeof(decimal)))
+            return false;
+        matched = 6;
+        CodeInstruction call = list[index + 6];
+        if (call.opcode != OpCodes.Call || call.labels.Count != 0 || call.blocks.Count != 0 ||
+            call.operand is not MethodInfo method || !acceptTarget(method))
+        {
+            reason = "ritsu attack DamageWithAttackHitHooks call is missing or changed";
+            return false;
+        }
+        target = method;
+        matched = 7;
+        length = 7;
+        return true;
+    }
+
+    private static bool TryMatchStateFieldLoad(IReadOnlyList<CodeInstruction> list, int index, Type stateType,
+        Type fieldType)
+    {
+        CodeInstruction ldarg = list[index];
+        CodeInstruction ldfld = list[index + 1];
+        if (ldarg.opcode != OpCodes.Ldarg_0 || ldarg.labels.Count != 0 || ldarg.blocks.Count != 0)
+            return false;
+        if (ldfld.opcode != OpCodes.Ldfld || ldfld.labels.Count != 0 || ldfld.blocks.Count != 0 ||
+            ldfld.operand is not FieldInfo field)
+            return false;
+        return !field.IsStatic && field.DeclaringType == stateType && field.FieldType == fieldType;
+    }
+
+    private static bool IsRitsuLibMethod(MethodInfo method)
+    {
+        string? asmName = method.Module.Assembly.GetName().Name;
+        return asmName != null && asmName.StartsWith("STS2-RitsuLib", StringComparison.Ordinal);
+    }
+
+    private static bool IsRitsuDamageHooksCall(MethodInfo method)
+    {
+        if (!method.IsStatic || method.Name != "DamageWithAttackHitHooks" ||
+            method.ReturnType != typeof(Task<IEnumerable<DamageResult>>) ||
+            method.DeclaringType?.FullName != "STS2RitsuLib.Combat.AttackHits.AttackHitHook" ||
+            !IsRitsuLibMethod(method))
+            return false;
+        return ParameterTypesEqual(method, RitsuAttackHookParams);
     }
 
     private static bool TryMatchLoader2(Body body, BridgeSite site, MethodInfo replacement,

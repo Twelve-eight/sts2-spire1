@@ -96,6 +96,8 @@ internal static class Spire1FtlPlayScope
                 foreach (var item in handlers)
                 {
                     var method = new HarmonyMethod(item.Handler) { priority = PatchPriority(item.Handler) };
+                    if (item.Handler == Own(nameof(GuardAttackContinuations)))
+                        method.after = ["com.ritsukage.sts2-RitsuLib.framework-core"];
                     switch (item.Kind)
                     {
                         case HarmonyPatchType.Prefix: harmony.Patch(item.Target, prefix: method); break;

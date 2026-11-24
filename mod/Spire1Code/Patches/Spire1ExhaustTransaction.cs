@@ -705,6 +705,16 @@ internal sealed class Spire1ExhaustTransaction : IDisposable
         CardModel? source, CardPlay? play, ModifyDamageHookType hooks, AttackCommand command)
         => Spire1DamageSnapshot.DamageFromAttack(context, targets, amount, props, dealer, source, play, hooks, command);
 
+    internal static Task<IEnumerable<DamageResult>> DamageFromAttackWithRitsu(PlayerChoiceContext context,
+        IEnumerable<DamageTargetData>? targets, decimal amount, ValueProp props, Creature? dealer,
+        CardModel? source, CardPlay? play, ModifyDamageHookType hooks, AttackCommand command,
+        int hitIndex, decimal totalHitCount)
+        => Spire1DamageSnapshot.DamageFromAttackWithRitsu(context, targets, amount, props, dealer, source, play, hooks,
+            command, hitIndex, totalHitCount);
+
+    internal static void RegisterRitsuAttackDamage(MethodInfo method)
+        => Spire1DamageSnapshot.RegisterRitsuAttackDamage(method);
+
     internal static object? BeginDamage(IRunState run, ICombatState? combat, Creature? target, Creature? dealer,
         decimal amount, ValueProp props, CardModel? source, CardPlay? play, ModifyDamageHookType hooks, CardPreviewMode preview)
         => Spire1DamageSnapshot.BeginDamage(run, combat, target, dealer, amount, props, source, play, hooks, preview);
@@ -861,6 +871,19 @@ internal sealed class Spire1DamageSnapshot
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
+    private delegate Task<IEnumerable<DamageResult>> RitsuDamageWithAttackHitHooksDelegate(
+        PlayerChoiceContext choiceContext, IEnumerable<DamageTargetData>? targets, decimal amount,
+        ValueProp props, Creature? dealer, CardModel? card, CardPlay? play,
+        ModifyDamageHookType hooks, AttackCommand attack, int hitIndex, decimal totalHitCount);
+
+    private static RitsuDamageWithAttackHitHooksDelegate? _ritsuAttackDamage;
+
+    internal static void RegisterRitsuAttackDamage(MethodInfo method)
+    {
+        var created = method.CreateDelegate<RitsuDamageWithAttackHitHooksDelegate>();
+        Volatile.Write(ref _ritsuAttackDamage, created);
+    }
+
     internal static Task<IEnumerable<DamageResult>> DamageFromAttack(PlayerChoiceContext context,
         IEnumerable<DamageTargetData>? targets, decimal amount, ValueProp props, Creature? dealer,
         CardModel? card, CardPlay? play, ModifyDamageHookType hooks, AttackCommand command)
@@ -877,6 +900,19 @@ internal sealed class Spire1DamageSnapshot
         _pending = new Ticket(captured);
         try { return Finish(CreatureCmd.Damage(context, new Targets(list, captured), amount, props, dealer, card, play, ModifyDamageHookType.Cap), captured); }
         finally { _pending = previous; }
+    }
+
+    internal static Task<IEnumerable<DamageResult>> DamageFromAttackWithRitsu(PlayerChoiceContext context,
+        IEnumerable<DamageTargetData>? targets, decimal amount, ValueProp props, Creature? dealer,
+        CardModel? card, CardPlay? play, ModifyDamageHookType hooks, AttackCommand command,
+        int hitIndex, decimal totalHitCount)
+    {
+        if (command is CapturedAttack captured)
+            return DamageFromAttack(context, targets, amount, props, dealer, card, play, hooks, captured);
+        RitsuDamageWithAttackHitHooksDelegate? ritsu = Volatile.Read(ref _ritsuAttackDamage);
+        if (ritsu != null)
+            return ritsu(context, targets, amount, props, dealer, card, play, hooks, command, hitIndex, totalHitCount);
+        return CreatureCmd.Damage(context, targets, amount, props, dealer, card, play, hooks);
     }
 
     private static async Task<IEnumerable<DamageResult>> Finish(Task<IEnumerable<DamageResult>> task, CapturedAttack attack)
@@ -1049,7 +1085,8 @@ internal static class Spire1ExhaustRewardAwaitPatch
 internal static class Spire1ExhaustAttackPatch
 {
     private static MethodBase TargetMethod() => Spire1ExhaustPatches.AttackMove;
-    [HarmonyTranspiler]
+    // Harmony treats -1 as unset (falls back to Priority.Normal); -2 sorts strictly after Priority.Last (0).
+    [HarmonyTranspiler, HarmonyAfter("com.ritsukage.sts2-RitsuLib.framework-core"), HarmonyPriority(-2)]
     private static IEnumerable<CodeInstruction> Transpile(IEnumerable<CodeInstruction> instructions, MethodBase __originalMethod)
         => Spire1ContinuationIl.Rewrite(Spire1ContinuationIl.Owner.Exhaust, __originalMethod, instructions.ToList());
 }
