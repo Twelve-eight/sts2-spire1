@@ -1,4 +1,3 @@
-using BaseLib.Abstracts;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Relics;
@@ -20,16 +19,10 @@ public class RingOfTheSnake : Spire1Relic
     /// registered into an ENGINE character relic pool, so base-game runs could
     /// roll it. Starter-grant flow (direct grant) bypasses IsAllowed and is
     /// unaffected.</summary>
-    public override bool IsAllowed(global::MegaCrit.Sts2.Core.Runs.IRunState runState)
-        => base.IsAllowed(runState) && Spire1Config.RelicsEnabled;
+    protected override bool IsAllowedInternal(global::MegaCrit.Sts2.Core.Runs.IRunState runState)
+        => base.IsAllowedInternal(runState) && Spire1Config.RelicsEnabled;
 
     public override RelicRarity Rarity => RelicRarity.Starter;
-
-    public override List<(string, string)>? Localization =>
-        new RelicLoc(
-            "StS1 - Ring of the Snake",
-            "#At the start of each combat, draw 2 additional cards.",
-            "A fanged ring.");
 
     /// <summary>
     /// Touch of Orobas (and the relic-collection "upgraded starter" row) resolves the upgrade

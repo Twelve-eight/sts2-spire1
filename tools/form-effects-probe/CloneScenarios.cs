@@ -135,9 +135,17 @@ internal static class CloneScenarios
         {
             var f = new Fixture();
             var original = f.Attach<CelestialFormPower>();
+            var carrier = f.AttachEntryCarrier();
+            original.BindEntryContext(f.Context, carrier);
             await original.AfterApplied(f.Owner, null);
             var clone = f.CloneAndAttach(original);
             Check.FreshInternalData(original, clone);
+            bool rejected = false;
+            try { await clone.AfterApplied(f.Owner, null); }
+            catch (InvalidOperationException error) when (error.Message.Contains("player-choice context")) { rejected = true; }
+            Check.True(rejected, "clone does not inherit another entry's context");
+            Check.Equal(1, Journal.EnergyRequests.Count, "missing clone context cannot grant energy");
+            clone.BindEntryContext(f.Context, carrier);
             await clone.AfterApplied(f.Owner, null);
             await original.AfterApplied(f.Owner, null);
             Check.Sequence(new[] { 3m, 3m }, Journal.EnergyRequests.Select(r => r.Amount), "one energy request per independent instance");

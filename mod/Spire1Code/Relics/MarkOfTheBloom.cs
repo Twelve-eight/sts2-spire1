@@ -1,4 +1,3 @@
-using BaseLib.Abstracts;
 using BaseLib.Hooks;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Relics;
@@ -25,21 +24,15 @@ namespace Spire1.Spire1Code.Relics;
 /// to add", and ModifyHealAmountPatches.cs:60-70 runs every additive contribution first; the multiplicative pass then
 /// multiplies that sum (ModifyHealAmountPatches.cs:72-83) and clamps at Math.Max(0m, ...). So the correct member is
 /// ModifyHealMultiplicative returning 0m: it is applied after the additive pass, which means it also zeroes additive
-/// heal bonuses from other sources, and being a product it wins over any other multiplier (e.g. this mod's
-/// MagicFlower 1.5x). ModifyHealAdditive is deliberately left at its default 0m - a negative addend there would only
-/// subtract a fixed amount and could not express "no longer heal".
+/// heal bonuses (including MagicFlower's rounded bonus), and being a product it wins over any other
+/// multiplier. ModifyHealAdditive is deliberately left at its default 0m - a negative addend there
+/// would only subtract a fixed amount and could not express "no longer heal".
 /// </summary>
 public class MarkOfTheBloom : Spire1Relic, IHealAmountModifier
 {
     public override RelicRarity Rarity => RelicRarity.Event;
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
-
-    public override List<(string, string)>? Localization =>
-        new RelicLoc(
-            "Mark of the Bloom",
-            "#You can no longer heal.",
-            "In the Beyond, thoughts and reality are one.");
 
     public decimal ModifyHealMultiplicative(Creature creature, decimal amount)
     {

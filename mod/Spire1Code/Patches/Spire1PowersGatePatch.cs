@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using HarmonyLib;
@@ -11,6 +13,8 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Powers;
+using Spire1.Spire1Code.Cards;
 using Spire1.Spire1Code.Potions;
 using Spire1.Spire1Code.Relics;
 using Spire1.Spire1Code.Config;
@@ -60,9 +64,8 @@ namespace Spire1.Spire1Code.Patches;
     ///     放行, 避免把已存在实例冻结成死锁 (旧存档与局中切开关的收尾语义);
     ///   - offset &lt; 0 且由 Spire1 卡发起/目标是 vanilla power: 拦截 (属于 Spire1 内容触发的新效果).
     ///   移除 (<c>PowerCmd.Remove</c>) 不设门控, 保证切开关后旧实例能正常收尾.
-    /// * fallback 的 PreApplyBridge/Given/Received/ApplyInternal 层不重新解释该谓词, 而是复用同一
-    ///   <c>ShouldBlockApply/ShouldBlockModify</c>, 并只用本次调用的参数与实例的稳定状态
-    ///   (<c>HasOwner</c>/<c>IsCanonical</c>) 做本地判定; 不保存任何跨调用状态.
+    /// * fallback 的普通调用复用 <c>ShouldBlockApply/ShouldBlockModify</c>，只按当次参数判定；
+    ///   Flex 的例外仅接受其真实 PowerCmd 调用点签发的独立一次性身份及对应同步阶段票据。
     /// * 直接 <c>SetAmount</c> 的第三方路径仍不在本门控覆盖内; <c>ApplyInternal</c> 仅在 fallback
     ///   层成功安装时覆盖 Spire1 命名空间 power (Forms 形态局例外); Spire1 卡源触发的 vanilla power
     ///   在该层没有 cardSource 可判定, 属明确记录的 NotClosed 边界.
@@ -99,6 +102,347 @@ namespace Spire1.Spire1Code.Patches;
     /// 在 Phase3 无法完整枚举, PreApplyBridge 固定目标集合只作 best-effort, 不计入 coverage 证明.
     /// </para>
     /// </summary>
+// Flex needs a separate, single-use identity for each PowerCmd invocation. The wrappers below
+// are installed only at the actual PowerCmd async call sites; fallback gates never accept an
+// ambient card/target match as authorization for an arbitrary hook or ApplyInternal call.
+internal static class Spire1FlexLease
+{
+    private const string Owner = "Spire1.FlexLease";
+    private const BindingFlags Methods = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
+    private static readonly AsyncLocal<Frame?> Current = new();
+    [ThreadStatic] private static Frame? _pending;
+    [ThreadStatic] private static Stage? _stage;
+    private static bool _available;
+
+    private sealed class Frame(PlayerChoiceContext context, Flex card, Creature target, PowerModel power,
+        decimal amount, bool modify, object run, ICombatState combat)
+    {
+        internal readonly PlayerChoiceContext Context = context;
+        internal readonly Flex Card = card;
+        internal readonly Creature Target = target;
+        internal readonly PowerModel Power = power;
+        internal readonly decimal Amount = amount;
+        internal readonly bool Modify = modify;
+        internal readonly object Run = run;
+        internal readonly ICombatState Combat = combat;
+        internal int Active = 1;
+        internal bool Entered;
+    }
+
+    private readonly struct Stage(Frame frame, string kind)
+    {
+        internal readonly Frame Frame = frame;
+        internal readonly string Kind = kind;
+    }
+
+    private struct Scope
+    {
+        internal Frame? Previous;
+        internal Frame? Frame;
+        internal bool Entered;
+        internal bool TaskOwnsFrame;
+    }
+
+    internal static bool Available => _available;
+    private static MethodInfo Own(string name) => typeof(Spire1FlexLease).GetMethod(name, Methods)
+        ?? throw new MissingMethodException(typeof(Spire1FlexLease).FullName, name);
+    private static MethodInfo Required(Type type, string name) => AccessTools.Method(type, name)
+        ?? throw new MissingMethodException(type.FullName, name);
+
+    private static MethodInfo MoveNext(MethodInfo method)
+    {
+        Type state = method.GetCustomAttribute<AsyncStateMachineAttribute>()?.StateMachineType
+            ?? throw new InvalidOperationException("PowerCmd async state machine is unavailable: " + method.Name);
+        if (state.DeclaringType != typeof(PowerCmd))
+            throw new InvalidOperationException("Unexpected PowerCmd state machine owner");
+        return state.GetMethod("MoveNext", Methods) ?? throw new MissingMethodException(state.FullName, "MoveNext");
+    }
+
+    private static (MethodInfo Original, MethodInfo Wrapper)[] Sites(bool apply)
+    {
+        var sites = new List<(MethodInfo, MethodInfo)> {
+            (Required(typeof(Hook), nameof(Hook.BeforePowerAmountChanged)), Own(nameof(Before))),
+            (Required(typeof(Hook), nameof(Hook.ModifyPowerAmountGiven)), Own(nameof(Given))),
+            (Required(typeof(Hook), nameof(Hook.ModifyPowerAmountReceived)), Own(nameof(Received)))
+        };
+        if (apply)
+        {
+            sites.Add((Required(typeof(PowerModel), nameof(PowerModel.BeforeApplied)), Own(nameof(BeforeApplied))));
+            sites.Add((Required(typeof(PowerModel), nameof(PowerModel.ApplyInternal)), Own(nameof(ApplyInternal))));
+            sites.Add((Spire1PowersModifyAmountGatePatch.TargetMethod
+                ?? throw new InvalidOperationException("PowerCmd.ModifyAmount target unavailable"), Own(nameof(NestedModify))));
+        }
+        return sites.ToArray();
+    }
+
+    private static List<CodeInstruction> Rewrite(IEnumerable<CodeInstruction> instructions, bool apply, bool replace)
+    {
+        var body = instructions.Select(instruction => new CodeInstruction(instruction)).ToList();
+        foreach ((MethodInfo original, MethodInfo wrapper) in Sites(apply))
+        {
+            CodeInstruction[] matches = body.Where(instruction =>
+                (instruction.opcode == OpCodes.Call || instruction.opcode == OpCodes.Callvirt)
+                && Equals(instruction.operand, original)).ToArray();
+            if (matches.Length != 1)
+                throw new InvalidOperationException($"PowerCmd {original.Name} call site count was {matches.Length}, expected one");
+            if (replace) { matches[0].opcode = OpCodes.Call; matches[0].operand = wrapper; }
+        }
+        return body;
+    }
+
+    private static IEnumerable<CodeInstruction> TranspileApply(IEnumerable<CodeInstruction> body) => Rewrite(body, true, true);
+    private static IEnumerable<CodeInstruction> TranspileModify(IEnumerable<CodeInstruction> body) => Rewrite(body, false, true);
+
+    internal static void Install()
+    {
+        var harmony = new Harmony(Owner);
+        try
+        {
+            MethodInfo apply = Spire1PowersApplyGatePatch.TargetMethod
+                ?? throw new InvalidOperationException("PowerCmd.Apply target unavailable");
+            MethodInfo modify = Spire1PowersModifyAmountGatePatch.TargetMethod
+                ?? throw new InvalidOperationException("PowerCmd.ModifyAmount target unavailable");
+            MethodInfo applyMove = MoveNext(apply), modifyMove = MoveNext(modify);
+            Rewrite(PatchProcessor.GetOriginalInstructions(applyMove), true, false);
+            Rewrite(PatchProcessor.GetOriginalInstructions(modifyMove), false, false);
+            harmony.Patch(applyMove, transpiler: new HarmonyMethod(Own(nameof(TranspileApply))));
+            harmony.Patch(modifyMove, transpiler: new HarmonyMethod(Own(nameof(TranspileModify))));
+            harmony.Patch(apply, prefix: new HarmonyMethod(Own(nameof(BeginApply))) { priority = Priority.First },
+                postfix: new HarmonyMethod(Own(nameof(EndApply))), finalizer: new HarmonyMethod(Own(nameof(Restore))));
+            harmony.Patch(modify, prefix: new HarmonyMethod(Own(nameof(BeginModify))) { priority = Priority.First },
+                postfix: new HarmonyMethod(Own(nameof(EndModify))), finalizer: new HarmonyMethod(Own(nameof(Restore))));
+            Verify(applyMove, nameof(TranspileApply), HarmonyPatchType.Transpiler);
+            Verify(modifyMove, nameof(TranspileModify), HarmonyPatchType.Transpiler);
+            Verify(apply, nameof(BeginApply), HarmonyPatchType.Prefix);
+            Verify(apply, nameof(EndApply), HarmonyPatchType.Postfix);
+            Verify(apply, nameof(Restore), HarmonyPatchType.Finalizer);
+            Verify(modify, nameof(BeginModify), HarmonyPatchType.Prefix);
+            Verify(modify, nameof(EndModify), HarmonyPatchType.Postfix);
+            Verify(modify, nameof(Restore), HarmonyPatchType.Finalizer);
+            _available = true;
+        }
+        catch (Exception error)
+        {
+            _available = false;
+            harmony.UnpatchAll(Owner);
+            MainFile.Logger.Error("[Spire1] Flex callsite lease unavailable; retaining the existing powers gate: " + error.Message);
+        }
+    }
+
+    private static void Verify(MethodInfo target, string method, HarmonyPatchType kind)
+    {
+        var info = Harmony.GetPatchInfo(target) ?? throw new InvalidOperationException("Missing Flex lease patch target");
+        IEnumerable<Patch> patches = kind switch {
+            HarmonyPatchType.Prefix => info.Prefixes, HarmonyPatchType.Postfix => info.Postfixes,
+            HarmonyPatchType.Finalizer => info.Finalizers, HarmonyPatchType.Transpiler => info.Transpilers,
+            _ => throw new ArgumentOutOfRangeException(nameof(kind))
+        };
+        if (patches.Count(patch => patch.owner == Owner && patch.PatchMethod == Own(method)) != 1)
+            throw new InvalidOperationException("Missing exact Flex lease patch: " + method);
+    }
+
+    private static void BeginApply(PlayerChoiceContext choiceContext, PowerModel power, Creature target,
+        decimal amount, Creature? applier, CardModel? cardSource, out Scope __state) =>
+        Begin(choiceContext, power, target, amount, applier, cardSource, false, out __state);
+
+    private static void BeginModify(PlayerChoiceContext choiceContext, PowerModel power, decimal offset,
+        Creature? applier, CardModel? cardSource, out Scope __state) =>
+        Begin(choiceContext, power, _pending?.Target, offset, applier, cardSource, true, out __state);
+
+    private static void Begin(PlayerChoiceContext context, PowerModel power, Creature? target, decimal amount,
+        Creature? applier, CardModel? source, bool modify, out Scope scope)
+    {
+        Frame? previous = Current.Value;
+        Frame? frame = _pending;
+        if (previous is null && frame is null) { scope = default; return; }
+        scope = new Scope { Entered = true, Previous = previous };
+        _pending = null;
+        Current.Value = null; // Every nested command masks its parent, even when it has no Flex ticket.
+        if (frame is null) return;
+        if (!ReferenceEquals(frame.Context, context) || !ReferenceEquals(frame.Power, power)
+            || !ReferenceEquals(frame.Target, target) || !ReferenceEquals(frame.Target, applier)
+            || !ReferenceEquals(frame.Card, source) || frame.Amount != amount || frame.Modify != modify
+            || !Matches(frame))
+        {
+            Current.Value = scope.Previous;
+            scope.Entered = false;
+            throw new InvalidOperationException("Flex command ticket does not match the actual PowerCmd invocation.");
+        }
+        frame.Entered = true;
+        scope.Frame = frame;
+        Current.Value = frame;
+    }
+
+    private static bool Matches(Frame frame) => Volatile.Read(ref frame.Active) != 0
+        && ReferenceEquals(frame.Card.Owner.Creature, frame.Target)
+        && ReferenceEquals(frame.Card.Owner.RunState, frame.Run)
+        && ReferenceEquals(frame.Target.CombatState, frame.Combat);
+
+    private static void EndApply(ref Task __result, ref Scope __state)
+    {
+        if (__state.Frame is not { } frame) return;
+        if (__result is null) throw new InvalidOperationException("PowerCmd.Apply returned no task");
+        if (__result.IsCompleted) Interlocked.Exchange(ref frame.Active, 0);
+        else __result = ReleaseAfter(__result, frame);
+        __state.TaskOwnsFrame = true;
+    }
+
+    private static void EndModify(ref Task<int> __result, ref Scope __state)
+    {
+        if (__state.Frame is not { } frame) return;
+        if (__result is null) throw new InvalidOperationException("PowerCmd.ModifyAmount returned no task");
+        if (__result.IsCompleted) Interlocked.Exchange(ref frame.Active, 0);
+        else __result = ReleaseAfter(__result, frame);
+        __state.TaskOwnsFrame = true;
+    }
+
+    private static async Task ReleaseAfter(Task task, Frame frame)
+    {
+        try { await task; } finally { Interlocked.Exchange(ref frame.Active, 0); }
+    }
+    private static async Task<int> ReleaseAfter(Task<int> task, Frame frame)
+    {
+        try { return await task; } finally { Interlocked.Exchange(ref frame.Active, 0); }
+    }
+
+    private static Exception? Restore(Exception? __exception, Scope __state)
+    {
+        if (__state.Entered)
+        {
+            Current.Value = __state.Previous;
+            if ((__exception is not null || !__state.TaskOwnsFrame) && __state.Frame is { } frame)
+                Interlocked.Exchange(ref frame.Active, 0);
+        }
+        return __exception;
+    }
+
+    private static Task Invoke(Frame frame)
+    {
+        if (_pending is not null) throw new InvalidOperationException("Nested Flex ticket before PowerCmd entry");
+        _pending = frame;
+        try
+        {
+            Task task = frame.Modify
+                ? PowerCmd.ModifyAmount(frame.Context, frame.Power, frame.Amount, frame.Target, frame.Card)
+                : PowerCmd.Apply(frame.Context, frame.Power, frame.Target, frame.Amount, frame.Target, frame.Card);
+            if (!frame.Entered) throw new InvalidOperationException("Flex command did not reach its exact PowerCmd entry");
+            return task;
+        }
+        finally { if (ReferenceEquals(_pending, frame)) _pending = null; }
+    }
+
+    internal static Task Strength(PlayerChoiceContext context, Flex card, decimal amount)
+    {
+        Creature target = card.Owner.Creature;
+        // Preserve the generic Apply<StrengthPower> preamble and stacking choice.
+        if (CombatManager.Instance.IsEnding || !target.CanReceivePowers) return Task.CompletedTask;
+        PowerModel canonical = ModelDb.Power<StrengthPower>();
+        PowerModel? existing = PowerCmd.FindExistingInstanceForStacking(canonical, target, target);
+        PowerModel power = existing ?? canonical.ToMutable();
+        if (target.CombatState is not { } combat)
+            return existing is null ? PowerCmd.Apply(context, power, target, amount, target, card)
+                : PowerCmd.ModifyAmount(context, power, amount, target, card);
+        return Invoke(new Frame(context, card, target, power, amount, existing is not null, card.Owner.RunState, combat));
+    }
+
+    internal static Task Loss(PlayerChoiceContext context, Flex card, PowerModel canonical, decimal amount)
+    {
+        Creature target = card.Owner.Creature;
+        PowerModel power = canonical.ToMutable();
+        if (target.CombatState is not { } combat)
+            return PowerCmd.Apply(context, power, target, amount, target, card);
+        return Invoke(new Frame(context, card, target, power, amount, false, card.Owner.RunState, combat));
+    }
+
+    private static Task<int> NestedModify(PlayerChoiceContext context, PowerModel power, decimal amount,
+        Creature? applier, CardModel? source, bool silent)
+    {
+        Frame? parent = Current.Value;
+        if (parent is null || !Matches(parent) || !ReferenceEquals(parent.Context, context)
+            || !ReferenceEquals(parent.Card, source) || !ReferenceEquals(parent.Target, applier)
+            || parent.Amount != amount || !ReferenceEquals(power.Owner, parent.Target)
+            || !ReferenceEquals(PowerCmd.FindExistingInstanceForStacking(parent.Power, parent.Target, applier), power)
+            || silent)
+            return PowerCmd.ModifyAmount(context, power, amount, applier, source, silent);
+        var child = new Frame(context, parent.Card, parent.Target, power, amount, true, parent.Run, parent.Combat);
+        if (_pending is not null) throw new InvalidOperationException("Nested Flex ticket before PowerCmd entry");
+        _pending = child;
+        try
+        {
+            Task<int> task = PowerCmd.ModifyAmount(context, power, amount, applier, source, silent);
+            if (!child.Entered) throw new InvalidOperationException("Nested Flex command did not enter PowerCmd");
+            return task;
+        }
+        finally { if (ReferenceEquals(_pending, child)) _pending = null; }
+    }
+
+    internal static bool Central(PowerModel power, Creature? target, CardModel? source, decimal amount, bool modify)
+    {
+        Frame? frame = Current.Value;
+        return !Spire1PowersGate.HardFailClosed && frame is not null && Matches(frame)
+            && frame.Modify == modify && frame.Amount == amount && ReferenceEquals(frame.Power, power)
+            && ReferenceEquals(frame.Target, target) && ReferenceEquals(frame.Card, source);
+    }
+
+    internal static bool CentralModify(PowerModel power, CardModel? source, decimal amount)
+    {
+        Frame? frame = Current.Value;
+        return !Spire1PowersGate.HardFailClosed && frame is not null && frame.Modify && Matches(frame)
+            && frame.Amount == amount && ReferenceEquals(frame.Power, power) && ReferenceEquals(frame.Card, source)
+            && ReferenceEquals(power.Owner, frame.Target);
+    }
+
+    private static Stage? EnterStage(string kind, PowerModel power, Creature? target)
+    {
+        Frame? frame = Current.Value;
+        return frame is not null && Matches(frame) && ReferenceEquals(frame.Power, power)
+            && ReferenceEquals(frame.Target, target) ? new Stage(frame, kind) : null;
+    }
+
+    internal static bool ConsumeStage(string kind, PowerModel power, Creature? target, CardModel? source = null)
+    {
+        if (_stage is not { } stage || stage.Kind != kind || !ReferenceEquals(Current.Value, stage.Frame)
+            || !ReferenceEquals(stage.Frame.Power, power) || !ReferenceEquals(stage.Frame.Target, target)
+            || (kind is not ("received" or "internal") && !ReferenceEquals(stage.Frame.Card, source)))
+            return false;
+        _stage = null;
+        return !Spire1PowersGate.HardFailClosed && Matches(stage.Frame);
+    }
+
+    private static Task Before(ICombatState combat, PowerModel power, decimal amount, Creature target, Creature? applier, CardModel? source)
+    {
+        Stage? previous = _stage; _stage = EnterStage("before", power, target);
+        try { return Hook.BeforePowerAmountChanged(combat, power, amount, target, applier, source); }
+        finally { _stage = previous; }
+    }
+    private static decimal Given(ICombatState combat, PowerModel power, Creature giver, decimal amount,
+        Creature? target, CardModel? source, out IEnumerable<AbstractModel> modifiers)
+    {
+        Stage? previous = _stage; _stage = EnterStage("given", power, target);
+        try { return Hook.ModifyPowerAmountGiven(combat, power, giver, amount, target, source, out modifiers); }
+        finally { _stage = previous; }
+    }
+    private static decimal Received(ICombatState combat, PowerModel power, Creature target, decimal amount,
+        Creature? giver, out IEnumerable<AbstractModel> modifiers)
+    {
+        Stage? previous = _stage; _stage = EnterStage("received", power, target);
+        try { return Hook.ModifyPowerAmountReceived(combat, power, target, amount, giver, out modifiers); }
+        finally { _stage = previous; }
+    }
+    private static Task BeforeApplied(PowerModel power, Creature target, decimal amount, Creature? applier, CardModel? source)
+    {
+        Stage? previous = _stage; _stage = EnterStage("applied", power, target);
+        try { return power.BeforeApplied(target, amount, applier, source); }
+        finally { _stage = previous; }
+    }
+    private static void ApplyInternal(PowerModel power, Creature target, decimal amount, bool silent)
+    {
+        Stage? previous = _stage; _stage = EnterStage("internal", power, target);
+        try { power.ApplyInternal(target, amount, silent); }
+        finally { _stage = previous; }
+    }
+}
+
 internal static class Spire1PowersGate
 {
     private const string ModNamespacePrefix = "Spire1.";
@@ -109,6 +453,7 @@ internal static class Spire1PowersGate
 
     private static bool _blockedApplyLogged;
     private static bool _blockedModifyLogged;
+
 
     /// <summary>
     /// True 仅当非泛型 <c>PowerCmd.Apply</c> 目标已解析且对应 Harmony 补丁类成功安装.
@@ -308,6 +653,7 @@ internal static class Spire1PowersGate
             ReconcileCentralGateInstallation(harmony);
             Spire1PowersFallbackInstaller.InstallIfNeeded(harmony);
             _coverageProven = EvaluateAndEnforceCoverage("EnsureInstalled");
+            if (_coverageProven) Spire1FlexLease.Install();
             _installEnsured = true;
             return _coverageProven;
         }
@@ -861,7 +1207,7 @@ internal static class Spire1PowersGate
     /// <summary>
     /// r8b: True = 该类型由 powers gate preflight 显式安装 (central Apply/ModifyAmount 或 fallback 类);
     /// MainFile Phase3 属性扫描必须跳过它们, 避免与 preflight 重复挂载.
-    /// r8e: 独立不可用安全过滤器 (cards/relics/potions/events) 不在此列: 正常可用路径由 Phase3
+    /// r8e: 独立不可用安全过滤器 (cards/relics/potions) 不在此列: 正常可用路径由 Phase3
     /// 属性扫描安装, 不可用路径由 <see cref="EnsureUnavailableSafetyFiltersInstalled"/> 显式安装;
     /// 两条控制流互斥 (不可用分支在扫描前 return), 不存在重复挂载.
     /// </summary>
@@ -875,7 +1221,7 @@ internal static class Spire1PowersGate
     }
 
     /// <summary>
-    /// r8e: True = 该类型是独立不可用安全过滤器之一 (cards/relics/potions/events 的注册后运行期提供路径).
+    /// r8e: True = 该类型是独立不可用安全过滤器之一 (cards/relics/potions 的注册后运行期提供路径).
     /// 不可用状态 (熔断面安装失败/部分安装/覆盖证明失败) 下由
     /// <see cref="EnsureUnavailableSafetyFiltersInstalled"/> 的显式白名单安装并逐目标证明.
     /// 本判定只服务不可用路径; 不参与 MainFile Phase3 的 gate-managed 跳过集合.
@@ -884,10 +1230,7 @@ internal static class Spire1PowersGate
     {
         return type == typeof(Spire1SharedPoolGatePatch)
             || type == typeof(Spire1PotionPoolGatePatch)
-            || type == typeof(Spire1RelicPoolGatePatch)
-            || type == typeof(Sts1EventToggleGenerateRoomsPatch)
-            || type == typeof(Sts1EventTogglePullNextEventPrefixPatch)
-            || type == typeof(Sts1EventTogglePullNextEventPostfixPatch);
+            || type == typeof(Spire1RelicPoolGatePatch);
     }
 
     /// <summary>
@@ -900,14 +1243,11 @@ internal static class Spire1PowersGate
     {
         (typeof(Spire1SharedPoolGatePatch), Spire1SharedPoolGatePatch.TargetMethod, Spire1SharedPoolGatePatch.PostfixMethod, "ColorlessCardPool.GetUnlockedCards"),
         (typeof(Spire1PotionPoolGatePatch), Spire1PotionPoolGatePatch.TargetMethod, Spire1PotionPoolGatePatch.PostfixMethod, "PotionPoolModel.GetUnlockedPotions"),
-        (typeof(Spire1RelicPoolGatePatch), Spire1RelicPoolGatePatch.TargetMethod, Spire1RelicPoolGatePatch.PostfixMethod, "RelicPoolModel.GetUnlockedRelics"),
-        (typeof(Sts1EventToggleGenerateRoomsPatch), Sts1EventToggleGenerateRoomsPatch.TargetMethod, Sts1EventToggleGenerateRoomsPatch.PostfixMethod, "ActModel.GenerateRooms"),
-        (typeof(Sts1EventTogglePullNextEventPrefixPatch), Sts1EventTogglePullNextEventPrefixPatch.TargetMethod, Sts1EventTogglePullNextEventPrefixPatch.PrefixMethod, "ActModel.PullNextEvent(prefix)"),
-        (typeof(Sts1EventTogglePullNextEventPostfixPatch), Sts1EventTogglePullNextEventPostfixPatch.TargetMethod, Sts1EventTogglePullNextEventPostfixPatch.PostfixMethod, "ActModel.PullNextEvent(postfix)")
+        (typeof(Spire1RelicPoolGatePatch), Spire1RelicPoolGatePatch.TargetMethod, Spire1RelicPoolGatePatch.PostfixMethod, "RelicPoolModel.GetUnlockedRelics")
     };
 
     /// <summary>
-    /// r8d: 不可用状态下显式安装 cards/relics/potions/events 安全过滤器, 逐目标用 GetPatchInfo 精确证明.
+    /// r8d: 不可用状态下显式安装 cards/relics/potions 安全过滤器, 逐目标用 GetPatchInfo 精确证明.
     /// 返回 true 仅当白名单全部证明安装; 任一目标缺失/部分安装/异常时返回 false (fail closed).
     /// 本方法不读 Spire1Config.
     /// </summary>
@@ -978,8 +1318,7 @@ internal static class Spire1PowersGate
     // ------------------------------------------------------------------
     // C12 r6-B fallback support. 仅当中央漏斗 (非泛型 PowerCmd.Apply +
     // PowerCmd.ModifyAmount) 任一目标未安装时, MainFile.Phase3 才安装后备层.
-    // 本层不保存跨调用状态 (无 token/计数/CWT); Before 命中即 faulted Task 硬阻断,
-    // Given/Received/ApplyInternal 各自只用本次调用参数与 HasOwner/IsCanonical 判定.
+    // 普通调用仍只用本次参数判定；Flex 专用阶段票据在各 prefix 中消费，绝不授权任意嵌套调用。
     // ------------------------------------------------------------------
 
     /// <summary>
@@ -1211,9 +1550,10 @@ internal static class Spire1PowersApplyGatePatch
     }
 
     [HarmonyPrefix]
-    private static bool Prefix(PowerModel power, Creature target, CardModel? cardSource, ref Task __result)
+    private static bool Prefix(PowerModel power, Creature target, decimal amount, CardModel? cardSource, ref Task __result)
     {
-        if (!Spire1PowersGate.ShouldBlockApply(power, target, cardSource))
+        if (Spire1FlexLease.Central(power, target, cardSource, amount, false)
+            || !Spire1PowersGate.ShouldBlockApply(power, target, cardSource))
         {
             return true;
         }
@@ -1324,7 +1664,8 @@ internal static class Spire1PowersModifyAmountGatePatch
     [HarmonyPrefix]
     private static bool Prefix(PowerModel power, decimal offset, CardModel? cardSource, ref Task<int> __result)
     {
-        if (!Spire1PowersGate.ShouldBlockModify(power, offset, cardSource))
+        if (Spire1FlexLease.CentralModify(power, cardSource, offset)
+            || !Spire1PowersGate.ShouldBlockModify(power, offset, cardSource))
         {
             return true;
         }
@@ -1335,9 +1676,8 @@ internal static class Spire1PowersModifyAmountGatePatch
 }
 
 /// <summary>
-/// C12 r6-B fallback 层 A: Hook.BeforePowerAmountChanged 只做本地判定, 不保存任何跨调用状态.
-/// 命中时直接以 faulted Task 硬阻断本次调用, 不再预测 Given/Received 是否可达:
-/// 引擎没有跨方法调用身份, 异步重入会改变 applier/combatState 与实例挂载状态.
+/// C12 r6-B fallback 层 A: 普通调用按本地参数判定；Flex 仅可消费精确调用点的单次阶段票据。
+/// 命中时以 faulted Task 阻断，不预测后续 Given/Received 是否可达。
 /// </summary>
 [HarmonyPatch]
 internal static class Spire1PowersFallbackBeforePatch
@@ -1440,7 +1780,8 @@ internal static class Spire1PowersFallbackBeforePatch
         CardModel? cardSource,
         ref Task __result)
     {
-        if (!Spire1PowersGate.ShouldBlockFallbackBefore(power, amount, target, cardSource))
+        if (Spire1FlexLease.ConsumeStage("before", power, target, cardSource)
+            || !Spire1PowersGate.ShouldBlockFallbackBefore(power, amount, target, cardSource))
         {
             return true;
         }
@@ -1599,7 +1940,8 @@ internal static class Spire1PowersFallbackPreApplyBridgePatch
         // 只覆盖 "Spire1 cardSource -> vanilla/其它 mod power" 且 Before 目标缺失的路径:
         // Spire1 自有 power 由 Received/ApplyInternal 覆盖; 非 Spire1 cardSource 不属于本门控.
         // 基类方法与 4 个 override 的第四个参数名都按位置绑定 (Harmony 允许按位置匹配).
-        if (!Spire1PowersGate.ShouldBlockFallbackPreApplyBridge(__instance, target, cardSource))
+        if (Spire1FlexLease.ConsumeStage("applied", __instance, target, cardSource)
+            || !Spire1PowersGate.ShouldBlockFallbackPreApplyBridge(__instance, target, cardSource))
         {
             return true;
         }
@@ -1723,7 +2065,8 @@ internal static class Spire1PowersFallbackGivenPatch
         // out 参数必须始终写值: 调用方会把该值传给 Hook.AfterModifyingPowerAmountGiven,
         // 该 hook 对集合执行 Contains; 空集合保持与引擎默认行为一致.
         modifiers = Array.Empty<AbstractModel>();
-        if (!Spire1PowersGate.ShouldBlockFallbackGiven(power, amount, target, cardSource))
+        if (Spire1FlexLease.ConsumeStage("given", power, target, cardSource)
+            || !Spire1PowersGate.ShouldBlockFallbackGiven(power, amount, target, cardSource))
         {
             return true;
         }
@@ -1839,10 +2182,10 @@ internal static class Spire1PowersFallbackReceivedPatch
         out IEnumerable<AbstractModel> modifiers,
         ref decimal __result)
     {
-        // out 参数必须始终写值 (调用方会把该值传给 Hook.AfterModifyingPowerAmountReceived,
-        // 该 hook 对集合执行 Contains). 命中判定只使用本次调用的参数, 无跨调用状态.
+        // out 参数必须始终写值；仅 Flex 的精确调用点可提供一次性阶段票据。
         modifiers = Array.Empty<AbstractModel>();
-        if (!Spire1PowersGate.ShouldBlockFallbackReceived(canonicalPower, target, amount))
+        if (Spire1FlexLease.ConsumeStage("received", canonicalPower, target)
+            || !Spire1PowersGate.ShouldBlockFallbackReceived(canonicalPower, target, amount))
         {
             return true;
         }
@@ -1953,7 +2296,8 @@ internal static class Spire1PowersFallbackApplyInternalPatch
         {
             return;
         }
-        if (Spire1PowersGate.ShouldBlockFallbackApplyInternal(__instance, owner))
+        if (!Spire1FlexLease.ConsumeStage("internal", __instance, owner)
+            && Spire1PowersGate.ShouldBlockFallbackApplyInternal(__instance, owner))
         {
             amount = 0m;
         }

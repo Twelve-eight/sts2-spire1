@@ -11,6 +11,8 @@ namespace Spire1.Spire1Code.Cards;
 [Pool(typeof(Spire1LegacyPool))]
 public class PommelStrike() : Spire1Card(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
+    protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
+
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new DamageVar(9, ValueProp.Move), new CardsVar(1)];
 

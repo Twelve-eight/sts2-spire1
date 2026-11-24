@@ -30,7 +30,7 @@ namespace Spire1.Spire1Code.Patches;
 /// concat，天然不受影响。
 /// </para>
 /// </summary>
-[HarmonyPatch(typeof(ActModel), nameof(ActModel.GenerateRooms))]
+[HarmonyPatch(typeof(ActModel), nameof(ActModel.GenerateRooms), new[] { typeof(MegaCrit.Sts2.Core.Random.Rng), typeof(MegaCrit.Sts2.Core.Unlocks.UnlockState), typeof(bool), typeof(bool) })]
 internal static class LegacyActSharedEventFilterPatch
 {
     private static readonly FieldInfo RoomsField =
@@ -52,7 +52,9 @@ internal static class LegacyActSharedEventFilterPatch
                 ?.GetValue(null) as IEnumerable<EventModel>;
             if (shared != null)
             {
-                var ids = new HashSet<string>(shared.Select(e => e.Id.Entry));
+                var ids = new HashSet<string>(shared
+                    .Where(model => model.GetType().Assembly == typeof(EventModel).Assembly)
+                    .Select(model => model.Id.Entry));
                 if (ids.Count > 0)
                 {
                     return ids;

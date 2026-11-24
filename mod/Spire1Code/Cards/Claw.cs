@@ -4,7 +4,6 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using Spire1.Spire1Code.Character;
-using System.Linq;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -18,12 +17,31 @@ public class Claw() : Spire1Card(0, CardType.Attack, CardRarity.Common, TargetTy
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        await CommonActions.CardAttack(this, play).Execute(choiceContext);
+        var attack = CommonActions.CardAttack(this, play);
+        // Claw.use @74-87 captures GashAction's amount before the queued attack executes.
         decimal increase = DynamicVars["Increase"].BaseValue;
-        foreach (Claw claw in Owner.PlayerCombatState.AllCards.OfType<Claw>())
+        await attack.Execute(choiceContext);
+        // GashAction.update @0-205: current card, then discard/draw/hand; no deduplication.
+        IncreaseDamage(increase);
+        var state = Owner.PlayerCombatState;
+        IncreasePileDamage(state.DiscardPile, increase);
+        IncreasePileDamage(state.DrawPile, increase);
+        IncreasePileDamage(state.Hand, increase);
+    }
+
+    private void IncreaseDamage(decimal amount)
+    {
+        DynamicVars.Damage.BaseValue += amount;
+        _extraDamageFromClawPlays += amount;
+    }
+
+    private static void IncreasePileDamage(CardPile pile, decimal amount)
+    {
+        var cards = pile.Cards;
+        for (int i = 0; i < cards.Count; i++)
         {
-            claw.DynamicVars.Damage.BaseValue += increase;
-            claw._extraDamageFromClawPlays += increase;
+            if (cards[i] is Claw claw)
+                claw.IncreaseDamage(amount);
         }
     }
 

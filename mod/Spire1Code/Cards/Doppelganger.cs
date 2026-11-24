@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Spire1.Spire1Code.Character;
 using Spire1.Spire1Code.Config;
+using DrawCardNextTurnPower = Spire1.Spire1Code.Powers.DrawCardNextTurnPower;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -27,7 +28,7 @@ public class Doppelganger() : Spire1Card(0, CardType.Skill, CardRarity.Rare, Tar
         {
             return;
         }
-        await PowerCmd.Apply<DrawCardsNextTurnPower>(choiceContext, Owner.Creature, x, Owner.Creature, this);
+        await PowerCmd.Apply<DrawCardNextTurnPower>(choiceContext, Owner.Creature, x, Owner.Creature, this);
         await PowerCmd.Apply<EnergyNextTurnPower>(choiceContext, Owner.Creature, x, Owner.Creature, this);
     }
 }

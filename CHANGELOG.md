@@ -10,6 +10,11 @@ repository-side summary.
 
 ---
 
+## [Unreleased] — 2026-11-17
+
+### Changed
+- 依赖下界：`BaseLib` 最低版本由 3.4.5 提升至 3.4.8，与编译引用 `Alchyr.Sts2.BaseLib` 3.4.8 对齐；仅当前宿主 v0.113.1 编译成功，不等同完整可玩验收。
+
 ## [1.2.5] — 2026-10-20
 
 ### Changed

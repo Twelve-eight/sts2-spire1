@@ -1,4 +1,3 @@
-using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 
@@ -16,10 +15,4 @@ public class SpiritPoop : Spire1Relic
     public override RelicRarity Rarity => RelicRarity.Event;
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
-
-    public override List<(string, string)>? Localization =>
-        new RelicLoc(
-            "Spirit Poop",
-            "#It's unpleasant.",
-            "The charred remains of your offering to the spirits.");
 }

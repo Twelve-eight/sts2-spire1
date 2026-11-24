@@ -1,0 +1,4 @@
+{
+  "OPTION_SPIRE1_LIFT.name": "Lift",
+  "OPTION_SPIRE1_LIFT.description": "Gain +1 Strength at the start of each combat. Lifts remaining: {LiftsLeft}."
+}

@@ -31,6 +31,7 @@ internal static class Program
         CelestialReaperScenarios.Register(suite);
         CloneScenarios.Register(suite);
         TransactionScenarios.Register(suite);
+        CarrierScenarios.Register(suite);
         return await suite.Run(filter, listOnly);
     }
 }

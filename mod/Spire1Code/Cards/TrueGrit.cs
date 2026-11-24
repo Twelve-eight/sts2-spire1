@@ -12,17 +12,15 @@ namespace Spire1.Spire1Code.Cards;
 
 /// <summary>StS1 Ironclad - True Grit (Common). Gain 7 Block, exhaust a random hand card (9 Block, choose card upgraded).</summary>
 [Pool(typeof(Spire1LegacyPool))]
-public class TrueGrit() : Spire1Card(1, CardType.Skill, CardRarity.Common, TargetType.None)
+public class TrueGrit() : Spire1Card(1, CardType.Skill, CardRarity.Common, TargetType.Self)
 {
-    private bool _choose;
-
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(7, ValueProp.Move)];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         await CommonActions.CardBlock(this, DynamicVars.Block, play);
 
-        if (_choose)
+        if (IsUpgraded)
         {
             var prefs = new CardSelectorPrefs(CardSelectorPrefs.ExhaustSelectionPrompt, 1);
             var picked = (await CommonActions.SelectCards(this, prefs, choiceContext, PileType.Hand, null)).FirstOrDefault();
@@ -31,7 +29,11 @@ public class TrueGrit() : Spire1Card(1, CardType.Skill, CardRarity.Common, Targe
         }
         else
         {
-            var random = PileType.Hand.GetPile(Owner).Cards.OrderBy(_ => System.Guid.NewGuid()).FirstOrDefault();
+            var cards = PileType.Hand.GetPile(Owner).Cards;
+            // StS1 ExhaustAction.update @12-128 consumes no RNG when at most one card remains.
+            var random = cards.Count == 0 ? null : cards[cards.Count == 1
+                ? 0
+                : Owner.RunState.Rng.CombatCardSelection.NextInt(0, cards.Count)];
             if (random != null)
                 await CardCmd.Exhaust(choiceContext, random);
         }
@@ -39,7 +41,6 @@ public class TrueGrit() : Spire1Card(1, CardType.Skill, CardRarity.Common, Targe
 
     protected override void OnUpgrade()
     {
-        _choose = true;
         DynamicVars.Block.UpgradeValueBy(2m);
     }
 }

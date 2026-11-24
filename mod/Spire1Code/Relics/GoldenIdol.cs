@@ -1,4 +1,3 @@
-using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -16,12 +15,6 @@ public class GoldenIdol : Spire1Relic
     public override RelicRarity Rarity => RelicRarity.Event;
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
-
-    public override List<(string, string)>? Localization =>
-        new RelicLoc(
-            "Golden Idol",
-            "#Enemies drop 25% more *Gold*.",
-            "Made of solid gold, you feel richer just holding it.");
 
     // StS1 puts none of this in the relic. RewardItem's gold path does:
     //     if (!(AbstractDungeon.getCurrRoom() instanceof TreasureRoom)

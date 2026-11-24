@@ -46,7 +46,7 @@
 //    `RandomEnemy` is the flag that enables enemy-select; a jar ALL_ENEMY card whose KB text
 //    says "random" may legitimately use it (SwordBoomerang, ThunderStrike).
 // R5 rarity. StS1 `SPECIAL` has no single StS2 counterpart - it maps to Token, to Ancient when
-//    the card lives in the EventCardPool (mod JAX, mirroring the shipped Apparition), or to
+//    the card lives in the EventCardPool (mirroring the shipped Apparition), or to
 //    Curse for curse-type cards. StS1 statuses carry rarity COMMON while StS2 models statuses
 //    as CardRarity.Status (engine's own Burn/Dazed/Wound do exactly this). Unplayable StS1
 //    cards use cost -2; StS2 has no -2 and models them as -1 plus CardKeyword.Unplayable
@@ -159,7 +159,6 @@ const LEGACY_EXEMPT = new Map([
   ["ThroughViolence", "StS1 Watcher token card (tempCards). Unreachable in the mod (no Watcher character); registered only so its SPIRE1-* id stays loadable."],
   ["Expunger", "StS1 Watcher token card (tempCards), spawned by a card that does not exist in the mod. Registered only so its SPIRE1-* id stays loadable."],
   ["Omega", "StS1 Watcher token card (tempCards), spawned by Beta which is itself unreachable. Registered only so its SPIRE1-* id stays loadable."],
-  ["JAX", "StS1 Colorless SPECIAL card granted only by the Augmenter event (mod/Spire1Code/Events/DrugDealer.cs). StS2 has no SPECIAL bucket; the mod maps it to CardRarity.Ancient + EventCardPool, mirroring the shipped Apparition (documented in JAX.cs)."],
 ]);
 
 // ---------- javap extraction ----------

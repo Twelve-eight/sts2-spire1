@@ -1,4 +1,3 @@
-using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -13,12 +12,6 @@ public class BurningBlood : Spire1Relic
     public override RelicRarity Rarity => RelicRarity.Starter;
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new HealVar(6m)];
-
-    public override List<(string, string)>? Localization =>
-        new RelicLoc(
-            "StS1 - Burning Blood",
-            "#At the end of combat, heal !H! HP.",
-            "Your body's own blood burns with an undying rage.");
 
     /// <summary>
     /// Touch of Orobas (and the relic-collection "upgraded starter" row) resolves the upgrade

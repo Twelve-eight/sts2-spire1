@@ -176,6 +176,74 @@ internal static class DemonScenarios
             Check.Equal(0, reject.Rejections, "negative grant hook cannot block exact restoration");
         });
 
+        foreach (bool refreshBeforeExit in new[] { false, true })
+        {
+            bool refresh = refreshBeforeExit;
+            suite.Add($"demon.zero_aggregate_then_external_grant_preserves_sources_refresh_{refresh}", async () =>
+            {
+                var f = new Fixture();
+                var power = f.Attach<DemonFormPower>();
+                await power.AfterApplied(f.Owner, null);
+                await PowerCmd.ModifyAmount(f.Context, f.Owner.GetPower<StrengthPower>()!, -1m, f.Owner, null);
+                Check.Same(null, f.Owner.GetPower<StrengthPower>(), "exact zero removes the original aggregate");
+                await PowerCmd.Apply<StrengthPower>(f.Context, f.Owner, 2m, f.Owner, null);
+                Check.Equal(2, f.Strength, "new external grant creates another aggregate");
+                if (refresh)
+                    await f.StartOwnTurn(power, 2);
+                await PowerCmd.Remove(power);
+                Check.Equal(1, f.Strength, "exit preserves external -1 plus 2 after removing all form contribution");
+            });
+        }
+
+        suite.Add("demon.replacement_purged_after_zero_does_not_charge_future_strength", async () =>
+        {
+            var f = new Fixture();
+            var power = f.Attach<DemonFormPower>();
+            await power.AfterApplied(f.Owner, null);
+            await PowerCmd.ModifyAmount(f.Context, f.Owner.GetPower<StrengthPower>()!, -1m, f.Owner, null);
+            await PowerCmd.Apply<StrengthPower>(f.Context, f.Owner, 2m, f.Owner, null);
+            await f.StartOwnTurn(power, 2);
+            await PowerCmd.Remove(f.Owner.GetPower<StrengthPower>());
+            await PowerCmd.Apply<StrengthPower>(f.Context, f.Owner, 4m, f.Owner, null);
+            await PowerCmd.Remove(power);
+            Check.Equal(4, f.Strength, "purging the replacement ends the migrated form contribution");
+        });
+
+        suite.Add("demon.zero_then_unobserved_replacement_purge_preserves_future_strength", async () =>
+        {
+            var f = new Fixture();
+            var power = f.Attach<DemonFormPower>();
+            await power.AfterApplied(f.Owner, null);
+            await PowerCmd.ModifyAmount(f.Context, f.Owner.GetPower<StrengthPower>()!, -1m, f.Owner, null);
+            await PowerCmd.Apply<StrengthPower>(f.Context, f.Owner, 2m, f.Owner, null);
+            await PowerCmd.Remove(f.Owner.GetPower<StrengthPower>());
+            await PowerCmd.Apply<StrengthPower>(f.Context, f.Owner, 4m, f.Owner, null);
+            await PowerCmd.Remove(power);
+            Check.Equal(4, f.Strength, "a purge before refresh also ends the former contribution");
+        });
+
+        foreach (bool addReplacement in new[] { false, true })
+        {
+            bool replacement = addReplacement;
+            suite.Add($"demon.initial_apply_tail_zero_retains_external_delta_replacement_{replacement}", async () =>
+            {
+                var f = new Fixture();
+                var power = f.Attach<DemonFormPower>();
+                PowerHooks.AfterAmountChanged = async request =>
+                {
+                    if (request.Power is not StrengthPower || request.Target != f.Owner)
+                        return;
+                    PowerHooks.AfterAmountChanged = null;
+                    await PowerCmd.ModifyAmount(f.Context, f.Owner.GetPower<StrengthPower>()!, -1m, f.Owner, null);
+                    if (replacement)
+                        await PowerCmd.Apply<StrengthPower>(f.Context, f.Owner, 2m, f.Owner, null);
+                };
+                await power.AfterApplied(f.Owner, null);
+                await PowerCmd.Remove(power);
+                Check.Equal(replacement ? 1 : -1, f.Strength, "tail hook cannot erase the external negative contribution");
+            });
+        }
+
         suite.Add("demon.purged_nonzero_aggregate_is_not_withdrawn_twice", async () =>
         {
             var f = new Fixture();

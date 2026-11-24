@@ -11,6 +11,26 @@ internal static class CelestialReaperScenarios
 {
     public static void Register(ProbeSuite suite)
     {
+        suite.Add("celestial.draw_listener_can_request_player_choice", async () =>
+        {
+            var f = new Fixture();
+            var power = f.Attach<CelestialFormPower>();
+            var choice = new ProbeChoiceContext();
+            power.BindEntryContext(choice, f.AttachEntryCarrier());
+            Journal.DrawContinuation = async (context, player) =>
+            {
+                await context.SignalPlayerChoiceBegun(player);
+                await context.SignalPlayerChoiceEnded();
+            };
+            Task grant = power.AfterApplied(f.Owner, null);
+            Check.False(grant.IsCompleted, "entry waits while its draw listener requests a choice");
+            Check.Same(f.OwnerPlayer, choice.Chooser, "choice belongs to the entering player");
+            choice.Resume();
+            await grant;
+            Check.True(choice.Ended, "choice continuation completes");
+            AssertResources(f, 3m);
+        });
+
         foreach (var entry in new[] { (Round: 1, Amount: 3m), (Round: 3, Amount: 3m), (Round: 5, Amount: 5m) })
         {
             var sample = entry;
@@ -18,6 +38,7 @@ internal static class CelestialReaperScenarios
             {
                 var f = new Fixture(round: sample.Round);
                 var power = f.Attach<CelestialFormPower>();
+                power.BindEntryContext(f.Context, f.AttachEntryCarrier());
                 await power.AfterApplied(f.Owner, null);
                 AssertResources(f, sample.Amount);
                 await power.AfterApplied(f.Owner, null);
@@ -33,6 +54,7 @@ internal static class CelestialReaperScenarios
                 var f = new Fixture(round: 5);
                 Creature owner = state == "no_player" ? f.Combat.Enemies[0] : f.Owner;
                 var power = f.Attach<CelestialFormPower>(owner);
+                power.BindEntryContext(f.Context, f.AttachEntryCarrier(owner));
                 if (state == "no_combat") owner.CombatState = null;
                 if (state == "ending") CombatManager.Instance.IsEnding = true;
                 if (state == "over") CombatManager.Instance.IsInProgress = false;
@@ -45,6 +67,7 @@ internal static class CelestialReaperScenarios
         {
             var f = new Fixture();
             var power = f.Attach<CelestialFormPower>();
+            power.BindEntryContext(f.Context, f.AttachEntryCarrier());
             var gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
             Task? first = null, duplicate = null;
             Journal.EnergyPause = _ => gate.Task;
@@ -64,6 +87,29 @@ internal static class CelestialReaperScenarios
                 await Task.WhenAll(first ?? Task.CompletedTask, duplicate ?? Task.CompletedTask);
             }
             AssertResources(f, 3m);
+        });
+
+        suite.Add("celestial.missing_entry_context_rejects_before_resources", async () =>
+        {
+            var f = new Fixture();
+            var power = f.Attach<CelestialFormPower>();
+            bool rejected = false;
+            try { await power.AfterApplied(f.Owner, null); }
+            catch (InvalidOperationException error) when (error.Message.Contains("player-choice context")) { rejected = true; }
+            Check.True(rejected, "direct entry without a context is explicitly rejected");
+            Check.NoResources("missing context");
+        });
+
+        suite.Add("celestial.missing_exact_carrier_rejects_before_resources", async () =>
+        {
+            var f = new Fixture();
+            var power = f.Attach<CelestialFormPower>();
+            power.BindEntryContext(f.Context, null!);
+            bool rejected = false;
+            try { await power.AfterApplied(f.Owner, null); }
+            catch (InvalidOperationException error) when (error.Message.Contains("exact stance carrier")) { rejected = true; }
+            Check.True(rejected, "a context alone is not a valid entry binding");
+            Check.NoResources("missing carrier");
         });
 
         foreach (string dealerKind in new[] { "owner", "owner_pet" })

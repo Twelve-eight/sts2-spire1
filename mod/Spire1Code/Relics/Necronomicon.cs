@@ -1,4 +1,3 @@
-using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -30,18 +29,6 @@ public class Necronomicon : Spire1Relic
 
     /// <summary>StS1 <c>Necronomicon.COST_THRESHOLD = 2</c>.</summary>
     protected override IEnumerable<DynamicVar> CanonicalVars => [new EnergyVar(2)];
-
-    // StS1 ships TWO descriptions for this relic: the pickup-screen text, which ends with "Upon pickup,
-    // obtain a special #rCurse.", and the shorter text that onEquip() writes over it once the relic is
-    // actually held ("The first #yAttack played each turn that costs #b2 or more is played twice."). A StS2
-    // relic has exactly one description and it is always the equipped one, so the equipped form is the
-    // faithful choice; the pickup sentence belongs to the event's reward preview, not to the relic.
-    // StS1's #y/#b/#r colour codes are not StS2 markup and are stripped (DEVLOG.md:287).
-    public override List<(string, string)>? Localization =>
-        new RelicLoc(
-            "Necronomicon",
-            "#The first Attack played each turn that costs 2 or more is played twice.",
-            "Only a fool would try and harness this evil power. At night your dreams are haunted by images of the book devouring your mind.");
 
     // StS1's onEquip() grants a Necronomicurse and onUnequip() removes it again. Both StS2 hooks exist
     // (RelicModel.AfterObtained() at RelicModel.cs:546, RelicModel.AfterRemoved() at RelicModel.cs:551),

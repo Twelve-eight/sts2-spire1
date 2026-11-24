@@ -1,11 +1,8 @@
 using BaseLib.Abstracts;
-using MegaCrit.Sts2.Core.CardSelection;
-using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
-using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using System.Linq;
-using Spire1.Spire1Code.Config;
+using MegaCrit.Sts2.Core.Models;
+using Spire1.Spire1Code.Patches;
 
 namespace Spire1.Spire1Code.Powers;
 
@@ -18,30 +15,13 @@ public class ToolsOfTheTradePower : CustomPowerModel
     public override List<(string, string)>? Localization =>
         new PowerLoc(
             "Tools of the Trade",
-            "#At the start of your turn, draw {Amount:plural:card|cards} and discard {Amount:plural:card|cards}.",
-            "At the start of your turn, draw a card and discard a card.");
+            "#At the start of your turn, draw {Amount} {Amount:plural:card|cards} and discard {Amount} {Amount:plural:card|cards}.",
+            "At the start of your turn, draw {Amount} {Amount:plural:card|cards} and discard {Amount} {Amount:plural:card|cards}.");
 
-    // Hooks copied verbatim from the decompiled game's ToolsOfTheTradePower: the extra draw is part of the
-    // turn-start hand draw, then the discard happens after the turn starts (needs a real choice context).
-    public override decimal ModifyHandDraw(Player player, decimal count)
+    // The setup bridge owns the captured draw/discard batch, even if this source is removed.
+    public override Task BeforeApplied(Creature target, decimal amount, Creature? applier, CardModel? cardSource)
     {
-        if (player != Owner.Player || !Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
-            return count;
-        return count + Amount;
-    }
-
-    public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
-    {
-        if (player != Owner.Player)
-            return;
-        if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))
-        {
-            return;
-        }
-        var picked = (await CardSelectCmd.FromHandForDiscard(choiceContext, player, new CardSelectorPrefs(CardSelectorPrefs.DiscardSelectionPrompt, Amount), null, this)).ToList();
-        if (picked.Count != 0)
-        {
-            await CardCmd.Discard(choiceContext, picked);
-        }
+        Spire1PostDrawBridge.RequireAvailable();
+        return Task.CompletedTask;
     }
 }

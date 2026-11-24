@@ -15,8 +15,6 @@ public class Burst() : Spire1Card(1, CardType.Skill, CardRarity.Rare, TargetType
 {
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<BurstPower>(1)];
 
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
-
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))

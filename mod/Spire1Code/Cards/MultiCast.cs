@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using Spire1.Spire1Code.Character;
+using Spire1.Spire1Code.Patches;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -15,8 +16,13 @@ public class MultiCast() : Spire1Card(-1, CardType.Skill, CardRarity.Rare, Targe
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+        Spire1MultiCastPayment.RequireAvailable();
+        if (!Spire1MultiCastPayment.HasOrb(this))
+            return;
         int count = ResolveEnergyXValue() + (IsUpgraded ? 1 : 0);
+        if (count <= 0)
+            return;
+        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         for (int i = 0; i < count; i++)
         {
             await OrbCmd.EvokeNext(choiceContext, Owner, dequeue: i == count - 1);

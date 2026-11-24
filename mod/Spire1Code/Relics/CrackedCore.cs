@@ -1,4 +1,3 @@
-using BaseLib.Abstracts;
 using Spire1.Spire1Code.Config;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
@@ -25,18 +24,12 @@ public class CrackedCore : Spire1Relic
     /// registered into an ENGINE character relic pool, so base-game runs could
     /// roll it. Starter-grant flow (direct grant) bypasses IsAllowed and is
     /// unaffected.</summary>
-    public override bool IsAllowed(global::MegaCrit.Sts2.Core.Runs.IRunState runState)
-        => base.IsAllowed(runState) && Spire1Config.RelicsEnabled;
+    protected override bool IsAllowedInternal(global::MegaCrit.Sts2.Core.Runs.IRunState runState)
+        => base.IsAllowedInternal(runState) && Spire1Config.RelicsEnabled;
 
     public override RelicRarity Rarity => RelicRarity.Starter;
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Lightning", 1m)];
-
-    public override List<(string, string)>? Localization =>
-        new RelicLoc(
-            "StS1 - Cracked Core",
-            "#At the start of combat, Channel 1 Lightning.",
-            "The remains of the Defect's heart.");
 
     /// <summary>
     /// Touch of Orobas (and the relic-collection "upgraded starter" row) resolves the upgrade

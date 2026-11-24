@@ -4,12 +4,10 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
-    <Compile Include="Doubles.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)../../mod/Spire1Code/Config/Spire1Config.cs" Link="Spire1Config.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)../../mod/Spire1Code/Run/Spire1RunContent.cs" Link="Spire1RunContent.cs" />
+    <Reference Include="0Harmony">
+      <HintPath>$(Sts2DataDir)/0Harmony.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

@@ -18,6 +18,20 @@ internal static class TransactionScenarios
     };
     public static void Register(ProbeSuite suite)
     {
+        suite.Add("transaction.void_paid_autoplay_cannot_borrow_manual_allowance", async () =>
+        {
+            var f = new Fixture();
+            var power = f.Attach<VoidFormEffectPower>();
+            CardModel card = f.Card();
+            await ProductionPatchCalls.SpendResources(card, () =>
+            {
+                Check.Cost(power, card, false, "payment outside a manual action retains its energy and star costs");
+                return Task.FromResult((3, 4));
+            });
+            await PlayTransactionCard(f, power, card, Fixture.Play(card, auto: true), isAutoPlay: true);
+            Check.Cost(power, f.Card(), true, "paid automatic play preserves the later manual allowance");
+        });
+
         suite.Add("transaction.void_pending_spend_keeps_owner_reservation", async () =>
         {
             Check.True(ProductionPatchCalls.HasVoidPatch, "linked Void transaction patch is present");

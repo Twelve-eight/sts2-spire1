@@ -4,7 +4,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Models.Powers;
+using Spire1.Spire1Code.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Spire1.Spire1Code.Character;
 using Spire1.Spire1Code.Config;
@@ -25,7 +25,7 @@ public class Predator() : Spire1Card(2, CardType.Attack, CardRarity.Uncommon, Ta
         {
             return;
         }
-        await PowerCmd.Apply<DrawCardsNextTurnPower>(choiceContext, Owner.Creature, DynamicVars.Cards.BaseValue, Owner.Creature, this);
+        await PowerCmd.Apply<DrawCardNextTurnPower>(choiceContext, Owner.Creature, DynamicVars.Cards.BaseValue, Owner.Creature, this);
     }
 
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(5m);

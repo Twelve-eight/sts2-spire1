@@ -1,10 +1,12 @@
 using BaseLib.Utils;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using MegaCrit.Sts2.Core.ValueProps;
 using Spire1.Spire1Code.Character;
+using Spire1.Spire1Code.Patches;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -12,8 +14,8 @@ namespace Spire1.Spire1Code.Cards;
 /// StS1 Defect Uncommon Skill 遗传算法（jar 权威：cards/blue/GeneticAlgorithm.class；
 /// 官方原文 eng "Gain !B! Block. Permanently increase this card's Block by !M!. NL Exhaust."
 /// / zhs 获得 !B! 点格挡。每打出一次格挡永久 +!M!。消耗。）
-/// 跨战斗成长链路：战斗实例 OnPlay -> 同步到 DeckVersion(牌库母本,[SavedProperty] 随存档序列化)
-/// -> 下场战斗 PopulateCombatState 从母本 Clone(MemberwiseClone 含私有字段)。
+/// 同 UUID 的原牌/重放副本共享永久成长；普通 CreateClone 是新的身份，不共享成长。
+/// DeckVersion 是牌库母本，SavedProperty 继续承担跨战斗保存。
 /// </summary>
 [Pool(typeof(DefectCardPool))]
 public class GeneticAlgorithm : Spire1Card
@@ -65,20 +67,31 @@ public class GeneticAlgorithm : Spire1Card
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        await CommonActions.CardBlock(this, DynamicVars.Block, play);
-        // 单点成长入口:自身与牌库母本走同一条路径,ExtraGain 的 setter 负责写回 Block.
-        ApplyGrowth(DynamicVars["Increase"].IntValue);
-        if (DeckVersion is GeneticAlgorithm master)
+        var mutation = Spire1EchoReplay.CaptureMutation(this);
+        if (!mutation.Includes(this))
+            return;
+        decimal block = DynamicVars.Block.BaseValue;
+        ValueProp props = DynamicVars.Block.Props;
+        // IncreaseMiscAction grows the master deck AND every in-battle card with the same UUID.
+        // A native dupe represents makeSameInstanceOf; an ordinary CloneOf does not. In particular,
+        // the purge copy is a real second growth, not an excuse to grow only the paid original.
+        int increase = DynamicVars["Increase"].IntValue;
+        var identity = Spire1EchoReplay.ReplayIdentity(this);
+        foreach (var card in mutation.Members(this))
+            card.ApplyGrowth(increase);
+
+        if (identity.DeckVersion is GeneticAlgorithm master)
         {
-            master.ApplyGrowth(DynamicVars["Increase"].IntValue);
+            master.ApplyGrowth(increase);
         }
         else if (!_deckVersionWarned)
         {
-            // 战斗内副本无 DeckVersion(如 Discovery 生成):成长不跨战斗.
-            // 原实现每次出牌刷一条 Error;改为全进程一次,不掩盖问题也不刷屏.
             _deckVersionWarned = true;
             MainFile.Logger.Error("[Spire1] GA: DeckVersion missing/typed wrong - growth won't persist (logged once per process)");
         }
+        // GainBlockAction captured its value when use() queued it, before IncreaseMiscAction
+        // executes. Block listeners see the new growth, but this play still gains the old value.
+        await CreatureCmd.GainBlock(mutation.Player.Creature, block, props, play);
     }
 
     /// <summary>永久成长 +<paramref name="increase"/>;Block 的写回由 ExtraGain 的 setter 完成.</summary>

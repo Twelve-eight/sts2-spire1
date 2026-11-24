@@ -37,7 +37,7 @@ public class SporeCloudPower : CustomPowerModel
             "When this enemy dies, apply Vulnerable.");
 
     // Death hook signature copied from the decompiled game powers (e.g. SteamEruptionPower.AfterDeath).
-    public override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength)
+    public override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature, MegaCrit.Sts2.Core.Models.CardModel? source, bool wasRemovalPrevented, float deathAnimLength)
     {
         if (wasRemovalPrevented || creature != Owner)
             return;

@@ -76,13 +76,13 @@ public class Necronomicurse() : Spire1Curse()
 
     /// <summary>
     /// Transform path. StS1 funnels transformation through the same onRemoveFromMasterDeck callback, so a
-    /// transformed Necronomicurse also comes back. AfterTransformedFrom is synchronous while adding a card
+    /// transformed Necronomicurse also comes back. AfterThisWasTransformedIntoInternal is synchronous while adding a card
     /// is a command, so the command is started here; a faulted continuation reports failure rather than
     /// letting the task exception go unobserved (identical handling to Parasite).
     /// </summary>
-    public override void AfterTransformedFrom()
+    protected override void AfterThisWasTransformedIntoInternal(CardModel card)
     {
-        base.AfterTransformedFrom();
+        base.AfterThisWasTransformedIntoInternal(card);
 
         Task returning = Returns(PileType.Deck);
         if (returning.IsCompleted)
@@ -100,7 +100,7 @@ public class Necronomicurse() : Spire1Curse()
     private async Task Returns(PileType pile)
     {
         // Cards content group gate (C17, 2026-10-02): this path is used by BeforeCardRemoved and
-        // AfterTransformedFrom. Fail closed before the relic flash, before creating a card, and before
+        // AfterThisWasTransformedIntoInternal. Fail closed before the relic flash, before creating a card, and before
         // adding it; the async method still completes normally so callers keep their contract.
         if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Cards))
             return;

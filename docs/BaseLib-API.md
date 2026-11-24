@@ -579,7 +579,7 @@ Each has an implicit conversion to `List<(string, string)>` producing the exact 
 - `ActLoc(string Title, params ...)`; `OrbLoc(string Title, string Description, string SmartDescription, params ...)`; `ModifierLoc(string Title, string Description, params ...)`; `CardModifierLoc(string Title, string Description, string? ExtraCardText = null, params ...)` (+ `extraCardText`)
 - `CardModifier` loc table: `card_modifiers` (registered in `BaseLibMain.Initialize` via `CustomLocTableManager.Register("card_modifiers")`, `dll BaseLib/BaseLibMain.cs:76`); keys `<ID>.description` from `CardModifier.GetLoc(subKey)`.
 
-**Use:** `Relics/MagicFlower.cs` returns `new RelicLoc("Magic Flower", "#Healing is 50% more effective.", "It never wilts.")` - the `#` prefix is the SimpleLoc marker (below).
+**本项目约定：** 遗物文本由 `mod/Spire1/localization/{eng,zhs}/relics.json` 提供，继承默认 `Localization => null`，避免 C# 英文覆盖中文表。`Relics/MagicFlower.cs` 已移除原 `RelicLoc` 示例；以上辅助类型仍是 BaseLib API，但不再是本项目遗物的文本来源。
 
 ### 5.5 SimpleLoc markup (SHIPPED, `src Patches/Localization/SimpleLoc.cs`)
 

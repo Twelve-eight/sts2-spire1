@@ -4,7 +4,6 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Models.Powers;
 using Spire1.Spire1Code.Config;
 
 namespace Spire1.Spire1Code.Powers;
@@ -12,8 +11,8 @@ namespace Spire1.Spire1Code.Powers;
 /// <summary>
 /// StS1 Watcher - Discipline. If you end your turn with unused Energy, draw that many additional cards next turn.
 /// Energy is only reset at the start of a turn (CombatManager calls PlayerCombatState.ResetEnergy there), so the
-/// leftover amount is still readable in the turn-end hook. The extra draw is delegated to the shipped
-/// DrawCardsNextTurnPower, which adds its amount to the next hand draw and then removes itself.
+/// leftover amount is still readable in the turn-end hook. The extra draw shares the legacy
+/// DrawCardNextTurnPower batch with Predator and Doppelganger, after the base hand draw.
 /// </summary>
 public sealed class DisciplinePower : Spire1Power
 {
@@ -38,6 +37,6 @@ public sealed class DisciplinePower : Spire1Power
             return;
         }
         Flash();
-        await PowerCmd.Apply<DrawCardsNextTurnPower>(choiceContext, Owner, unused, Owner, null);
+        await PowerCmd.Apply<DrawCardNextTurnPower>(choiceContext, Owner, unused, Owner, null);
     }
 }

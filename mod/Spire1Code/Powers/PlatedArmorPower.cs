@@ -20,8 +20,10 @@ namespace Spire1.Spire1Code.Powers;
 /// <para>
 /// Deliberately NOT the shipped <see cref="MegaCrit.Sts2.Core.Models.Powers.PlatingPower"/>:
 /// that one grants Block every round and decays by itself over time, while StS1's Plated Armor
-/// only decays when actual unblocked damage lands. The block tick reuses the Metallicize idiom
-/// (<c>AfterSideTurnEnd</c>); the stack loss hooks <c>AfterDamageReceived</c>, gated exactly like
+/// only decays when actual unblocked damage lands. The player block tick runs in
+/// <c>BeforeSideTurnEnd</c> (the pre-hand-end point; enemy owners keep <c>AfterSideTurnEnd</c>) and
+/// grants unpowered Block, so Dexterity does not modify it; the stack loss hooks
+/// <c>AfterDamageReceived</c>, gated exactly like
 /// StS1's <c>wasHPLost</c>: unblocked damage AND a powered attack, which excludes HP loss,
 /// thorns and other unpowered sources (see the gate comment on the method).
 /// </para>
@@ -37,8 +39,28 @@ public class PlatedArmorPower : CustomPowerModel
             "#At the end of your turn, gain {Amount} *Block*. Lose 1 Stack whenever you take unblocked damage.",
             "At the end of your turn, gain Block. Lose a Stack whenever you take unblocked damage.");
 
-    public override async Task AfterSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side,
+    // StS1's Plated Armor is a preEndTurnCards power: GameActionManager gives it its Block before the
+    // hand's end-of-turn cards (Burn, etc.) resolve. The host's BeforeSideTurnEnd is that point; the
+    // player tick must not also run in AfterSideTurnEnd, or Burn damage would land first and the
+    // power would tick twice. Enemy owners keep the existing AfterSideTurnEnd timing because that is
+    // the host lifecycle their current behaviour uses.
+    public override Task BeforeSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side,
         IEnumerable<Creature> participants)
+    {
+        return side == CombatSide.Player
+            ? GrantBlock(participants)
+            : Task.CompletedTask;
+    }
+
+    public override Task AfterSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side,
+        IEnumerable<Creature> participants)
+    {
+        return side == CombatSide.Player
+            ? Task.CompletedTask
+            : GrantBlock(participants);
+    }
+
+    private async Task GrantBlock(IEnumerable<Creature> participants)
     {
         if (!participants.Contains(Owner) || Amount <= 0)
         {
@@ -49,7 +71,7 @@ public class PlatedArmorPower : CustomPowerModel
             return;
         }
         Flash();
-        await CreatureCmd.GainBlock(Owner, Amount, ValueProp.Move, null);
+        await CreatureCmd.GainBlock(Owner, Amount, ValueProp.Unpowered, null);
     }
 
     public override async Task AfterDamageReceived(PlayerChoiceContext choiceContext, Creature target,
@@ -62,7 +84,8 @@ public class PlatedArmorPower : CustomPowerModel
         // is "not a powered attack" (ValuePropExtensions.IsPoweredAttack: Move without Unpowered);
         // the same gate the shipped FlutterPower uses. So thorns, HP loss and other unpowered
         // sources must NOT strip a stack.
-        if (target != Owner || result.UnblockedDamage <= 0 || !props.IsPoweredAttack())
+        if (target != Owner || result.UnblockedDamage <= 0 || !props.IsPoweredAttack()
+            || dealer is null || ReferenceEquals(dealer, Owner))
         {
             return;
         }

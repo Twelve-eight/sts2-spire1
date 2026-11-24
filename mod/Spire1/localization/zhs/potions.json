@@ -1,0 +1,14 @@
+{
+  "SPIRE1-ANCIENT_POTION.title": "先古药水",
+  "SPIRE1-ANCIENT_POTION.description": "获得 !ArtifactPower! 层 *人工制品*。",
+  "SPIRE1-ESSENCE_OF_STEEL.title": "钢之精华",
+  "SPIRE1-ESSENCE_OF_STEEL.description": "获得 !PlatedArmorPower! 层 *多层护甲*。",
+  "SPIRE1-CULTIST_POTION.title": "邪教徒药水",
+  "SPIRE1-CULTIST_POTION.description": "获得 !RitualPower! 层 *仪式*。",
+  "SPIRE1-EXPLOSIVE_POTION.title": "爆炸药水",
+  "SPIRE1-EXPLOSIVE_POTION.description": "对所有敌人造成!D!点伤害.",
+  "SPIRE1-FEAR_POTION.title": "恐惧药水",
+  "SPIRE1-FEAR_POTION.description": "给予!VulnerablePower!层*易伤*.",
+  "SPIRE1-SMOKE_BOMB.title": "烟雾弹",
+  "SPIRE1-SMOKE_BOMB.description": "从一场非Boss战斗中逃离，不获得任何奖励。"
+}

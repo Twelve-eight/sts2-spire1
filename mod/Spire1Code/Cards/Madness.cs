@@ -18,6 +18,15 @@ namespace Spire1.Spire1Code.Cards;
 /// test (safe because the scan already proved one qualifies). When no card qualifies the action just ticks - a no-op.
 /// The winner gets cost = 0, costForTurn = 0 and isCostModified = true, persisting for the rest of the combat.
 ///
+/// PERMANENCE RULING (adjudicated against the same data file, cards.Madness): the loc DESCRIPTION reads "Reduce the
+/// cost of a random card in your hand to 0 this combat." and the behavior note says zeroing BOTH cost and costForTurn
+/// makes the reduction "persist for the whole combat rather than the turn". So the effect is combat-scoped, NOT
+/// run-permanent; the shipped CardEnergyCost setters are all scope-tagged (SetUntilPlayed, SetThisTurnOrUntilPlayed,
+/// SetThisTurn, SetThisCombat) and no run-scoped cost setter exists to reach for - none is needed. SetThisCombat is the
+/// intended mapping - its doc comment reads "Set this cost to the specified amount for the rest of the combat" - and
+/// SetToFreeThisCombat must not be substituted, because it also zeroes the star cost, which vanilla Madness never
+/// touches.
+///
 /// StS2 mapping (per the sts2_api_risk instruction in research/sts1data/face-relics-and-madness.json):
 /// * cardRandomRng -> RunState.Rng.CombatCardSelection (RunRngType.cs:10, RunRngSet.cs:62), the stream every shipped
 ///   in-combat card pick uses (Thrash.cs:50, TrueGrit.cs:40, Bookmark.cs:30).

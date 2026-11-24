@@ -3,6 +3,7 @@ using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using Spire1.Spire1Code.Patches;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -28,8 +29,11 @@ public class Rampage() : Spire1Card(1, CardType.Attack, CardRarity.Uncommon, Tar
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
+        var mutation = Spire1EchoReplay.CaptureMutation(this);
+        decimal increase = DynamicVars["RampInc"].BaseValue;
         await CommonActions.CardAttack(this, play).Execute(choiceContext);
-        DynamicVars["RampBonus"].BaseValue += DynamicVars["RampInc"].BaseValue; // grows this combat
+        foreach (var card in mutation.Members(this))
+            card.DynamicVars["RampBonus"].BaseValue += increase;
     }
 
     protected override void OnUpgrade() => DynamicVars["RampInc"].UpgradeValueBy(3); // 5 -> 8

@@ -1,16 +1,16 @@
-{
+﻿{
   "id": "Spire1",
   "name": "杀戮尖塔一代角色",
   "version": "1.2.5",
   "author": "Twelve-eight",
-  "description": "The three original Slay the Spire 1 characters (Ironclad / Silent / Defect) ported to Slay the Spire 2: 220 faithful cards, 24 relics, 6 unique StS1 events, powers and potions. Full Chinese + English localization. BaseLib required.",
-  "min_game_version": "0.111.0",
+  "description": "The three original Slay the Spire 1 characters (Ironclad / Silent / Defect), with cards, relics, powers and potions. Full Chinese + English localization. BaseLib required.",
+  "min_game_version": "0.113.0",
   "has_pck": true,
   "has_dll": true,
   "dependencies": [
     {
       "id": "BaseLib",
-      "min_version": "3.4.5"
+      "min_version": "3.4.8"
     }
   ],
   "affects_gameplay": true

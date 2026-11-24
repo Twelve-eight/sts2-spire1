@@ -1,5 +1,5 @@
-// Narrow collaborators only. The six form implementations are Compile Link inputs.
-// Engine provenance: G:\omp works\Sts\sts2-spire1\research\engine-dllsrc.
+// Narrow collaborators only. Form effects and the stance carrier are Compile Link inputs.
+// Current command order: v0.113 game-src/MegaCrit.Sts2.Core.Commands/PowerCmd.cs:105-163,291-298.
 // No Godot, native history subscribers, full hook enumeration, network, save, HP or deck simulation.
 global using MegaCrit.Sts2.Core.Models;
 global using FormsNs = Forms.FormsCode;
@@ -56,6 +56,9 @@ namespace MegaCrit.Sts2.Core.Entities.Powers
 namespace MegaCrit.Sts2.Core.Combat
 {
     public enum CombatSide { None, Player, Enemy }
+    // Fixture-controlled phases; the engine's scheduler is not simulated by this probe.
+    public enum PlayerTurnPhase { None, Start, AutoPrePlay, Play, AutoPostPlay, End }
+    public readonly record struct CombatId(int Value);
 
     public interface ICombatState
     {
@@ -69,25 +72,53 @@ namespace MegaCrit.Sts2.Core.Combat
     {
         public static CombatManager Instance { get; } = new();
         public History.CombatHistory History { get; } = new();
+        public CombatStateTracker StateTracker => throw FormEffectsProbe.CelestialMetadata.Unsupported();
         // Fixture-controlled lifecycle inputs, not an imitation of engine transition scheduling.
         public bool IsInProgress { get; set; } = true;
         public bool IsEnding { get; set; }
         public bool IsOverOrEnding => !IsInProgress || IsEnding;
+        public CombatId? CurrentCombatId { get; private set; }
+        private ICombatState? _probeState;
+        private int _probeSequence;
+        public ICombatState? DebugOnlyGetState() => _probeState;
+        public bool IsCurrentLiveCombat(CombatId? id)
+            => id.HasValue && id == CurrentCombatId && IsInProgress && !IsEnding;
+        public void SetProbeState(ICombatState state)
+        {
+            _probeState = state;
+            CurrentCombatId = new CombatId(++_probeSequence);
+        }
     }
 }
 
 namespace MegaCrit.Sts2.Core.GameActions.Multiplayer
 {
-    public abstract class PlayerChoiceContext { }
-    public sealed class ThrowingPlayerChoiceContext : PlayerChoiceContext { }
+    public abstract class PlayerChoiceContext
+    {
+        public abstract Task SignalPlayerChoiceBegun(Player chooser);
+        public abstract Task SignalPlayerChoiceEnded();
+    }
+    // Same rejection behavior as the engine's ThrowingPlayerChoiceContext; no UI/network emulation.
+    public sealed class ThrowingPlayerChoiceContext : PlayerChoiceContext
+    {
+        public override Task SignalPlayerChoiceBegun(Player chooser) => throw new NotImplementedException();
+        public override Task SignalPlayerChoiceEnded() => throw new NotImplementedException();
+    }
 }
 
 namespace MegaCrit.Sts2.Core.Entities.Players
 {
+    public sealed partial class PlayerCombatState
+    {
+        public PlayerTurnPhase Phase { get; set; } = PlayerTurnPhase.Play;
+        public int TurnNumber { get; set; } = 1;
+    }
+
     public sealed class Player
     {
         public string Name { get; }
         public Creature Creature { get; }
+        public PlayerCombatState PlayerCombatState { get; } = new();
 
         // Probe construction only. Production Player construction is outside this executable.
         public Player(string name)
@@ -115,6 +146,7 @@ namespace MegaCrit.Sts2.Core.Entities.Creatures
         public bool CanReceivePowers => CombatState != null && ProbeAllowHitting;
         public IReadOnlyList<PowerModel> Powers => _powers;
         public event Action<PowerModel, int, bool>? ProbeAmountChanged;
+        public event Action<PowerModel>? PowerApplied;
 
         public Creature(string name, CombatSide side, Player? player = null, Player? petOwner = null)
         {
@@ -134,6 +166,7 @@ namespace MegaCrit.Sts2.Core.Entities.Creatures
             if (power.InstanceType == PowerInstanceType.None && _powers.Any(p => p.GetType() == power.GetType()))
                 throw new InvalidOperationException("Duplicate non-instanced power.");
             _powers.Add(power);
+            PowerApplied?.Invoke(power);
         }
 
         public void RemovePowerInternal(PowerModel power)
@@ -163,7 +196,7 @@ namespace MegaCrit.Sts2.Core.Entities.Cards
 {
     public enum PileType { None, Draw, Hand, Discard, Exhaust, Play, Deck }
     public enum CardType { None, Attack, Skill, Power, Status, Curse, Quest }
-    public sealed class CardPile
+    public sealed partial class CardPile
     {
         public PileType Type { get; }
         public CardPile(PileType type) => Type = type;
@@ -206,7 +239,7 @@ namespace MegaCrit.Sts2.Core.ValueProps
 
 namespace MegaCrit.Sts2.Core.Models
 {
-    public sealed class CardModel
+    public sealed partial class CardModel
     {
         public required Player Owner { get; set; }
         public CardPile? Pile { get; set; }
@@ -248,6 +281,8 @@ namespace MegaCrit.Sts2.Core.Models
         public virtual PowerInstanceType InstanceType => PowerInstanceType.None;
         public virtual bool AllowNegative => false;
         protected virtual bool IsVisibleInternal => true;
+        public virtual string CustomPackedIconPath => "";
+        public virtual string CustomBigIconPath => "";
         public event Action? DisplayAmountChanged;
         public event Action? Removed;
         public int ProbeFlashCount { get; private set; }
@@ -503,8 +538,11 @@ namespace MegaCrit.Sts2.Core.Commands
         public static async Task Remove(PowerModel? power)
         {
             if (power == null) return;
+            if (PowerHooks.BeforeRemove != null) await PowerHooks.BeforeRemove(power);
             Journal.Removals.Add(power);
             power.RemoveInternal();
+            // Mirrors PowerCmd.Remove's native wait between detach and AfterRemoved.
+            if (PowerHooks.AfterRemoveInternal != null) await PowerHooks.AfterRemoveInternal(power);
             await power.AfterRemoved(power.Owner); // RemoveInternal does not clear Owner.
         }
     }
@@ -531,13 +569,15 @@ namespace MegaCrit.Sts2.Core.Commands
         }
     }
 
-    public static class CardPileCmd
+    public static partial class CardPileCmd
     {
-        public static Task<IEnumerable<CardModel>> Draw(PlayerChoiceContext choiceContext, decimal count, Player player, bool fromHandDraw = false)
+        public static async Task<IEnumerable<CardModel>> Draw(PlayerChoiceContext choiceContext, decimal count, Player player, bool fromHandDraw = false)
         {
             Journal.DrawRequests.Add(new DrawRequest(player, count, fromHandDraw));
-            // No deck simulation: only production command arguments are observable here.
-            return Task.FromResult<IEnumerable<CardModel>>(Array.Empty<CardModel>());
+            // A researched draw listener may request player choice. No deck or scheduler simulation.
+            if (Journal.DrawContinuation != null)
+                await Journal.DrawContinuation(choiceContext, player);
+            return Array.Empty<CardModel>();
         }
     }
 }

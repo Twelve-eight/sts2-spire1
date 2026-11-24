@@ -1,4 +1,3 @@
-using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -36,12 +35,6 @@ public class WarpedTongs : Spire1Relic
     public override RelicRarity Rarity => RelicRarity.Event;
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
-
-    public override List<(string, string)>? Localization =>
-        new RelicLoc(
-            "Warped Tongs",
-            "#At the start of your turn, Upgrade a random card in your hand for the rest of combat.",
-            "The cursed tongs emit a strong desire to return to where they were stolen from.");
 
     public override Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
     {

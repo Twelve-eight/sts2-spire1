@@ -1,0 +1,4 @@
+{
+  "OPTION_SPIRE1_LIFT.name": "举重",
+  "OPTION_SPIRE1_LIFT.description": "每场战斗开始时，获得+1点*力量*。剩余次数：{LiftsLeft}。"
+}

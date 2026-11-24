@@ -1,4 +1,3 @@
-using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Relics;
@@ -13,12 +12,6 @@ public class BloodyIdol : Spire1Relic
 
     /// <summary>StS1 <c>BloodyIdol.HEAL_AMOUNT = 5</c>.</summary>
     protected override IEnumerable<DynamicVar> CanonicalVars => [new HealVar(5m)];
-
-    public override List<(string, string)>? Localization =>
-        new RelicLoc(
-            "Bloody Idol",
-            "#Whenever you gain *Gold*, heal !H! HP.",
-            "The idol now weeps a constant stream of blood.");
 
     // StS1: onGainGold() { flash(); addToTop(new RelicAboveCreatureAction(player, this)); player.heal(5, true); }
     // AfterGoldGained (AbstractModel.cs:767) is the matching StS2 notification hook: async, so a heal can

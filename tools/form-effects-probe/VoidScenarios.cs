@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using Forms.FormsCode;
@@ -16,6 +17,19 @@ internal static class VoidScenarios
 
     public static void Register(ProbeSuite suite)
     {
+        suite.Add("void.auto_preplay_preview_preserves_paid_cost_and_other_player_allowance", () =>
+        {
+            var f = new Fixture();
+            var power = f.Attach<VoidFormEffectPower>();
+            var otherPower = f.Attach<VoidFormEffectPower>(f.Other);
+            f.OwnerPlayer.PlayerCombatState.Phase = PlayerTurnPhase.AutoPrePlay;
+            Check.Cost(power, f.Card(), false, "owner auto-pre-play resource query retains printed costs");
+            Check.Cost(otherPower, f.Card(f.OtherPlayer), true, "another player already in Play keeps the manual allowance");
+            f.OwnerPlayer.PlayerCombatState.Phase = PlayerTurnPhase.Play;
+            Check.Cost(power, f.Card(), true, "manual Play phase restores the unspent free preview");
+            return Task.CompletedTask;
+        });
+
         suite.Add("void.entry_after_does_not_spend_next_manual_allowance", async () =>
         {
             var f = new Fixture();

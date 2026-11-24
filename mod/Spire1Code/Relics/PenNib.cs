@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -29,12 +28,6 @@ public class PenNib : Spire1Relic
 
     public override int DisplayAmount =>
         IsActivating ? _attacksThreshold : AttacksPlayed % _attacksThreshold;
-
-    public override List<(string, string)>? Localization =>
-        new RelicLoc(
-            "StS1 - Pen Nib",
-            "#Every 10th Attack you play deals double damage.",
-            "Holding the nib, you can see everyone ever slain by a previous owner of the pen. A violent history.");
 
     private bool IsActivating
     {

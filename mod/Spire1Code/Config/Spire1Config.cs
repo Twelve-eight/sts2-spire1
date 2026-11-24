@@ -5,8 +5,7 @@ namespace Spire1.Spire1Code.Config;
 
 /// <summary>
 /// Runtime toggles for this mod, shown in Settings -> Mod Settings (auto-generated UI).
-/// Event injection defaults OFF. Read at run / act / pool generation time to gate content, so a run can
-/// use none of this mod's content while it stays installed (no uninstall needed).
+/// Read at run / act / pool generation time to gate this mod's content.
 /// </summary>
 [ConfigHoverTipsByDefault]
 internal class Spire1Config : SimpleModConfig
@@ -103,19 +102,9 @@ internal class Spire1Config : SimpleModConfig
     /// </summary>
     public static bool EnableSts1Potions { get; set; } = true;
 
-    /// <summary>
-    /// Inject StS1 events into the shared event pools (Act2 story events).
-    /// Default OFF; explicit user values are preserved.
-    /// When false, they are stripped at runtime from every act's event pool as
-    /// rooms are generated / the next event is pulled, so they never roll in
-    /// base-game runs (user request 2026-09-13: gen-1 events should be
-    /// toggleable out of gen-2 dungeons). This is a runtime filter, not a
-    /// startup removal; see Sts1EventToggleFilterPatch.
-    /// </summary>
-    public static bool EnableSts1Events { get; set; } = false;
 
     /// <summary>
-    /// 是否把本 mod 的一代奖励内容(卡牌/遗物/事件/药水/自定义力量的池注入与运行期应用)登记进"下一局"新对局.默认开.
+    /// 是否把本 mod 的一代奖励内容(卡牌/遗物/药水/自定义力量的池注入与运行期应用)登记进"下一局"新对局.默认开.
     /// <para>
     /// 与上面几个即时开关不同,本项在<b>新对局创建时被快照锁存进该局存档</b>(经
     /// <see cref="Spire1.Spire1Code.Run.Spire1ContentSnapshotModifier"/>,复用引擎
@@ -134,10 +123,11 @@ internal class Spire1Config : SimpleModConfig
     // The enum slots Monsters/Encounters/Acts/Scenes remain reserved for a future wave.
 
     /// <summary>
-    /// 纯一代池模式：自定义角色池不注入任何二代官方卡（SharedCardReuse 复用项全部跳过），
-    /// 改以我们自己的 StS1 忠实实现类填充（Ironclad/Silent 各 +10，Defect +ConserveBattery）。
-    /// 默认关。开启时 RewardClampPatch 将奖励类抽牌数量钳制到池内实际可行数，
-    /// 避免 ROOM_FULL_OF_CHEESE 等"要求 N 张不重复"的事件在小池上抛异常。
+    /// 纯一代池模式（option A，用户 2026-11-16 批准）：自定义角色池改用一代内容构建——使用自研的一代忠实实现；
+    /// 对一代与二代**确实等价且已按当前宿主逐行核对**的牌，直接沿用真实 host 牌，不复制第二个等价类。
+    /// 路由见 SharedCardReuse 的复用/漂移表与启动快照 <c>PureSts1PoolsAtRegistration</c>。
+    /// 该模式在注册期读取一次，修改后需重启游戏生效（不做热重建）。默认关。
+    /// 防御性奖励钳制（RewardClampPatch）保留，但它不是内容完整性的承诺，缺失的牌仍是缺陷。
     /// </summary>
     public static bool PureSts1Pools { get; set; } = false;
 
@@ -184,7 +174,7 @@ internal class Spire1Config : SimpleModConfig
     // --- gate helpers (computed; getter-only, not surfaced as settings) ---
     // Semantics (single source of truth for every content agent):
     //   * characters: select-time decision, deliberately NOT bound to the per-run snapshot.
-    //   * cards/relics/events/powers/potions: require the master switch, the per-group switch,
+    //   * cards/relics/powers/potions: require the master switch, the per-group switch,
     //     and the per-run snapshot latched by Run.Spire1RunContent at run creation / save load.
     //   * monsters/encounters/acts/scenes: no such content exists in the current product tree
     //     (see DEVELOP.md); the enum reserves the slots so a future wave cannot invent a
@@ -310,14 +300,13 @@ internal class Spire1Config : SimpleModConfig
         Volatile.Write(ref _cardsGateClosedThisRun, !(master && cards && runActive));
 
     [ConfigIgnore] public static bool RelicsEnabled => EnableSts1Content && EnableSts1Relics && Spire1.Spire1Code.Run.Spire1RunContent.ContentActiveThisRun;
-    [ConfigIgnore] public static bool EventsEnabled => EnableSts1Content && EnableSts1Events && Spire1.Spire1Code.Run.Spire1RunContent.ContentActiveThisRun;
     [ConfigIgnore] public static bool PowersEnabled => EnableSts1Content && EnableSts1Powers && Spire1.Spire1Code.Run.Spire1RunContent.ContentActiveThisRun;
     [ConfigIgnore] public static bool PotionsEnabled => EnableSts1Content && EnableSts1Potions && Spire1.Spire1Code.Run.Spire1RunContent.ContentActiveThisRun;
     [ConfigIgnore] public static bool LocDebug => EnableSts1Content && DebugShowLocKeys;
 
     /// <summary>
     /// Stable content-group identifiers for the single gate API. Consumers (character pools,
-    /// card/relic/potion/event/power filters, run-snapshot code) must call
+    /// card/relic/potion/power filters, run-snapshot code) must call
     /// <see cref="Spire1Config.IsEnabled(Spire1ContentGroup)"/> instead of re-deriving the AND chain.
     /// The enum is deliberately not a config property: it is not serialized and does not
     /// appear in the settings UI.
@@ -329,7 +318,6 @@ internal class Spire1Config : SimpleModConfig
         Relics,
         Powers,
         Potions,
-        Events,
         Monsters,
         Encounters,
         Acts,
@@ -351,7 +339,6 @@ internal class Spire1Config : SimpleModConfig
         Spire1ContentGroup.Relics => RelicsEnabled,
         Spire1ContentGroup.Powers => PowersEnabled,
         Spire1ContentGroup.Potions => PotionsEnabled,
-        Spire1ContentGroup.Events => EventsEnabled,
         _ => false,
     };
 }

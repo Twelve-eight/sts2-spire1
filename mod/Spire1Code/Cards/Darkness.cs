@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Orbs;
+using MegaCrit.Sts2.Core.Models.Relics;
 using Spire1.Spire1Code.Character;
 using System.Linq;
 
@@ -20,7 +21,12 @@ public class Darkness() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, Tar
         if (!IsUpgraded)
             return;
 
-        foreach (var orb in Owner.PlayerCombatState.OrbQueue.Orbs.Where(orb => orb is DarkOrb).ToList())
+        var orbs = Owner.PlayerCombatState.OrbQueue.Orbs;
+        foreach (var orb in orbs.Where(orb => orb is DarkOrb).ToList())
             await OrbCmd.Passive(choiceContext, orb, null);
+
+        // StS1 DarkImpulseAction.update @70-142 adds Cables after all Dark passives.
+        if (Owner.GetRelic<GoldPlatedCables>() != null && orbs.Count > 0 && orbs[0] is DarkOrb first)
+            await OrbCmd.Passive(choiceContext, first, null);
     }
 }

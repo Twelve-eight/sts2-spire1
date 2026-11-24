@@ -52,8 +52,8 @@ internal static class SharedCardReuse
         typeof(Sts2Cards.MachineLearning), // 1E, draw 1 extra each turn, Innate on upgrade
         typeof(Sts2Cards.MeteorStrike),    // 5E, 24 dmg (+6), channel 3 Plasma
         typeof(Sts2Cards.Rainbow),         // 2E, channel Lightning + Frost + Dark, Exhaust
-        typeof(Sts2Cards.Reboot),
-        typeof(Sts2Cards.AllForOne),
+        typeof(Sts2Cards.Reboot),            // numbers/keywords match; effect chain drifts -> FieldDriftTwins (own Reboot)
+        typeof(Sts2Cards.AllForOne),         // StS1 recall uses stored cost==0 or freeToPlayOnce; inject own drift fix below
         typeof(Sts2Cards.Barrage),
         typeof(Sts2Cards.Chill),
         typeof(Sts2Cards.Claw),
@@ -61,7 +61,7 @@ internal static class SharedCardReuse
         typeof(Sts2Cards.Darkness),
         typeof(Sts2Cards.Ftl),
         typeof(Sts2Cards.MultiCast),
-        typeof(Sts2Cards.Tempest),          // 0E, shuffle everything back, draw 4 (+2), Exhaust
+        typeof(Sts2Cards.Tempest),         // X Energy, channel X Lightning (+1), Exhaust in StS1
     ];
 
     /// <summary>Shipped StS2 cards identical to their StS1 Ironclad counterparts (A-group in
@@ -176,7 +176,13 @@ internal static class SharedCardReuse
     /// </summary>
     public static void Register()
     {
-        if (Config.Spire1Config.PureSts1Pools)
+        // Option A interface: record the boot-effective route exactly once, here, because this is the
+        // only place the mode is read and pools freeze on first materialization. Downstream consumers
+        // (scoped portrait mapping, diagnostics) must use this snapshot rather than re-reading the
+        // live config, which may have changed after registration without rebuilding anything.
+        PureSts1PoolsAtRegistration = Config.Spire1Config.PureSts1Pools;
+
+        if (PureSts1PoolsAtRegistration)
         {
             // 纯一代池：角色池 = 自研实现类（一代卡面），覆盖全部稀有度。
             // 同名实现类以 [Pool(Spire1LegacyPool)] 退役，这里动态加入角色池；
@@ -199,6 +205,41 @@ internal static class SharedCardReuse
 
         // SP1-1: no diagnostic pool reads here (was LogPoolCensus x4). The ordered census
         // runs on demand AFTER all mods registered - see Diagnostics/PoolCensus.cs.
+    }
+
+    /// <summary>
+    /// Option A: the ONLY registry-side members are this boot latch and the exact routing query below.
+    /// Portrait/resource mapping (source character + exact model/id -> art path) is owned by the local
+    /// view layer that holds the proven resource join; this class deliberately keeps no second registry
+    /// and no lookup that could only ever fail.
+    /// </summary>
+    internal static bool PureSts1PoolsAtRegistration { get; private set; }
+
+    /// <summary>
+    /// Option A boundary: this registry exposes only the REAL boot-effective mode and the exact owned-type
+    /// routing below. Portrait/resource mapping (legacy id -> art resource) belongs to the local view layer
+    /// that owns the actual resource join; there is deliberately no second registry here and no placeholder
+    /// lookup that would always fail. An always-false query is not an implementation and must not exist in
+    /// a production checkpoint.
+    /// </summary>
+    public static IReadOnlyList<System.Type> ReuseTypesFor(System.Type pool)
+    {
+        if (pool == typeof(Spire1CardPool))
+        {
+            return IroncladReuse;
+        }
+
+        if (pool == typeof(SilentCardPool))
+        {
+            return SilentReuse;
+        }
+
+        if (pool == typeof(DefectCardPool))
+        {
+            return DefectReuse;
+        }
+
+        return System.Array.Empty<System.Type>();
     }
 
     /// <summary>
@@ -263,12 +304,94 @@ internal static class SharedCardReuse
         // Flechettes：StS1 基伤 4；StS2 基伤 5
         "Flechettes",
         // Chill：StS1 升级加 Innate、保留 Exhaust；StS2 升级移除 Exhaust
+        // Chill：另含目标集合 drift（一代按 isDeadOrEscaped 计数，StS2 原生用 HittableEnemies）
         "Chill",
-        // Darkness：StS1 升级只换文案（触发全部暗球被动一次不变）；StS2 升级触发两次
+        // StS1 Darkness.use @18-33 triggers Dark passives only when upgraded; StS2 triggers 1/2 times.
         "Darkness",
+        // Legacy postdraw batches capture before base draw; the native powers merge or defer them.
+        "NoxiousFumes",
+        "ToolsOfTheTrade",
+        // The legacy no-orb path has no energy-payment or Chemical X side effects.
+        "MultiCast",
         // Envenom:StS1 升级 2->1 费,EnvenomPower 仍 1;StS2 升级费用仍 2,EnvenomPower 1->2
         "Envenom",
+        // StS1 cards/CalculatedGamble.txt::upgrade @25-27 removes Exhaust;
+        // v0.113 Models.Cards/CalculatedGamble.cs:26-29 adds Retain instead.
+        "CalculatedGamble",
+        // StS1 cards/Tempest.txt::<init> @43-45 sets Exhaust; v0.113 Tempest omits it.
+        "Tempest",
+        // StS1 ApplyBulletTimeAction::update @33-35 keeps energy cost zero for the whole turn.
+        "BulletTime",
+        // StS2 Filter uses effective All cost and excludes X; StS1 uses stored cost==0 or freeToPlayOnce.
+        "AllForOne",
+        // StS1 ScrapeFollowUpAction::update @52-84 reads costForTurn and freeToPlayOnce;
+        // v0.113 Models.Cards/Scrape.cs:32 reads GetWithModifiers(All) and treats CostsX as qualifying.
+        "Scrape",
+        // StS1 ExhaustAction::update @38-128 exhausts a sole hand card without consuming RNG.
+        "TrueGrit",
+        // StS1 LegSweep::use @0-47 applies Weak before Block; v0.113 reverses the order.
+        "LegSweep",
+        // StS1 Nightmare lacks the HEALING generation exclusion; v0.113 disables combat generation.
+        "Nightmare",
+        // StS1 green/Alchemize::use @0-15 rolls AbstractDungeon.returnRandomPotion(true): potionRng
+        // random(0,99), 65/90 rarity thresholds, the fixed Silent table order and the Fruit Juice
+        // exclusion (PotionHelper 65/25 chances; returnRandomPotion(rarity,true) retry loop).
+        // v0.113 Models.Cards/Alchemize.cs:21-25 rolls PotionFactory.CreateRandomPotionInCombat
+        // (float 0.10/0.35 thresholds over the character/shared potion pools), so the shipped
+        // card cannot reproduce the legacy table, weights or stream.
+        "Alchemize",
+        // StS1 Chaos selects Dark/Frost/Lightning/Plasma before channeling; v0.113 also selects Glass.
+        "Chaos",
+        // StS1 cards/WhiteNoise.txt:27-43 (use @0-28) draws AbstractDungeon.returnTrulyRandomCardInCombat(POWER)
+        // from the OWNED character's src*CardPool minus CardTags.HEALING rows (AbstractDungeon.txt:2793-2878),
+        // then setCostForTurn(0). CardLibrary.addXCards already filtered !BASIC && (!isCardLocked(id) ||
+        // treatEverythingAsUnlocked) at pool construction (CardLibrary.txt:2903-3078). v0.113
+        // Models.Cards/WhiteNoise.cs:20-31 draws Owner.Character.CardPool with no legacy canonical identity,
+        // no HEALING exclusion and no complete four-character mapping.
+        "WhiteNoise",
+        // Reboot: legacy notifies shuffle listeners before moving cards. ShuffleAllAction.update
+        // shuffles discard in place (one Shuffle seed), then Soul.shuffle actually moves it to draw;
+        // PutOnDeckAction selects hand cards using cardRandomRng and moves them to the top.
+        // ShuffleAction(draw,false) uses a second Shuffle seed without a second notification.
+        // Source: cards/Reboot.txt::use; actions/defect/ShuffleAllAction.txt::update @32-131;
+        // extra/Soul.txt::shuffle @10-25; actions/common/PutOnDeckAction.txt::update @48-88.
+        // The shipped twin instead performs one final shuffle and only then notifies listeners.
+        "Reboot",
+        // Rage: the shipped twin's OnPlay applies MegaCrit.Sts2.Core.Models.Powers.RagePower, which pays
+        // every Attack in AfterCardPlayed with the live amount, so a Whirlwind expansion takes its hits
+        // before the block. Jar evidence (J/cards/Whirlwind.txt:30-46,
+        // J/actions/unique/WhirlwindAction.txt:46-69,109-135, J/powers/RagePower.txt:55-72): use() queues
+        // WhirlwindAction, onUseCard queues Rage's captured GainBlockAction behind it, and WhirlwindAction
+        // appends its hits behind that block. Cards/Rage.cs applies Spire1RagePower for the reviewed
+        // order, freeze and current-instance expiry.
+        "Rage",
+        // S1 Rupture must resolve Cards.Rupture: the shipped StS2 RupturePower gates by side and
+        // lacks the StS1 dealer==owner gate, so the shipped card cannot reproduce wasHPLost.
+        "Rupture",
+        // StS1 PerfectedStrike::countCards @0-138 counts hand+draw+discard by hasTag(STRIKE);
+        // v0.113 Models.Cards/PerfectedStrike.cs:18-22 sums PlayerCombatState.AllCards (5 piles,
+        // including Exhaust/Play), so the shipped card cannot reproduce the legacy count.
+        "PerfectedStrike",
+        "EchoForm", // StS1 all-play budget + purge-copy identity/order; inject own EchoForm
+        // FiendFireAction resolves live-hand exhausts before independent captured DamageActions; FNP/DE payments keep their captured queue-tail amounts.
+        "FiendFire",
     ];
+
+    private static readonly Dictionary<string, System.Type> OwnImplementations =
+        BuildOwnImplementations(typeof(SharedCardReuse).Assembly.DefinedTypes);
+
+    private static Dictionary<string, System.Type> BuildOwnImplementations(IEnumerable<System.Type> types)
+    {
+        var result = new Dictionary<string, System.Type>(StringComparer.OrdinalIgnoreCase);
+        foreach (var type in types)
+        {
+            if (type.IsNested || type.Namespace != "Spire1.Spire1Code.Cards" || type.BaseType != typeof(Cards.Spire1Card))
+                continue;
+            if (!result.TryAdd(type.Name, type))
+                throw new System.Reflection.AmbiguousMatchException($"Multiple authored card types match {type.Name} ignoring case.");
+        }
+        return result;
+    }
 
     private static void AddOwnImplementations(System.Type pool, System.Type[] twins)
     {
@@ -285,9 +408,7 @@ internal static class SharedCardReuse
 
     private static System.Type? ResolveOwnImplementation(System.Type twin)
     {
-        // 官方类 Sts2Cards.X -> 自研类 Spire1.Spire1Code.Cards.X
-        var name = twin.Name;
-        var own = typeof(SharedCardReuse).Assembly.GetType("Spire1.Spire1Code.Cards." + name);
-        return own != null && own.BaseType?.Name == "Spire1Card" ? own : null;
+        // Build once, require a unique authored type, and preserve its name and saved identity.
+        return OwnImplementations.GetValueOrDefault(twin.Name);
     }
 }

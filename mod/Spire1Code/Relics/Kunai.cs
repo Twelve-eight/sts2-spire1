@@ -1,4 +1,3 @@
-using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -28,12 +27,6 @@ public class Kunai : Spire1Relic
         IsActivating ? DynamicVars.Cards.IntValue : AttacksPlayedThisTurn % DynamicVars.Cards.IntValue;
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(3), new PowerVar<DexterityPower>(1m)];
-
-    public override List<(string, string)>? Localization =>
-        new RelicLoc(
-            "StS1 - Kunai",
-            "#Every time you play 3 Attacks in a single turn, gain !DexterityPower! Dexterity.",
-            "A blade favored by assassins for its ability to strike multiple times.");
 
     private bool IsActivating
     {

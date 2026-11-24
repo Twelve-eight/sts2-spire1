@@ -1,4 +1,3 @@
-using BaseLib.Abstracts;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
@@ -26,19 +25,13 @@ public class InfusedCore : Spire1Relic
     /// registered into an ENGINE character relic pool, so base-game runs could
     /// roll it. Starter-grant flow (direct grant) bypasses IsAllowed and is
     /// unaffected.</summary>
-    public override bool IsAllowed(global::MegaCrit.Sts2.Core.Runs.IRunState runState)
-        => base.IsAllowed(runState) && Spire1Config.RelicsEnabled;
+    protected override bool IsAllowedInternal(global::MegaCrit.Sts2.Core.Runs.IRunState runState)
+        => base.IsAllowedInternal(runState) && Spire1Config.RelicsEnabled;
 
     public override RelicRarity Rarity => RelicRarity.Starter;
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new DynamicVar("Lightning", 3m), new DynamicVar("ExtraDamage", 1m)];
-
-    public override List<(string, string)>? Localization =>
-        new RelicLoc(
-            "StS1 - Infused Core",
-            "#At the start of combat, Channel 3 Lightning. Lightning deals 1 additional damage.",
-            "The Defect's cracked core, humming with stored lightning.");
 
     public override async Task AfterSideTurnStart(CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
     {

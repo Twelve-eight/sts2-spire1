@@ -19,7 +19,7 @@
   "SPIRE1-ENABLE_STS1_POTIONS.hover.desc": "将一代药水注入奖励池。默认开启,与本开关存在之前的行为一致。在卡池查询时读取并按局快照:修改只影响之后新开的对局,加载存档始终使用该存档创建时的值。",
   "SPIRE1-PURE_STS1_POOLS.title": "纯一代卡池",
   "SPIRE1-PURE_STS1_POOLS.hover.title": "纯一代卡池",
-  "SPIRE1-PURE_STS1_POOLS.hover.desc": "自定义角色池不注入二代官方同名牌,改以我们的一代忠实实现填充。开启时奖励数量会按池内实际可行数钳制。",
+  "SPIRE1-PURE_STS1_POOLS.hover.desc": "自定义角色池改用一代内容构建:使用我们的一代忠实实现;对于一代与二代确实等价的牌,直接沿用真实 host 牌,不再复制重复类。该选择在启动时读取一次,修改后需重启游戏生效。",
   "SPIRE1-DEBUG_SHOW_LOC_KEYS.title": "显示本地化键名",
   "SPIRE1-DEBUG_SHOW_LOC_KEYS.hover.title": "显示本地化键名",
   "SPIRE1-DEBUG_SHOW_LOC_KEYS.hover.desc": "游戏内每条本模组文本后附加定位键(如 SPIRE1-STRIKE.title),便于排查与控制台调用。",
@@ -35,9 +35,7 @@
   "SPIRE1-ENABLE_SKIP_NODE_BUTTON.title": "地图跳过节点按钮",
   "SPIRE1-ENABLE_SKIP_NODE_BUTTON.hover.title": "地图跳过节点按钮",
   "SPIRE1-ENABLE_SKIP_NODE_BUTTON.hover.desc": "在地图页显示救援按钮:卡死在房间时解锁选点,直接点击下一节点。走原生投票管线,无失同步风险。",
-  "SPIRE1-ENABLE_STS1_EVENTS.title": "注入一代事件到事件池",
-  "SPIRE1-ENABLE_STS1_EVENTS.hover.desc": "默认关闭,保留已有的显式设置.需同时开启一代内容总开关.开启时:一代事件(神圣泉水,留给自己的讯息,流浪汉的恳求,增益研究者,古老文字)注册进共享/幕事件池,可在任意局出现.关闭时:在房间生成/抽取下一个事件时从各幕事件池过滤,永不出现.(高塔之心从不自动注册.)",
   "SPIRE1-REGISTER_CONTENT_NEXT_RUN.title": "将内容登记进下一局",
   "SPIRE1-REGISTER_CONTENT_NEXT_RUN.hover.title": "将内容登记进下一局",
-  "SPIRE1-REGISTER_CONTENT_NEXT_RUN.hover.desc": "默认开启.控制新对局登记哪些本模组内容:卡牌/遗物/事件/药水会注入各自的奖励池或事件池,自定义力量则由运行期力量门控在效果应用时决定.与上面几个即时开关不同,本项在对局创建时被快照锁存进该局存档:修改它只影响之后新开的对局,而加载任意存档时始终以该存档创建时的值运行.本功能上线前创建的旧存档按开启处理.角色可见性在选人期(建局之前)决定,不受本项影响."
+  "SPIRE1-REGISTER_CONTENT_NEXT_RUN.hover.desc": "默认开启.控制新对局登记哪些本模组内容:卡牌/遗物/药水会注入各自的奖励池,自定义力量则由运行期力量门控在效果应用时决定.与上面几个即时开关不同,本项在对局创建时被快照锁存进该局存档:修改它只影响之后新开的对局,而加载任意存档时始终以该存档创建时的值运行.本功能上线前创建的旧存档按开启处理.角色可见性在选人期(建局之前)决定,不受本项影响."
 }

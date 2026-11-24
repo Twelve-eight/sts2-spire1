@@ -13,12 +13,13 @@ public class BulletTime() : Spire1Card(3, CardType.Skill, CardRarity.Rare, Targe
 {
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        // Same approach as the game's own BulletTime card: X-cost cards keep their X cost.
+        // StS1 keeps the energy reduction for repeated plays in this turn; X costs stay X.
         foreach (var card in PileType.Hand.GetPile(Owner).Cards)
         {
             if (!card.EnergyCost.CostsX)
             {
-                card.SetToFreeThisTurn();
+                card.EnergyCost.SetThisTurn(0);
+                card.SetStarCostThisTurn(0);
             }
         }
         if (!Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Powers))

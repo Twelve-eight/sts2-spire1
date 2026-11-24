@@ -36,14 +36,14 @@ public abstract class Spire1Relic : CustomRelicModel
     /// Keep the per-run C01 gate here so every Spire1 relic, including relics assigned to
     /// an engine character pool, fails closed when the relic group is disabled.
     /// </summary>
-    public override bool IsAllowed(global::MegaCrit.Sts2.Core.Runs.IRunState runState)
+    protected override bool IsAllowedInternal(global::MegaCrit.Sts2.Core.Runs.IRunState runState)
     {
         // r8d: 独立不可用状态优先, 不读 Spire1Config (静态构造失败时不得把异常传播到引擎).
         if (Spire1PowersGate.ContentUnavailableActive)
         {
             return false;
         }
-        return base.IsAllowed(runState)
+        return base.IsAllowedInternal(runState)
             && Spire1Config.IsEnabled(Spire1Config.Spire1ContentGroup.Relics);
     }
 

@@ -22,7 +22,7 @@ public class CorpseExplosionPower : CustomPowerModel
             "When the enemy dies, deal damage equal to its Max HP to ALL enemies.");
 
     // Death hook signature copied from the decompiled game powers (e.g. MagicBombPower.AfterDeath).
-    public override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength)
+    public override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature, MegaCrit.Sts2.Core.Models.CardModel? source, bool wasRemovalPrevented, float deathAnimLength)
     {
         if (wasRemovalPrevented || creature != Owner)
             return;

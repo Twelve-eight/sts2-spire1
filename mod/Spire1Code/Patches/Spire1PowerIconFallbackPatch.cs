@@ -34,8 +34,8 @@ namespace Spire1.Spire1Code.Patches;
 /// <c>ICustomPower.CustomPackedIconPath</c>,非空则原样返回,绝不覆盖.
 /// 覆盖者包括 <c>Spire1Power</c> 全家族(8 个具体直接子类 + <c>StancePower</c>
 /// 的 3 个具体子类)与继承 BaseLib <c>CustomTemporaryPowerModelWrapper</c> 的
-/// FlexPower / PiercingWailPower;只有直接继承 <c>CustomPowerModel</c>(默认返回
-/// null)的其余 47 个具体力量类才真正需要本回退.
+/// PiercingWailPower；<c>FlexPower</c> 及其他直接继承 <c>CustomPowerModel</c> 的力量
+/// 在没有显式路径时使用本回退。
 /// </para>
 /// </summary>
 [HarmonyPatch(typeof(PowerModel), "PackedIconPath", MethodType.Getter)]

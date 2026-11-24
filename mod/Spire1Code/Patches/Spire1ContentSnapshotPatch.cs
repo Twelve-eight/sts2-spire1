@@ -114,7 +114,7 @@ internal static class Spire1ContentSnapshotRestoreOnLoadPatch
 /// <summary>
 /// 构造前过滤: <c>RunState.CreateShared</c> 是 CreateForNewRun/CreateForTest/FromSerializable 的
 /// 唯一共同构造入口, 其 modifiers 参数会原样赋给私有构造函数里的 <c>RunState.Modifiers</c>
-/// (引擎 RunState.cs:319-344).前缀成功安装并执行时移除本 mod 快照, 快照就不会进入活动修正表,
+/// (v0.113 RunState.cs:335-377).前缀成功安装并执行时移除本 mod 快照, 快照就不会进入活动修正表,
 /// 因此不会被 <c>RunState.IterateHookListeners</c> 枚举, 也不会被 <c>NTopBar.Initialize</c> 渲染;
 /// 前缀未安装时由读档前缀的 fail-closed 拒绝路径拦截(后缀不会运行), 过滤已安装但未移除快照时
 /// 由读档后缀的 fail-closed 剥离兜底, 不宣称无条件隔离.
@@ -545,16 +545,17 @@ internal static class Spire1ContentSnapshotShared
         }
 
         ParameterInfo[] p = method.GetParameters();
-        return p.Length == 9
+        return p.Length == 10
             && p[0].ParameterType == typeof(IReadOnlyList<Player>) && p[0].Name == "players"
             && p[1].ParameterType == typeof(IReadOnlyList<ActModel>) && p[1].Name == "acts"
             && p[2].ParameterType == typeof(IReadOnlyList<ModifierModel>) && p[2].Name == "modifiers"
             && p[3].ParameterType == typeof(GameMode) && p[3].Name == "gameMode"
-            && p[4].ParameterType == typeof(int) && p[4].Name == "currentActIndex"
-            && p[5].ParameterType == typeof(RunRngSet) && p[5].Name == "rng"
-            && p[6].ParameterType == typeof(RunOddsSet) && p[6].Name == "odds"
-            && p[7].ParameterType == typeof(RelicGrabBag) && p[7].Name == "sharedRelicGrabBag"
-            && p[8].ParameterType == typeof(int) && p[8].Name == "ascensionLevel";
+            && p[4].ParameterType == typeof(bool) && p[4].Name == "isCustom"
+            && p[5].ParameterType == typeof(int) && p[5].Name == "currentActIndex"
+            && p[6].ParameterType == typeof(RunRngSet) && p[6].Name == "rng"
+            && p[7].ParameterType == typeof(RunOddsSet) && p[7].Name == "odds"
+            && p[8].ParameterType == typeof(RelicGrabBag) && p[8].Name == "sharedRelicGrabBag"
+            && p[9].ParameterType == typeof(int) && p[9].Name == "ascensionLevel";
     }
 
     /// <summary>构造前过滤补丁是否经 HarmonyCleanup 确认安装.诊断用, 不参与过滤决策.</summary>

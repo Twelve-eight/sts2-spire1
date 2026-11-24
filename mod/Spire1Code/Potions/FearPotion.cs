@@ -1,4 +1,3 @@
-using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -23,8 +22,8 @@ public class FearPotion : Spire1Potion
 
     public override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.FromPower<VulnerablePower>()];
 
-    public override List<(string, string)>? Localization =>
-        new PotionLoc("Fear Potion", "#Apply !VulnerablePower! *Vulnerable*.");
+    // Localization lives in localization/{eng,zhs}/potions.json (JSON-only convention). No inline
+    // PotionLoc here: it would overwrite the zhs table at ModelDb.Init.
 
     protected override async Task OnUse(PlayerChoiceContext choiceContext, Creature? target)
     {

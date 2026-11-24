@@ -69,14 +69,17 @@ public class CreativeAIPower : CustomPowerModel
         }
 
         Flash();
-        CardModel? card = CardFactory.GetDistinctForCombat(
-            Owner.Player,
-            Owner.Player.Character.CardPool
-                .GetUnlockedCards(Owner.Player.UnlockState, Owner.Player.RunState.CardMultiplayerConstraint)
-                .Where(c => c.Type == CardType.Power),
-            1,
-            Owner.Player.RunState.Rng.CombatCardGeneration).FirstOrDefault();
-        if (card != null)
-            await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, Owner.Player);
+        for (int i = 0; i < Amount; i++)
+        {
+            CardModel? card = CardFactory.GetDistinctForCombat(
+                Owner.Player,
+                Owner.Player.Character.CardPool
+                    .GetUnlockedCards(Owner.Player.UnlockState, Owner.Player.RunState.CardMultiplayerConstraint)
+                    .Where(c => c.Type == CardType.Power),
+                1,
+                Owner.Player.RunState.Rng.CombatCardGeneration).FirstOrDefault();
+            if (card != null)
+                await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, Owner.Player);
+        }
     }
 }

@@ -17,11 +17,22 @@ public class AllForOne() : Spire1Card(2, CardType.Attack, CardRarity.Rare, Targe
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         await CommonActions.CardAttack(this, play).Execute(choiceContext);
-        var cards = PileType.Discard.GetPile(Owner).Cards
-            .Where(card => card.EnergyCost.GetWithModifiers(CostModifiers.All) == 0 && !card.EnergyCost.CostsX)
+
+        CardPile discard = PileType.Discard.GetPile(Owner);
+        var cards = discard.Cards
+            .Where(card => ReferenceEquals(card.Owner, Owner) && LegacyRecallCost.Matches(card))
             .ToList();
+        CardPile hand = PileType.Hand.GetPile(Owner);
         foreach (var card in cards)
+        {
+            // Match DiscardToHandAction: the selection is fixed, but membership and
+            // capacity are checked again when each queued transfer is reached.
+            if (!ReferenceEquals(card.Owner, Owner)
+                || !discard.Cards.Contains(card)
+                || hand.Cards.Count >= CardPile.MaxCardsInHand)
+                continue;
             await CardPileCmd.Add(card, PileType.Hand);
+        }
     }
 
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(4m);

@@ -1,4 +1,3 @@
-using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -22,13 +21,6 @@ public class NilrysCodex : Spire1Relic
 
     /// <summary>StS1 <c>CodexAction.generateCardChoices()</c> loops until it holds 3 distinct cardIDs.</summary>
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(3)];
-
-    // StS1 DESCRIPTION verbatim, with the #b colour codes stripped (DEVLOG.md:287).
-    public override List<(string, string)>? Localization =>
-        new RelicLoc(
-            "Nilry's Codex",
-            "#At the end of your turn, you may shuffle 1 of 3 random cards into your draw pile.",
-            "Crafted by the infamous game master himself. Said to expand one's mind.");
 
     // StS1 onPlayerEndTurn() queues a RelicAboveCreatureAction plus a CodexAction; CodexAction.update() does
     // the real work. BeforeSideTurnEnd (AbstractModel.cs:1388) is the StS2 end-of-turn hook, and the only

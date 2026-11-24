@@ -19,9 +19,12 @@ public class Setup() : Spire1Card(1, CardType.Skill, CardRarity.Uncommon, Target
         var picked = (await CommonActions.SelectCards(this, prefs, choiceContext, PileType.Hand, null)).FirstOrDefault();
         if (picked != null)
         {
+            // StS1 sets freeToPlayOnce only when the stored legacy cost is positive.
+            // Check before moving the card so base-0, negative, and X cards are carried
+            // without receiving a new free marker; an existing marker is preserved.
+            if (LegacyRecallCost.ShouldGrantSetupFreeOnce(picked))
+                picked.EnergyCost.SetUntilPlayed(0);
             await CardPileCmd.Add(picked, PileType.Draw, CardPilePosition.Top);
-            // "It costs 0 until played" - the local cost modifier expires when the card is played.
-            picked.EnergyCost.SetUntilPlayed(0);
         }
     }
 

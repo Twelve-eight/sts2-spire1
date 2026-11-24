@@ -27,6 +27,7 @@ public static class Journal
     public static List<DrawRequest> DrawRequests { get; } = new();
     public static Func<DamageRequest, Task>? DamagePause { get; set; }
     public static Func<EnergyRequest, Task>? EnergyPause { get; set; }
+    public static Func<PlayerChoiceContext, Player, Task>? DrawContinuation { get; set; }
 
     public static void Reset()
     {
@@ -38,6 +39,7 @@ public static class Journal
         DrawRequests.Clear();
         DamagePause = null;
         EnergyPause = null;
+        DrawContinuation = null;
         PowerHooks.Reset();
         CombatManager.Instance.IsEnding = false;
         CombatManager.Instance.IsInProgress = true;
@@ -115,6 +117,8 @@ public static class PowerHooks
     public static List<ReceivedPowerRule> Received { get; } = new();
     public static Func<PowerRequest, Task>? BeforeAmountChanged { get; set; }
     public static Func<PowerRequest, Task>? AfterAmountChanged { get; set; }
+    public static Func<PowerModel, Task>? BeforeRemove { get; set; }
+    public static Func<PowerModel, Task>? AfterRemoveInternal { get; set; }
     public static Task BeforeChange(PowerRequest request) => BeforeAmountChanged?.Invoke(request) ?? Task.CompletedTask;
     public static Task AfterChange(PowerRequest request) => AfterAmountChanged?.Invoke(request) ?? Task.CompletedTask;
 
@@ -136,6 +140,8 @@ public static class PowerHooks
         Received.Clear();
         BeforeAmountChanged = null;
         AfterAmountChanged = null;
+        BeforeRemove = null;
+        AfterRemoveInternal = null;
     }
 }
 
@@ -166,6 +172,7 @@ public sealed class Fixture
     public Fixture(int round = 1, int[]? rng = null, int enemyCount = 3)
     {
         Combat = new ProbeCombatState(round, new Rng(rng ?? Enumerable.Repeat(0, 32).ToArray()));
+        CombatManager.Instance.SetProbeState(Combat);
         OwnerPet = new Creature("OwnerPet", CombatSide.Player, petOwner: OwnerPlayer);
         OtherPet = new Creature("OtherPet", CombatSide.Player, petOwner: OtherPlayer);
         foreach (Creature creature in new[] { Owner, Other, OwnerPet, OtherPet }) Add(creature);
@@ -202,6 +209,15 @@ public sealed class Fixture
         return power;
     }
 
+    public FormsNs.EchoCelestialStancePower AttachEntryCarrier(Creature? owner = null)
+    {
+        Creature target = owner ?? Owner;
+        var marker = Attach<FormsNs.ProbeDivinityMarker>(target);
+        var carrier = Attach<FormsNs.EchoCelestialStancePower>(target);
+        carrier.BindNativeMarker(marker);
+        return carrier;
+    }
+
     public T CloneAndAttach<T>(T source, Creature? owner = null) where T : PowerModel
     {
         var clone = (T)source.MutableClone();
@@ -232,6 +248,24 @@ public sealed class Fixture
 
     public Task StartSide(PowerModel power, params Creature[] participants)
         => power.BeforeSideTurnStart(Context, CombatSide.Player, participants, Combat);
+}
+
+public sealed class ProbeChoiceContext : PlayerChoiceContext
+{
+    private readonly TaskCompletionSource _resume = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    public Player? Chooser { get; private set; }
+    public bool Ended { get; private set; }
+    public override async Task SignalPlayerChoiceBegun(Player chooser)
+    {
+        Chooser = chooser;
+        await _resume.Task;
+    }
+    public override Task SignalPlayerChoiceEnded()
+    {
+        Ended = true;
+        return Task.CompletedTask;
+    }
+    public void Resume() => _resume.TrySetResult();
 }
 
 public sealed class ProbeFailure : Exception

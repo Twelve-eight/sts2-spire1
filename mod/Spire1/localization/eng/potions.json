@@ -1,0 +1,14 @@
+{
+  "SPIRE1-ANCIENT_POTION.title": "Ancient Potion",
+  "SPIRE1-ANCIENT_POTION.description": "Gain !ArtifactPower! *Artifact*.",
+  "SPIRE1-ESSENCE_OF_STEEL.title": "Essence of Steel",
+  "SPIRE1-ESSENCE_OF_STEEL.description": "Gain !PlatedArmorPower! *Plated Armor*.",
+  "SPIRE1-CULTIST_POTION.title": "Cultist Potion",
+  "SPIRE1-CULTIST_POTION.description": "Gain !RitualPower! *Ritual*.",
+  "SPIRE1-EXPLOSIVE_POTION.title": "Explosive Potion",
+  "SPIRE1-EXPLOSIVE_POTION.description": "Deal !D! damage to ALL enemies.",
+  "SPIRE1-FEAR_POTION.title": "Fear Potion",
+  "SPIRE1-FEAR_POTION.description": "Apply !VulnerablePower! *Vulnerable*.",
+  "SPIRE1-SMOKE_BOMB.title": "Smoke Bomb",
+  "SPIRE1-SMOKE_BOMB.description": "Escape from a non-boss combat. Receive no rewards."
+}

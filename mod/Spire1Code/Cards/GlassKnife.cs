@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using Spire1.Spire1Code.Character;
+using Spire1.Spire1Code.Patches;
 
 namespace Spire1.Spire1Code.Cards;
 
@@ -22,8 +23,11 @@ public class GlassKnife() : Spire1Card(1, CardType.Attack, CardRarity.Rare, Targ
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
+        var mutation = Spire1EchoReplay.CaptureMutation(this);
+        decimal decrease = DynamicVars["GKInc"].BaseValue;
         await CommonActions.CardAttack(this, play, hitCount: 2).Execute(choiceContext);
-        DynamicVars["GKBonus"].BaseValue += DynamicVars["GKInc"].BaseValue; // -2 damage per play this combat
+        foreach (var card in mutation.Members(this))
+            card.DynamicVars["GKBonus"].BaseValue += decrease;
     }
 
     protected override void OnUpgrade() => DynamicVars["CalculationBase"].UpgradeValueBy(4m); // 8 -> 12

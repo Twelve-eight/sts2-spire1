@@ -1,4 +1,3 @@
-using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Relics;
@@ -20,13 +19,6 @@ public class Enchiridion : Spire1Relic
     // StS1 Enchiridion.numbers is just the literal 0 it hands to setCostForTurn; there is no tunable
     // constant to bind, so there is nothing to expose here (as in GoldenIdol.cs:18, SpiritPoop.cs:18).
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
-
-    // StS1 DESCRIPTION verbatim, with the #y/#b colour codes stripped (DEVLOG.md:287).
-    public override List<(string, string)>? Localization =>
-        new RelicLoc(
-            "Enchiridion",
-            "#At the start of each combat, add a random Power card into your hand. It costs 0 for that turn.",
-            "The legendary journal of an ancient lich.");
 
     // StS1 atPreBattle():
     //     flash();

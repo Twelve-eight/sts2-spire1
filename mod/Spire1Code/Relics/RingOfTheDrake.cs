@@ -1,4 +1,3 @@
-using BaseLib.Abstracts;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Relics;
@@ -22,18 +21,12 @@ public class RingOfTheDrake : Spire1Relic
     /// registered into an ENGINE character relic pool, so base-game runs could
     /// roll it. Starter-grant flow (direct grant) bypasses IsAllowed and is
     /// unaffected.</summary>
-    public override bool IsAllowed(global::MegaCrit.Sts2.Core.Runs.IRunState runState)
-        => base.IsAllowed(runState) && Spire1Config.RelicsEnabled;
+    protected override bool IsAllowedInternal(global::MegaCrit.Sts2.Core.Runs.IRunState runState)
+        => base.IsAllowedInternal(runState) && Spire1Config.RelicsEnabled;
 
     public override RelicRarity Rarity => RelicRarity.Starter;
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(2), new DynamicVar("Turns", 3m)];
-
-    public override List<(string, string)>? Localization =>
-        new RelicLoc(
-            "StS1 - Ring of the Drake",
-            "#At the start of your first 3 turns, draw 2 additional cards.",
-            "Your ring has morphed and changed forms.");
 
     public override decimal ModifyHandDraw(Player player, decimal count)
     {

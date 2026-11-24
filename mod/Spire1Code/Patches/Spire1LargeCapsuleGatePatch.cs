@@ -401,7 +401,7 @@ internal static class Spire1LargeCapsuleGate
     {
         for (int i = 0; i < instance.DynamicVars["Relics"].IntValue; i++)
         {
-            RelicModel relic = RelicFactory.PullNextRelicFromFront(instance.Owner).ToMutable();
+            RelicModel relic = RelicFactory.PullNextRelicForRewardFromFront(instance.Owner).ToMutable();
             await RelicCmd.Obtain(relic, instance.Owner);
         }
 

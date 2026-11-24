@@ -14,8 +14,9 @@ namespace HarmonyLib
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
     public sealed class HarmonyPatch : Attribute
     {
-        public Type DeclaringType { get; }
-        public string MethodName { get; }
+        public Type? DeclaringType { get; }
+        public string? MethodName { get; }
+        public HarmonyPatch() { }
         public HarmonyPatch(Type declaringType, string methodName)
         {
             DeclaringType = declaringType;
@@ -35,7 +36,7 @@ namespace HarmonyLib
         public HarmonyPriority(int value) => Value = value;
     }
 
-    public static class Priority { public const int Last = 0; }
+    public static class Priority { public const int Last = 0; public const int First = 800; }
 
     public sealed class CodeInstruction
     {

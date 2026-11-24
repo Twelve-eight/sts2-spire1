@@ -102,6 +102,144 @@ function Add-ConcreteModelStems([string]$CodeDir, [string]$Pattern, [System.Coll
     }
 }
 
+function Remove-CommentSpans([string]$Text) {
+    # Blanks // and /* */ comment bodies while preserving every line break, so a literal that only
+    # appears in a comment is never mistaken for a live icon override (Add-ExplicitRelicIconKeeps
+    # matches on the comment-free text). String, verbatim-string and char literals are copied through
+    # unchanged, so "//" inside a string is not a comment and a quote inside a comment cannot shift the
+    # remaining code. The output always has the input's length, so match offsets map 1:1 to lines.
+    $slash = [char]47
+    $star = [char]42
+    $quote = [char]34
+    $at = [char]64
+    $backslash = [char]92
+    $single = [char]39
+    $lf = [char]10
+    $space = [char]32
+    $builder = [System.Text.StringBuilder]::new($Text.Length)
+    $i = 0
+    $length = $Text.Length
+    while ($i -lt $length) {
+        $c = $Text[$i]
+        $d = if (($i + 1) -lt $length) { $Text[$i + 1] } else { [char]0 }
+        if ($c -eq $slash -and $d -eq $slash) {
+            while ($i -lt $length -and $Text[$i] -ne $lf) { [void]$builder.Append($space); $i++ }
+        } elseif ($c -eq $slash -and $d -eq $star) {
+            [void]$builder.Append($space)
+            [void]$builder.Append($space)
+            $i += 2
+            $closed = $false
+            while ($i -lt $length) {
+                if ($Text[$i] -eq $star -and ($i + 1) -lt $length -and $Text[$i + 1] -eq $slash) {
+                    [void]$builder.Append($space)
+                    [void]$builder.Append($space)
+                    $i += 2
+                    $closed = $true
+                    break
+                }
+                if ($Text[$i] -eq $lf) { [void]$builder.Append($lf) } else { [void]$builder.Append($space) }
+                $i++
+            }
+            if (-not $closed) { throw 'SOURCE-LEX: unterminated block comment in a scanned C# source.' }
+        } elseif ($c -eq $at -and $d -eq $quote) {
+            [void]$builder.Append($at)
+            [void]$builder.Append($quote)
+            $i += 2
+            while ($i -lt $length) {
+                if ($Text[$i] -eq $quote) {
+                    if (($i + 1) -lt $length -and $Text[$i + 1] -eq $quote) {
+                        [void]$builder.Append($quote)
+                        [void]$builder.Append($quote)
+                        $i += 2
+                        continue
+                    }
+                    [void]$builder.Append($quote)
+                    $i++
+                    break
+                }
+                [void]$builder.Append($Text[$i])
+                $i++
+            }
+        } elseif ($c -eq $quote -or $c -eq $single) {
+            $delimiter = $c
+            [void]$builder.Append($c)
+            $i++
+            while ($i -lt $length) {
+                if ($Text[$i] -eq $backslash) {
+                    [void]$builder.Append($backslash)
+                    if (($i + 1) -lt $length) { [void]$builder.Append($Text[$i + 1]) }
+                    $i += 2
+                    continue
+                }
+                [void]$builder.Append($Text[$i])
+                if ($Text[$i] -eq $delimiter) { $i++; break }
+                $i++
+            }
+        } else {
+            [void]$builder.Append($c)
+            $i++
+        }
+    }
+    return $builder.ToString()
+}
+
+function Add-ExplicitRelicIconKeeps([string]$CodeDir, [string]$ConcretePattern, [string]$SourceRoot, [System.Collections.Generic.HashSet[string]]$Set) {
+    # A concrete relic may point one of the three engine icon slots at an explicitly named shipped file
+    # instead of the Id-derived name (CultistHeadpiece/GremlinVisage/NlothsHungryFace use the StS1
+    # *_mask.png art). Only one form is accepted: the engine member followed by a single string literal
+    # and one of the two StringExtensions relic helpers, e.g.
+    #   public override string PackedIconPath => "cultist_mask.png".RelicImagePath();
+    #   protected override string BigIconPath => "cultist_mask.png".BigRelicImagePath();
+    # The helper decides the folder (images/relics vs images/relics/big), which is exactly what the
+    # runtime does. Comments are blanked first, so a literal that only appears in a comment is never a
+    # reference; a concrete override written in any other form stops the release instead of silently
+    # falling back to the default relic image, and so does an explicit reference whose file is absent.
+    $memberPattern = '(?m)^[ \t]*(?:public|protected|internal|private)[ \t]+(?:override[ \t]+|virtual[ \t]+|new[ \t]+)*(?:string|String)[ \t]+(PackedIconPath|PackedIconOutlinePath|BigIconPath)\b'
+    $literalPattern = '(?m)^[ \t]*(?:public|protected|internal|private)[ \t]+(?:override[ \t]+|virtual[ \t]+|new[ \t]+)*(?:string|String)[ \t]+(PackedIconPath|PackedIconOutlinePath|BigIconPath)[ \t]*=>[ \t]*"([^"\r\n]+)"[ \t]*\.(RelicImagePath|BigRelicImagePath)\(\)[ \t]*;'
+    foreach ($file in Get-ChildItem -LiteralPath $CodeDir -Filter '*.cs' -File) {
+        $raw = Get-Content -LiteralPath $file.FullName -Raw
+        if ($raw -notmatch $ConcretePattern) { continue }
+        if ($raw -notmatch 'PackedIconPath|PackedIconOutlinePath|BigIconPath') { continue }
+        $code = Remove-CommentSpans $raw
+        $declared = [regex]::Matches($code, $memberPattern)
+        $recognized = [regex]::Matches($code, $literalPattern)
+        foreach ($decl in $declared) {
+            $resolved = $false
+            foreach ($literalMatch in $recognized) {
+                if ($literalMatch.Index -eq $decl.Index) { $resolved = $true; break }
+            }
+            if (-not $resolved) {
+                $line = 1 + ([regex]::Matches($code.Substring(0, $decl.Index), "`n")).Count
+                throw "ASSET-UNRECOGNIZED-ICON: '$($file.Name)' line $line overrides $($decl.Groups[1].Value) with an expression the release contract cannot resolve; use one string literal followed by .RelicImagePath() or .BigRelicImagePath(), or drop the override."
+            }
+        }
+        foreach ($literalMatch in $recognized) {
+            $member = $literalMatch.Groups[1].Value
+            $literal = $literalMatch.Groups[2].Value
+            $helper = $literalMatch.Groups[3].Value
+            if ([string]::IsNullOrWhiteSpace($literal)) {
+                throw "ASSET-DENY: '$($file.Name)' $member has an empty icon name."
+            }
+            if ($literal.Contains(':') -or [System.IO.Path]::IsPathRooted($literal)) {
+                throw "PATH-DENY [relic-icon:$member]: '$literal' in '$($file.Name)' is an absolute or drive-qualified path."
+            }
+            foreach ($segment in $literal.Split([char[]]@('\','/'))) {
+                if ($segment -eq '..' -or $segment -eq '.') {
+                    throw "PATH-DENY [relic-icon:$member]: '$literal' in '$($file.Name)' escapes the images/relics folder."
+                }
+            }
+            $folder = if ($helper -eq 'BigRelicImagePath') { 'images/relics/big/' } else { 'images/relics/' }
+            $rel = $folder + $literal.Replace('\','/')
+            $full = Resolve-FullPath (Join-Path $SourceRoot ($rel.Replace('/','\')))
+            Assert-Under $full $SourceRoot "relic-icon:$member"
+            if (-not (Test-Path -LiteralPath $full -PathType Leaf)) {
+                throw "ASSET-MISSING: '$($file.Name)' $member explicitly references '$literal' -> '$rel', which is not shipped under the source root; the release refuses the silent fallback to the default relic image."
+            }
+            Add-Keep $Set $rel
+        }
+    }
+}
+
 function Copy-Checked([string]$Source, [string]$Destination, [string]$SourceRoot, [string]$StageRoot) {
     Assert-Under $Source $SourceRoot 'source-file'
     Assert-Under $Destination $StageRoot 'stage-file'
@@ -157,8 +295,9 @@ $cardStems = [System.Collections.Generic.HashSet[string]]::new([StringComparer]:
 $relicStems = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 $potionStems = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 
+$relicClassPattern = '(?m)\bclass\s+([A-Za-z0-9_]+)\s*(?:\([^)]*\))?\s*:\s*Spire1Relic\b'
 Add-ConcreteModelStems (Join-Path $codeRoot 'Cards') '(?m)\bclass\s+([A-Za-z0-9_]+)\s*(?:\([^)]*\))?\s*:\s*(?:Spire1Card|Spire1Curse)\b' $cardStems
-Add-ConcreteModelStems (Join-Path $codeRoot 'Relics') '(?m)\bclass\s+([A-Za-z0-9_]+)\s*(?:\([^)]*\))?\s*:\s*Spire1Relic\b' $relicStems
+Add-ConcreteModelStems (Join-Path $codeRoot 'Relics') $relicClassPattern $relicStems
 Add-ConcreteModelStems (Join-Path $codeRoot 'Potions') '(?m)\bclass\s+([A-Za-z0-9_]+)\s*(?:\([^)]*\))?\s*:\s*Spire1Potion\b' $potionStems
 
 Add-Keep $keep 'mod_image.png'
@@ -190,6 +329,10 @@ foreach ($stem in $relicStems) {
         if (Test-Path -LiteralPath (Join-Path $sourceRoot $rel)) { Add-Keep $keep $rel }
     }
 }
+# Explicitly named icon files are not derivable from the class stem, so they are read from the concrete
+# relic sources and added to the same keep set. A missing or escaping reference is a release error
+# (ASSET-MISSING / ASSET-UNRECOGNIZED-ICON / PATH-DENY), never a silent default-image fallback.
+Add-ExplicitRelicIconKeeps (Join-Path $codeRoot 'Relics') $relicClassPattern $sourceRoot $keep
 foreach ($stem in $potionStems) {
     foreach ($rel in @("images/potions/$stem.png", "images/potions/outline/$stem.png")) {
         if (Test-Path -LiteralPath (Join-Path $sourceRoot $rel)) { Add-Keep $keep $rel }

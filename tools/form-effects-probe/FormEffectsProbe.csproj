@@ -22,6 +22,9 @@
     <Compile Include="CelestialReaperScenarios.cs" />
     <Compile Include="CloneScenarios.cs" />
     <Compile Include="TransactionPatchAdapter.cs" />
+    <Compile Include="CelestialPatchMetadata.cs" />
+    <Compile Include="CarrierScenarios.cs" />
+    <Compile Include="CarrierCollaborators.cs" />
     <Compile Include="TransactionScenarios.cs" />
     <Compile Include="$(FormsSourceRoot)/VoidFormPlayTransactionPatch.cs" Link="Forms/VoidFormPlayTransactionPatch.cs" Condition="Exists('$(FormsSourceRoot)/VoidFormPlayTransactionPatch.cs')" />
     <Compile Include="$(FormsSourceRoot)/DemonFormStrengthTransactionPatch.cs" Link="Forms/DemonFormStrengthTransactionPatch.cs" Condition="Exists('$(FormsSourceRoot)/DemonFormStrengthTransactionPatch.cs')" />
@@ -31,6 +34,10 @@
     <Compile Include="$(FormsSourceRoot)/ReaperFormEffectPower.cs" Link="Forms/ReaperFormEffectPower.cs" />
     <Compile Include="$(FormsSourceRoot)/EchoFormEffectPower.cs" Link="Forms/EchoFormEffectPower.cs" />
     <Compile Include="$(FormsSourceRoot)/CelestialFormPower.cs" Link="Forms/CelestialFormPower.cs" />
+    <Compile Include="$(FormsSourceRoot)/CelestialResourceTransactionPatch.cs" Link="Forms/CelestialResourceTransactionPatch.cs" />
+    <Compile Include="$(FormsSourceRoot)/FormsStancePower.cs" Link="Forms/FormsStancePower.cs" />
+    <Compile Include="$(FormsSourceRoot)/WatcherFormStancePower.cs" Link="Forms/WatcherFormStancePower.cs" />
+    <Compile Include="$(FormsSourceRoot)/EchoCelestialStancePower.cs" Link="Forms/EchoCelestialStancePower.cs" />
     <AssemblyMetadata Include="FormsSourceRoot" Value="$(FormsSourceRoot)" />
   </ItemGroup>
 </Project>

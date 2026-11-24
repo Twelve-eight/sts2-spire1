@@ -48,7 +48,7 @@ public partial class MainFile : Node
     /// the runtime query/grant entries and by the per-run snapshot. Phase 2 still runs
     /// unconditionally so that old saves keep resolving their model ids; the switches are
     /// read by <see cref="Spire1Config.IsEnabled(Spire1ContentGroup)"/>
-    /// consumers (pools, event filter, character pools, effect application).
+    /// consumers (pools, character pools, effect application).
     /// </para>
     /// </remarks>
     public static void Initialize()
@@ -100,15 +100,37 @@ public partial class MainFile : Node
         // 失败或任何确定性不可用状态置位时, 跳过 Phase2 内容注册 (硬失败状态已独立于
         // Spire1Config setter 与未安装 prefix). Phase3 只安装其余补丁并复核, 不会重复挂载.
         bool contentRegistrationAllowed;
+        // r8e: the composite gate chain is evaluated step by step so the log can name the stage that actually returned
+        // false. The order and the short-circuit semantics are unchanged: powers -> postdraw -> multicast -> reboot.
+        string registrationStage = "powers-gate-preflight";
+        bool registrationThrew = false;
         try
         {
-            contentRegistrationAllowed = Spire1PowersGate.PreflightBeforeContentRegistration(
-                Phase3Harmony());
+            bool powersGateAllowed = Spire1PowersGate.PreflightBeforeContentRegistration(Phase3Harmony());
+            registrationStage = powersGateAllowed ? "postdraw-bridge" : "powers-gate-preflight";
+            bool postDrawAllowed = powersGateAllowed && Spire1PostDrawBridge.EnsureInstalled();
+            registrationStage = postDrawAllowed ? "multicast-payment" : registrationStage;
+            bool multiCastAllowed = postDrawAllowed && Spire1MultiCastPayment.EnsureInstalled();
+            registrationStage = multiCastAllowed ? "reboot-transaction" : registrationStage;
+            bool rebootAllowed = multiCastAllowed && Spire1RebootTransaction.EnsureInstalled();
+            contentRegistrationAllowed = rebootAllowed;
+            if (contentRegistrationAllowed)
+            {
+                // Electrodynamics carries its own all-enemies Lightning rewrite (card + power +
+                // two patches). Install it inside this existing pre-registration window: a throw
+                // below reaches the same MarkDeterministicUnavailable path, so no second fuse
+                // convention and no card whose text cannot be honoured. Install is idempotent.
+                registrationStage = "electrodynamics-install";
+                ElectrodynamicsLightning.Install();
+            }
         }
         catch (Exception e)
         {
+            registrationThrew = true;
             Spire1PowersGate.MarkDeterministicUnavailable(
                 "Phase3 harmony creation exception (" + e.GetType().Name + ": " + e.Message + ")");
+            Logger.Error(
+                "[Spire1] Phase2 gate chain or install threw at stage '" + registrationStage + "': " + e);
             contentRegistrationAllowed = false;
         }
         if (contentRegistrationAllowed)
@@ -126,8 +148,14 @@ public partial class MainFile : Node
         else
         {
             Logger.Error(
-                "[Spire1] Phase2 semantic content registration skipped: powers gate reported the " +
-                "deterministic unavailable state (coverage not proven or hard fail-closed).");
+                registrationThrew
+                    ? "[Spire1] Phase2 semantic content registration skipped: stage '" + registrationStage +
+                      "' threw (see preceding log)."
+                    : "[Spire1] Phase2 semantic content registration skipped: gate stage '" + registrationStage +
+                      "' returned false this run. " +
+                      (registrationStage == "powers-gate-preflight"
+                          ? "The powers gate itself reported the deterministic unavailable state (coverage not proven or hard fail-closed)."
+                          : "The powers gate preflight had already allowed registration; the failing stage is this one, not the gate."));
         }
 
         try
@@ -168,16 +196,6 @@ public partial class MainFile : Node
     // ------------------------------------------------------------------
     private static void Phase2SemanticContentRegistration()
     {
-        // Events gate (user request 2026-09-13): gen-1 story events must be toggleable out of
-        // base-game event pools.
-        // FIXED 2026-09-27: the old removal here was a no-op. It ran in this INITIALIZER, but
-        // Spire1Event instances are only constructed (and auto-added to ActCustomEvents /
-        // SharedCustomEvents) later, at ModelDb.Init, which the engine's ModManager runs AFTER
-        // every mod initializer. So RemoveAll matched 0 items and the events were added anyway -
-        // the toggle had no effect regardless of its value. The gate is now enforced at RUNTIME
-        // by Sts1EventToggleFilterPatch (ActModel.GenerateRooms postfix), which reads the config
-        // after ModelDb.Init and strips Spire1Event from each act's event pool when disabled.
-        // SpireHeart stays out via compile-time autoAdd:false, unchanged.
 
         // LEAN-CODE RULE (DEVELOP.md 7a): shipped StS2 cards that are identical to their StS1
         // counterparts are added to our pools instead of being reimplemented. Must run before the
@@ -287,7 +305,7 @@ public partial class MainFile : Node
                     catch (Exception e)
                     {
                         failed++;
-                        Logger.Error($"Harmony patch {type.Name} failed: {e.Message}");
+                        Logger.Error($"Harmony patch {type.Name} failed: {e}");
                     }
                 }
                 if (failed > 0)

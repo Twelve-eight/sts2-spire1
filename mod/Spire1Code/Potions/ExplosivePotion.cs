@@ -1,4 +1,3 @@
-using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -20,8 +19,8 @@ public class ExplosivePotion : Spire1Potion
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(10m, ValueProp.Unpowered)];
 
-    public override List<(string, string)>? Localization =>
-        new PotionLoc("Explosive Potion", "#Deal !D! damage to ALL enemies.");
+    // Localization lives in localization/{eng,zhs}/potions.json (JSON-only convention). No inline
+    // PotionLoc here: it would overwrite the zhs table at ModelDb.Init.
 
     protected override async Task OnUse(PlayerChoiceContext choiceContext, Creature? target)
     {
