@@ -542,7 +542,7 @@ internal static class Spire1ContinuationIl
     private const string ExhaustDispatchTypeName = "Spire1.Spire1Code.Patches.Spire1ExhaustTransaction+ExhaustDispatch";
     private const string EchoTypeName = "Spire1.Spire1Code.Patches.Spire1EchoReplay";
 
-    private static readonly Guid HostMvid = Guid.Parse("9d417b39-1d40-4fc7-b993-28acdc29e151");
+    private static readonly Guid HostMvid = Guid.Parse("5ea39e07-070b-4c4e-a0a4-4ba0e29ff9a5");
     private static readonly Module LoadedBaseLibModule = typeof(BaseLib.Extensions.StringExtensions).Module;
     private static readonly Type[] RitsuAttackHookParams =
     {
@@ -864,7 +864,7 @@ internal static class Spire1ContinuationIl
                 throw new InvalidOperationException("pinned kickoff static/instance shape changed");
             if (entry.Module.ModuleVersionId != HostMvid)
                 throw new InvalidOperationException("host module MVID " + entry.Module.ModuleVersionId +
-                    " is not current1131 " + HostMvid);
+                    " is not current1140 " + HostMvid);
             if (entry.ReturnType != spec.Return)
                 throw new InvalidOperationException("return type is " + entry.ReturnType + ", pinned " + spec.Return);
             ParameterInfo[] parameters = entry.GetParameters();
@@ -921,7 +921,7 @@ internal static class Spire1ContinuationIl
                         " is not pinned " + spec.MoveToken);
             }
             if (move.Module.ModuleVersionId != HostMvid)
-                throw new InvalidOperationException("continuation target module MVID is not current1131");
+                throw new InvalidOperationException("continuation target module MVID is not current1140");
             pinned.Move = move;
         }
         catch (Exception error)
@@ -1207,7 +1207,7 @@ internal static class Spire1ContinuationIl
             MethodInfo damage = ExactStatic(typeof(CreatureCmd), "Damage", typeof(Task<IEnumerable<DamageResult>>),
                 typeof(PlayerChoiceContext), typeof(IEnumerable<DamageTargetData>), typeof(decimal), typeof(ValueProp),
                 typeof(Creature), typeof(CardModel), typeof(CardPlay), typeof(ModifyDamageHookType));
-            int cacheBranch = Array.IndexOf(rawOffsets, 2099);
+            int cacheBranch = Array.IndexOf(rawOffsets, 2093);
             if (!IsAttackHistoryDelegateCacheBranch(body, rawOffsets, placement, cleanup, history, cacheBranch))
                 throw OriginalError(body, cacheBranch, "attack history delegate-cache diamond changed");
             for (int i = cleanup; i < history; i++)
@@ -1228,7 +1228,7 @@ internal static class Spire1ContinuationIl
     {
         List<CodeInstruction> original = body.Original;
         if (branch != cleanup + 10 || history != branch + 9 || branch < 2 || history >= original.Count ||
-            offsets[cleanup] != 2065 || offsets[branch] != 2099 || offsets[branch + 7] != 2124 || offsets[history] != 2134 ||
+            offsets[cleanup] != 2059 || offsets[branch] != 2093 || offsets[branch + 7] != 2118 || offsets[history] != 2128 ||
             original[branch].opcode != OpCodes.Brtrue_S || original[branch].operand is not Label merge ||
             !placement.TryGetValue(merge, out int target) || target != branch + 7 ||
             original[target].labels.Count != 1 || !original[target].labels.Contains(merge) ||
@@ -1240,9 +1240,9 @@ internal static class Spire1ContinuationIl
 
         Type? closure = typeof(AttackCommand).GetNestedType("<>c", BindingFlags.Public | BindingFlags.NonPublic);
         Type selectorType = typeof(Func<List<DamageResult>, IEnumerable<DamageResult>>);
-        FieldInfo? cache = closure?.GetField("<>9__91_0", DeclaredAll);
+        FieldInfo? cache = closure?.GetField("<>9__92_0", DeclaredAll);
         FieldInfo? singleton = closure?.GetField("<>9", DeclaredAll);
-        MethodInfo? selector = closure == null ? null : ExactMethod(closure, "<Execute>b__91_0",
+        MethodInfo? selector = closure == null ? null : ExactMethod(closure, "<ExecuteInternal>b__92_0",
             typeof(IEnumerable<DamageResult>), false, new[] { typeof(List<DamageResult>) });
         ConstructorInfo? constructor = selectorType.GetConstructor(new[] { typeof(object), typeof(IntPtr) });
         FieldInfo? combat = body.Move.DeclaringType?.GetField("<combatState>5__2", DeclaredAll);
@@ -1321,16 +1321,16 @@ internal static class Spire1ContinuationIl
                 break;
             case 4:
                 AddBridge(body, offsets, Owner.Exhaust, BridgeForm.Direct, BridgeMethodId.ExhaustBeforeDamageReceived,
-                    HostBridgeId.HookBeforeDamageReceived, 637, OpCodes.Call, null,
+                    HostBridgeId.HookBeforeDamageReceived, 1057, OpCodes.Call, null,
                     "exhaust.bridge.before-damage-received");
                 AddBridge(body, offsets, Owner.Exhaust, BridgeForm.Direct, BridgeMethodId.ExhaustAfterDamageGiven,
-                    HostBridgeId.HookAfterDamageGiven, 3875, OpCodes.Call, null,
+                    HostBridgeId.HookAfterDamageGiven, 2851, OpCodes.Call, null,
                     "exhaust.bridge.after-damage-given");
                 AddBridge(body, offsets, Owner.Exhaust, BridgeForm.Direct, BridgeMethodId.ExhaustAfterDamageReceived,
-                    HostBridgeId.HookAfterDamageReceived, 4069, OpCodes.Call, null,
+                    HostBridgeId.HookAfterDamageReceived, 3045, OpCodes.Call, null,
                     "exhaust.bridge.after-damage-received");
                 AddBridge(body, offsets, Owner.Exhaust, BridgeForm.Direct, BridgeMethodId.ExhaustDamageKill,
-                    HostBridgeId.CreatureKill3, 4377, OpCodes.Call, null, "exhaust.bridge.damage-kill");
+                    HostBridgeId.CreatureKill3, 3352, OpCodes.Call, null, "exhaust.bridge.damage-kill");
                 break;
             case 5:
                 AddBridge(body, offsets, Owner.Exhaust, BridgeForm.Direct, BridgeMethodId.ExhaustKillOne,
@@ -1338,15 +1338,15 @@ internal static class Spire1ContinuationIl
                 break;
             case 6:
                 AddBridge(body, offsets, Owner.Exhaust, BridgeForm.Direct, BridgeMethodId.ExhaustDamageKill,
-                    HostBridgeId.CreatureKill3, 1550, OpCodes.Call, null, "exhaust.bridge.damage-kill");
+                    HostBridgeId.CreatureKill3, 1582, OpCodes.Call, null, "exhaust.bridge.damage-kill");
                 AddBridge(body, offsets, Owner.Exhaust, BridgeForm.Direct, BridgeMethodId.ExhaustKillCreature,
-                    HostBridgeId.CreatureKill2, 1738, OpCodes.Call, null, "exhaust.bridge.kill-creature");
+                    HostBridgeId.CreatureKill2, 1770, OpCodes.Call, null, "exhaust.bridge.kill-creature");
                 AddBridge(body, offsets, Owner.Exhaust, BridgeForm.Direct, BridgeMethodId.ExhaustKillOne,
-                    HostBridgeId.KillWithout4, 2280, OpCodes.Call, null, "exhaust.bridge.kill-one");
+                    HostBridgeId.KillWithout4, 2325, OpCodes.Call, null, "exhaust.bridge.kill-one");
                 break;
             case 23:
                 AddBridge(body, offsets, Owner.Exhaust, BridgeForm.Loader, BridgeMethodId.ExhaustDamageFromAttack,
-                    HostBridgeId.CreatureDamage8, 1896, OpCodes.Call, body.ThisField,
+                    HostBridgeId.CreatureDamage8, 1890, OpCodes.Call, body.ThisField,
                     "exhaust.bridge.damage-from-attack");
                 break;
             case 24:
@@ -3754,8 +3754,8 @@ internal static class Spire1ContinuationIl
                 Parameters = new Type[] { typeof(PlayerChoiceContext), typeof(decimal), typeof(Player), typeof(bool) },
                 Return = typeof(Task<IEnumerable<CardModel>>),
                 State = "MegaCrit.Sts2.Core.Commands.CardPileCmd+<DrawInternal>d__21",
-                MoveToken = 0x0600c285, IlBytes = 1122,
-                Sha = "f4ebd8d5848885739cea3532b201fd7f412eb6c660ab168e0eabb43560f855f1",
+                MoveToken = 0x0600c328, IlBytes = 1122,
+                Sha = "6c177545bbd7c75721bd2c7349f713636c80c477c6c7cd392db28a66fd510877",
                 SelectorName = "player", SelectorType = typeof(Player),
                 ContextName = "choiceContext", ContextType = typeof(PlayerChoiceContext),
                 Emitters = new Owner[] { Owner.Reboot, Owner.Ftl, Owner.Exhaust },
@@ -3767,8 +3767,8 @@ internal static class Spire1ContinuationIl
                 Parameters = new Type[] { typeof(IEnumerable<CardModel>), typeof(CardPile), typeof(CardPilePosition), typeof(AbstractModel), typeof(bool), typeof(bool) },
                 Return = typeof(Task<IReadOnlyList<CardPileAddResult>>),
                 State = "MegaCrit.Sts2.Core.Commands.CardPileCmd+<Add>d__10",
-                MoveToken = 0x0600c269, IlBytes = 2398,
-                Sha = "55d31ae34a2040cf83e542cb99169ded865e867d546582645d38c6b81cd0389a",
+                MoveToken = 0x0600c30c, IlBytes = 2398,
+                Sha = "74582b43260771f992e4a5a86572f8d4f741fb6b1394f54b14419be329244077",
                 SelectorName = "newPile", SelectorType = typeof(CardPile),
                 Emitters = new Owner[] { Owner.Reboot, Owner.Exhaust },
                 AwaitExpectation = new AwaitPin(4, -1, -1, null),
@@ -3784,8 +3784,8 @@ internal static class Spire1ContinuationIl
                 Parameters = new Type[] { typeof(PlayerChoiceContext), typeof(Player) },
                 Return = typeof(Task),
                 State = "MegaCrit.Sts2.Core.Commands.CardPileCmd+<Shuffle>d__22",
-                MoveToken = 0x0600c291, IlBytes = 1341,
-                Sha = "652e92488b7d0cf9fdf3b17da904b6ba6132a8bf06206060e6e98bf530823681",
+                MoveToken = 0x0600c334, IlBytes = 1341,
+                Sha = "3b7761f51d0756efb296496745eeaa9cb51907dac28458448aa04840adb940b2",
                 SelectorName = "player", SelectorType = typeof(Player),
                 ContextName = "choiceContext", ContextType = typeof(PlayerChoiceContext),
                 Emitters = new Owner[] { Owner.Reboot, Owner.Exhaust },
@@ -3796,9 +3796,9 @@ internal static class Spire1ContinuationIl
                 Id = 3, Type = typeof(CreatureCmd), Name = "GainBlock",
                 Parameters = new Type[] { typeof(Creature), typeof(decimal), typeof(ValueProp), typeof(CardPlay), typeof(bool) },
                 Return = typeof(Task<decimal>),
-                State = "MegaCrit.Sts2.Core.Commands.CreatureCmd+<GainBlock>d__21",
-                MoveToken = 0x0600c316, IlBytes = 1017,
-                Sha = "47cc524563cba0476c1fcafb5fb0d050a7219b974b5ef366d3777edff3f48da4",
+                State = "MegaCrit.Sts2.Core.Commands.CreatureCmd+<GainBlock>d__24",
+                MoveToken = 0x0600c3bc, IlBytes = 1017,
+                Sha = "5cceb9facd04be2110c405fd29c21ccc399d4c5342fa3973ebb0dc7fdb725a19",
                 SelectorName = "creature", SelectorType = typeof(Creature),
                 Emitters = new Owner[] { Owner.Reboot, Owner.Exhaust },
                 AwaitExpectation = new AwaitPin(5, -1, -1, null),
@@ -3813,17 +3813,16 @@ internal static class Spire1ContinuationIl
                 Parameters = new Type[] { typeof(PlayerChoiceContext), typeof(IEnumerable<DamageTargetData>), typeof(decimal), typeof(ValueProp), typeof(Creature), typeof(CardModel), typeof(CardPlay), typeof(ModifyDamageHookType) },
                 Return = typeof(Task<IEnumerable<DamageResult>>),
                 State = "MegaCrit.Sts2.Core.Commands.CreatureCmd+<Damage>d__13",
-                MoveToken = 0x0600c302, IlBytes = 4725,
-                Sha = "b2b078615ad7a5592c4664fde1b0333acedaee6f544bc88c215b98c01aeb29cd",
+                MoveToken = 0x0600c3a8, IlBytes = 3699,
+                Sha = "e9915f5093a6b0507d32207b4d4dcbbf21e62bf2c58197d4c9f4917cce144bd1",
                 SelectorName = "dealer", SelectorType = typeof(Creature),
                 ContextName = "choiceContext", ContextType = typeof(PlayerChoiceContext),
                 Emitters = new Owner[] { Owner.Reboot, Owner.Exhaust },
-                AwaitExpectation = new AwaitPin(12, -1, -1, null),
+                AwaitExpectation = new AwaitPin(10, -1, -1, null),
                 GuardFieldName = "targetData", GuardFieldType = typeof(IEnumerable<DamageTargetData>),
                 CommitPins = new[]
                 {
-                    new CommitPin(typeof(Creature), "DamageBlockInternal", new[] { typeof(decimal), typeof(ValueProp) }, false),
-                    new CommitPin(typeof(Creature), "LoseHpInternal", new[] { typeof(decimal), typeof(ValueProp) }, false)
+                    new CommitPin(typeof(CreatureCmd), "ApplyDamageResults", new[] { typeof(IRunState), typeof(ICombatState), typeof(DamageResults) }, false)
                 }
             },
             new Spec
@@ -3831,9 +3830,9 @@ internal static class Spire1ContinuationIl
                 Id = 5, Type = typeof(CreatureCmd), Name = "Kill",
                 Parameters = new Type[] { typeof(IReadOnlyCollection<Creature>), typeof(CardModel), typeof(bool) },
                 Return = typeof(Task),
-                State = "MegaCrit.Sts2.Core.Commands.CreatureCmd+<Kill>d__17",
-                MoveToken = 0x0600c322, IlBytes = 696,
-                Sha = "dffa70afc916e45eb9af51e0e7d4fdb2c9c908add8e9a4f134c75f58dded646e",
+                State = "MegaCrit.Sts2.Core.Commands.CreatureCmd+<Kill>d__20",
+                MoveToken = 0x0600c3c8, IlBytes = 696,
+                Sha = "ede69e69bba8e934e60719e8c412c9663e02e6f1defa7fb7898d5f58803a2851",
                 SelectorName = "creatures", SelectorType = typeof(IReadOnlyCollection<Creature>),
                 Emitters = new Owner[] { Owner.Reboot, Owner.Exhaust },
                 AwaitExpectation = new AwaitPin(1, -1, -1, null)
@@ -3843,9 +3842,9 @@ internal static class Spire1ContinuationIl
                 Id = 6, Type = typeof(CreatureCmd), Name = "KillWithoutCheckingWinCondition",
                 Parameters = new Type[] { typeof(Creature), typeof(CardModel), typeof(bool), typeof(int) },
                 Return = typeof(Task),
-                State = "MegaCrit.Sts2.Core.Commands.CreatureCmd+<KillWithoutCheckingWinCondition>d__18",
-                MoveToken = 0x0600c324, IlBytes = 2460,
-                Sha = "97cf8e1c08c172a6e755e3eb55367fc56272e744abd1f35db85dc9a0ddd7dabf",
+                State = "MegaCrit.Sts2.Core.Commands.CreatureCmd+<KillWithoutCheckingWinCondition>d__21",
+                MoveToken = 0x0600c3ca, IlBytes = 2505,
+                Sha = "173ffeff8351bacd304e7aaf5cf338fccdc7d938c81c15775a5d14edf0ba8ae4",
                 SelectorName = "creature", SelectorType = typeof(Creature),
                 Emitters = new Owner[] { Owner.Reboot, Owner.Exhaust },
                 AwaitExpectation = new AwaitPin(11, -1, -1, null)
@@ -3855,9 +3854,9 @@ internal static class Spire1ContinuationIl
                 Id = 7, Type = typeof(Hook), Name = "AfterShuffle",
                 Parameters = new Type[] { typeof(ICombatState), typeof(PlayerChoiceContext), typeof(Player) },
                 Return = typeof(Task),
-                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterShuffle>d__76",
-                MoveToken = 0x0600bebf, IlBytes = 312,
-                Sha = "54b24c6c6b53ad71b869af1ec44c9e74df340067292006372af2f934e6419196",
+                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterShuffle>d__77",
+                MoveToken = 0x0600bf59, IlBytes = 312,
+                Sha = "4e93ff198f992181d346c2c64ecfd350da9479eb2cc52be6bf1a50fdeaa2f647",
                 SelectorName = "combatState", SelectorType = typeof(ICombatState),
                 ContextName = "choiceContext", ContextType = typeof(PlayerChoiceContext),
                 ModelName = "<model>5__3", ModelType = typeof(AbstractModel),
@@ -3868,9 +3867,9 @@ internal static class Spire1ContinuationIl
                 Id = 8, Type = typeof(Hook), Name = "AfterCardDrawn",
                 Parameters = new Type[] { typeof(ICombatState), typeof(PlayerChoiceContext), typeof(CardModel), typeof(bool) },
                 Return = typeof(Task),
-                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterCardDrawn>d__14",
-                MoveToken = 0x0600be5d, IlBytes = 589,
-                Sha = "53412e2f446c82e6aa6f27517a7cacff90ff94c3a58032e2e95e7fe980cd068a",
+                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterCardDrawn>d__15",
+                MoveToken = 0x0600bef7, IlBytes = 589,
+                Sha = "b4cae1ec0a0cb0cf6e3b9404b8248cf937216650284671cacc0ebbdf500ee68a",
                 SelectorName = "combatState", SelectorType = typeof(ICombatState),
                 ContextName = "choiceContext", ContextType = typeof(PlayerChoiceContext),
                 ModelName = "<model>5__3", ModelType = typeof(AbstractModel),
@@ -3882,9 +3881,9 @@ internal static class Spire1ContinuationIl
                 Id = 9, Type = typeof(Hook), Name = "AfterCardChangedPiles",
                 Parameters = new Type[] { typeof(IRunState), typeof(ICombatState), typeof(CardModel), typeof(PileType), typeof(AbstractModel) },
                 Return = typeof(Task),
-                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterCardChangedPiles>d__12",
-                MoveToken = 0x0600be59, IlBytes = 533,
-                Sha = "64a7340d864ed7f2554d0ab14c256c2c446aeaf2d091c0e57baa5b40fcbb7534",
+                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterCardChangedPiles>d__13",
+                MoveToken = 0x0600bef3, IlBytes = 533,
+                Sha = "234eae72da536dbfe15c25f9a4e3ad9386bf555104b9038267f2d5d53a1af7b3",
                 SelectorName = "combatState", SelectorType = typeof(ICombatState),
                 ModelName = "<model>5__3", ModelType = typeof(AbstractModel),
                 Emitters = new Owner[] { Owner.Reboot }
@@ -3894,9 +3893,9 @@ internal static class Spire1ContinuationIl
                 Id = 10, Type = typeof(Hook), Name = "BeforeBlockGained",
                 Parameters = new Type[] { typeof(ICombatState), typeof(Creature), typeof(decimal), typeof(ValueProp), typeof(CardModel) },
                 Return = typeof(Task),
-                State = "MegaCrit.Sts2.Core.Hooks.Hook+<BeforeBlockGained>d__9",
-                MoveToken = 0x0600becf, IlBytes = 290,
-                Sha = "af324b6e0abec2dbc6ed0f86f3880e498dc86e258c6249f5cb7915f966d6c70b",
+                State = "MegaCrit.Sts2.Core.Hooks.Hook+<BeforeBlockGained>d__10",
+                MoveToken = 0x0600bf6b, IlBytes = 290,
+                Sha = "5e607e447aaace9dcfb93836d4746ab77ee92833b9fa41b15427d11cd5b271e4",
                 SelectorName = "combatState", SelectorType = typeof(ICombatState),
                 ModelName = "<model>5__3", ModelType = typeof(AbstractModel),
                 Emitters = new Owner[] { Owner.Reboot }
@@ -3906,9 +3905,9 @@ internal static class Spire1ContinuationIl
                 Id = 11, Type = typeof(Hook), Name = "AfterModifyingBlockAmount",
                 Parameters = new Type[] { typeof(ICombatState), typeof(decimal), typeof(CardModel), typeof(CardPlay), typeof(IEnumerable<AbstractModel>) },
                 Return = typeof(Task),
-                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterModifyingBlockAmount>d__43",
-                MoveToken = 0x0600be87, IlBytes = 306,
-                Sha = "7e86b10e388a85164e1f99e019a66a3d16d29d365707272a76c763341e0ad770",
+                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterModifyingBlockAmount>d__44",
+                MoveToken = 0x0600bf21, IlBytes = 306,
+                Sha = "7f7ce14d1bf2c5f7a6b5e5cd73cdfaac7600c8df3a164cac5fb4454c85a73f0f",
                 SelectorName = "combatState", SelectorType = typeof(ICombatState),
                 ModelName = "<modifier>5__3", ModelType = typeof(AbstractModel),
                 Emitters = new Owner[] { Owner.Reboot }
@@ -3918,9 +3917,9 @@ internal static class Spire1ContinuationIl
                 Id = 12, Type = typeof(Hook), Name = "AfterBlockGained",
                 Parameters = new Type[] { typeof(ICombatState), typeof(Creature), typeof(decimal), typeof(ValueProp), typeof(CardModel) },
                 Return = typeof(Task),
-                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterBlockGained>d__10",
-                MoveToken = 0x0600be57, IlBytes = 290,
-                Sha = "c6e1a14270526b7f19e666323e150cde3edfb5e4187340b04b693d8ea747756e",
+                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterBlockGained>d__11",
+                MoveToken = 0x0600bef1, IlBytes = 290,
+                Sha = "e515875319f26aa45d868fc0e3f97aa1a90efb70ea0c1c6626559518d5e96a3e",
                 SelectorName = "combatState", SelectorType = typeof(ICombatState),
                 ModelName = "<model>5__3", ModelType = typeof(AbstractModel),
                 Emitters = new Owner[] { Owner.Reboot }
@@ -3930,9 +3929,9 @@ internal static class Spire1ContinuationIl
                 Id = 13, Type = typeof(Hook), Name = "AfterModifyingDamageAmount",
                 Parameters = new Type[] { typeof(IRunState), typeof(ICombatState), typeof(CardModel), typeof(IEnumerable<AbstractModel>) },
                 Return = typeof(Task),
-                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterModifyingDamageAmount>d__46",
-                MoveToken = 0x0600be8d, IlBytes = 297,
-                Sha = "ddb5e6addeacf20d347bf24f872445523f0d5e1d63451de8cbcf918b3f492f00",
+                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterModifyingDamageAmount>d__47",
+                MoveToken = 0x0600bf27, IlBytes = 297,
+                Sha = "a1267a94e214c479e593a35b6987736958270f7656cae8b8f9dfa75313ba5804",
                 SelectorName = "combatState", SelectorType = typeof(ICombatState),
                 ModelName = "<modifier>5__3", ModelType = typeof(AbstractModel),
                 Emitters = new Owner[] { Owner.Reboot }
@@ -3942,9 +3941,9 @@ internal static class Spire1ContinuationIl
                 Id = 14, Type = typeof(Hook), Name = "BeforeDamageReceived",
                 Parameters = new Type[] { typeof(PlayerChoiceContext), typeof(IRunState), typeof(ICombatState), typeof(Creature), typeof(decimal), typeof(ValueProp), typeof(Creature), typeof(CardModel) },
                 Return = typeof(Task),
-                State = "MegaCrit.Sts2.Core.Hooks.Hook+<BeforeDamageReceived>d__28",
-                MoveToken = 0x0600bedb, IlBytes = 345,
-                Sha = "fe248e515cde05369b0f75ce7dd21396e2f0e7f18e6f427f00cdd5038b4dad5a",
+                State = "MegaCrit.Sts2.Core.Hooks.Hook+<BeforeDamageReceived>d__29",
+                MoveToken = 0x0600bf77, IlBytes = 345,
+                Sha = "c69a0b11443a5185745300ea07e296d311cbb8fc7c76f75bcdf5a03ca9d0966b",
                 SelectorName = "combatState", SelectorType = typeof(ICombatState),
                 ContextName = "choiceContext", ContextType = typeof(PlayerChoiceContext),
                 ModelName = "<model>5__3", ModelType = typeof(AbstractModel),
@@ -3956,9 +3955,9 @@ internal static class Spire1ContinuationIl
                 Id = 15, Type = typeof(Hook), Name = "AfterModifyingHpLostBeforeOsty",
                 Parameters = new Type[] { typeof(IRunState), typeof(ICombatState), typeof(IEnumerable<AbstractModel>) },
                 Return = typeof(Task),
-                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterModifyingHpLostBeforeOsty>d__50",
-                MoveToken = 0x0600be97, IlBytes = 291,
-                Sha = "b1c093a2b435896fcbf6b928e22b3fd06f5077311e55744955c1984b3f46c792",
+                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterModifyingHpLostBeforeOsty>d__51",
+                MoveToken = 0x0600bf31, IlBytes = 291,
+                Sha = "d37fd7e0557b6797337ea58db3f7bf2b1cc9443089466d11243550d3da2100fa",
                 SelectorName = "combatState", SelectorType = typeof(ICombatState),
                 ModelName = "<modifier>5__3", ModelType = typeof(AbstractModel),
                 Emitters = new Owner[] { Owner.Reboot }
@@ -3968,9 +3967,9 @@ internal static class Spire1ContinuationIl
                 Id = 16, Type = typeof(Hook), Name = "AfterModifyingHpLostAfterOsty",
                 Parameters = new Type[] { typeof(IRunState), typeof(ICombatState), typeof(IEnumerable<AbstractModel>) },
                 Return = typeof(Task),
-                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterModifyingHpLostAfterOsty>d__51",
-                MoveToken = 0x0600be95, IlBytes = 291,
-                Sha = "420a8591ff35a00e36bc19cd38dec2ca6a587f376abccf9d38740e49062db67c",
+                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterModifyingHpLostAfterOsty>d__52",
+                MoveToken = 0x0600bf2f, IlBytes = 291,
+                Sha = "3fd02ceb0d8772387fa0696d807cbe5dccfca6399cadaafd609a2525e10bb28b",
                 SelectorName = "combatState", SelectorType = typeof(ICombatState),
                 ModelName = "<modifier>5__3", ModelType = typeof(AbstractModel),
                 Emitters = new Owner[] { Owner.Reboot }
@@ -3980,9 +3979,9 @@ internal static class Spire1ContinuationIl
                 Id = 17, Type = typeof(Hook), Name = "AfterBlockBroken",
                 Parameters = new Type[] { typeof(ICombatState), typeof(PlayerChoiceContext), typeof(Creature), typeof(Creature) },
                 Return = typeof(Task),
-                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterBlockBroken>d__7",
-                MoveToken = 0x0600be53, IlBytes = 284,
-                Sha = "700c7ca4eeddd62cec25d96b1ffcad6d3073f1765a6ccd8fb62af491848c957b",
+                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterBlockBroken>d__8",
+                MoveToken = 0x0600beed, IlBytes = 284,
+                Sha = "57f0c4bdf0051b489888231b5db3579bc0f8b51ea54fde6e3b2b9b0583d9f617",
                 SelectorName = "combatState", SelectorType = typeof(ICombatState),
                 ContextName = "choiceContext", ContextType = typeof(PlayerChoiceContext),
                 ModelName = "<model>5__3", ModelType = typeof(AbstractModel),
@@ -3993,9 +3992,9 @@ internal static class Spire1ContinuationIl
                 Id = 18, Type = typeof(Hook), Name = "AfterCurrentHpChanged",
                 Parameters = new Type[] { typeof(IRunState), typeof(ICombatState), typeof(Creature), typeof(decimal) },
                 Return = typeof(Task),
-                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterCurrentHpChanged>d__26",
-                MoveToken = 0x0600be6d, IlBytes = 284,
-                Sha = "07ea731c72190225ad403631027eea28d1d0498f45a373a0224b53c8235f182f",
+                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterCurrentHpChanged>d__27",
+                MoveToken = 0x0600bf07, IlBytes = 284,
+                Sha = "53f94900679fe177165965f90ce3740698df2fa694cdf93d52cd6d18824ab0a8",
                 SelectorName = "combatState", SelectorType = typeof(ICombatState),
                 ModelName = "<model>5__3", ModelType = typeof(AbstractModel),
                 Emitters = new Owner[] { Owner.Reboot }
@@ -4005,9 +4004,9 @@ internal static class Spire1ContinuationIl
                 Id = 19, Type = typeof(Hook), Name = "AfterDamageGiven",
                 Parameters = new Type[] { typeof(PlayerChoiceContext), typeof(ICombatState), typeof(Creature), typeof(DamageResult), typeof(ValueProp), typeof(Creature), typeof(CardModel) },
                 Return = typeof(Task),
-                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterDamageGiven>d__27",
-                MoveToken = 0x0600be6f, IlBytes = 339,
-                Sha = "fb110c811ce9e616755d1abc96b861355285e71f777506e1237a1b1273fadcd1",
+                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterDamageGiven>d__28",
+                MoveToken = 0x0600bf09, IlBytes = 339,
+                Sha = "01ebb795ecb2414703da3322ab78de82e4f3f4013c61e062bdd01d9cfd55db2b",
                 SelectorName = "combatState", SelectorType = typeof(ICombatState),
                 ContextName = "choiceContext", ContextType = typeof(PlayerChoiceContext),
                 ModelName = "<model>5__3", ModelType = typeof(AbstractModel),
@@ -4019,9 +4018,9 @@ internal static class Spire1ContinuationIl
                 Id = 20, Type = typeof(Hook), Name = "AfterDamageReceived",
                 Parameters = new Type[] { typeof(PlayerChoiceContext), typeof(IRunState), typeof(ICombatState), typeof(Creature), typeof(DamageResult), typeof(ValueProp), typeof(Creature), typeof(CardModel) },
                 Return = typeof(Task),
-                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterDamageReceived>d__29",
-                MoveToken = 0x0600be71, IlBytes = 643,
-                Sha = "3e4d0073a66ff509d85e5604613e5ad9f75f1a3f20baea85b58fbf2cd97ec93c",
+                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterDamageReceived>d__30",
+                MoveToken = 0x0600bf0b, IlBytes = 643,
+                Sha = "ea8f80e06d8503f017ed4681b176cb0ea119caffbc0190681b5891d7405c45d5",
                 SelectorName = "combatState", SelectorType = typeof(ICombatState),
                 ContextName = "choiceContext", ContextType = typeof(PlayerChoiceContext),
                 ModelName = "<model>5__3", ModelType = typeof(AbstractModel),
@@ -4033,9 +4032,9 @@ internal static class Spire1ContinuationIl
                 Id = 21, Type = typeof(Hook), Name = "BeforeDeath",
                 Parameters = new Type[] { typeof(IRunState), typeof(ICombatState), typeof(Creature) },
                 Return = typeof(Task),
-                State = "MegaCrit.Sts2.Core.Hooks.Hook+<BeforeDeath>d__30",
-                MoveToken = 0x0600bedd, IlBytes = 278,
-                Sha = "ca7f194c0bccdfeac911b5fb6c32e99a8df54c55f65fcb130139efc9216ed15e",
+                State = "MegaCrit.Sts2.Core.Hooks.Hook+<BeforeDeath>d__31",
+                MoveToken = 0x0600bf79, IlBytes = 278,
+                Sha = "9f14c8eab3d0a6fe8e07b3ea2fddacfc9dfea3c29360a311f335c2ecc1cac0f4",
                 SelectorName = "combatState", SelectorType = typeof(ICombatState),
                 ModelName = "<model>5__3", ModelType = typeof(AbstractModel),
                 Emitters = new Owner[] { Owner.Reboot }
@@ -4045,22 +4044,22 @@ internal static class Spire1ContinuationIl
                 Id = 22, Type = typeof(Hook), Name = "AfterDeath",
                 Parameters = new Type[] { typeof(IRunState), typeof(ICombatState), typeof(Creature), typeof(CardModel), typeof(bool), typeof(float) },
                 Return = typeof(Task),
-                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterDeath>d__31",
-                MoveToken = 0x0600be73, IlBytes = 381,
-                Sha = "dec1a425dd4436a639df54f03cf1b481a14226ed9a229aee92441501c3660c8c",
+                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterDeath>d__32",
+                MoveToken = 0x0600bf0d, IlBytes = 381,
+                Sha = "a39f21826c59bf477965908ad0bb237f63f99b474af8f9a1ba49eb6e36521b1a",
                 SelectorName = "combatState", SelectorType = typeof(ICombatState),
                 ModelName = "<model>5__4", ModelType = typeof(AbstractModel),
                 Emitters = new Owner[] { Owner.Reboot }
             },
             new Spec
             {
-                Id = 23, Type = typeof(AttackCommand), Name = "Execute",
+                Id = 23, Type = typeof(AttackCommand), Name = "ExecuteInternal",
                 Parameters = new Type[] { typeof(PlayerChoiceContext) },
-                Return = typeof(Task<AttackCommand>),
+                Return = typeof(Task),
                 Static = false,
-                State = "MegaCrit.Sts2.Core.Commands.Builders.AttackCommand+<Execute>d__91",
-                MoveToken = 100713377, IlBytes = 2315,
-                Sha = "bfaf245d804e26f689a9930172d9bbb3c3d6ce406ab3879ee213b4c11c10b1a5",
+                State = "MegaCrit.Sts2.Core.Commands.Builders.AttackCommand+<ExecuteInternal>d__92",
+                MoveToken = 0x0600c447, IlBytes = 2306,
+                Sha = "3f8947a7311d12993dbac6196985bb4fd100182f9a99c4cf04ab398507261771",
                 Emitters = new Owner[] { Owner.Ftl, Owner.Exhaust },
                 AwaitExpectation = new AwaitPin(7, 6, 1, typeof(IEnumerable<DamageResult>)),
                 ThisName = "<>4__this", ThisType = typeof(AttackCommand)
@@ -4070,9 +4069,9 @@ internal static class Spire1ContinuationIl
                 Id = 24, Type = typeof(CardCmd), Name = "Exhaust",
                 Parameters = new Type[] { typeof(PlayerChoiceContext), typeof(CardModel), typeof(bool), typeof(bool) },
                 Return = typeof(Task<CardPileAddResult?>),
-                State = "MegaCrit.Sts2.Core.Commands.CardCmd+<Exhaust>d__6",
-                MoveToken = 100713024, IlBytes = 478,
-                Sha = "f4ac6a976e612134bcc1b0d584e55005f1b4de23a80d8e34f5f06cb2be965fe9",
+                State = "MegaCrit.Sts2.Core.Commands.CardCmd+<Exhaust>d__7",
+                MoveToken = 0x0600c2e3, IlBytes = 478,
+                Sha = "46e65a160f25d53197db079d0f6b8f1ea02bdb160896197baa7f732f093ec12f",
                 Emitters = new Owner[] { Owner.Exhaust },
                 AwaitExpectation = new AwaitPin(2, 1, 1, typeof(CardPileAddResult))
             },
@@ -4081,9 +4080,9 @@ internal static class Spire1ContinuationIl
                 Id = 25, Type = typeof(Hook), Name = "AfterCardExhausted",
                 Parameters = new Type[] { typeof(ICombatState), typeof(PlayerChoiceContext), typeof(CardModel), typeof(bool) },
                 Return = typeof(Task),
-                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterCardExhausted>d__16",
-                MoveToken = 100712033, IlBytes = 318,
-                Sha = "1ea8baf0fcc6ee325e2fc27c3f9a170cb06974ddd2bec0f967c80a4de35870be",
+                State = "MegaCrit.Sts2.Core.Hooks.Hook+<AfterCardExhausted>d__17",
+                MoveToken = 0x0600befb, IlBytes = 318,
+                Sha = "1428cd0b161f2a505de4df56916d59c01a9d02ab106a5435531c8d889f833fda",
                 Emitters = new Owner[] { Owner.Exhaust },
                 AwaitExpectation = new AwaitPin(1, 1, 0, null)
             },
@@ -4092,7 +4091,7 @@ internal static class Spire1ContinuationIl
                 Id = 26, Type = typeof(Hook), Name = "ModifyCardPlayCount",
                 Parameters = new Type[] { typeof(ICombatState), typeof(CardModel), typeof(int), typeof(Creature), typeof(List<AbstractModel>).MakeByRefType() },
                 Return = typeof(int),
-                MoveToken = 0x060053a5, IlBytes = 78, Sha = "b1fc035277777414760022b0b7940966ef407498b750b7fc7ff7f0552ce41e53",
+                MoveToken = 0x060053bc, IlBytes = 78, Sha = "9d451a8664704dc87ca728c0f6e5e572c26b058090b279f69de4433717b00fcf",
                 Emitters = new Owner[] { Owner.Echo }
             },
             new Spec
@@ -4101,11 +4100,11 @@ internal static class Spire1ContinuationIl
                 Parameters = new Type[] { typeof(PlayerChoiceContext), typeof(Creature), typeof(bool), typeof(ResourceInfo), typeof(bool) },
                 Return = typeof(Task),
                 Static = false,
-                EntryToken = 0x06001a21, EntryIlBytes = 97,
-                EntrySha = "3b20da91f5e60d98d3d6dbada36cd5266edc937767e8683634c1a88bbf6ba5a4",
+                EntryToken = 0x06001a34, EntryIlBytes = 97,
+                EntrySha = "ab6f0f159a46790c5db08e6424981f78d9ea0d5d7cd8237fa1b4b70259b62774",
                 State = "MegaCrit.Sts2.Core.Models.CardModel+<OnPlayWrapper>d__359",
-                MoveToken = 0x0600a7b9, IlBytes = 3918,
-                Sha = "591eef3300ad7e9edcf755aa59f45611e7e19b90d55d8a26512d423053c712aa",
+                MoveToken = 0x0600a853, IlBytes = 3918,
+                Sha = "afe3d33329fba728c3333eaa16544880c97b16b1fa07c83b212ca0c0f468f7fa",
                 Emitters = new Owner[] { Owner.Ftl }
             },
             new Spec
@@ -4114,8 +4113,8 @@ internal static class Spire1ContinuationIl
                 Parameters = new Type[] { typeof(PlayerChoiceContext), typeof(Player) },
                 Return = typeof(Task),
                 State = "MegaCrit.Sts2.Core.Commands.CardPileCmd+<ShuffleIfNecessary>d__25",
-                MoveToken = 100713109, IlBytes = 314,
-                Sha = "52b400574a4d3e5200268abd8c8988e2020a9c8860347542c0c7aa1493f8f4e2",
+                MoveToken = 0x0600c338, IlBytes = 314,
+                Sha = "a0fa86acc524e783dcd30101628860fd8955958de2c0673e4439f885d0547494",
                 Emitters = new Owner[] { Owner.Exhaust },
                 AwaitExpectation = new AwaitPin(2, -1, -1, null)
             },
@@ -4125,11 +4124,11 @@ internal static class Spire1ContinuationIl
                 Parameters = new Type[] { typeof(PlayerChoiceContext), typeof(CardPlay) },
                 Return = typeof(Task),
                 Static = false,
-                EntryToken = 0x06002057, EntryIlBytes = 71,
-                EntrySha = "de65e6419359ec401ef75cf4254c7725b3ce8abb540e6996e26403acdb6c027b",
+                EntryToken = 0x06002072, EntryIlBytes = 71,
+                EntrySha = "dcf714d277d98dddafd1476b9c556f6d7f50fff94902ab949f6177c3eaadac65",
                 State = "MegaCrit.Sts2.Core.Models.Relics.IronClub+<AfterCardPlayed>d__19",
-                MoveToken = 0x0600a937, IlBytes = 275,
-                Sha = "0d336bff912d59c2d24d631ff86d2e833888fb44568bc422fb8a14e2d9d7806f",
+                MoveToken = 0x0600a9d1, IlBytes = 275,
+                Sha = "9b876d2d6b992238f962d9b4637214bec5d18825d4c71565c5ea3e7d767cf297",
                 Emitters = new Owner[] { Owner.Ftl },
                 ModelName = "cardPlay", ModelType = typeof(CardPlay),
                 ThisName = "<>4__this", ThisType = typeof(MegaCrit.Sts2.Core.Models.Relics.IronClub)

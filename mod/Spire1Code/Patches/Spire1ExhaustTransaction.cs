@@ -961,7 +961,7 @@ internal static class Spire1ExhaustPatches
         return method;
     }
     private static MethodInfo Move(MethodInfo method) => Spire1ContinuationIl.ForKickoff(method).Move;
-    internal static readonly MethodInfo AttackMove = Move(AccessTools.DeclaredMethod(typeof(AttackCommand), nameof(AttackCommand.Execute), [typeof(PlayerChoiceContext)])!);
+    internal static readonly MethodInfo AttackMove = Move(AccessTools.DeclaredMethod(typeof(AttackCommand), "ExecuteInternal", [typeof(PlayerChoiceContext)])!);
     internal static readonly MethodInfo DamageMethod = Exact(typeof(CreatureCmd), nameof(CreatureCmd.Damage), typeof(Task<IEnumerable<DamageResult>>),
         typeof(PlayerChoiceContext), typeof(IEnumerable<DamageTargetData>), typeof(decimal), typeof(ValueProp),
         typeof(Creature), typeof(CardModel), typeof(CardPlay), typeof(ModifyDamageHookType));

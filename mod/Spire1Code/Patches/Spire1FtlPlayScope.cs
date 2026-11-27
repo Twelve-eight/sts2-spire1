@@ -59,10 +59,11 @@ internal static class Spire1FtlPlayScope
             MethodInfo draw = Exact(typeof(CardPileCmd), "DrawInternal", typeof(Task<IEnumerable<CardModel>>),
                 typeof(PlayerChoiceContext), typeof(decimal), typeof(Player), typeof(bool));
             MethodInfo attack = Exact(typeof(AttackCommand), nameof(AttackCommand.Execute), typeof(Task<AttackCommand>), typeof(PlayerChoiceContext));
+            MethodInfo attackInternal = Exact(typeof(AttackCommand), "ExecuteInternal", typeof(Task), typeof(PlayerChoiceContext));
             MethodInfo drawMove = MoveNext(draw);
-            MethodInfo attackMove = MoveNext(attack);
+            MethodInfo attackMove = MoveNext(attackInternal);
             Spire1ContinuationIl.ForKickoff(draw);
-            Spire1ContinuationIl.ForKickoff(attack);
+            Spire1ContinuationIl.ForKickoff(attackInternal);
             MethodInfo wrapper = Exact(typeof(CardModel), nameof(CardModel.OnPlayWrapper), typeof(Task),
                 typeof(PlayerChoiceContext), typeof(Creature), typeof(bool), typeof(ResourceInfo), typeof(bool));
             MethodInfo wrapperMove = MoveNext(wrapper);

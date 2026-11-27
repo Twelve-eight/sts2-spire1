@@ -58,6 +58,6 @@
 [/list]
 
 [i]The Workshop BaseLib often lags behind the official GitHub. If BaseLib errors after a game update, grab the latest release from GitHub (link above), unzip into the mods folder, and unsubscribe from the Workshop copy to avoid double-loading.[/i]"
-	"changenote"		"v1.3.0: 适配游戏 v0.113.1 与 BaseLib 3.4.8+, 并新增 STS2-RitsuLib 兼容与多项结构修复. (1) 新增/补全 Chaos, EchoForm, Electrodynamics, PerfectedStrike, Reboot, Scrape, WhiteNoise 等卡牌及 AncientPotion / CultistPotion / EssenceOfSteel / SmokeBomb 共计 6 种药水. (2) 6 个一代事件, JAX 与 MutagenicStrength 已拆分至独立扩展 一代事件 (Spire1Events); LegacySaveCompatPatch 会在未安装 Spire1Events 时清理已拆出的旧存档残留条目, 安装 Spire1Events 时完整保留. (3) 兼容 Workshop 版 BaseLib 与 RitsuLib 0.6.15 (运行期模块匹配, AttackHitHook 与 CardOnPlayHook 转译共存). (4) Flex 在跨模组契约不匹配时记日志回退 FlexPower, 不再在出牌中抛异常. (5) IgnoreMpModDifferences 与 SuppressMpDivergencePopup 默认改为关闭, 不再默认放行清单差异或隐藏失同步弹窗."
+	"changenote"		"v1.3.1: 适配游戏 v0.114.0 与 BaseLib 3.4.8+ / STS2-RitsuLib 0.6.16 (0.114.0). (1) 更新全部延续性 IL 守卫以适配 v0.114.0 的 AttackCommand.ExecuteInternal 与 CreatureCmd.ApplyDamageResults 重构, 保持与 RitsuLib 0.6.16 的 AttackHitHook / CardOnPlayHook 共存. (2) 包含 v1.3.0 全部内容: 新增/补全 Chaos, EchoForm, Electrodynamics, PerfectedStrike, Reboot, Scrape, WhiteNoise 等卡牌及 AncientPotion / CultistPotion / EssenceOfSteel / SmokeBomb 共计 6 种药水; 6 个一代事件, JAX 与 MutagenicStrength 拆分至独立扩展 一代事件 (Spire1Events) 并支持旧存档自动兼容; Flex 跨模组契约降级; IgnoreMpModDifferences 与 SuppressMpDivergencePopup 默认关闭."
 	"publishedfileid"		"3799031900"
 }

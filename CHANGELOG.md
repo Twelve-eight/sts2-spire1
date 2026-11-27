@@ -10,6 +10,12 @@ repository-side summary.
 
 ---
 
+## [1.3.1] — 2026-11-27
+
+### Changed
+- 适配游戏宿主 `v0.114.0`（更新 `Spire1ContinuationIl` 全部 30 项宿主 MVID / 元数据令牌 / 原始 IL 校验，适配 `AttackCommand.ExecuteInternal` 与 `CreatureCmd.ApplyDamageResults` 重构，并与 `STS2-RitsuLib 0.6.16 (0.114.0)` `AttackCommandExecuteHitHookPatch` 共存）。
+- `mod/Spire1.json` 升级 `version` 至 `1.3.1`、`min_game_version` 至 `0.114.0`。
+
 ## [1.3.0] — 2026-11-24
 
 ### Changed
