@@ -49,6 +49,7 @@ internal static class LegacySaveCompatPatch
         "SPIRE1-ADDICT",
         "SPIRE1-BACK_TO_BASICS",
         "SPIRE1-DRUG_DEALER",
+        "SPIRE1-FACE_TRADER",
         "SPIRE1-FOUNTAIN_OF_CURSE_REMOVAL",
         "SPIRE1-NOTE_FOR_YOURSELF",
         "SPIRE1-SPIRE_HEART",
@@ -56,6 +57,11 @@ internal static class LegacySaveCompatPatch
 
     private static void Prefix(ref SerializablePlayer save)
     {
+        if (save is null)
+        {
+            return;
+        }
+
         try
         {
             if (save.Relics is not null)
@@ -103,7 +109,7 @@ internal static class LegacySaveCompatPatch
         List<string> dropped = new();
         relics.RemoveAll(r =>
         {
-            if (r.Id == null)
+            if (r?.Id == null)
             {
                 return false;
             }
@@ -131,7 +137,7 @@ internal static class LegacySaveCompatPatch
         List<string> dropped = new();
         deck.RemoveAll(c =>
         {
-            if (c.Id != null && MovedCardIds.Contains(c.Id.Entry) && ModelDb.GetByIdOrNull<CardModel>(c.Id) is null)
+            if (c?.Id != null && MovedCardIds.Contains(c.Id.Entry) && ModelDb.GetByIdOrNull<CardModel>(c.Id) is null)
             {
                 dropped.Add(c.Id.Entry);
                 return true;
@@ -154,7 +160,7 @@ internal static class LegacySaveCompatPatch
         List<string> dropped = new();
         potions.RemoveAll(p =>
         {
-            if (p.Id != null && RemovedPotionIds.Contains(p.Id.Entry))
+            if (p?.Id != null && RemovedPotionIds.Contains(p.Id.Entry))
             {
                 dropped.Add(p.Id.Entry);
                 return true;
@@ -176,7 +182,7 @@ internal static class LegacyRunSaveCompatPatch
     {
         try
         {
-            if (save.EventsSeen.Count == 0)
+            if (save?.EventsSeen is null || save.EventsSeen.Count == 0)
             {
                 return;
             }

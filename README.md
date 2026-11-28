@@ -4,9 +4,9 @@
 
 # 杀戮尖塔一代角色 / Slay the Spire 1 Characters
 
-把《杀戮尖塔 1》的三名原始角色 —— **铁甲战士 / Ironclad**、**静默猎手 / Silent**、**故障机器人 / Defect** —— 连同他们的一代卡池、遗物、事件、药水与力量，作为独立内容层移植进《杀戮尖塔 2》。
+把《杀戮尖塔 1》的三名原始角色 —— **铁甲战士 / Ironclad**、**静默猎手 / Silent**、**故障机器人 / Defect** —— 连同他们的一代卡池、遗物、药水与力量，作为独立内容层移植进《杀戮尖塔 2》（经典一代事件已拆分为独立配套模组 [Spire1Events](https://github.com/Twelve-eight/sts2-spire1-events)）。
 
-[![Version](https://img.shields.io/badge/version-1.3.2-blue.svg)](mod/Spire1.json)
+[![Version](https://img.shields.io/badge/version-1.3.3-blue.svg)](mod/Spire1.json)
 [![Slay the Spire 2](https://img.shields.io/badge/Slay%20the%20Spire%202-0.114.0%2B-orange.svg)](https://store.steampowered.com/app/2868840/)
 [![BaseLib](https://img.shields.io/badge/BaseLib-3.4.8%2B-green.svg)](https://github.com/Alchyr/BaseLib-StS2/releases)
 [![License](https://img.shields.io/badge/license-see%20LICENSE-lightgrey.svg)](LICENSE)
@@ -18,13 +18,13 @@
 
 ## 这是什么 / What is this
 
-*《杀戮尖塔 2》的引擎里已经存在铁甲战士 / 静默猎手 / 故障机器人的同名卡牌与卡池，数值按二代重新平衡过。* 本模组不替换、也不隐藏它们，而是在角色选择界面**并列新增**三个独立角色（游戏内名称 `StS1 - 铁甲战士` / `StS1 - 静默猎手` / `StS1 - 故障机器人`），按**一代原版**的初始生命、初始卡组、初始遗物、卡池、遗物池、药水池与事件重新实现一遍。
+*《杀戮尖塔 2》的引擎里已经存在铁甲战士 / 静默猎手 / 故障机器人的同名卡牌与卡池，数值按二代重新平衡过。* 本模组不替换、也不隐藏它们，而是在角色选择界面**并列新增**三个独立角色（游戏内名称 `StS1 - 铁甲战士` / `StS1 - 静默猎手` / `StS1 - 故障机器人`），按**一代原版**的初始生命、初始卡组、初始遗物、卡池、遗物池、药水池与力量重新实现一遍。
 
 卡牌数值按一代原版逐张对齐（费用、基础值、升级增量、关键字、目标、稀有度）。与二代已出货卡牌**逐字段一致**的条目直接复用二代卡；任何一项有差异的条目使用本模组自研的一代忠实实现，避免二代的平衡改动渗进一代层。
 
 模组只依赖 BaseLib，与二代原生内容和社区幕组同时安装时互不替换。三名一代角色可以进入任意二代地牢，也可以和二代角色一起联机。模组自带的运行时开关允许你在一局里完全不使用它的任何内容，而无需卸载。
 
-> **English**: StS2 already ships same-named cards and pools for these characters with rebalanced numbers. This mod does not replace them — it adds three separate characters (`StS1 - Ironclad` / `- Silent` / `- Defect`) that follow the *original* StS1 numbers, card pools, relics, events and potions. Cards whose numbers match the shipped StS2 card field-for-field are reused instead of duplicated; any drift keeps a faithful StS1 implementation.
+> **English**: StS2 already ships same-named cards and pools for these characters with rebalanced numbers. This mod does not replace them — it adds three separate characters (`StS1 - Ironclad` / `- Silent` / `- Defect`) that follow the *original* StS1 numbers, card pools, relics, potions and powers. Cards whose numbers match the shipped StS2 card field-for-field are reused instead of duplicated; any drift keeps a faithful StS1 implementation.
 
 ---
 
@@ -44,37 +44,35 @@
 
 ### 卡牌池 / Card pools
 
-- **220 个具体卡牌类**（`mod/Spire1Code/Cards/` 共 222 个类文件，另 2 个是抽象基类）：覆盖一代的 基础牌 / 普通 / 罕见 / 稀有 / 状态 / 诅咒。
-- **93 张二代卡直接复用**：与一代同名且逐字段一致的二代已出货卡牌，不再重复实现（`Character/SharedCardReuse.cs` 共 103 条注入，其中 10 条见下）。
-- **10 张"漂移同名卡"**：二代改过稀有度或数值的条目（Bludgeon、Acrobatics、Predator、DarkEmbrace、Claw、Barrage、Flechettes、Chill、Darkness、Envenom）改用自研的一代忠实版，不让二代平衡污染一代层（`SharedCardReuse.RarityDriftTwins` / `FieldDriftTwins`）。
-- **79 个同名类退役**：与二代同名同效果的自研类移入 `Spire1LegacyPool` —— 仍会注册，只为旧存档还能解析 `SPIRE1-*` id，**不会出现在任何奖励、商店或图鉴里**（上条那 10 个"漂移同名卡"是例外：它们由 `SharedCardReuse` 在运行期改注入角色池）；其余 **141 个**类直接归属可玩卡池（`Character/Spire1LegacyPool.cs`）。
+- **226 个具体卡牌类**（`mod/Spire1Code/Cards/` 共 231 个 `.cs` 文件，另含 2 个抽象基类与辅助类）：覆盖一代的基础牌 / 普通 / 罕见 / 稀有 / 状态 / 诅咒。
+- **93 张二代卡直接复用**：与一代同名且逐字段一致的二代本体卡牌，不再重复实现（`Character/SharedCardReuse.cs` 共 103 条注入，其中 10 条见下）。
+- **10 张“漂移同名卡”**：二代改过稀有度或数值的条目（Bludgeon、Acrobatics、Predator、DarkEmbrace、Claw、Barrage、Flechettes、Chill、Darkness、Envenom）改用自研的一代忠实版，不让二代平衡污染一代层（`SharedCardReuse.RarityDriftTwins` / `FieldDriftTwins`）。
+- **85 个同名类退役**：与二代同名同效果的自研类移入 `Spire1LegacyPool` —— 仍会注册，只为旧存档还能解析 `SPIRE1-*` id，**不会出现在任何奖励、商店或图鉴里**；其余 **141 个**具体类直接归属可玩卡池（`Character/Spire1LegacyPool.cs`）。
 - 每张角色牌加入对应角色的专属池；按引擎规则进入无色 / 事件奖励池。**不替换任何二代卡牌。**
 
-> **计数口径**：以上为代码里可机械重数的**具体类**数量，不是类文件数量。复现：
-> `grep -rhE '^public (sealed |partial )*class ' mod/Spire1Code/Cards | wc -l` → `220`；
-> `grep -rhE '^\[Pool\(typeof\(Spire1LegacyPool\)\)\]' mod/Spire1Code/Cards | wc -l` → `79`；
+> **计数口径**：以上为代码里可机械重数的具体类数量。复现：
+> `grep -rhE '^public (sealed |partial )*class ' mod/Spire1Code/Cards | wc -l` → `226`；
+> `grep -rhE '^\[Pool\(typeof\(Spire1LegacyPool\)\)\]' mod/Spire1Code/Cards | wc -l` → `85`；
 > `grep -o 'typeof(Sts2Cards\.[A-Za-z]*' mod/Spire1Code/Character/SharedCardReuse.cs | wc -l` → `103`。
 
 ### 遗物 / Relics
 
-24 件一代遗物（`mod/Spire1Code/Relics/`），包含三件初始遗物及其升级版（燃血 → 黑血、蛇之戒指 → 龙之戒指、破裂核心 → 注能核心），以及 Nilry's Codex、Enchiridion、Toolbox、Necronomicon、Girya、Kunai、Shuriken、Pen Nib、Mark of Pain、Magic Flower 等。数值按二代引擎语义适配，效果按一代原版实现。
-
-> 计数：`grep -rhE '^public (sealed |partial )*class ' mod/Spire1Code/Relics | wc -l` → `24`（另有 1 个抽象基类 `Spire1Relic`）。
+29 件一代遗物（`mod/Spire1Code/Relics/` 共 31 个 `.cs` 文件，另含 1 个抽象基类 `Spire1Relic` 与 1 个营火选项辅助类 `GiryaRestSiteOption`），包含三件初始遗物及其升级版（燃血 → 黑血、蛇之戒指 → 龙之戒指、破裂核心 → 注能核心），以及 Nilry's Codex、Enchiridion、Toolbox、Necronomicon、Girya、Kunai、Shuriken、Pen Nib、Mark of Pain、Magic Flower、五件面具遗物等。数值按二代引擎语义适配，效果按一代原版实现。
 
 ### 独立配套扩展 / Standalone Companions
 
-- **一代事件（[Spire1Events](https://github.com/Twelve-eight/sts2-spire1-events)）**：自 `v1.3.0` 起，6 个一代普通事件（`Addict`、`BackToBasics`、`DrugDealer`、`FountainOfCurseRemoval`、`NoteForYourself`、`FaceTrader`）连同 `J.A.X.` 与 `MutagenicStrength` 已拆分为独立模组（Workshop `3846650436`），不再内置于本角色包中；旧存档会在未安装 `Spire1Events` 时按类别独立安全剔除迁出条目，安装时完整保留。
+- **一代事件（[Spire1Events](https://github.com/Twelve-eight/sts2-spire1-events)）**：自 `v1.3.0` 起，6 个一代普通事件（`Addict`、`BackToBasics`、`DrugDealer`、`FountainOfCurseRemoval`、`NoteForYourself`、`FaceTrader`）连同 `J.A.X.` 与 `MutagenicStrength` 已拆分为独立模组（Workshop `3846650436`），不再内置于本角色包中；旧存档在未安装 `Spire1Events` 时会按类别独立安全剔除迁出条目，安装时完整保留。
 - **第三幕尖塔之心事件与第四幕入口**：由 [Act 4 Heart](https://steamcommunity.com/sharedfiles/filedetails/?id=3747537811) 提供。
 - **观者姿态形态流派（[Forms](https://github.com/Twelve-eight/sts2-forms)）**：已拆分为独立自定义修正模组（Workshop `3846650387`）。
 
 ### 药水与力量 / Potions & Powers
 
 - **6 种药水**（`mod/Spire1Code/Potions/`）：原有 `ExplosivePotion`（爆炸药水）、`FearPotion`（恐惧药水），以及 `v1.3.0+` 新增 `AncientPotion`（远古药水）、`CultistPotion`（邪教徒药水）、`EssenceOfSteel`（精钢精华）、`SmokeBomb`（烟雾弹）。
-- **60 个力量类**（`mod/Spire1Code/Powers/` 共 62 个类文件，含 2 个抽象基类）：覆盖一代的增益/减益。
+- **67 个具体力量类**（`mod/Spire1Code/Powers/` 共 69 个 `.cs` 文件，含 2 个抽象基类）：覆盖一代的增益/减益。
 
 ### 本地化 / Localization
 
-简体中文 + English 双语文案，覆盖卡牌、遗物、事件、力量、药水、角色、设置界面（`mod/Spire1/localization/{zhs,eng}/*.json`）。描述支持动态数值（`!D!` / `!B!` / `*关键字*` 由 BaseLib SimpleLoc 在加载期展开）。
+简体中文 + English 双语文案，覆盖卡牌、遗物、力量、药水、角色、设置界面（`mod/Spire1/localization/{zhs,eng}/*.json`）。描述支持动态数值（`!D!` / `!B!` / `*关键字*` 由 BaseLib SimpleLoc 在加载期展开）。
 
 ### 设置 / Settings
 
@@ -85,7 +83,7 @@
 | 一代内容 | 总开关，关闭后本模组全部内容停用 | 开 |
 | 一代角色 | 在角色选择里显示三个一代角色 | 开 |
 | 一代卡牌 / 遗物 / 药水 / 力量 | 分别控制各类内容注入与生效 | 开 |
-| 纯一代卡池 | 角色池改用一代内容构建：自研忠实实现 + 已按当前宿主核对等价的真实 host 牌（不再复制重复类）；启动时读取一次，修改后需重启 | 关 |
+| 纯一代卡池 | 角色池改用一代内容构建：使用自研一代忠实实现，对与一代逐字段等价的二代本体同名牌直接沿用（不复制重复类）；启动时读取一次，修改后需重启 | 关 |
 | 将内容登记进下一局 | 在建局时把当前内容状态快照进该局存档 | 开 |
 | 联机忽略 mod 差异（清单级） | 握手时在哈希一致前提下忽略双方 mod 清单差异（双方需同构建） | 关 |
 | 联机抑制失同步弹窗 | 抑制 RitsuLib 的状态失同步诊断弹窗（诊断包仍写磁盘） | 关 |
@@ -108,7 +106,7 @@ BaseLib 是**唯一**的运行时依赖（`mod/Spire1.json` → `dependencies: [
 
 ### 方式二：手动安装
 
-1. 下载发行包（或自行构建，见下节）。
+1. 从本仓库 [GitHub Releases](https://github.com/Twelve-eight/sts2-spire1/releases) 下载最新压缩包（或自行构建，见下节）。
 2. 解压到游戏根目录的 `mods/` 下，最终结构必须是：
 
    ```
@@ -121,7 +119,7 @@ BaseLib 是**唯一**的运行时依赖（`mod/Spire1.json` → `dependencies: [
          └─ Spire1.json
    ```
 
-3. **不要**同时保留两份 BaseLib（工坊版 + 手动版），否则会双加载报错。
+3. **不要**对 `BaseLib` 或 `Spire1` 任一模组同时保留创意工坊订阅版与手动本地版，否则会触发双加载报错。
 
 ### 依赖版本提示
 
@@ -135,7 +133,7 @@ BaseLib 是**唯一**的运行时依赖（`mod/Spire1.json` → `dependencies: [
 
 - **.NET 9 SDK**（本项目目标框架 `net9.0`）
 - 已安装的《杀戮尖塔 2》（构建需要引用游戏目录下的 `sts2.dll` 与 `0Harmony.dll`）
-- 仅当需要产出 `.pck`：Godot 4.5.1 mono 导出器（`mod/Directory.Build.props:5` 的 `<GodotPath>`，默认值指向维护者机器的 `C:/megadot/...`，需按本机修改）
+- 仅当需要自行导出 `.pck`：Godot 4.5.1 mono 导出器（需在 `mod/Directory.Build.props` 中按本机路径配置 `<GodotPath>`）
 
 ### 构建
 
@@ -149,8 +147,7 @@ dotnet build mod/Spire1.csproj -c Release \
 ```
 
 - `Sts2Path` 必须指向**游戏根目录**（其下应有 `data_sts2_windows_x86_64/`，内含 `sts2.dll`、`0Harmony.dll`）。缺失时 `CheckDependencyPaths` 会直接失败：`Slay the Spire 2 data not found at path '...'`。
-  也可以在 `mod/Directory.Build.props` 里取消注释 `<Sts2Path>` 固定下来；自动探测顺序为 `Sts2TestPath` → 维护者本机的本地副本 → 仓库内的测试客户端副本，**不会**回落到 Steam 安装目录。
-- `-p:CopyToModsFolderOnBuild=false` 表示"只编译、不写进游戏目录"。
+- `-p:CopyToModsFolderOnBuild=false` 表示“只编译、不自动写进游戏目录”。
 - 产物：`mod/.godot/mono/temp/bin/Release/Spire1.dll`。
 
 ### 产出可用的 mod 目录
@@ -165,20 +162,19 @@ cp "<含 Spire1.pck 的目录>/Spire1.pck"          "<StS2>/mods/Spire1/"
 
 `.pck` 由 Godot 导出（`dotnet publish` + `GodotPath`）或由 `BSchneppe.StS2.PckPacker` 生成；`CopyToModsFolderOnBuild=false` 的编译路径**不生成** `.pck`。
 
-> **一条维护者限制，外部构建前请先读**
-> `AssertModsPathIdentity` 目标只允许 `mod/Spire1.csproj` 中 `ModsPath` 白名单内的部署根目录，用于防止构建误写进真实的 Steam 安装。落在白名单外会以 `MODSPATH-GUARD-DENY` 失败 —— 这是**预期行为**，用 `-p:CopyToModsFolderOnBuild=false` 或把游戏放在白名单路径即可。
+> **外部构建提示**
+> `AssertModsPathIdentity` 目标会阻止构建脚本自动写入真实 Steam 安装目录；未传 `-p:CopyToModsFolderOnBuild=false` 时会以 `MODSPATH-GUARD-DENY` 拒绝 —— 这是**预期安全护栏**，外部构建请固定传递 `-p:CopyToModsFolderOnBuild=false`。
 
 ---
 
 ## 兼容性与已知问题 / Compatibility & known issues
 
 - **BaseLib 版本漂移**：见「依赖版本提示」。工坊 BaseLib 落后时，本模组可能无法加载。
-- **高塔之心事件不可遇到**：`SpireHeart` 以 `autoAdd: false` 构造，且仓库中没有任何触发点。它需要一代的钥匙/结局流程，二代没有对应 API。因此实际可遇到的一代独有事件是 **5 个**（不是 6 个）。
-- **观者（Watcher）与一代地牢已移除**：早期测试版包含观者角色与自建的一代地牢/怪物，现版本已整体删除。旧存档里指向这些内容的引用会被引擎降级为占位卡（不会崩溃），其余内容不受影响；`mod/Spire1Code/Powers` 中仍保留架势/真言的基础设施，但没有观者角色可玩。
-- **退役卡兜底**：v1.2.5 修复了 79 张退役 `SPIRE1-*` 卡在取 `Pool` 时抛 `InvalidProgramException` 导致的联机校验和分叉；现在会回落到铁甲池。走到兜底时，该卡的卡框与图标会按铁甲池渲染 —— 这是兜底而非根因修复。
-- **联机**：需要双方安装**相同构建**。`联机忽略 mod 差异` / `忽略 ModelID 哈希差异` 两个开关只是容错，打开会削弱序列化安全，哈希不符时强制放行可能造成失同步；真实游戏版本不符仍会被拦截。
-- **纯一代卡池模式**：开启后角色池不再注入二代同名牌，缺失由自研实现补齐；奖励类事件要求"N 张不重复"时，抽牌数量会被钳制到池内实际可行数。
-- **事件默认关闭**：一代事件默认不进入事件池，需要在设置里显式打开。
+- **一代事件已拆出**：自 `v1.3.0` 起，一代经典事件不再内置于本模组；请按需安装独立配套模组 [Spire1Events](https://github.com/Twelve-eight/sts2-spire1-events)（第三幕尖塔之心事件与第四幕入口由 [Act 4 Heart](https://steamcommunity.com/sharedfiles/filedetails/?id=3747537811) 提供）。
+- **观者（Watcher）与一代地牢已移除**：早期测试版包含观者角色与自建的一代地牢/怪物，现版本已整体删除。旧存档里指向这些内容的引用会被引擎降级为占位卡（不会崩溃），其余内容不受影响；观者三形态玩法请见独立模组 [Forms](https://github.com/Twelve-eight/sts2-forms)。
+- **退役卡兜底**：v1.2.5 修复了退役 `SPIRE1-*` 卡在取 `Pool` 时抛 `InvalidProgramException` 导致的联机校验和分叉；现在会回落到铁甲池。走到兜底时，该卡的卡框与图标会按铁甲池渲染 —— 这是兜底而非根因修复。
+- **联机**：需要双方安装**相同构建**。`联机忽略 mod 差异` / `忽略 ModelID 哈希差异` 两个开关默认关闭，打开会削弱序列化安全，哈希不符时强制放行可能造成失同步；真实游戏版本不符仍会被拦截。
+- **纯一代卡池模式**：开启后三名角色池改用一代内容构建（与一代逐字段等价的二代本体牌直接沿用，其余使用本模组自研一代实现）；修改后需重启游戏生效；奖励类事件要求“N 张不重复”时，抽牌数量会被钳制到池内实际可行数。
 
 ---
 
@@ -189,9 +185,9 @@ sts2-spire1/
 ├─ mod/                         Godot 4.5.1 + .NET 9 的模组工程（Spire1.csproj / Spire1.json）
 │  ├─ Spire1Code/               C# 源码
 │  │  ├─ Character/             三个角色、卡池/遗物池/药水池、SharedCardReuse
-│  │  ├─ Cards/  Relics/  Powers/  Potions/  Events/
+│  │  ├─ Cards/  Relics/  Powers/  Potions/
 │  │  ├─ Patches/               Harmony 补丁（内容门控、联机、存档保护）
-│  │  ├─ Interop/               第三方 mod 反射桥（AFTP / Forms / Auto-Anthonyology）
+│  │  ├─ Interop/               第三方 mod 反射桥（Acts from the Past / Forms / Auto-Anthonyology）
 │  │  ├─ Config/                Spire1Config 运行时开关、CharacterGate
 │  │  ├─ Run/                   按局内容快照
 │  │  └─ Diagnostics/           卡池普查（诊断用，默认关闭）
@@ -204,7 +200,7 @@ sts2-spire1/
 └─ DEVLOG.md                    内部开发日志（不随仓库分发）
 ```
 
-约定：内容类一律继承 `Spire1Card` / `Spire1Relic` / `Spire1Potion` / `Spire1Event`，通过 BaseLib 的池标记自动注册；ID 形如 `SPIRE1-<CLASS>`；每个内容类都必须在 `localization/{eng,zhs}` 里有对应条目。详细契约见 [`DEVELOP.md`](DEVELOP.md)。
+约定：内容类一律继承 `Spire1Card` / `Spire1Relic` / `Spire1Potion`，通过 BaseLib 的池标记自动注册；ID 形如 `SPIRE1-<CLASS>`；每个内容类都必须在 `localization/{eng,zhs}` 里有对应条目。详细契约见 [`DEVELOP.md`](DEVELOP.md)。
 
 已构建的第三方互操作（全部为可选、缺失即自动禁用，不产生硬依赖）：
 
@@ -246,13 +242,13 @@ sts2-spire1/
 
 ## English summary
 
-**What it is.** Slay the Spire 2 already ships same-named cards and pools for the Ironclad, Silent and Defect, with rebalanced numbers. This mod adds three *separate* characters (`StS1 - Ironclad` / `- Silent` / `- Defect`) built on the original StS1 numbers, card pools, relics, events, potions and powers. Vanilla StS2 content is never replaced or hidden.
+**What it is.** Slay the Spire 2 already ships same-named cards and pools for the Ironclad, Silent and Defect, with rebalanced numbers. This mod adds three *separate* characters (`StS1 - Ironclad` / `- Silent` / `- Defect`) built on the original StS1 numbers, card pools, relics, potions and powers (classic StS1 events are provided separately by [Spire1Events](https://github.com/Twelve-eight/sts2-spire1-events)). Vanilla StS2 content is never replaced or hidden.
 
-**Content.** 3 characters (80/70/75 HP with their StS1 starter decks and starter relics), 220 card classes, 93 shipped StS2 cards reused where field-for-field identical, 24 relics, 6 events (5 reachable), 2 potions, 60 power classes, full zh/en localization, and per-category runtime toggles in *Settings → Mod Settings*.
+**Content.** 3 characters (80/70/75 HP with their StS1 starter decks and starter relics), 226 card classes (141 active + 85 retired legacy placeholders), 93 shipped StS2 cards reused where field-for-field identical, 29 relics, 6 potions, 67 power classes, full zh/en localization, and per-category runtime toggles in *Settings → Mod Settings*.
 
-**Requirements.** Slay the Spire 2 `0.111.0+` and BaseLib `3.4.5+` (the only runtime dependency). If the Workshop BaseLib lags behind a game update, install the latest release from [BaseLib's GitHub](https://github.com/Alchyr/BaseLib-StS2/releases) and unsubscribe from the Workshop copy.
+**Requirements.** Slay the Spire 2 `0.114.0+` and BaseLib `3.4.8+` (the only runtime dependency). If the Workshop BaseLib lags behind a game update, install the latest release from [BaseLib's GitHub](https://github.com/Alchyr/BaseLib-StS2/releases) and unsubscribe from the Workshop copy.
 
-**Install.** Subscribe on the [Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3799031900), or drop `Spire1.dll`, `Spire1.pck` and `Spire1.json` into `Slay the Spire 2/mods/Spire1/`.
+**Install.** Subscribe on the [Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3799031900), or download the latest archive from [GitHub Releases](https://github.com/Twelve-eight/sts2-spire1/releases) and extract it into `Slay the Spire 2/mods/` so `mods/Spire1/{Spire1.dll,Spire1.pck,Spire1.json}` exist (do not enable both Workshop and local copies simultaneously).
 
 **Build.**
 
@@ -262,6 +258,6 @@ dotnet build mod/Spire1.csproj -c Release \
   -p:CopyToModsFolderOnBuild=false
 ```
 
-Requires the .NET 9 SDK; the output is `mod/.godot/mono/temp/bin/Release/Spire1.dll`. See [Building from source](#从源码构建--building-from-source) for the ModsPath allowlist caveat.
+Requires the .NET 9 SDK; the output is `mod/.godot/mono/temp/bin/Release/Spire1.dll`. Always pass `-p:CopyToModsFolderOnBuild=false` when building externally.
 
 **Not affiliated with Mega Crit.** *Slay the Spire* and *Slay the Spire 2* are trademarks of Mega Crit, LLC. This is a non-commercial fan project.

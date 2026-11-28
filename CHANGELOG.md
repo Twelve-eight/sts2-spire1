@@ -10,6 +10,12 @@ repository-side summary.
 
 ---
 
+## [1.3.3] — 2026-11-28
+
+### Fixed
+- `LegacySaveCompatPatch`：补入 `SPIRE1-FACE_TRADER` 至条件剥离事件名单，并在 `Player.FromSerializable` / `RunState.FromSerializable` 入口及列表元素访问处补齐空引用防护（`save is null`、`save.EventsSeen is null`、`r?.Id`/`c?.Id`/`p?.Id`）。
+- 同步全面修订 `README.md`（含底部 `English summary`），清除已拆出事件的过时描述并对齐当前源码的实际卡牌/遗物/力量/药水计数。
+
 ## [1.3.2] — 2026-11-28
 
 ### Fixed
