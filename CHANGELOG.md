@@ -10,6 +10,12 @@ repository-side summary.
 
 ---
 
+## [1.3.2] — 2026-11-28
+
+### Fixed
+- `LegacySaveCompatPatch`：`StripRelics`、`StripPotions`、`StripMovedCards` 拆分为三个独立 `try/catch` 块并增加空集合防护，避免单个类别异常导致后续兼容剥离被跳过。
+- 同步修正 `README.md` 与工坊更新说明中的版本号、6 种药水完整清单（原有 `ExplosivePotion` / `FearPotion` + 新增 `AncientPotion` / `CultistPotion` / `EssenceOfSteel` / `SmokeBomb`）及事件独立拆分说明。
+
 ## [1.3.1] — 2026-11-27
 
 ### Changed

@@ -58,14 +58,39 @@ internal static class LegacySaveCompatPatch
     {
         try
         {
-            StripRelics(save.Relics);
-            StripPotions(save.Potions);
-            StripMovedCards(save.Deck);
+            if (save.Relics is not null)
+            {
+                StripRelics(save.Relics);
+            }
         }
         catch (System.Exception e)
         {
-            // 兼容层绝不允许把存档加载整个打断--异常时退回引擎原生 deprecated 占位行为。
-            MainFile.Logger.Error($"[Spire1] legacy save strip failed (falling back to deprecated placeholders): {e.Message}");
+            // 兼容层绝不允许把存档加载整个打断--各条目独立捕获, 单步异常退回引擎原生 deprecated 占位行为。
+            MainFile.Logger.Error($"[Spire1] legacy relic strip failed (falling back to deprecated placeholders): {e.Message}");
+        }
+
+        try
+        {
+            if (save.Potions is not null)
+            {
+                StripPotions(save.Potions);
+            }
+        }
+        catch (System.Exception e)
+        {
+            MainFile.Logger.Error($"[Spire1] legacy potion strip failed (falling back to deprecated placeholders): {e.Message}");
+        }
+
+        try
+        {
+            if (save.Deck is not null)
+            {
+                StripMovedCards(save.Deck);
+            }
+        }
+        catch (System.Exception e)
+        {
+            MainFile.Logger.Error($"[Spire1] legacy card strip failed (falling back to deprecated placeholders): {e.Message}");
         }
     }
 

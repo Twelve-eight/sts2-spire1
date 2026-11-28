@@ -6,13 +6,13 @@
 
 把《杀戮尖塔 1》的三名原始角色 —— **铁甲战士 / Ironclad**、**静默猎手 / Silent**、**故障机器人 / Defect** —— 连同他们的一代卡池、遗物、事件、药水与力量，作为独立内容层移植进《杀戮尖塔 2》。
 
-[![Version](https://img.shields.io/badge/version-1.2.5-blue.svg)](mod/Spire1.json)
-[![Slay the Spire 2](https://img.shields.io/badge/Slay%20the%20Spire%202-0.111.0%2B-orange.svg)](https://store.steampowered.com/app/2868840/)
-[![BaseLib](https://img.shields.io/badge/BaseLib-3.4.5%2B-green.svg)](https://github.com/Alchyr/BaseLib-StS2/releases)
+[![Version](https://img.shields.io/badge/version-1.3.2-blue.svg)](mod/Spire1.json)
+[![Slay the Spire 2](https://img.shields.io/badge/Slay%20the%20Spire%202-0.114.0%2B-orange.svg)](https://store.steampowered.com/app/2868840/)
+[![BaseLib](https://img.shields.io/badge/BaseLib-3.4.8%2B-green.svg)](https://github.com/Alchyr/BaseLib-StS2/releases)
 [![License](https://img.shields.io/badge/license-see%20LICENSE-lightgrey.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-PC%20%C2%B7%20Steam-informational.svg)](https://store.steampowered.com/app/2868840/)
 
-> **English**: The three original *Slay the Spire 1* characters — Ironclad, Silent and Defect — ported to *Slay the Spire 2* as additive characters, with their StS1 card pools, relics, events, powers and potions. Single runtime dependency: BaseLib 3.4.5+. Not affiliated with Mega Crit.
+> **English**: The three original *Slay the Spire 1* characters — Ironclad, Silent and Defect — ported to *Slay the Spire 2* as additive characters, with their StS1 card pools, relics, powers and potions (classic events are split into [Spire1Events](https://github.com/Twelve-eight/sts2-spire1-events)). Single runtime dependency: BaseLib 3.4.8+. Not affiliated with Mega Crit.
 
 ---
 
@@ -61,25 +61,16 @@
 
 > 计数：`grep -rhE '^public (sealed |partial )*class ' mod/Spire1Code/Relics | wc -l` → `24`（另有 1 个抽象基类 `Spire1Relic`）。
 
-### 事件 / Events
+### 独立配套扩展 / Standalone Companions
 
-6 个一代独有事件（`mod/Spire1Code/Events/`）：
-
-| 类 | 游戏内名称（中 / 英） | 可遇到 |
-|---|---|---|
-| `Addict` | 流浪汉的恳求 / Pleading Vagrant | 是 |
-| `BackToBasics` | 古老文字 / Ancient Writing | 是 |
-| `DrugDealer` | 增益研究者 / Augmenter | 是 |
-| `FountainOfCurseRemoval` | 神圣泉水 / The Divine Fountain | 是 |
-| `NoteForYourself` | 留给自己的讯息 / A Note For Yourself | 是 |
-| `SpireHeart` | 高塔之心 / Spire Heart | 否（未接入，见「已知问题」） |
-
-默认**不注入**事件池，需在模组设置里打开（见下文「设置」）。其余一代事件由 [Acts from the Past](https://steamcommunity.com/sharedfiles/filedetails/?id=3746969593) 提供，本模组不重复实现。
+- **一代事件（[Spire1Events](https://github.com/Twelve-eight/sts2-spire1-events)）**：自 `v1.3.0` 起，6 个一代普通事件（`Addict`、`BackToBasics`、`DrugDealer`、`FountainOfCurseRemoval`、`NoteForYourself`、`FaceTrader`）连同 `J.A.X.` 与 `MutagenicStrength` 已拆分为独立模组（Workshop `3846650436`），不再内置于本角色包中；旧存档会在未安装 `Spire1Events` 时按类别独立安全剔除迁出条目，安装时完整保留。
+- **第三幕尖塔之心事件与第四幕入口**：由 [Act 4 Heart](https://steamcommunity.com/sharedfiles/filedetails/?id=3747537811) 提供。
+- **观者姿态形态流派（[Forms](https://github.com/Twelve-eight/sts2-forms)）**：已拆分为独立自定义修正模组（Workshop `3846650387`）。
 
 ### 药水与力量 / Potions & Powers
 
-- **2 种药水**：爆炸药水 / Explosive Potion、恐惧药水 / Fear Potion（`mod/Spire1Code/Potions/`）。
-- **60 个力量类**（`mod/Spire1Code/Powers/` 共 62 个类文件，含 2 个抽象基类）：覆盖一代的增益/减益，包含观者（Watcher）的架势（Calm / Wrath / Divinity）与真言（Mantra）基础设施 —— 这部分是给后续内容预留的运行时基础，当前没有观者角色。
+- **6 种药水**（`mod/Spire1Code/Potions/`）：原有 `ExplosivePotion`（爆炸药水）、`FearPotion`（恐惧药水），以及 `v1.3.0+` 新增 `AncientPotion`（远古药水）、`CultistPotion`（邪教徒药水）、`EssenceOfSteel`（精钢精华）、`SmokeBomb`（烟雾弹）。
+- **60 个力量类**（`mod/Spire1Code/Powers/` 共 62 个类文件，含 2 个抽象基类）：覆盖一代的增益/减益。
 
 ### 本地化 / Localization
 
@@ -134,7 +125,7 @@ BaseLib 是**唯一**的运行时依赖（`mod/Spire1.json` → `dependencies: [
 
 ### 依赖版本提示
 
-`mod/Spire1.json` 要求 **BaseLib ≥ 3.4.5**，本仓库也按 3.4.5 编译。创意工坊的 BaseLib 更新经常落后于官方 GitHub：游戏更新后如果 BaseLib 报错或本模组加载失败，请从 [BaseLib GitHub Releases](https://github.com/Alchyr/BaseLib-StS2/releases) 取最新版，解压进 `mods/`，并**取消订阅工坊版 BaseLib**。
+`mod/Spire1.json` 要求 **Slay the Spire 2 ≥ 0.114.0** 与 **BaseLib ≥ 3.4.8**。创意工坊的 BaseLib 更新经常落后于官方 GitHub：游戏更新后如果 BaseLib 报错或本模组加载失败，请从 [BaseLib GitHub Releases](https://github.com/Alchyr/BaseLib-StS2/releases) 取最新版，解压进 `mods/`，并**取消订阅工坊版 BaseLib**。若需在工坊审核期间手动安装本模组，可直接下载本仓库 [GitHub Releases](https://github.com/Twelve-eight/sts2-spire1/releases) 中的压缩包。
 
 ---
 
